@@ -288,7 +288,7 @@ function renderFooter(path) {
     return;
   }
   $('#footer').innerHTML =
-    `<div class="container"><div class="footer-top"><div><a href="#/" aria-label="Techouse home">${brand}</a><p>Construction. Energy. New possibilities.<br>Building your next possibility.</p></div><div class="footer-col"><span>EXPLORE</span><a href="#/divisions">Our divisions</a><a href="#/about">About Techouse</a><a href="#/updates">Company updates</a><a href="#/office">Employee back office</a></div><div class="footer-col"><span>LET’S TALK</span><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a><a href="tel:+639855626888">+63 985 562 6888</a><a href="#/inquiry">Start a project ${arrow}</a></div></div><div class="footer-bottom"><span>Techouse Technology Construction Corp</span></div></div>`;
+    `<div class="container"><div class="footer-top"><div><a href="#/" aria-label="Techouse home">${brand}</a><p>Construction. Energy. New possibilities.<br>Building your next possibility.</p></div><div class="footer-col"><span>EXPLORE</span><a href="#/divisions">Our divisions</a><a href="#/about">About Techouse</a><a href="#/updates">Company updates</a><a href="#/office">Employee back office</a></div><div class="footer-col"><span>LET’S TALK</span><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a><a href="tel:+639855626888">+63 985 562 6888</a><a href="#/inquiry">Start a project ${arrow}</a></div></div><div class="footer-bottom"><span>Techouse Technology Construction Corp</span><nav class="footer-socials" aria-label="Social media"><a href="https://www.facebook.com/profile.php?id=61590728812899" target="_blank" rel="noopener noreferrer">Facebook ↗</a><a href="https://www.tiktok.com/@asiatechouse" target="_blank" rel="noopener noreferrer">TikTok ↗</a><span class="social-pending">LinkedIn · coming soon</span></nav></div></div>`;
 }
 const breadcrumb = (title) =>
   `<div class="container breadcrumb"><a href="#/">Home</a><span>/</span><span>${esc(title)}</span></div>`;
@@ -343,6 +343,195 @@ function about() {
   return `${breadcrumb('About Techouse')}<section class="container page-hero about-introduction"><div class="eyebrow">GET TO KNOW TECHOUSE</div><h1>New ways to build.<br>More ways forward.</h1><p>Techouse brings construction technologies and solar energy solutions to the Philippines—connecting your plans with possibilities for the spaces you build and the energy you use.</p></section><div class="container content-columns about-company"><div><span class="eyebrow">CONSTRUCTION. ENERGY. POSSIBILITY.</span><h2>One company.<br>Five ways to move forward.</h2><p>Techouse Technology Construction Corp brings together construction, solar energy, prefabricated buildings, real estate development and elevator engineering. Each division offers a different starting point for your project.</p><p>Whether you’re exploring rooftop solar, planning a building or considering a new use for your property, start with what you want to achieve. Explore the relevant division, share your requirements, and discuss the next step with our team.</p><a class="text-link" href="#/divisions">Find your division ${arrow}</a></div>${window.TechouseAbout.panel()}</div><section class="container about-pathways"><div class="section-heading"><span>WHAT ARE YOU PLANNING?</span><h2>Start with your next step.</h2></div><div>${divisions.map((d) => `<a href="#/divisions/${d.id}"><span>${d.number}</span><strong>${esc(d.short)}</strong>${arrow}</a>`).join('')}</div></section>${cta('Have a project in mind?', 'Tell us what you’re planning. We’ll help you find the right conversation to start.')}`;
 }
 
+// Returning visitors can review browser-local requests without accidentally creating duplicates.
+function mountInquiryHistory(showCurrent = true) {
+  const grid = document.querySelector('.contact-grid');
+  if (!grid || !inquiries.length) return;
+  grid.classList.add('inquiry-workspace');
+  document.body.classList.add('has-saved-inquiry');
+  const saved = [...inquiries].reverse().filter((q) => q && typeof q.id === 'string');
+  if (!saved.length) return;
+  let history = document.querySelector('#saved-inquiry-history');
+  if (!history) {
+    history = document.createElement('section');
+    history.id = 'saved-inquiry-history';
+    history.className = 'container saved-inquiry-history';
+    grid.before(history);
+  }
+  const anotherLink =
+    '#/inquiry?new=1' +
+    (new URLSearchParams(location.hash.split('?')[1]).get('estimate') === '1'
+      ? '&division=solar&estimate=1'
+      : '');
+  const visits = readStore('techouse-demo-site-visits-v1', []);
+  history.innerHTML = `<div><h2>Your inquiries <span class="inquiry-count">${saved.length}</span></h2><p>Choose a card to see its details and next steps. Demo requests stay in this browser.</p></div><ul class="saved-inquiry-cards" aria-label="Saved inquiries">${saved
+    .map((q, index) => {
+      const sector = {
+        residential: 'Residential',
+        commercial: 'Commercial',
+        industrial: 'Industrial',
+      }[q.solarSector];
+      const visit =
+        Array.isArray(visits) &&
+        visits.some((v) => v.inquiryId === q.id && v.status === 'requested');
+      const date = new Date(q.createdAt);
+      const dateLabel = Number.isFinite(+date)
+        ? date.toLocaleDateString('en-PH', {
+            month: 'short',
+            day: 'numeric',
+            timeZone: 'Asia/Manila',
+          })
+        : '';
+      return `<li><button class="saved-reference-button" type="button" data-review-inquiry="${esc(q.id)}" aria-controls="inquiry-expanded-details" aria-expanded="false" aria-pressed="false"><span class="saved-card-kicker">INQUIRY ${String(saved.length - index).padStart(2, '0')}${dateLabel ? ' · ' + esc(dateLabel) : ''}</span><span class="saved-card-title">${esc(sector && q.division === 'solar' ? sector + ' solar' : getDivision(q.division)?.short || 'Project inquiry')}</span><span class="saved-card-location">${esc(q.location || 'Location not provided')}</span><span class="saved-card-status">${visit ? 'Site visit requested · demo' : 'Saved · demo'}</span><strong>${esc(q.id)}</strong><span class="saved-card-open">View inquiry ${arrow}</span></button></li>`;
+    })
+    .join(
+      '',
+    )}</ul><div class="inquiry-another-prompt"><h3>Planning another project?</h3><p>You can make a separate request for Solar or any other division.</p></div><a class="button" href="${anotherLink}">Make another inquiry ${arrow}</a>`;
+  history
+    .querySelector('.saved-inquiry-cards')
+    .style.setProperty('--ticket-columns', Math.min(saved.length, 3));
+  history
+    .querySelector('.saved-inquiry-cards')
+    .style.setProperty('--ticket-tablet-columns', Math.min(saved.length, 2));
+  history.querySelectorAll('[data-review-inquiry]').forEach((button) =>
+    button.addEventListener('click', () => {
+      const q = saved.find((item) => item.id === button.dataset.reviewInquiry);
+      if (q) {
+        if (button.getAttribute('aria-expanded') === 'true') showInquiryOverview();
+        else showSavedInquiry(q);
+      }
+    }),
+  );
+  if (!showCurrent) {
+    const latest = history.querySelector('[data-review-inquiry]');
+    latest?.setAttribute('aria-pressed', 'true');
+    if (latest) latest.querySelector('.saved-card-open').innerHTML = 'Viewing inquiry ' + arrow;
+  }
+  ensureInquiryBack();
+  if (showCurrent) {
+    if (new URLSearchParams(location.hash.split('?')[1]).has('new')) {
+      history.hidden = true;
+      grid.hidden = false;
+      document.body.classList.add('inquiry-new-request');
+      document.querySelector('#inquiry-back').hidden = false;
+    } else showInquiryOverview();
+  }
+}
+function ensureInquiryBack() {
+  let back = document.querySelector('#inquiry-back');
+  if (back) return back;
+  back = document.createElement('div');
+  back.id = 'inquiry-back';
+  back.className = 'container inquiry-back';
+  back.hidden = true;
+  back.innerHTML = `<button class="text-link" type="button">${window.TechouseIcons.icon('arrow_back')} Back to your inquiries</button><span>YOUR REQUEST DETAILS</span>`;
+  document.querySelector('.page-hero').after(back);
+  back.querySelector('button').addEventListener('click', () => {
+    showInquiryOverview();
+    document.querySelector('#saved-inquiry-history h2')?.focus({ preventScroll: true });
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  });
+  return back;
+}
+function showInquiryOverview() {
+  const grid = document.querySelector('.contact-grid');
+  const saved = document.querySelector('#saved-inquiry-history');
+  if (!grid || !saved) return;
+  document.body.classList.remove(
+    'inquiry-details',
+    'inquiry-new-request',
+    'inquiry-inline-details',
+  );
+  document.body.classList.add('inquiry-overview');
+  grid.hidden = true;
+  saved.after(grid);
+  grid.classList.add('container');
+  saved.querySelector('.inquiry-expanded-row')?.remove();
+  saved.hidden = false;
+  saved.querySelectorAll('[data-review-inquiry]').forEach((button) => {
+    button.setAttribute('aria-pressed', 'false');
+    button.setAttribute('aria-expanded', 'false');
+    button.querySelector('.saved-card-open').innerHTML = 'View inquiry ' + arrow;
+  });
+  ensureInquiryBack().hidden = true;
+  const params = new URLSearchParams(location.hash.split('?')[1]);
+  params.delete('new');
+  window.history.replaceState(null, '', '#/inquiry' + (params.size ? '?' + params.toString() : ''));
+  const hero = document.querySelector('.page-hero');
+  hero.querySelector('.eyebrow').textContent = 'YOUR REQUEST IS SAVED';
+  hero.querySelector('h1').textContent =
+    inquiries.length === 1 ? 'You already have an inquiry.' : 'Your inquiries are saved.';
+  hero.querySelector('p').textContent =
+    'Pick up where you left off. Open a ticket to review your request or plan your next step. Demo only: saved in this browser, not sent to Techouse.';
+  saved.querySelector('h2').tabIndex = -1;
+}
+
+function showSavedInquiry(q) {
+  const area = document.querySelector('#inquiry-form-area');
+  if (!area) return;
+  const history = document.querySelector('#saved-inquiry-history');
+  if (!history) return;
+  document.body.classList.remove('inquiry-details', 'inquiry-new-request');
+  document.body.classList.add('inquiry-overview', 'inquiry-inline-details');
+  history.hidden = false;
+  const grid = document.querySelector('.contact-grid');
+  let expansion = history.querySelector('.inquiry-expanded-row');
+  if (!expansion) {
+    expansion = document.createElement('li');
+    expansion.className = 'inquiry-expanded-row';
+    expansion.id = 'inquiry-expanded-details';
+    expansion.innerHTML = `<div class="inquiry-expansion-bar"><span>YOUR REQUEST DETAILS</span><button class="text-link" type="button" data-collapse-inquiry>Collapse inquiry ${window.TechouseIcons.icon('close')}</button></div>`;
+    history.querySelector('.saved-inquiry-cards').append(expansion);
+    expansion.querySelector('[data-collapse-inquiry]').addEventListener('click', () => {
+      const selected = history.querySelector('[data-review-inquiry][aria-expanded="true"]');
+      showInquiryOverview();
+      selected?.focus({ preventScroll: true });
+    });
+  }
+  grid.classList.remove('container');
+  expansion.append(grid);
+  grid.hidden = false;
+  ensureInquiryBack().hidden = true;
+  document.querySelectorAll('[data-review-inquiry]').forEach((button) => {
+    const selected = button.dataset.reviewInquiry === q.id;
+    button.setAttribute('aria-pressed', String(selected));
+    button.setAttribute('aria-expanded', String(selected));
+    button.querySelector('.saved-card-open').innerHTML =
+      (selected ? 'Collapse inquiry ' : 'View inquiry ') + arrow;
+  });
+  area.setAttribute('aria-label', 'Selected inquiry details');
+  window.TechouseVisits?.setInquiry(q);
+  const solar = q.division === 'solar';
+  const sectorLabel = {
+    residential: 'Residential',
+    commercial: 'Commercial',
+    industrial: 'Industrial',
+  }[q.solarSector];
+  const annual = Number(q.solarSavings) * 12;
+  area.innerHTML = `<div class="success saved-inquiry-current" tabindex="-1"><header class="inquiry-ticket-heading"><span class="eyebrow">SELECTED INQUIRY</span><h2>${esc(getDivision(q.division)?.short || 'Project')} inquiry</h2><p class="ticket-reference">REFERENCE <strong>${esc(q.id)}</strong></p></header><div class="inquiry-ticket-body"><p class="inquiry-save-status"><span aria-hidden="true">✓</span> Demo saved in this browser</p><p class="inquiry-delivery-note">No inquiry has been sent to Techouse.</p><dl class="inquiry-summary-facts"><div><dt>Project location</dt><dd>${esc(q.location || 'Not provided')}</dd></div>${sectorLabel ? `<div><dt>Installation type</dt><dd>${sectorLabel}</dd></div>` : ''}</dl>${solar && Number.isFinite(annual) && annual > 0 ? `<div class="inquiry-annual-savings"><span>Your potential annual savings</span><strong>${new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', maximumFractionDigits: 0 }).format(annual)}<small> / year</small></strong><p>Monthly estimate × 12. Subject to site and usage review.</p></div>` : ''}<details class="inquiry-request-details"><summary>Review your request</summary><p class="saved-inquiry-requirements">${esc(q.requirements)}</p></details>${solar ? `<div class="inquiry-next-step"><span class="eyebrow">YOUR NEXT STEP</span><h3>Let’s take a closer look.</h3><p>A site visit helps check your roof and refine your estimate.</p><button class="button" type="button" data-request-visit data-inquiry-id="${esc(q.id)}">Request a site visit ${arrow}</button></div>` : ''}</div></div>`;
+  if (q.division === 'solar')
+    window.TechouseVisits?.restoreSavedVisit(area.querySelector('.success'), q);
+  if (q.division === 'solar') window.TechouseVisits?.renderProjectPreviews();
+  else window.TechouseVisits?.clearProjectPreviews();
+  if (!expansion.dataset.revealed && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const height = expansion.getBoundingClientRect().height;
+    expansion.style.overflow = 'hidden';
+    expansion
+      .animate(
+        [
+          { height: '0px', opacity: 0 },
+          { height: `${height}px`, opacity: 1 },
+        ],
+        { duration: 360, easing: 'cubic-bezier(.16,1,.3,1)' },
+      )
+      .finished.catch(() => {})
+      .finally(() => {
+        expansion.style.overflow = '';
+      });
+  }
+  expansion.dataset.revealed = 'true';
+}
+window.TechouseInquiry = { showSavedInquiry, showInquiryOverview };
 function inquiryPage(selected) {
   return `${breadcrumb('Start a project')}<section class="container page-hero"><div class="eyebrow">Let’s start a conversation</div><h1>Your next project<br>starts here.</h1><p>Tell us what you have in mind. Choose a division and share the details that matter.</p></section><div class="container contact-grid"><div class="form-card" id="inquiry-form-area"><h2>Tell us about your project.</h2><p>Fields marked * are required.</p><form id="inquiry-form"><div class="field-grid"><div class="field"><label for="inquiry-name">Full name *</label><input id="inquiry-name" name="name" autocomplete="name" required maxlength="100" placeholder="Your full name"></div><div class="field"><label for="inquiry-company">Company <small>(optional)</small></label><input id="inquiry-company" name="company" autocomplete="organization" maxlength="150" placeholder="Company or organization"></div><div class="field"><label for="inquiry-email">Email address *</label><input id="inquiry-email" name="email" type="email" autocomplete="email" required maxlength="200" placeholder="you@example.com"></div><div class="field"><label for="inquiry-phone">Mobile number <small>(optional)</small></label><input id="inquiry-phone" name="phone" type="tel" autocomplete="tel" maxlength="35" placeholder="+63"></div><div class="field"><label for="inquiry-division">Division *</label><select id="inquiry-division" name="division" required>${divisionOptions(getDivision(selected) ? selected : '')}</select></div><div class="field"><label for="inquiry-location">Project location *</label><input id="inquiry-location" name="location" required maxlength="200" placeholder="City / province"></div><div class="field full"><label for="inquiry-capacity">Size or required capacity <small>(optional)</small></label><input id="inquiry-capacity" name="capacity" maxlength="150" placeholder="e.g. 100 sq m, 10 kW, or number of units"></div><div class="field full"><label for="inquiry-requirements">Project requirements *</label><textarea id="inquiry-requirements" name="requirements" required minlength="10" maxlength="5000" placeholder="Tell us about your project, timeline, and any specific requirements."></textarea></div></div><p class="form-note">Demo only. This inquiry stays in your current browser and is not sent to Techouse. Use example details for the presentation.</p><div class="form-actions"><button class="button" type="submit">Save demo inquiry ${arrow}</button><small>No message will be sent.</small></div></form></div><aside class="contact-aside"><h3>Prefer a direct conversation?</h3><p>Contact details from the existing Techouse website.</p><div class="contact-item"><span>EMAIL</span><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a></div><div class="contact-item"><span>PHONE</span><a href="tel:+639855626888">+63 985 562 6888</a></div><div class="contact-item"><span>HELPFUL TO HAVE READY</span><p>A project location, a short brief, and any available plans or site details.</p></div><p class="visual-note">Service scope and contact details should be confirmed with Techouse before a public launch.</p></aside></div>`;
 }
@@ -477,10 +666,20 @@ function render() {
   );
   document.body.classList.toggle('landing', path === '/');
   activePostFilter = 'all';
+  document.body.classList.toggle('inquiry-page', path === '/inquiry');
+  document.body.classList.remove(
+    'has-saved-inquiry',
+    'inquiry-overview',
+    'inquiry-details',
+    'inquiry-new-request',
+    'inquiry-inline-details',
+  );
   renderHeader(path);
-  if (path === '/inquiry')
-    document.querySelectorAll('#header a[href="#/inquiry"]').forEach((link) => link.remove());
   renderFooter(path);
+  if (path === '/inquiry')
+    document
+      .querySelectorAll('#header a[href^="#/inquiry"], #footer a[href^="#/inquiry"]')
+      .forEach((link) => link.remove());
   let html;
   let title = 'Building what comes next';
   if (path === '/') html = window.TechouseBanner.html(divisions, elevatorArt, arrow);
@@ -549,6 +748,7 @@ function render() {
   if (path === '/') window.TechouseBanner.mount(returningHome);
   window.TechouseDivisions.mount();
   window.TechouseSolar?.prefill();
+  if (path === '/inquiry') mountInquiryHistory();
   window.TechouseReadability?.mount();
   window.TechouseExperience?.mount();
   window.TechouseSolarExtras?.mount();
@@ -633,6 +833,119 @@ async function viewInquiry(id) {
     `<h2 id="modal-title">Project inquiry</h2><p>Saved in this browser · email delivery not connected.</p><dl class="inquiry-detail">${fields.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl><div class="modal-actions"><button class="button outline" data-close-modal>Close inquiry</button></div>`,
   );
 }
+// Ask before starting another request, without losing the estimate captured by the form handler.
+function promptExistingInquiry(link, count) {
+  if (document.querySelector('#repeat-inquiry-dialog')) return;
+  const opener = link;
+  const target = new URLSearchParams(link.getAttribute('href').split('?')[1]);
+  const existingParams = new URLSearchParams(target);
+  existingParams.delete('new');
+  target.set('new', '1');
+  const newDestination = '#/inquiry?' + target.toString();
+  const existingDestination =
+    '#/inquiry' + (existingParams.size ? '?' + existingParams.toString() : '');
+  const dialog = document.createElement('dialog');
+  dialog.id = 'repeat-inquiry-dialog';
+  dialog.setAttribute('aria-labelledby', 'repeat-inquiry-title');
+  dialog.setAttribute('aria-describedby', 'repeat-inquiry-description');
+  dialog.innerHTML = `<span class="eyebrow">BEFORE YOU CONTINUE</span><h2 id="repeat-inquiry-title">You already have ${count === 1 ? 'an inquiry' : count + ' inquiries'} saved.</h2><p id="repeat-inquiry-description">Would you like to start another request, or take a look at the ${count === 1 ? 'one you have' : 'ones you have'}?</p><p class="repeat-inquiry-demo">Demo requests are saved in this browser. They have not been sent to Techouse.</p><div class="repeat-inquiry-actions"><button class="button" type="button" data-existing-action="continue">Continue with a new inquiry ${arrow}</button><button class="button outline" type="button" data-existing-action="view">View my inquiries ${arrow}</button><button class="repeat-inquiry-cancel" type="button" data-existing-action="cancel" autofocus>Cancel · stay here</button></div>`;
+  document.body.append(dialog);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let leaving = false;
+  async function finish(destination) {
+    if (leaving) return;
+    leaving = true;
+    dialog.classList.add('is-leaving');
+    if (!reduce && dialog.open)
+      await dialog
+        .animate(
+          [
+            { opacity: 1, transform: 'translateY(0)' },
+            { opacity: 0, transform: 'translateY(8px)' },
+          ],
+          { duration: 160, easing: 'ease-in' },
+        )
+        .finished.catch(() => {});
+    dialog.close();
+    if (destination) {
+      if (location.hash === destination) render();
+      else location.hash = destination;
+    }
+  }
+  dialog.addEventListener('click', (event) => {
+    const action = event.target.closest('[data-existing-action]')?.dataset.existingAction;
+    if (action)
+      finish(
+        action === 'continue' ? newDestination : action === 'view' ? existingDestination : null,
+      );
+    else if (event.target === dialog) {
+      const bounds = dialog.getBoundingClientRect();
+      if (
+        event.clientX < bounds.left ||
+        event.clientX > bounds.right ||
+        event.clientY < bounds.top ||
+        event.clientY > bounds.bottom
+      )
+        finish();
+    }
+  });
+  dialog.addEventListener('cancel', (event) => {
+    event.preventDefault();
+    finish();
+  });
+  dialog.addEventListener(
+    'close',
+    () => {
+      document.documentElement.classList.remove('inquiry-prompt-open');
+      dialog.remove();
+      if (opener.isConnected) opener.focus({ preventScroll: true });
+    },
+    { once: true },
+  );
+  document.documentElement.classList.add('inquiry-prompt-open');
+  dialog.showModal();
+  if (!reduce)
+    dialog.animate(
+      [
+        { opacity: 0, transform: 'translateY(12px)' },
+        { opacity: 1, transform: 'translateY(0)' },
+      ],
+      { duration: 220, easing: 'cubic-bezier(.16,1,.3,1)' },
+    );
+}
+document.addEventListener(
+  'click',
+  (event) => {
+    const link = event.target.closest('a[href]');
+    if (
+      !link ||
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey ||
+      link.target === '_blank' ||
+      link.hasAttribute('download')
+    )
+      return;
+    const href = link.getAttribute('href');
+    if (!/^#\/inquiry(?:\?|$)/.test(href)) return;
+    const count = Array.isArray(inquiries)
+      ? inquiries.filter((q) => q && typeof q.id === 'string').length
+      : 0;
+    if (!count) return;
+    // Capture prevents route-transition handlers from navigating; the target form still captures its estimate.
+    event.preventDefault();
+    if (link.id === 'solar-estimate-inquiry' && !link.closest('form').checkValidity()) {
+      link.closest('form').reportValidity();
+      return;
+    }
+    promptExistingInquiry(link, count);
+  },
+  { capture: true },
+);
+
 // DELEGATED EVENTS: handlers stay attached while route-specific markup is replaced.
 document.addEventListener('click', (event) => {
   if (event.target.closest('.skip-link')) {
@@ -781,6 +1094,9 @@ document.addEventListener('submit', async (event) => {
     const solarSavings = data.division === 'solar' ? Number(form.dataset.solarSavings) : NaN;
     const q = {
       ...data,
+      ...(data.division === 'solar' && form.dataset.solarSector
+        ? { solarSector: form.dataset.solarSector }
+        : {}),
       ...(Number.isFinite(solarSavings) && solarSavings > 0 ? { solarSavings } : {}),
       id: uid('DEMO').toUpperCase(),
       createdAt: new Date().toISOString(),
@@ -788,6 +1104,13 @@ document.addEventListener('submit', async (event) => {
     const next = [...inquiries, q];
     if (!(await saveStore(inquiryKey, next))) return;
     inquiries = next;
+    const inquiryParams = new URLSearchParams(location.hash.split('?')[1]);
+    inquiryParams.delete('new');
+    history.replaceState(
+      null,
+      '',
+      '#/inquiry' + (inquiryParams.size ? '?' + inquiryParams.toString() : ''),
+    );
     window.TechouseVisits?.setInquiry(q);
     const button = (
       event.submitter || form.querySelector('[type="submit"]')
@@ -805,6 +1128,11 @@ document.addEventListener('submit', async (event) => {
       $('.success').focus({ preventScroll: true });
       $('.success').scrollIntoView({ block: 'center', behavior: 'instant' });
       window.TechouseSolarExtras?.afterInquiry(data.division, q.solarSavings, esc(q.id));
+      mountInquiryHistory(false);
+      document.querySelector('#saved-inquiry-history').hidden = true;
+      document.body.classList.remove('inquiry-new-request');
+      document.body.classList.add('inquiry-details');
+      ensureInquiryBack().hidden = false;
     };
     if (data.division === 'solar' && window.TechouseSolarExtras) {
       window.TechouseSolarExtras.revealConfirmation(showConfirmation, origin);
@@ -813,6 +1141,7 @@ document.addEventListener('submit', async (event) => {
 });
 // NAVIGATION: close any dialog and rebuild the page when the URL fragment changes.
 window.addEventListener('hashchange', () => {
+  document.querySelector('#repeat-inquiry-dialog')?.close();
   if ($('#modal').open) $('#modal').close();
   render();
   $('#main').focus({ preventScroll: true });
@@ -820,7 +1149,15 @@ window.addEventListener('hashchange', () => {
 window.addEventListener('storage', (event) => {
   if (event.key === postKey) posts = readStore(postKey, seeds);
   if (event.key === inquiryKey) inquiries = readStore(inquiryKey, []);
-  if (!$('#post-form') && !$('#inquiry-form') && !$('#website-customizer') && !$('#project-editor'))
+  // Another tab must not replace an active visit form or repeat-inquiry decision.
+  if (
+    !$('#post-form') &&
+    !$('#inquiry-form') &&
+    !$('#website-customizer') &&
+    !$('#project-editor') &&
+    !$('.visit-card') &&
+    !$('#repeat-inquiry-dialog[open]')
+  )
     render();
 });
 if (window.TechouseContent.previewFrame) window.TechouseContent.startPreview(render);

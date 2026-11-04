@@ -1,5 +1,15 @@
 # Releases and recovery
 
+## 1.0.1 source release — 4 November 2026
+
+Approved after system/component review. The annotated Git tag is `v1.0.1`; the package metadata also records `1.0.1`. The tag identifies the reviewed source, not a Cloudflare deployment. GitHub publication is complete only once `main` and this tag are present on origin.
+
+Included: repeat-inquiry entry prompt, visible saved-request cards with inline ticket expansion, annual savings confirmation, refined visit calendar/ticket states, sector-matched project slideshow, Facebook/TikTok footer links and blurred image previews. Fixed restored-visit lookup, calendar keyboard focus and cross-tab form-loss edge cases. Inquiry styles are isolated in `site/inquiry.css` with cascade order preserved.
+
+Validation: 19 checks passed across 14 groups; 48 scripts/modules parsed; 31 desktop/mobile visual comparisons reviewed (30 exact, one unchanged-logo rasterization variance). Approved homepage intro, banner hover and equipment slider animation sources were unchanged by the review.
+
+Inquiry delivery and visits remain demos; third-party portfolio references retain their labels. No database migration or automatic deployment is part of this release. Private contracts, review artifacts and credentials are excluded from Git.
+
 ## Current identities
 
 | Record                             | Identity                                               | Meaning                                                                                              |
@@ -9,7 +19,7 @@
 | Hosted release name                | Techouse 1.0                                           | Website currently served from the temporary Cloudflare address                                       |
 | Latest recorded Worker version     | `9be19ffd-8de2-4e61-b43c-ca5e9f7ac46f`                 | Desktop hover layout containment update                                                              |
 | Immediate prior Worker version     | `6121f911-614f-4073-9049-23c0c2cf428e`                 | Font, hero-image and browser-cache loading update                                                    |
-| GitHub Releases / Git version tags | None created during setup                              | Git commits and provider versions exist without a GitHub Release                                     |
+| Source release tag                | `v1.0.1`                                               | Annotated source tag; remote publication must be verified separately                                  |
 | Published packages                 | None                                                   | `platform/package.json` is private; no npm/GitHub Package is published                               |
 
 The hosting record is in [deployments/techouse-1.0/hosting-record.json](deployments/techouse-1.0/hosting-record.json). New deployments must update that record and this history as appropriate.

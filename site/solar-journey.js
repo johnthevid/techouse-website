@@ -227,6 +227,7 @@ window.TechouseSolar = (() => {
     const e = estimate;
     // Carry a numeric estimate separately from editable prose; never parse customer text for money.
     const savings = e.savings;
+    form.dataset.solarSector = e.sector.toLowerCase();
     if (Number.isFinite(savings) && savings > 0) form.dataset.solarSavings = String(savings);
     form.elements.division.value = 'solar';
     form.elements.location.value = e.location;

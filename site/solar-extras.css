@@ -727,13 +727,13 @@
 
 /* Expand into a paired confirmation/calendar layout; stack naturally on small screens. */
 #modal.project-dialog.has-visit-card {
-  width: min(1120px, calc(100vw - 40px));
-  max-width: min(1120px, calc(100vw - 40px)) !important;
+  width: min(1000px, calc(100vw - 40px));
+  max-width: min(1000px, calc(100vw - 40px)) !important;
 }
 .has-visit-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 28px;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 24px;
   align-items: start;
 }
 .has-visit-card .visit-card {
@@ -772,9 +772,23 @@
   }
 }
 #modal.project-dialog {
-  transition:
-    width 620ms cubic-bezier(0.22, 0.61, 0.36, 1),
-    max-width 620ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition: none;
+}
+.has-visit-card .visit-card {
+  padding: 16px;
+  font-size: 0.9rem;
+}
+.has-visit-card .visit-calendar button {
+  min-height: 34px;
+}
+.has-visit-card .visit-month {
+  margin-top: 12px;
+}
+.has-visit-card .visit-card p {
+  margin: 10px 0;
+}
+[data-request-visit][hidden] {
+  display: none !important;
 }
 .has-visit-card .solar-savings-amount {
   font-size: clamp(2.8rem, 5vw, 3.8rem);
@@ -893,289 +907,1481 @@
   }
 }
 /* Optional learning content uses the same inset as its disclosure heading. */
-.solar-optional-guide #solar-options { padding: clamp(20px,3vw,36px); margin: 0; width: 100%; box-sizing: border-box; }
-.solar-optional-guide #solar-options .section-heading { gap: 20px; margin-bottom: 22px; }
-.solar-optional-guide #solar-options .solar-lesson-card { margin: 0; width: 100%; }
-@media(max-width:700px) { .solar-optional-guide #solar-options .section-heading { display: block; } }
+.solar-optional-guide #solar-options {
+  padding: clamp(20px, 3vw, 36px);
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+.solar-optional-guide #solar-options .section-heading {
+  gap: 20px;
+  margin-bottom: 22px;
+}
+.solar-optional-guide #solar-options .solar-lesson-card {
+  margin: 0;
+  width: 100%;
+}
+@media (max-width: 700px) {
+  .solar-optional-guide #solar-options .section-heading {
+    display: block;
+  }
+}
 /* Override the earlier lesson rule that forced zero horizontal padding. */
-.solar-streamlined .solar-optional-guide > #solar-options { padding: 28px 26px !important; }
-@media(max-width:650px) { .solar-streamlined .solar-optional-guide > #solar-options { padding: 22px 18px !important; } }
-.solar-technical-guide .partner-band { padding: clamp(24px,3vw,40px); background: #e8eee3; border: 1px solid #c9d4c0; margin: 24px 26px 26px; }
-.solar-technical-guide .partner-band > span { display: block; letter-spacing: .14em; font-size: 12px; color: #45604b; margin-bottom: 18px; }
-.solar-technical-guide .partner-band > div { display: grid; grid-template-columns: minmax(200px, .8fr) minmax(0,1.2fr); gap: 32px; align-items: center; }
-.solar-technical-guide .partner-band strong { font-size: clamp(28px,3vw,46px); color: #174f91; }
-.solar-technical-guide .partner-band p { max-width: 560px; font-size: 17px; line-height: 1.7; margin: 0; }
-@media(max-width:650px) { .solar-technical-guide .partner-band { margin: 18px; } .solar-technical-guide .partner-band > div { grid-template-columns: 1fr; gap: 16px; } }
-#estimate-result { container-type: inline-size; min-width: 0; }
-#estimate-result h3.animated-price { white-space: nowrap; font-size: clamp(16px,5.5cqw,42px); line-height: 1.25; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
-#estimate-result h3.animated-price > span { display: inline; white-space: nowrap; }
-#solar-estimator .solar-offset-control { position: relative; display: block; padding: 20px; border: 1px solid #c6cfbe; background: #f1f3e9; }
-#solar-estimator .solar-offset-control output { display: block; font-size: 26px; font-weight: 600; color: #244b38; margin: 12px 0; }
-#solar-estimator .solar-offset-control input[type="range"] { appearance: none; width: 100%; height: 8px; margin: 24px 0 16px; padding: 0; border: 0; border-radius: 4px; background: linear-gradient(to right,#526f45 0 var(--coverage),#d2d8cb var(--coverage) 100%); cursor: pointer; }
-#solar-estimator .solar-offset-control input::-webkit-slider-thumb { appearance: none; width: 22px; height: 22px; border: 3px solid #fffdf5; border-radius: 50%; background: #365d42; box-shadow: 0 0 0 1px #59734f; }
-#solar-estimator .solar-offset-control input::-moz-range-thumb { width: 18px; height: 18px; border: 3px solid #fffdf5; border-radius: 50%; background: #365d42; }
-.solar-offset-endpoints { display: flex; justify-content: space-between; font-size: 12px; color: #596752; }
-#solar-estimator .solar-offset-control .solar-target-note { display: block; margin-top: 14px; }
-.solar-coverage-tier { display: grid; gap: 6px; margin-top: 18px; padding-top: 15px; border-top: 1px solid #c7d1bf; min-height: 74px; }
-.solar-coverage-tier strong { font-size: 19px; color: #284e37; line-height: 1.3; }
-.solar-coverage-tier span { font-size: 14px; line-height: 1.55; color: #52614c; }
-.solar-coverage-tier { grid-template-columns: 54px minmax(0,1fr); gap: 14px; align-items: center; }
-.coverage-sun { display: block; width: 54px; height: 54px; }
-.coverage-tier-copy { display: grid; gap: 6px; }
-.coverage-ray { opacity: .15; transition: opacity .25s ease; }
-.coverage-ray.is-lit { opacity: 1; }
-@media(prefers-reduced-motion:reduce) { .coverage-ray { transition: none; } }
-.solar-streamlined #estimate-result:has(.estimate-budget-highlight) { display: flex; flex-direction: column; padding: clamp(24px,3vw,40px); }
-.estimate-budget-highlight { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; min-height: 270px; padding-block: 24px 32px; }
-.estimate-budget-highlight > span { font-size: 12px; letter-spacing: .14em; color: #d0dcca; }
-#estimate-result .estimate-budget-highlight h3.animated-price { font-size: clamp(16px,6.1cqw,48px); margin: 22px 0 30px; line-height: 1.2; color: #e7cd99; }
-.estimate-budget-highlight .button { margin: 0 0 14px; }
-.estimate-budget-highlight small { font-size: 13px; line-height: 1.6; color: #bdcdbf; max-width: 42ch; }
-.estimate-budget-references { border-top: 1px solid #ffffff30; padding-top: 16px; }
-.estimate-budget-references > details { margin: 0 !important; padding: 12px 0 !important; border: 0; }
-.estimate-budget-references summary { font-size: 14px; line-height: 1.5; }
-@media(max-width:650px) { .estimate-budget-highlight { min-height: 220px; } }
-#solar-estimator .solar-bill-control,#solar-estimator .solar-offset-control { padding: 20px; border: 1px solid #c6cfbe; background: #f5f5ed; }
-#solar-estimator .solar-bill-control { display: block; margin: 0; font-weight: 600; }
-#solar-estimator .solar-bill-control input { margin-top: 14px; min-height: 54px; font-size: 24px; font-weight: 500; }
-.solar-streamlined #estimate-result .estimate-budget-highlight { min-height: 0; justify-content: flex-start; padding: 4px 0 24px; }
-#estimate-result .estimate-budget-highlight h3.animated-price { margin: 18px 0 24px; }
-.estimate-economics { display: grid; gap: 0; width: 100%; margin: 0 0 24px; }
-.estimate-economics > div { display: flex; justify-content: space-between; align-items: baseline; gap: 18px; padding: 16px 0; border-top: 1px solid #ffffff25; }
-.estimate-economics dt { font-size: 14px; color: #c6d5c9; }
-.estimate-economics dd { margin: 0; color: #f4ead5; font-size: clamp(17px,3.6cqw,23px); font-weight: 600; text-align: right; white-space: nowrap; }
-.estimate-economics-note { font-size: 12px; line-height: 1.65; color: #bdcdbf; margin: 16px 0 0; }
-@media(max-width:650px) { .estimate-economics > div { gap: 12px; } .estimate-economics dt { max-width: 55%; } }
-#solar-estimator .calculate-cost[hidden] { display: none !important; }
-#solar-estimator .solar-offset-control input::-webkit-slider-thumb { width: 32px; height: 32px; border-width: 4px; }
-#solar-estimator .solar-offset-control input::-moz-range-thumb { width: 24px; height: 24px; border-width: 4px; }
-.estimate-budget-highlight { width: 100%; min-width: 0; }
-.solar-technical-guide .partner-band { display: grid; grid-template-columns: minmax(180px,.7fr) minmax(0,1.3fr); gap: 36px; padding: 32px; background: #eef1e7; border-left: 3px solid #1e5791; }
-.solar-technical-guide .partner-band > .partner-identity { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 12px; border-right: 1px solid #ccd5c5; padding-right: 32px; }
-.partner-identity > span { font-size: 11px; letter-spacing: .12em; color: #52634e; }
-.solar-technical-guide .partner-band .partner-identity strong { font-size: clamp(27px,3vw,40px); line-height: 1.1; }
-.partner-identity small { font-size: 13px; color: #52634e; }
-.solar-technical-guide .partner-band > .partner-message { display: block; }
-.partner-message h3 { margin: 0 0 12px; font-size: clamp(22px,2vw,28px); line-height: 1.25; }
-.solar-technical-guide .partner-band .partner-message p { font-size: 16px; margin: 0 0 18px; line-height: 1.65; }
-.partner-message .text-link { display: inline-flex; gap: 12px; align-items: center; font-size: 14px; }
-@media(max-width:650px) { .solar-technical-guide .partner-band { grid-template-columns: 1fr; gap: 24px; padding: 24px; } .solar-technical-guide .partner-band > .partner-identity { border-right: 0; border-bottom: 1px solid #ccd5c5; padding: 0 0 22px; } }
-.solar-technical-guide .partner-band { align-items: start; }
-.solar-technical-guide .partner-band > .partner-identity { align-self: stretch; justify-content: flex-start; padding-top: 0; gap: 12px; }
-.solar-technical-guide .partner-band .partner-identity strong { display: block; margin: 0; }
-.solar-technical-guide .partner-band > .partner-message { align-self: start; }
-.solar-technical-guide .partner-band .partner-message h3 { margin-top: 0; }
-.skyworth-showcase { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 22px; }
-.skyworth-range-card { min-width: 0; background: #fff; border: 1px solid #d6ddcf; display: flex; flex-direction: column; }
-.skyworth-range-visual { position: relative; display: block; aspect-ratio: 4 / 3; overflow: hidden; background: #eff2ed; }
-.skyworth-range-visual img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.skyworth-range-visual > span { position: absolute; top: 14px; left: 14px; font-size: 11px; letter-spacing: .1em; background: #fffef2e8; color: #29402c; padding: 7px 10px; }
-.skyworth-range-copy { padding: 24px; display: flex; flex-direction: column; flex: 1; }
-.skyworth-range-copy h3 { font-size: 26px; margin: 0 0 22px; }
-.range-model-label { color: #6c795f; font-size: 10px; letter-spacing: .08em; }
-.skyworth-range-copy h4 { font-size: 18px; margin: 10px 0; line-height: 1.4; }
-.range-rating { color: #1b568e; font-size: 25px; }
-.skyworth-range-copy ul { padding-left: 18px; font-size: 14px; line-height: 1.8; margin: 16px 0; }
-.range-image-note { color: #66705e; font-size: 12px; line-height: 1.6; margin: 0 0 20px; }
-.range-actions { display: flex; flex-wrap: wrap; gap: 16px; margin-top: auto; font-size: 13px; border-top: 1px solid #d6ddcf; padding-top: 16px; }
-@media(max-width:950px) { .skyworth-showcase { grid-template-columns: 1fr; } .skyworth-range-card { display: grid; grid-template-columns: .9fr 1.1fr; } .skyworth-range-visual { height: 100%; aspect-ratio: auto; min-height: 260px; } }
-@media(max-width:600px) { .skyworth-range-card { display: flex; } .skyworth-range-visual { aspect-ratio: 4 / 3; min-height: 0; } }
-.catalogue-hero-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
-.catalogue-hero-layout h1 { font-size: clamp(40px,5vw,72px); }
-.catalogue-hero-layout figure { margin: 0; }
-.catalogue-hero-layout figure img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
-.catalogue-hero-layout figcaption,.catalogue-range-count { display: block; font-size: 12px; line-height: 1.6; color: #62705c; margin-top: 12px; }
-.catalogue-page .catalogue-products { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; }
-.catalogue-page .catalogue-product { display: flex; flex-direction: column; background: #fffdf7; border: 1px solid #d4dccd; }
-.catalogue-page .catalogue-image { height: 300px; padding: 20px; background: #edf0e7; }
-.catalogue-page .catalogue-image img { width: 100%; height: 100%; object-fit: contain; }
-.catalogue-page .catalogue-copy { padding: 28px; flex: 1; }
-.catalogue-page .catalogue-copy h2 { font-size: 26px; line-height: 1.3; }
-@media(max-width:700px) { .catalogue-hero-layout,.catalogue-page .catalogue-products { grid-template-columns: 1fr; } .catalogue-hero-layout { gap: 24px; } }
+.solar-streamlined .solar-optional-guide > #solar-options {
+  padding: 28px 26px !important;
+}
+@media (max-width: 650px) {
+  .solar-streamlined .solar-optional-guide > #solar-options {
+    padding: 22px 18px !important;
+  }
+}
+.solar-technical-guide .partner-band {
+  padding: clamp(24px, 3vw, 40px);
+  background: #e8eee3;
+  border: 1px solid #c9d4c0;
+  margin: 24px 26px 26px;
+}
+.solar-technical-guide .partner-band > span {
+  display: block;
+  letter-spacing: 0.14em;
+  font-size: 12px;
+  color: #45604b;
+  margin-bottom: 18px;
+}
+.solar-technical-guide .partner-band > div {
+  display: grid;
+  grid-template-columns: minmax(200px, 0.8fr) minmax(0, 1.2fr);
+  gap: 32px;
+  align-items: center;
+}
+.solar-technical-guide .partner-band strong {
+  font-size: clamp(28px, 3vw, 46px);
+  color: #174f91;
+}
+.solar-technical-guide .partner-band p {
+  max-width: 560px;
+  font-size: 17px;
+  line-height: 1.7;
+  margin: 0;
+}
+@media (max-width: 650px) {
+  .solar-technical-guide .partner-band {
+    margin: 18px;
+  }
+  .solar-technical-guide .partner-band > div {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+#estimate-result {
+  container-type: inline-size;
+  min-width: 0;
+}
+#estimate-result h3.animated-price {
+  white-space: nowrap;
+  font-size: clamp(16px, 5.5cqw, 42px);
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+}
+#estimate-result h3.animated-price > span {
+  display: inline;
+  white-space: nowrap;
+}
+#solar-estimator .solar-offset-control {
+  position: relative;
+  display: block;
+  padding: 20px;
+  border: 1px solid #c6cfbe;
+  background: #f1f3e9;
+}
+#solar-estimator .solar-offset-control output {
+  display: block;
+  font-size: 26px;
+  font-weight: 600;
+  color: #244b38;
+  margin: 12px 0;
+}
+#solar-estimator .solar-offset-control input[type='range'] {
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  margin: 24px 0 16px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: linear-gradient(to right, #526f45 0 var(--coverage), #d2d8cb var(--coverage) 100%);
+  cursor: pointer;
+}
+#solar-estimator .solar-offset-control input::-webkit-slider-thumb {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border: 3px solid #fffdf5;
+  border-radius: 50%;
+  background: #365d42;
+  box-shadow: 0 0 0 1px #59734f;
+}
+#solar-estimator .solar-offset-control input::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 3px solid #fffdf5;
+  border-radius: 50%;
+  background: #365d42;
+}
+.solar-offset-endpoints {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #596752;
+}
+#solar-estimator .solar-offset-control .solar-target-note {
+  display: block;
+  margin-top: 14px;
+}
+.solar-coverage-tier {
+  display: grid;
+  gap: 6px;
+  margin-top: 18px;
+  padding-top: 15px;
+  border-top: 1px solid #c7d1bf;
+  min-height: 74px;
+}
+.solar-coverage-tier strong {
+  font-size: 19px;
+  color: #284e37;
+  line-height: 1.3;
+}
+.solar-coverage-tier span {
+  font-size: 14px;
+  line-height: 1.55;
+  color: #52614c;
+}
+.solar-coverage-tier {
+  grid-template-columns: 54px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+}
+.coverage-sun {
+  display: block;
+  width: 54px;
+  height: 54px;
+}
+.coverage-tier-copy {
+  display: grid;
+  gap: 6px;
+}
+.coverage-ray {
+  opacity: 0.15;
+  transition: opacity 0.25s ease;
+}
+.coverage-ray.is-lit {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .coverage-ray {
+    transition: none;
+  }
+}
+.solar-streamlined #estimate-result:has(.estimate-budget-highlight) {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(24px, 3vw, 40px);
+}
+.estimate-budget-highlight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 270px;
+  padding-block: 24px 32px;
+}
+.estimate-budget-highlight > span {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: #d0dcca;
+}
+#estimate-result .estimate-budget-highlight h3.animated-price {
+  font-size: clamp(16px, 6.1cqw, 48px);
+  margin: 22px 0 30px;
+  line-height: 1.2;
+  color: #e7cd99;
+}
+.estimate-budget-highlight .button {
+  margin: 0 0 14px;
+}
+.estimate-budget-highlight small {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #bdcdbf;
+  max-width: 42ch;
+}
+.estimate-budget-references {
+  border-top: 1px solid #ffffff30;
+  padding-top: 16px;
+}
+.estimate-budget-references > details {
+  margin: 0 !important;
+  padding: 12px 0 !important;
+  border: 0;
+}
+.estimate-budget-references summary {
+  font-size: 14px;
+  line-height: 1.5;
+}
+@media (max-width: 650px) {
+  .estimate-budget-highlight {
+    min-height: 220px;
+  }
+}
+#solar-estimator .solar-bill-control,
+#solar-estimator .solar-offset-control {
+  padding: 20px;
+  border: 1px solid #c6cfbe;
+  background: #f5f5ed;
+}
+#solar-estimator .solar-bill-control {
+  display: block;
+  margin: 0;
+  font-weight: 600;
+}
+#solar-estimator .solar-bill-control input {
+  margin-top: 14px;
+  min-height: 54px;
+  font-size: 24px;
+  font-weight: 500;
+}
+.solar-streamlined #estimate-result .estimate-budget-highlight {
+  min-height: 0;
+  justify-content: flex-start;
+  padding: 4px 0 24px;
+}
+#estimate-result .estimate-budget-highlight h3.animated-price {
+  margin: 18px 0 24px;
+}
+.estimate-economics {
+  display: grid;
+  gap: 0;
+  width: 100%;
+  margin: 0 0 24px;
+}
+.estimate-economics > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 18px;
+  padding: 16px 0;
+  border-top: 1px solid #ffffff25;
+}
+.estimate-economics dt {
+  font-size: 14px;
+  color: #c6d5c9;
+}
+.estimate-economics dd {
+  margin: 0;
+  color: #f4ead5;
+  font-size: clamp(17px, 3.6cqw, 23px);
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+.estimate-economics-note {
+  font-size: 12px;
+  line-height: 1.65;
+  color: #bdcdbf;
+  margin: 16px 0 0;
+}
+@media (max-width: 650px) {
+  .estimate-economics > div {
+    gap: 12px;
+  }
+  .estimate-economics dt {
+    max-width: 55%;
+  }
+}
+#solar-estimator .calculate-cost[hidden] {
+  display: none !important;
+}
+#solar-estimator .solar-offset-control input::-webkit-slider-thumb {
+  width: 32px;
+  height: 32px;
+  border-width: 4px;
+}
+#solar-estimator .solar-offset-control input::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-width: 4px;
+}
+.estimate-budget-highlight {
+  width: 100%;
+  min-width: 0;
+}
+.solar-technical-guide .partner-band {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.7fr) minmax(0, 1.3fr);
+  gap: 36px;
+  padding: 32px;
+  background: #eef1e7;
+  border-left: 3px solid #1e5791;
+}
+.solar-technical-guide .partner-band > .partner-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 12px;
+  border-right: 1px solid #ccd5c5;
+  padding-right: 32px;
+}
+.partner-identity > span {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: #52634e;
+}
+.solar-technical-guide .partner-band .partner-identity strong {
+  font-size: clamp(27px, 3vw, 40px);
+  line-height: 1.1;
+}
+.partner-identity small {
+  font-size: 13px;
+  color: #52634e;
+}
+.solar-technical-guide .partner-band > .partner-message {
+  display: block;
+}
+.partner-message h3 {
+  margin: 0 0 12px;
+  font-size: clamp(22px, 2vw, 28px);
+  line-height: 1.25;
+}
+.solar-technical-guide .partner-band .partner-message p {
+  font-size: 16px;
+  margin: 0 0 18px;
+  line-height: 1.65;
+}
+.partner-message .text-link {
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 14px;
+}
+@media (max-width: 650px) {
+  .solar-technical-guide .partner-band {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px;
+  }
+  .solar-technical-guide .partner-band > .partner-identity {
+    border-right: 0;
+    border-bottom: 1px solid #ccd5c5;
+    padding: 0 0 22px;
+  }
+}
+.solar-technical-guide .partner-band {
+  align-items: start;
+}
+.solar-technical-guide .partner-band > .partner-identity {
+  align-self: stretch;
+  justify-content: flex-start;
+  padding-top: 0;
+  gap: 12px;
+}
+.solar-technical-guide .partner-band .partner-identity strong {
+  display: block;
+  margin: 0;
+}
+.solar-technical-guide .partner-band > .partner-message {
+  align-self: start;
+}
+.solar-technical-guide .partner-band .partner-message h3 {
+  margin-top: 0;
+}
+.skyworth-showcase {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+.skyworth-range-card {
+  min-width: 0;
+  background: #fff;
+  border: 1px solid #d6ddcf;
+  display: flex;
+  flex-direction: column;
+}
+.skyworth-range-visual {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #eff2ed;
+}
+.skyworth-range-visual img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.skyworth-range-visual > span {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  background: #fffef2e8;
+  color: #29402c;
+  padding: 7px 10px;
+}
+.skyworth-range-copy {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.skyworth-range-copy h3 {
+  font-size: 26px;
+  margin: 0 0 22px;
+}
+.range-model-label {
+  color: #6c795f;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.skyworth-range-copy h4 {
+  font-size: 18px;
+  margin: 10px 0;
+  line-height: 1.4;
+}
+.range-rating {
+  color: #1b568e;
+  font-size: 25px;
+}
+.skyworth-range-copy ul {
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.8;
+  margin: 16px 0;
+}
+.range-image-note {
+  color: #66705e;
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+.range-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: auto;
+  font-size: 13px;
+  border-top: 1px solid #d6ddcf;
+  padding-top: 16px;
+}
+@media (max-width: 950px) {
+  .skyworth-showcase {
+    grid-template-columns: 1fr;
+  }
+  .skyworth-range-card {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+  }
+  .skyworth-range-visual {
+    height: 100%;
+    aspect-ratio: auto;
+    min-height: 260px;
+  }
+}
+@media (max-width: 600px) {
+  .skyworth-range-card {
+    display: flex;
+  }
+  .skyworth-range-visual {
+    aspect-ratio: 4 / 3;
+    min-height: 0;
+  }
+}
+.catalogue-hero-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+.catalogue-hero-layout h1 {
+  font-size: clamp(40px, 5vw, 72px);
+}
+.catalogue-hero-layout figure {
+  margin: 0;
+}
+.catalogue-hero-layout figure img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  display: block;
+}
+.catalogue-hero-layout figcaption,
+.catalogue-range-count {
+  display: block;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #62705c;
+  margin-top: 12px;
+}
+.catalogue-page .catalogue-products {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.catalogue-page .catalogue-product {
+  display: flex;
+  flex-direction: column;
+  background: #fffdf7;
+  border: 1px solid #d4dccd;
+}
+.catalogue-page .catalogue-image {
+  height: 300px;
+  padding: 20px;
+  background: #edf0e7;
+}
+.catalogue-page .catalogue-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.catalogue-page .catalogue-copy {
+  padding: 28px;
+  flex: 1;
+}
+.catalogue-page .catalogue-copy h2 {
+  font-size: 26px;
+  line-height: 1.3;
+}
+@media (max-width: 700px) {
+  .catalogue-hero-layout,
+  .catalogue-page .catalogue-products {
+    grid-template-columns: 1fr;
+  }
+  .catalogue-hero-layout {
+    gap: 24px;
+  }
+}
 
 /* Quiet, product-focused catalogue: generous image stage and optional details. */
-.catalogue-page .catalogue-products { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
-.catalogue-page .catalogue-product { border: 0; background: transparent; }
-.catalogue-page .catalogue-image { height: 340px; display: flex; align-items: center; justify-content: center; background: #f0f1ed; padding: 32px; }
-.catalogue-page .catalogue-image img { width: 100%; height: 100%; object-fit: contain; }
-.catalogue-page .catalogue-copy { padding: 24px 0; }
-.catalogue-page .catalogue-copy h2 { font-size: 23px; margin: 10px 0; }
-.catalogue-page .catalogue-copy > strong { display: block; font-size: 25px; margin-bottom: 20px; }
-.catalogue-page .catalogue-actions { flex-wrap: wrap; gap: 16px; margin-top: 22px; }
-.model-specifications { border-top: 1px solid #d4dccd; padding-top: 14px; font-size: 14px; }
-.model-specifications summary { cursor: pointer; }
-.model-image-pending { display: grid; gap: 18px; text-align: center; color: #54635a; }
-.model-image-pending strong { font-size: 32px; }
-.model-image-pending small { font-size: 12px; }
-@media(max-width:1000px) { .catalogue-page .catalogue-products { grid-template-columns: repeat(2,minmax(0,1fr)); } }
-@media(max-width:600px) { .catalogue-page .catalogue-products { grid-template-columns: 1fr; } .catalogue-page .catalogue-image { height: 300px; } }
+.catalogue-page .catalogue-products {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.catalogue-page .catalogue-product {
+  border: 0;
+  background: transparent;
+}
+.catalogue-page .catalogue-image {
+  height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f1ed;
+  padding: 32px;
+}
+.catalogue-page .catalogue-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.catalogue-page .catalogue-copy {
+  padding: 24px 0;
+}
+.catalogue-page .catalogue-copy h2 {
+  font-size: 23px;
+  margin: 10px 0;
+}
+.catalogue-page .catalogue-copy > strong {
+  display: block;
+  font-size: 25px;
+  margin-bottom: 20px;
+}
+.catalogue-page .catalogue-actions {
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 22px;
+}
+.model-specifications {
+  border-top: 1px solid #d4dccd;
+  padding-top: 14px;
+  font-size: 14px;
+}
+.model-specifications summary {
+  cursor: pointer;
+}
+.model-image-pending {
+  display: grid;
+  gap: 18px;
+  text-align: center;
+  color: #54635a;
+}
+.model-image-pending strong {
+  font-size: 32px;
+}
+.model-image-pending small {
+  font-size: 12px;
+}
+@media (max-width: 1000px) {
+  .catalogue-page .catalogue-products {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .catalogue-page .catalogue-products {
+    grid-template-columns: 1fr;
+  }
+  .catalogue-page .catalogue-image {
+    height: 300px;
+  }
+}
 
 /* Native range control with a slim track and a generous, warm-toned handle. */
-#solar-estimator .solar-offset-control input[type="range"] {
-  appearance: none; -webkit-appearance: none; display: block;
-  width: 100%; height: 44px; min-height: 44px; margin: 12px 0 4px;
-  padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none;
+#solar-estimator .solar-offset-control input[type='range'] {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  width: 100%;
+  height: 44px;
+  min-height: 44px;
+  margin: 12px 0 4px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
   touch-action: pan-y;
 }
-#solar-estimator .solar-offset-control input[type="range"]::-webkit-slider-runnable-track {
-  height: 6px; border-radius: 3px;
+#solar-estimator .solar-offset-control input[type='range']::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
   background: linear-gradient(to right, #244b38 0 var(--coverage), #d4d8ca var(--coverage) 100%);
 }
-#solar-estimator .solar-offset-control input[type="range"]::-webkit-slider-thumb {
-  appearance: none; -webkit-appearance: none; width: 30px; height: 30px; margin-top: -12px;
-  border: 3px solid #faf7ed; border-radius: 50%; background: #d4af68;
-  box-shadow: 0 0 0 1px #9b804b, 0 2px 5px #183b2826;
+#solar-estimator .solar-offset-control input[type='range']::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 30px;
+  height: 30px;
+  margin-top: -12px;
+  border: 3px solid #faf7ed;
+  border-radius: 50%;
+  background: #d4af68;
+  box-shadow:
+    0 0 0 1px #9b804b,
+    0 2px 5px #183b2826;
   transition: box-shadow 160ms ease;
 }
-#solar-estimator .solar-offset-control input[type="range"]::-moz-range-track { height: 6px; border-radius: 3px; background: #d4d8ca; }
-#solar-estimator .solar-offset-control input[type="range"]::-moz-range-progress { height: 6px; border-radius: 3px; background: #244b38; }
-#solar-estimator .solar-offset-control input[type="range"]::-moz-range-thumb { box-sizing: border-box; width: 30px; height: 30px; border: 3px solid #faf7ed; border-radius: 50%; background: #d4af68; box-shadow: 0 0 0 1px #9b804b, 0 2px 5px #183b2826; }
-#solar-estimator .solar-offset-control input[type="range"]:focus-visible { outline: 2px solid #9b804b; outline-offset: 4px; border-radius: 4px; }
-.solar-peso-icon { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; font-size: 22px; font-weight: 600; line-height: 1; }
-@media(prefers-reduced-motion:reduce) { #solar-estimator .solar-offset-control input[type="range"]::-webkit-slider-thumb { transition: none; } }
+#solar-estimator .solar-offset-control input[type='range']::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: #d4d8ca;
+}
+#solar-estimator .solar-offset-control input[type='range']::-moz-range-progress {
+  height: 6px;
+  border-radius: 3px;
+  background: #244b38;
+}
+#solar-estimator .solar-offset-control input[type='range']::-moz-range-thumb {
+  box-sizing: border-box;
+  width: 30px;
+  height: 30px;
+  border: 3px solid #faf7ed;
+  border-radius: 50%;
+  background: #d4af68;
+  box-shadow:
+    0 0 0 1px #9b804b,
+    0 2px 5px #183b2826;
+}
+#solar-estimator .solar-offset-control input[type='range']:focus-visible {
+  outline: 2px solid #9b804b;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+.solar-peso-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  #solar-estimator .solar-offset-control input[type='range']::-webkit-slider-thumb {
+    transition: none;
+  }
+}
 
 /* Product catalogue: compact introduction, restrained navigation and clear product rows. */
-.catalogue-refined { background: #f8f7f0; padding-bottom: 64px; }
-.catalogue-refined .breadcrumb { padding-top: 28px; margin-bottom: 0; }
-.catalogue-refined .catalogue-intro { display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 64px; padding: 52px 0 40px; }
-.catalogue-refined .catalogue-intro h1 { font-size: clamp(46px, 5vw, 72px); line-height: 1.05; letter-spacing: -.055em; margin: 18px 0 0; }
-.catalogue-intro-copy { max-width: 470px; justify-self: end; }
-.catalogue-intro-copy p { margin: 0 0 18px; font-size: 16px; line-height: 1.7; color: #59655f; }
-.catalogue-intro-copy > span { font-size: 11px; letter-spacing: .04em; color: #5f6c61; }
-.catalogue-intro-copy > span > span { padding: 0 10px; color: #a89267; }
-.catalogue-refined .catalogue-tabs { display: flex; gap: 32px; margin: 0; border-bottom: 1px solid #ced4c9; padding: 0; }
-.catalogue-refined .catalogue-tabs a { background: transparent; color: #607067; border: 0; border-bottom: 3px solid transparent; padding: 16px 0; font-size: 14px; margin-bottom: -1px; }
-.catalogue-refined .catalogue-tabs a[aria-current="page"] { color: #193f30; border-bottom-color: #244b38; font-weight: 600; }
-.catalogue-refined .catalogue-tabs a:hover { color: #193f30; border-bottom-color: #b9a376; }
-.catalogue-refined .catalogue-products { display: flex; flex-direction: column; gap: 0; }
-.catalogue-refined .catalogue-product { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: center; gap: clamp(32px, 6vw, 90px); padding: 44px 0; border: 0; border-bottom: 1px solid #ced4c9; background: transparent; }
-.catalogue-product-figure { margin: 0; min-width: 0; }
-.catalogue-refined .catalogue-image { display: flex; align-items: center; justify-content: center; height: 340px; padding: 26px; background: #fff; border: 1px solid #e8ebe3; }
-.catalogue-refined .catalogue-image img { display: block; width: 100%; height: 100%; object-fit: contain; }
-.catalogue-product-figure figcaption { margin-top: 12px; color: #68736b; font-size: 11px; line-height: 1.5; }
-.catalogue-product-figure figcaption a { display: inline-flex; align-items: center; gap: 6px; }
-.catalogue-product-figure figcaption .icon { width: 14px; height: 14px; }
-.catalogue-refined .catalogue-copy { padding: 0; min-width: 0; }
-.catalogue-refined .catalogue-product-kicker { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #697464; }
-.catalogue-refined .catalogue-copy h2 { font-size: clamp(26px, 2.65vw, 38px); line-height: 1.15; letter-spacing: -.04em; margin: 16px 0 12px; }
-.catalogue-refined .catalogue-copy > .catalogue-capacity { display: block; font-size: 28px; line-height: 1.3; font-weight: 500; color: #8b7142; margin: 0 0 18px; }
-.catalogue-key-fact { color: #526256; font-size: 15px; line-height: 1.7; margin: 0 0 20px; }
-.catalogue-refined .model-specifications { padding: 14px 0; border-top: 1px solid #dce0d5; border-bottom: 1px solid #dce0d5; color: #405446; }
-.catalogue-refined .model-specifications summary { font-size: 13px; }
-.catalogue-refined .model-specifications ul { font-size: 14px; line-height: 1.8; margin-bottom: 0; padding-left: 20px; }
-.catalogue-refined .catalogue-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 24px; margin-top: 24px; }
-.catalogue-refined .catalogue-actions .button { font-size: 13px; }
-.catalogue-refined .catalogue-actions .text-link { font-size: 13px; }
-.catalogue-refined .catalogue-footnote { max-width: 850px; margin: 28px 0; font-size: 12px; line-height: 1.7; color: #637065; }
-.catalogue-refined .catalogue-footnote p { margin: 8px 0; }
-@media(max-width:700px) {
- .catalogue-refined .catalogue-intro { grid-template-columns: 1fr; gap: 22px; padding: 36px 0 28px; }
- .catalogue-intro-copy { justify-self: start; }
- .catalogue-refined .catalogue-tabs { gap: 22px; }
- .catalogue-refined .catalogue-tabs a { font-size: 12px; }
- .catalogue-refined .catalogue-product { grid-template-columns: 1fr; gap: 24px; padding: 30px 0; }
- .catalogue-refined .catalogue-image { height: 300px; }
- .catalogue-refined .catalogue-copy h2 { font-size: 28px; }
- .catalogue-refined .catalogue-actions { gap: 18px; }
+.catalogue-refined {
+  background: #f8f7f0;
+  padding-bottom: 64px;
+}
+.catalogue-refined .breadcrumb {
+  padding-top: 28px;
+  margin-bottom: 0;
+}
+.catalogue-refined .catalogue-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: end;
+  gap: 64px;
+  padding: 52px 0 40px;
+}
+.catalogue-refined .catalogue-intro h1 {
+  font-size: clamp(46px, 5vw, 72px);
+  line-height: 1.05;
+  letter-spacing: -0.055em;
+  margin: 18px 0 0;
+}
+.catalogue-intro-copy {
+  max-width: 470px;
+  justify-self: end;
+}
+.catalogue-intro-copy p {
+  margin: 0 0 18px;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #59655f;
+}
+.catalogue-intro-copy > span {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: #5f6c61;
+}
+.catalogue-intro-copy > span > span {
+  padding: 0 10px;
+  color: #a89267;
+}
+.catalogue-refined .catalogue-tabs {
+  display: flex;
+  gap: 32px;
+  margin: 0;
+  border-bottom: 1px solid #ced4c9;
+  padding: 0;
+}
+.catalogue-refined .catalogue-tabs a {
+  background: transparent;
+  color: #607067;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  padding: 16px 0;
+  font-size: 14px;
+  margin-bottom: -1px;
+}
+.catalogue-refined .catalogue-tabs a[aria-current='page'] {
+  color: #193f30;
+  border-bottom-color: #244b38;
+  font-weight: 600;
+}
+.catalogue-refined .catalogue-tabs a:hover {
+  color: #193f30;
+  border-bottom-color: #b9a376;
+}
+.catalogue-refined .catalogue-products {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.catalogue-refined .catalogue-product {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: clamp(32px, 6vw, 90px);
+  padding: 44px 0;
+  border: 0;
+  border-bottom: 1px solid #ced4c9;
+  background: transparent;
+}
+.catalogue-product-figure {
+  margin: 0;
+  min-width: 0;
+}
+.catalogue-refined .catalogue-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 340px;
+  padding: 26px;
+  background: #fff;
+  border: 1px solid #e8ebe3;
+}
+.catalogue-refined .catalogue-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.catalogue-product-figure figcaption {
+  margin-top: 12px;
+  color: #68736b;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.catalogue-product-figure figcaption a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.catalogue-product-figure figcaption .icon {
+  width: 14px;
+  height: 14px;
+}
+.catalogue-refined .catalogue-copy {
+  padding: 0;
+  min-width: 0;
+}
+.catalogue-refined .catalogue-product-kicker {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #697464;
+}
+.catalogue-refined .catalogue-copy h2 {
+  font-size: clamp(26px, 2.65vw, 38px);
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+  margin: 16px 0 12px;
+}
+.catalogue-refined .catalogue-copy > .catalogue-capacity {
+  display: block;
+  font-size: 28px;
+  line-height: 1.3;
+  font-weight: 500;
+  color: #8b7142;
+  margin: 0 0 18px;
+}
+.catalogue-key-fact {
+  color: #526256;
+  font-size: 15px;
+  line-height: 1.7;
+  margin: 0 0 20px;
+}
+.catalogue-refined .model-specifications {
+  padding: 14px 0;
+  border-top: 1px solid #dce0d5;
+  border-bottom: 1px solid #dce0d5;
+  color: #405446;
+}
+.catalogue-refined .model-specifications summary {
+  font-size: 13px;
+}
+.catalogue-refined .model-specifications ul {
+  font-size: 14px;
+  line-height: 1.8;
+  margin-bottom: 0;
+  padding-left: 20px;
+}
+.catalogue-refined .catalogue-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 24px;
+}
+.catalogue-refined .catalogue-actions .button {
+  font-size: 13px;
+}
+.catalogue-refined .catalogue-actions .text-link {
+  font-size: 13px;
+}
+.catalogue-refined .catalogue-footnote {
+  max-width: 850px;
+  margin: 28px 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #637065;
+}
+.catalogue-refined .catalogue-footnote p {
+  margin: 8px 0;
+}
+@media (max-width: 700px) {
+  .catalogue-refined .catalogue-intro {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding: 36px 0 28px;
+  }
+  .catalogue-intro-copy {
+    justify-self: start;
+  }
+  .catalogue-refined .catalogue-tabs {
+    gap: 22px;
+  }
+  .catalogue-refined .catalogue-tabs a {
+    font-size: 12px;
+  }
+  .catalogue-refined .catalogue-product {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 30px 0;
+  }
+  .catalogue-refined .catalogue-image {
+    height: 300px;
+  }
+  .catalogue-refined .catalogue-copy h2 {
+    font-size: 28px;
+  }
+  .catalogue-refined .catalogue-actions {
+    gap: 18px;
+  }
 }
 
 /* A quiet hand-off from the main header to the sticky solar guide. */
-.solar-streamlined .division-subnav { position: sticky; display: flex; justify-content: center; align-items: center; flex-wrap: nowrap; min-height: 64px; padding: 10px 24px; gap: 0; }
-.solar-subnav-links { display: flex; justify-content: center; align-items: center; gap: clamp(24px,3vw,45px); transition: transform 360ms cubic-bezier(.2,.7,.2,1); }
-.solar-call-visible .solar-subnav-links { transform: translateX(-52px); }
-.division-subnav .solar-subnav-call { position: absolute; right: max(24px, 4vw); padding: 10px 16px; display: inline-flex; align-items: center; gap: 9px; color: #fffdf3; background: #193e2f; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-5px); transition: opacity 300ms ease, transform 360ms cubic-bezier(.2,.7,.2,1), visibility 0s linear 360ms; font-size: 12px; }
-.division-subnav.solar-call-visible .solar-subnav-call { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); transition-delay: 0s; }
-#solar-technical #products { scroll-margin-top: 88px; }
-/* Alternative slider: square green grip on a recessed warm-neutral track. */
-#solar-estimator .solar-offset-control input[type="range"]::-webkit-slider-runnable-track { height: 8px; border-radius: 0; box-shadow: inset 0 1px 2px #1b342516; background: linear-gradient(to right,#365945 0 var(--coverage),#dedfd3 var(--coverage) 100%); }
-#solar-estimator .solar-offset-control input[type="range"]::-webkit-slider-thumb { width: 28px; height: 34px; margin-top: -13px; border: 3px solid #f7f5eb; border-radius: 3px; background: linear-gradient(90deg,transparent 0 9px,#d8dccc 9px 10px,transparent 10px 13px,#d8dccc 13px 14px,transparent 14px),#244b38; box-shadow: 0 0 0 1px #365945,0 2px 5px #183b2826; }
-#solar-estimator .solar-offset-control input[type="range"]::-moz-range-track { height: 8px; border-radius: 0; background: #dedfd3; box-shadow: inset 0 1px 2px #1b342516; }
-#solar-estimator .solar-offset-control input[type="range"]::-moz-range-progress { height: 8px; border-radius: 0; background: #365945; }
-#solar-estimator .solar-offset-control input[type="range"]::-moz-range-thumb { width: 28px; height: 34px; border: 3px solid #f7f5eb; border-radius: 3px; background: linear-gradient(90deg,transparent 0 9px,#d8dccc 9px 10px,transparent 10px 13px,#d8dccc 13px 14px,transparent 14px),#244b38; box-shadow: 0 0 0 1px #365945,0 2px 5px #183b2826; }
-.skyworth-range-visual { background: #fff; }
-.skyworth-range-visual img { object-fit: contain; padding: 24px; }
-@media(max-width:1000px) and (min-width:701px) { .solar-streamlined .division-subnav { justify-content: flex-start; padding-left: 28px; } .solar-subnav-links { gap: 24px; font-size: 12px; } .solar-call-visible .solar-subnav-links { transform: none; } }
-@media(max-width:700px) {
- .solar-streamlined .division-subnav { justify-content: flex-start; min-height: 84px; padding: 10px 14px; }
- .solar-subnav-links { display: grid; grid-template-columns: auto auto; gap: 10px 20px; font-size: 11px; line-height: 1.3; text-align: left; }
- .solar-call-visible .solar-subnav-links { transform: none; }
- .division-subnav .solar-subnav-call { right: 14px; padding: 10px; gap: 6px; font-size: 11px; }
- .solar-subnav-call .icon { width: 17px; height: 17px; }
- #solar-technical #products { scroll-margin-top: 100px; }
+.solar-streamlined .division-subnav {
+  position: sticky;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  min-height: 64px;
+  padding: 10px 24px;
+  gap: 0;
 }
-@media(prefers-reduced-motion:reduce) { .solar-subnav-links, .division-subnav .solar-subnav-call { transition: none; } }
+.solar-subnav-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(24px, 3vw, 45px);
+  transition: transform 360ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.solar-call-visible .solar-subnav-links {
+  transform: translateX(-52px);
+}
+.division-subnav .solar-subnav-call {
+  position: absolute;
+  right: max(24px, 4vw);
+  padding: 10px 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #fffdf3;
+  background: #193e2f;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-5px);
+  transition:
+    opacity 300ms ease,
+    transform 360ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    visibility 0s linear 360ms;
+  font-size: 12px;
+}
+.division-subnav.solar-call-visible .solar-subnav-call {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition-delay: 0s;
+}
+#solar-technical #products {
+  scroll-margin-top: 88px;
+}
+/* Alternative slider: square green grip on a recessed warm-neutral track. */
+#solar-estimator .solar-offset-control input[type='range']::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 0;
+  box-shadow: inset 0 1px 2px #1b342516;
+  background: linear-gradient(to right, #365945 0 var(--coverage), #dedfd3 var(--coverage) 100%);
+}
+#solar-estimator .solar-offset-control input[type='range']::-webkit-slider-thumb {
+  width: 28px;
+  height: 34px;
+  margin-top: -13px;
+  border: 3px solid #f7f5eb;
+  border-radius: 3px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0 9px,
+      #d8dccc 9px 10px,
+      transparent 10px 13px,
+      #d8dccc 13px 14px,
+      transparent 14px
+    ),
+    #244b38;
+  box-shadow:
+    0 0 0 1px #365945,
+    0 2px 5px #183b2826;
+}
+#solar-estimator .solar-offset-control input[type='range']::-moz-range-track {
+  height: 8px;
+  border-radius: 0;
+  background: #dedfd3;
+  box-shadow: inset 0 1px 2px #1b342516;
+}
+#solar-estimator .solar-offset-control input[type='range']::-moz-range-progress {
+  height: 8px;
+  border-radius: 0;
+  background: #365945;
+}
+#solar-estimator .solar-offset-control input[type='range']::-moz-range-thumb {
+  width: 28px;
+  height: 34px;
+  border: 3px solid #f7f5eb;
+  border-radius: 3px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0 9px,
+      #d8dccc 9px 10px,
+      transparent 10px 13px,
+      #d8dccc 13px 14px,
+      transparent 14px
+    ),
+    #244b38;
+  box-shadow:
+    0 0 0 1px #365945,
+    0 2px 5px #183b2826;
+}
+.skyworth-range-visual {
+  background: #fff;
+}
+.skyworth-range-visual img {
+  object-fit: contain;
+  padding: 24px;
+}
+@media (max-width: 1000px) and (min-width: 701px) {
+  .solar-streamlined .division-subnav {
+    justify-content: flex-start;
+    padding-left: 28px;
+  }
+  .solar-subnav-links {
+    gap: 24px;
+    font-size: 12px;
+  }
+  .solar-call-visible .solar-subnav-links {
+    transform: none;
+  }
+}
+@media (max-width: 700px) {
+  .solar-streamlined .division-subnav {
+    justify-content: flex-start;
+    min-height: 84px;
+    padding: 10px 14px;
+  }
+  .solar-subnav-links {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 10px 20px;
+    font-size: 11px;
+    line-height: 1.3;
+    text-align: left;
+  }
+  .solar-call-visible .solar-subnav-links {
+    transform: none;
+  }
+  .division-subnav .solar-subnav-call {
+    right: 14px;
+    padding: 10px;
+    gap: 6px;
+    font-size: 11px;
+  }
+  .solar-subnav-call .icon {
+    width: 17px;
+    height: 17px;
+  }
+  #solar-technical #products {
+    scroll-margin-top: 100px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .solar-subnav-links,
+  .division-subnav .solar-subnav-call {
+    transition: none;
+  }
+}
 
 /* Restore the editorial family photography; keep individual model renders in the catalogue. */
-.skyworth-range-visual img { object-fit: cover; padding: 0; }
-.catalogue-refined .catalogue-banner { position: relative; isolation: isolate; overflow: hidden; min-height: 190px; margin: 24px 0 14px; padding: 26px 36px; gap: 40px; align-items: center; background: #15251f; color: #fff; }
-.catalogue-banner > .catalogue-banner-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 48%; z-index: -2; }
-.catalogue-banner-shade { position: absolute; inset: 0; background: linear-gradient(90deg,rgba(10,27,22,.93),rgba(10,27,22,.78) 46%,rgba(10,27,22,.38)); z-index: -1; }
-.catalogue-refined .catalogue-banner .eyebrow { color: #e6d8b5; font-size: 10px; }
-.catalogue-refined .catalogue-banner h1 { font-size: clamp(36px,4.2vw,60px); color: #fffdf4; margin-top: 14px; }
-.catalogue-banner .catalogue-intro-copy p { color: #f0f2ea; font-size: 14px; line-height: 1.6; margin-bottom: 14px; }
-.catalogue-banner .catalogue-intro-copy > span { color: #d8dfd0; font-size: 10px; }
-.catalogue-refined .catalogue-products { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 22px; align-items: start; padding-top: 24px; }
-.catalogue-refined .catalogue-product { display: flex; flex-direction: column; align-items: stretch; gap: 0; padding: 0; background: #fffef9; border: 1px solid #dce1d6; min-width: 0; }
-.catalogue-refined .catalogue-image { height: 170px; padding: 16px; border: 0; border-bottom: 1px solid #edf0e7; }
-.catalogue-refined .catalogue-copy { display: flex; flex-direction: column; padding: 18px; }
-.catalogue-refined .catalogue-product-kicker { font-size: 9px; line-height: 1.4; letter-spacing: .06em; min-height: 25px; }
-.catalogue-refined .catalogue-copy h2 { font-size: 22px; line-height: 1.15; margin: 8px 0; min-height: 51px; }
-.catalogue-refined .catalogue-copy > .catalogue-capacity { font-size: 21px; line-height: 1.35; margin: 0 0 16px; min-height: 29px; }
-.catalogue-refined .model-specifications { padding: 10px 0; }
-.catalogue-refined .model-specifications summary { font-size: 12px; }
-.catalogue-refined .model-specifications ul { font-size: 12px; overflow-wrap: anywhere; }
-.catalogue-image-reference { font-size: 11px; line-height: 1.5; color: #6b756b; margin: 12px 0; }
-.catalogue-refined .catalogue-actions { justify-content: space-between; gap: 12px; margin-top: 16px; }
-.catalogue-refined .catalogue-actions .button { font-size: 12px; padding: 10px 12px; }
-.catalogue-refined .catalogue-actions .text-link { font-size: 12px; }
-.catalogue-refined .catalogue-footnote { margin: 24px 0; font-size: 11px; }
-@media(max-width:1000px) { .catalogue-refined .catalogue-products { grid-template-columns: repeat(2,minmax(0,1fr)); } }
-@media(max-width:650px) {
- .catalogue-refined .catalogue-banner { grid-template-columns: 1fr; padding: 26px; gap: 20px; min-height: 280px; }
- .catalogue-banner-shade { background: linear-gradient(90deg,#0a1b16e8,#0a1b1699); }
- .catalogue-refined .catalogue-products { grid-template-columns: 1fr; gap: 20px; }
- .catalogue-refined .catalogue-copy h2 { min-height: 0; }
- .catalogue-refined .catalogue-product-kicker { min-height: 0; }
- .catalogue-refined .catalogue-image { height: 210px; }
+.skyworth-range-visual img {
+  object-fit: cover;
+  padding: 0;
 }
-.discovery-photo-visual[data-story="Industrial"] .discovery-story-photo { object-position: 65% center; }
+.catalogue-refined .catalogue-banner {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 190px;
+  margin: 24px 0 14px;
+  padding: 26px 36px;
+  gap: 40px;
+  align-items: center;
+  background: #15251f;
+  color: #fff;
+}
+.catalogue-banner > .catalogue-banner-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 48%;
+  z-index: -2;
+}
+.catalogue-banner-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 27, 22, 0.93),
+    rgba(10, 27, 22, 0.78) 46%,
+    rgba(10, 27, 22, 0.38)
+  );
+  z-index: -1;
+}
+.catalogue-refined .catalogue-banner .eyebrow {
+  color: #e6d8b5;
+  font-size: 10px;
+}
+.catalogue-refined .catalogue-banner h1 {
+  font-size: clamp(36px, 4.2vw, 60px);
+  color: #fffdf4;
+  margin-top: 14px;
+}
+.catalogue-banner .catalogue-intro-copy p {
+  color: #f0f2ea;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+.catalogue-banner .catalogue-intro-copy > span {
+  color: #d8dfd0;
+  font-size: 10px;
+}
+.catalogue-refined .catalogue-products {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  align-items: start;
+  padding-top: 24px;
+}
+.catalogue-refined .catalogue-product {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  background: #fffef9;
+  border: 1px solid #dce1d6;
+  min-width: 0;
+}
+.catalogue-refined .catalogue-image {
+  height: 170px;
+  padding: 16px;
+  border: 0;
+  border-bottom: 1px solid #edf0e7;
+}
+.catalogue-refined .catalogue-copy {
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+}
+.catalogue-refined .catalogue-product-kicker {
+  font-size: 9px;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  min-height: 25px;
+}
+.catalogue-refined .catalogue-copy h2 {
+  font-size: 22px;
+  line-height: 1.15;
+  margin: 8px 0;
+  min-height: 51px;
+}
+.catalogue-refined .catalogue-copy > .catalogue-capacity {
+  font-size: 21px;
+  line-height: 1.35;
+  margin: 0 0 16px;
+  min-height: 29px;
+}
+.catalogue-refined .model-specifications {
+  padding: 10px 0;
+}
+.catalogue-refined .model-specifications summary {
+  font-size: 12px;
+}
+.catalogue-refined .model-specifications ul {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.catalogue-image-reference {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #6b756b;
+  margin: 12px 0;
+}
+.catalogue-refined .catalogue-actions {
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+}
+.catalogue-refined .catalogue-actions .button {
+  font-size: 12px;
+  padding: 10px 12px;
+}
+.catalogue-refined .catalogue-actions .text-link {
+  font-size: 12px;
+}
+.catalogue-refined .catalogue-footnote {
+  margin: 24px 0;
+  font-size: 11px;
+}
+@media (max-width: 1000px) {
+  .catalogue-refined .catalogue-products {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 650px) {
+  .catalogue-refined .catalogue-banner {
+    grid-template-columns: 1fr;
+    padding: 26px;
+    gap: 20px;
+    min-height: 280px;
+  }
+  .catalogue-banner-shade {
+    background: linear-gradient(90deg, #0a1b16e8, #0a1b1699);
+  }
+  .catalogue-refined .catalogue-products {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .catalogue-refined .catalogue-copy h2 {
+    min-height: 0;
+  }
+  .catalogue-refined .catalogue-product-kicker {
+    min-height: 0;
+  }
+  .catalogue-refined .catalogue-image {
+    height: 210px;
+  }
+}
+.discovery-photo-visual[data-story='Industrial'] .discovery-story-photo {
+  object-position: 65% center;
+}
 
 /* Horizontal compact cards give portrait equipment a taller image stage. */
-.catalogue-refined .catalogue-product { display: grid; grid-template-columns: minmax(110px,.45fr) minmax(0,.55fr); align-items: stretch; min-height: 300px; }
-.catalogue-refined .catalogue-product-figure { display: flex; }
-.catalogue-refined .catalogue-image { width: 100%; height: 100%; min-height: 300px; padding: 12px; border-bottom: 0; border-right: 1px solid #edf0e7; cursor: default; }
-.catalogue-refined .catalogue-image img { width: 100%; height: 270px; object-fit: contain; }
-.catalogue-refined .catalogue-copy { padding: 18px 14px; justify-content: center; }
-.catalogue-refined .catalogue-copy h2 { font-size: 20px; min-height: 0; margin: 10px 0; overflow-wrap: anywhere; }
-.catalogue-refined .catalogue-copy > .catalogue-capacity { font-size: 18px; min-height: 0; margin-bottom: 16px; }
-.catalogue-refined .catalogue-product-kicker { min-height: 0; }
-.catalogue-refined .catalogue-actions { justify-content: flex-start; gap: 12px 16px; }
-.catalogue-refined .catalogue-actions .button { padding: 9px 10px; font-size: 11px; }
-.catalogue-refined .catalogue-actions .text-link { font-size: 11px; }
-@media(max-width:1200px) and (min-width:1001px) { .catalogue-refined .catalogue-product { grid-template-columns: minmax(100px,.42fr) minmax(0,.58fr); } .catalogue-refined .catalogue-image { padding: 8px; } .catalogue-refined .catalogue-copy { padding: 16px 12px; } }
-@media(max-width:650px) { .catalogue-refined .catalogue-product { grid-template-columns: minmax(110px,.43fr) minmax(0,.57fr); min-height: 280px; } .catalogue-refined .catalogue-image { min-height: 280px; padding: 12px; } .catalogue-refined .catalogue-image img { height: 250px; } .catalogue-refined .catalogue-copy h2 { font-size: 21px; } }
+.catalogue-refined .catalogue-product {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.45fr) minmax(0, 0.55fr);
+  align-items: stretch;
+  min-height: 300px;
+}
+.catalogue-refined .catalogue-product-figure {
+  display: flex;
+}
+.catalogue-refined .catalogue-image {
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  padding: 12px;
+  border-bottom: 0;
+  border-right: 1px solid #edf0e7;
+  cursor: default;
+}
+.catalogue-refined .catalogue-image img {
+  width: 100%;
+  height: 270px;
+  object-fit: contain;
+}
+.catalogue-refined .catalogue-copy {
+  padding: 18px 14px;
+  justify-content: center;
+}
+.catalogue-refined .catalogue-copy h2 {
+  font-size: 20px;
+  min-height: 0;
+  margin: 10px 0;
+  overflow-wrap: anywhere;
+}
+.catalogue-refined .catalogue-copy > .catalogue-capacity {
+  font-size: 18px;
+  min-height: 0;
+  margin-bottom: 16px;
+}
+.catalogue-refined .catalogue-product-kicker {
+  min-height: 0;
+}
+.catalogue-refined .catalogue-actions {
+  justify-content: flex-start;
+  gap: 12px 16px;
+}
+.catalogue-refined .catalogue-actions .button {
+  padding: 9px 10px;
+  font-size: 11px;
+}
+.catalogue-refined .catalogue-actions .text-link {
+  font-size: 11px;
+}
+@media (max-width: 1200px) and (min-width: 1001px) {
+  .catalogue-refined .catalogue-product {
+    grid-template-columns: minmax(100px, 0.42fr) minmax(0, 0.58fr);
+  }
+  .catalogue-refined .catalogue-image {
+    padding: 8px;
+  }
+  .catalogue-refined .catalogue-copy {
+    padding: 16px 12px;
+  }
+}
+@media (max-width: 650px) {
+  .catalogue-refined .catalogue-product {
+    grid-template-columns: minmax(110px, 0.43fr) minmax(0, 0.57fr);
+    min-height: 280px;
+  }
+  .catalogue-refined .catalogue-image {
+    min-height: 280px;
+    padding: 12px;
+  }
+  .catalogue-refined .catalogue-image img {
+    height: 250px;
+  }
+  .catalogue-refined .catalogue-copy h2 {
+    font-size: 21px;
+  }
+}
 
-.catalogue-refined .catalogue-image { overflow: hidden; }
-.catalogue-refined[data-category="panels"] .catalogue-image img { width: 200%; max-width: none; flex-shrink: 0; }
-.catalogue-refined[data-category="batteries"] .catalogue-image img { width: 180%; max-width: none; flex-shrink: 0; }
+.catalogue-refined .catalogue-image {
+  overflow: hidden;
+}
+.catalogue-refined[data-category='panels'] .catalogue-image img {
+  width: 200%;
+  max-width: none;
+  flex-shrink: 0;
+}
+.catalogue-refined[data-category='batteries'] .catalogue-image img {
+  width: 180%;
+  max-width: none;
+  flex-shrink: 0;
+}
 
-.catalogue-refined .catalogue-tabs a { display: inline-flex; align-items: center; gap: 9px; }
-.catalogue-tab-count { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 5px; background: #e8ece0; color: #53644f; font-size: 11px; font-weight: 500; font-variant-numeric: tabular-nums; }
-.catalogue-tabs a[aria-current="page"] .catalogue-tab-count { background: #244b38; color: #fffdf3; }
-.catalogue-partnership { display: grid; grid-template-columns: minmax(180px,.7fr) minmax(0,1.3fr); gap: 36px; align-items: center; margin: 30px 0; padding: 30px; background: #eef1e7; border: 1px solid #cdd6c4; border-left: 3px solid #1e5791; }
-.catalogue-partner-identity { display: flex; flex-direction: column; gap: 12px; align-self: stretch; justify-content: center; border-right: 1px solid #ccd5c5; padding-right: 30px; }
-.catalogue-partner-identity > span { font-size: 10px; letter-spacing: .14em; color: #45604b; }
-.catalogue-partner-identity > strong { font-family: Arial,sans-serif; font-size: clamp(28px,3vw,40px); line-height: 1; letter-spacing: -.05em; color: #174f91; }
-.catalogue-partner-identity > small { font-size: 12px; color: #45604b; }
-.catalogue-partner-message h2 { font-size: clamp(24px,2.4vw,32px); line-height: 1.15; letter-spacing: -.035em; margin: 0 0 12px; }
-.catalogue-partner-message p { font-size: 14px; color: #59685b; line-height: 1.7; margin: 0 0 18px; max-width: 550px; }
-.catalogue-partner-message .text-link { font-size: 13px; display: inline-flex; align-items: center; gap: 12px; }
-@media(max-width:650px) { .catalogue-refined .catalogue-tabs { gap: 16px; } .catalogue-refined .catalogue-tabs a { gap: 6px; font-size: 11px; } .catalogue-tab-count { min-width: 18px; height: 20px; font-size: 10px; } .catalogue-partnership { grid-template-columns: 1fr; gap: 24px; padding: 24px; } .catalogue-partner-identity { border-right: 0; border-bottom: 1px solid #ccd5c5; padding: 0 0 22px; } }
+.catalogue-refined .catalogue-tabs a {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+.catalogue-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  background: #e8ece0;
+  color: #53644f;
+  font-size: 11px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.catalogue-tabs a[aria-current='page'] .catalogue-tab-count {
+  background: #244b38;
+  color: #fffdf3;
+}
+.catalogue-partnership {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.7fr) minmax(0, 1.3fr);
+  gap: 36px;
+  align-items: center;
+  margin: 30px 0;
+  padding: 30px;
+  background: #eef1e7;
+  border: 1px solid #cdd6c4;
+  border-left: 3px solid #1e5791;
+}
+.catalogue-partner-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-self: stretch;
+  justify-content: center;
+  border-right: 1px solid #ccd5c5;
+  padding-right: 30px;
+}
+.catalogue-partner-identity > span {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: #45604b;
+}
+.catalogue-partner-identity > strong {
+  font-family: Arial, sans-serif;
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: #174f91;
+}
+.catalogue-partner-identity > small {
+  font-size: 12px;
+  color: #45604b;
+}
+.catalogue-partner-message h2 {
+  font-size: clamp(24px, 2.4vw, 32px);
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  margin: 0 0 12px;
+}
+.catalogue-partner-message p {
+  font-size: 14px;
+  color: #59685b;
+  line-height: 1.7;
+  margin: 0 0 18px;
+  max-width: 550px;
+}
+.catalogue-partner-message .text-link {
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+@media (max-width: 650px) {
+  .catalogue-refined .catalogue-tabs {
+    gap: 16px;
+  }
+  .catalogue-refined .catalogue-tabs a {
+    gap: 6px;
+    font-size: 11px;
+  }
+  .catalogue-tab-count {
+    min-width: 18px;
+    height: 20px;
+    font-size: 10px;
+  }
+  .catalogue-partnership {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px;
+  }
+  .catalogue-partner-identity {
+    border-right: 0;
+    border-bottom: 1px solid #ccd5c5;
+    padding: 0 0 22px;
+  }
+}
 
 /* One shared track keeps the two category edges joined throughout the slide. */
-.catalogue-page .catalogue-banner { min-height: var(--catalogue-banner-height, 190px); }
-.catalogue-slide-viewport { overflow: hidden; overflow: clip; position: relative; overflow-anchor: none; }
-.catalogue-slide-banner { margin: 24px 0 14px; background: #15251f; }
-.catalogue-slide-track { display: flex; align-items: flex-start; width: 200%; will-change: transform; }
+.catalogue-page .catalogue-banner {
+  min-height: var(--catalogue-banner-height, 190px);
+}
+.catalogue-slide-viewport {
+  overflow: hidden;
+  overflow: clip;
+  position: relative;
+  overflow-anchor: none;
+}
+.catalogue-slide-banner {
+  margin: 24px 0 14px;
+  background: #15251f;
+}
+.catalogue-slide-track {
+  display: flex;
+  align-items: flex-start;
+  width: 200%;
+  will-change: transform;
+}
 .catalogue-slide-track > .catalogue-banner,
-.catalogue-slide-track > .catalogue-products { flex: 0 0 50%; width: 50%; box-sizing: border-box; margin: 0; }
+.catalogue-slide-track > .catalogue-products {
+  flex: 0 0 50%;
+  width: 50%;
+  box-sizing: border-box;
+  margin: 0;
+}

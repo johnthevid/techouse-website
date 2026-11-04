@@ -235,9 +235,9 @@ window.TechouseSolarExtras = (() => {
       maximumFractionDigits: 0,
     });
     const title = hasSavings
-      ? `You’re a step closer to saving <strong class="solar-savings-amount">${money.format(amount)}<span>per month</span></strong>`
+      ? `You’re a step closer to saving <strong class="solar-savings-amount">${money.format(amount * 12)}<span>per year</span></strong>`
       : 'You’re a step closer to a solar-powered future.';
-    return `<span class="eyebrow">YOUR NEXT STEP STARTS HERE</span><h2${modal ? ' id="modal-title"' : ''} class="solar-confirmation-title">${title}</h2><p class="solar-confirmation-intro">Let’s find the right solar setup for your property.</p>${hasSavings ? '<p class="solar-confirmation-note">Potential savings based on your estimate. Subject to a site and usage review.</p>' : ''}<div class="modal-actions"><button class="button" type="button" data-request-visit data-inquiry-id="${reference}" aria-expanded="false">Request a site visit</button></div><p class="solar-confirmation-demo">Demo saved · ${reference}<br>No inquiry sent or callback booked. Live service: a representative will contact you to discuss your property.</p>`;
+    return `<span class="eyebrow">YOUR NEXT STEP STARTS HERE</span><h2${modal ? ' id="modal-title"' : ''} class="solar-confirmation-title">${title}</h2><p class="solar-confirmation-intro">Let’s find the right solar setup for your property.</p>${hasSavings ? '<p class="solar-confirmation-note">Potential annual savings: your monthly estimate × 12. Subject to a site and usage review.</p>' : ''}<div class="modal-actions"><button class="button" type="button" data-request-visit data-inquiry-id="${reference}" aria-expanded="false">Request a site visit</button></div><p class="solar-confirmation-demo">Demo saved · ${reference}<br>No inquiry sent or callback booked. Live service: a representative will contact you to discuss your property.</p>`;
   }
   // Entrance belongs to the dialog and its fading backdrop; no whole-page wipe.
   function revealConfirmation(update) {
@@ -260,7 +260,7 @@ window.TechouseSolarExtras = (() => {
     if (!reduce)
       dialog.animate(
         [
-          { opacity: 0, transform: 'translateY(-42px) scale(.985)' },
+          { opacity: 0, transform: 'translateY(42px) scale(.985)' },
           { opacity: 1, transform: 'translateY(0) scale(1)' },
         ],
         { duration: 620, delay: 100, fill: 'backwards', easing: 'cubic-bezier(.22,.61,.36,1)' },

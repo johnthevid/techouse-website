@@ -8,9 +8,11 @@ Corporate website and protected content-management workspace for Techouse, built
 
 [Hosted preview](https://techouse.johndavidceasar.workers.dev) · [Getting started](#getting-started) · [Features](#current-features) · [Releases](RELEASES.md) · [Development workflow](WORKFLOW.md)
 
-**Techouse 1.0 · Private development repository · Manual deployment**
+**Source version 1.0.1 · Private development repository · Manual deployment**
 
 </div>
+
+> **Release status:** Version 1.0.1 is the reviewed source update. The Cloudflare preview remains on its previously deployed version; a GitHub release does not deploy it.
 
 > **Project status:** The original code-reviewed Stable Build 1 was approved on 3 November 2026. This repository also includes the subsequent Cloudflare hosting and performance updates. The hosted site remains a development preview; demo content and unfinished service integrations are identified below.
 
@@ -216,7 +218,7 @@ From `platform/`:
 npm test
 ```
 
-The suite currently contains **12 test groups**, covering account setup, password/MFA flows, sessions, request validation, content persistence and conflict handling, private office access, catalogue navigation, responsive browser behavior and cache policy. Browser tests require Chrome and the installed Playwright package.
+The suite currently contains **14 test groups (19 checks, including component scenarios)**, covering account setup, password/MFA flows, sessions, request validation, content persistence and conflict handling, private office access, catalogue navigation, responsive browser behavior and cache policy. Browser tests require Chrome and the installed Playwright package.
 
 Recorded validation for the current website code:
 

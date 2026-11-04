@@ -1,3 +1,7 @@
+## 1.0.1 source release — 4 November 2026
+
+Version 1.0.1 was reviewed on `update/1.0.1` and approved for the GitHub source release. Cloudflare deployment remains separate. Inquiry overview/ticket/prompt styling now lives in `inquiry.css`, loaded immediately after `solar-extras.css` to preserve the cascade. The approved homepage intro and equipment slider remain unchanged. `platform/tests/release-101-components.test.mjs` covers restored visit data, calendar keyboard focus, cross-tab changes, inline booking persistence and storage failures.
+
 ## Stable Build 1 code review — 3 November 2026
 
 The current local build is the final, code-reviewed Stable Build 1, approved on 3 November 2026. The review is documented in `../deliverables/Stable_Build_1_Code_Review_2026-11-03.md`. The pre-review source and private recovery backups are listed in `../releases/README.md`.

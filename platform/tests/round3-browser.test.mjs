@@ -286,6 +286,10 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
   await page.locator('#solar-estimator .calculate-cost').click();
   assert.equal(await page.locator('.estimate-economics dd').first().textContent(), '₱1,200');
   await page.locator('#solar-estimate-inquiry').click();
+  await page.locator('#repeat-inquiry-dialog [data-existing-action="view"]').click();
+  await page.waitForSelector('#saved-inquiry-history');
+  await page.locator('#saved-inquiry-history > a').click();
+  await page.locator('#repeat-inquiry-dialog [data-existing-action="continue"]').click();
   await page.waitForSelector('#inquiry-form');
   assert.equal(await page.locator('#inquiry-form').getAttribute('data-solar-savings'), '1200');
   await page.goto(f.env.APP_ORIGIN + '/#/divisions/solar/projects/%');
