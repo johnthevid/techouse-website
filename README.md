@@ -12,7 +12,7 @@ Corporate website and protected content-management workspace for Techouse, built
 
 </div>
 
-> **Release status:** Version 1.0.1 is the reviewed source update. The Cloudflare preview remains on its previously deployed version; a GitHub release does not deploy it.
+> **Release status:** Version 1.0.1 is the reviewed source update. The Cloudflare preview now serves 1.0.1 after a separately authorized manual deployment; GitHub pushes do not deploy it automatically.
 
 > **Project status:** The original code-reviewed Stable Build 1 was approved on 3 November 2026. This repository also includes the subsequent Cloudflare hosting and performance updates. The hosted site remains a development preview; demo content and unfinished service integrations are identified below.
 

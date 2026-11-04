@@ -2,7 +2,7 @@
 
 ## 1.0.1 source release — 4 November 2026
 
-Approved after system/component review. The annotated Git tag is `v1.0.1`; the package metadata also records `1.0.1`. The tag identifies the reviewed source, not a Cloudflare deployment. GitHub publication is complete only once `main` and this tag are present on origin.
+Approved after system/component review. The annotated Git tag is `v1.0.1`; the package metadata also records `1.0.1`. The tag identifies the reviewed source. That source was deployed to Cloudflare on 4 November 2026 as Worker version `8676aa74-6c27-4155-a000-7de006d6d1ea`. GitHub publication is complete only once `main` and this tag are present on origin.
 
 Included: repeat-inquiry entry prompt, visible saved-request cards with inline ticket expansion, annual savings confirmation, refined visit calendar/ticket states, sector-matched project slideshow, Facebook/TikTok footer links and blurred image previews. Fixed restored-visit lookup, calendar keyboard focus and cross-tab form-loss edge cases. Inquiry styles are isolated in `site/inquiry.css` with cascade order preserved.
 
@@ -16,9 +16,9 @@ Inquiry delivery and visits remain demos; third-party portfolio references retai
 | ---------------------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
 | Original approved baseline         | Stable Build 1 — Final, Code Reviewed; 3 November 2026 | Immutable historical source snapshot                                                                 |
 | First Git checkpoint               | `30fffe513e908608976c36c58231e2d054fa27ff`             | Current-at-import code, including later hosting/performance changes; not the original archive source |
-| Hosted release name                | Techouse 1.0                                           | Website currently served from the temporary Cloudflare address                                       |
-| Latest recorded Worker version     | `9be19ffd-8de2-4e61-b43c-ca5e9f7ac46f`                 | Desktop hover layout containment update                                                              |
-| Immediate prior Worker version     | `6121f911-614f-4073-9049-23c0c2cf428e`                 | Font, hero-image and browser-cache loading update                                                    |
+| Hosted release name                | Techouse 1.0.1                                           | Website currently served from the temporary Cloudflare address                                       |
+| Latest recorded Worker version     | `8676aa74-6c27-4155-a000-7de006d6d1ea`                 | 1.0.1 reviewed inquiry/ticket update                                                                  |
+| Immediate prior Worker version     | `9be19ffd-8de2-4e61-b43c-ca5e9f7ac46f`                 | Prior desktop hover layout containment release                                                       |
 | Source release tag                | `v1.0.1`                                               | Annotated source tag; remote publication must be verified separately                                  |
 | Published packages                 | None                                                   | `platform/package.json` is private; no npm/GitHub Package is published                               |
 

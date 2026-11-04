@@ -4,7 +4,7 @@ Recorded milestones for the Techouse website. Dates use the project's Asia/Manil
 
 ## 1.0.1 — 4 November 2026
 
-- Approved for the GitHub source release from `update/1.0.1`. Cloudflare deployment remains separate and has not changed.
+- Approved GitHub source release from `update/1.0.1`, then separately deployed to Cloudflare on 4 November 2026 as Worker `8676aa74-6c27-4155-a000-7de006d6d1ea`. Ten hosted browser check groups passed; no database/content changes.
 - System/component review passed 19 checks; fixed restored-visit lookup, calendar keyboard focus and cross-tab form-loss edge cases. Inquiry styling extracted into `inquiry.css` without changing cascade order.
 - Hide header/mobile/footer project-entry links on every inquiry division variant.
 - Show annual potential savings (monthly estimate × 12), with assumptions retained.

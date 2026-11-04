@@ -2,6 +2,15 @@
 
 Updated: 4 November 2026.
 
+## Latest: 1.0.1 deployed to Cloudflare
+
+The user authorized and completed the manual release to the existing `techouse` Worker. Live version: `8676aa74-6c27-4155-a000-7de006d6d1ea`; deployed source: `1d2e16eec87e40ac883e9aafcdd00a7577cb15b1` (`v1.0.1`). Rollback reference: `9be19ffd-8de2-4e61-b43c-ca5e9f7ac46f`.
+
+Ten live browser check groups passed with no uncaught errors or remote writes; HTTP access/cache checks passed. Public bootstrap is byte-identical before/after (13 projects, 0 published posts). Database, existing accounts/secrets and domain setup were unchanged. Deployment records in `deployments/techouse-1.0/` are updated. Source release is already on GitHub; the follow-up deployment-record commit must be pushed through the signed-in GitHub Desktop because terminal authentication is still unavailable. No redeployment is needed for documentation-only commits.
+
+Local review remains 19 passing checks, with approved intro/hover/slider sources unchanged. Inquiry delivery/calendar scheduling remain browser-local demos.
+
+
 ## Latest: approved 1.0.1 GitHub source release
 
 The user approved publishing the reviewed 1.0.1 source to GitHub on 4 November 2026. Prepare/commit the approved branch, fast-forward `main`, and create annotated tag `v1.0.1`. Cloudflare publication is **not** authorized by this request and remains unchanged.
