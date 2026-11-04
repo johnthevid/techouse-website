@@ -1,0 +1,4 @@
+# Keep internal maintenance notes and editor settings out of hosted public assets.
+**/*.md
+.prettierrc.json
+**/.DS_Store

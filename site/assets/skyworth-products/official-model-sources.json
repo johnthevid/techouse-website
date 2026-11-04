@@ -1,0 +1,56 @@
+[
+  {
+    "file": "module-g12r.png",
+    "image_url": "https://www.skyworth-pv.com/Public/Uploads/uploadfile/images/20250425/G12RSERIES.png",
+    "page": "https://www.skyworth-pv.com/product/pv-module/modules/g12r-series",
+    "website_model": "G12R SERIES"
+  },
+  {
+    "file": "module-g12.png",
+    "image_url": "https://www.skyworth-pv.com/Public/Uploads/uploadfile/images/20250425/G12SERIES.png",
+    "page": "https://www.skyworth-pv.com/product/pv-module/modules/g12-series",
+    "website_model": "G12 SERIES"
+  },
+  {
+    "file": "module-m10.png",
+    "image_url": "https://www.skyworth-pv.com/Public/Uploads/uploadfile/images/20250425/M10SERIES-893.png",
+    "page": "https://www.skyworth-pv.com/product/pv-module/modules/m10-series",
+    "website_model": "M10 SERIES"
+  },
+  {
+    "file": "hybrid-lv.png",
+    "image_url": "https://www.skyworth-pv.com/Public/Uploads/uploadfile/images/20250901/36KL.png",
+    "page": "https://www.skyworth-pv.com/product/battery-storage-system/residential-ess/svh-3-6kl-s1",
+    "website_model": "SWH 3\u20136KL-S1"
+  },
+  {
+    "file": "hybrid-hv.png",
+    "image_url": "https://www.skyworth-pv.com/Public/Uploads/uploadfile/images/20250901/2950.png",
+    "page": "https://www.skyworth-pv.com/product/battery-storage-system/c-i-ess/swh-29-50kh-t1",
+    "website_model": "SVH 29\u201350KH-T1"
+  },
+  {
+    "file": "ongrid-30-50.png",
+    "image_url": "https://www.skyworth-pv.com/Public/Uploads/uploadfile/images/20260907/SW3050.png",
+    "page": "https://www.skyworth-pv.com/product/pv-inverter/business/sw030-050-ktl-t1-g2",
+    "website_model": "SW030\u2013050 KTL-T1-G2"
+  },
+  {
+    "file": "ongrid-40-60.png",
+    "image_url": "https://www.skyworth-pv.com/Public/Uploads/uploadfile/images/20250830/4060.png",
+    "page": "https://www.skyworth-pv.com/product/pv-inverter/business/sw40-60ktl-t1",
+    "website_model": "SW40\u201360KTL-T1"
+  },
+  {
+    "file": "battery-hv.png",
+    "image_url": "https://www.skyworth-pv.com/Public/Uploads/uploadfile/images/20250901/5.1220.png",
+    "page": "https://www.skyworth-pv.com/product/battery-storage-system/residential-ess/svr-5-20k-h1",
+    "website_model": "SWR5.12\u201320.48-H1"
+  },
+  {
+    "file": "storage-cabinet.png",
+    "image_url": "https://www.skyworth-pv.com/Public/Uploads/uploadfile/images/20250901/100215.png",
+    "page": "https://www.skyworth-pv.com/product/battery-storage-system/c-i-ess/sws-p100e215-hc",
+    "website_model": "SWS-P100E215-HC"
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "name": "techouse-platform",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "dev": "node local.mjs",
+    "bootstrap": "node bootstrap.mjs"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}

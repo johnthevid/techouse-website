@@ -1,0 +1,230 @@
+[
+  {
+    "id": "illustrative-residential-01",
+    "title": "Family home rooftop",
+    "sector": "residential",
+    "location": "Quezon City",
+    "capacity": "4 kWp",
+    "system": "Grid-tied solar concept",
+    "sample": true,
+    "reference": false,
+    "status": "published",
+    "image": "assets/solar-story/lesson-daytime.jpg",
+    "gallery": [
+      {
+        "src": "assets/solar-story/lesson-daytime.jpg",
+        "caption": "Illustrative residential setting \u00b7 Unsplash photograph; not a Techouse installation"
+      }
+    ],
+    "description": "Illustrative residential project concept in Quezon City, using a sample 4 kWp system size. This is example content, not completed Techouse work. Equipment, roof suitability and final sizing require a site assessment."
+  },
+  {
+    "id": "illustrative-residential-02",
+    "title": "Townhouse solar plan",
+    "sector": "residential",
+    "location": "Pasig",
+    "capacity": "6 kWp",
+    "system": "Grid-tied solar concept",
+    "sample": true,
+    "reference": false,
+    "status": "published",
+    "image": "assets/solar.jpg",
+    "gallery": [
+      {
+        "src": "assets/solar.jpg",
+        "caption": "Illustrative residential setting \u00b7 Unsplash photograph; not a Techouse installation"
+      }
+    ],
+    "description": "Illustrative residential project concept in Pasig, using a sample 6 kWp system size. This is example content, not completed Techouse work. Equipment, roof suitability and final sizing require a site assessment."
+  },
+  {
+    "id": "illustrative-residential-03",
+    "title": "Home office solar plan",
+    "sector": "residential",
+    "location": "Cavite",
+    "capacity": "8 kWp",
+    "system": "Grid-tied solar concept",
+    "sample": true,
+    "reference": false,
+    "status": "published",
+    "image": "assets/solar-story/home-selected.jpg",
+    "gallery": [
+      {
+        "src": "assets/solar-story/home-selected.jpg",
+        "caption": "Illustrative residential setting \u00b7 Unsplash photograph; not a Techouse installation"
+      }
+    ],
+    "description": "Illustrative residential project concept in Cavite, using a sample 8 kWp system size. This is example content, not completed Techouse work. Equipment, roof suitability and final sizing require a site assessment."
+  },
+  {
+    "id": "illustrative-residential-04",
+    "title": "Family home with storage",
+    "sector": "residential",
+    "location": "Laguna",
+    "capacity": "10 kWp",
+    "system": "Hybrid solar concept",
+    "sample": true,
+    "reference": false,
+    "status": "published",
+    "image": "assets/solar-story/lesson-daytime.jpg",
+    "gallery": [
+      {
+        "src": "assets/solar-story/lesson-daytime.jpg",
+        "caption": "Illustrative residential setting \u00b7 Unsplash photograph; not a Techouse installation"
+      }
+    ],
+    "description": "Illustrative residential project concept in Laguna, using a sample 10 kWp system size. This is example content, not completed Techouse work. Equipment, roof suitability and final sizing require a site assessment."
+  },
+  {
+    "id": "illustrative-commercial-01",
+    "title": "Neighborhood shop solar plan",
+    "sector": "commercial",
+    "location": "Quezon City",
+    "capacity": "12 kWp",
+    "system": "Grid-tied solar concept",
+    "sample": true,
+    "reference": false,
+    "status": "published",
+    "image": "assets/solar-story/store-selected.jpg",
+    "gallery": [
+      {
+        "src": "assets/solar-story/store-selected.jpg",
+        "caption": "Illustrative commercial setting \u00b7 Unsplash photograph; not a Techouse installation"
+      }
+    ],
+    "description": "Illustrative commercial project concept in Quezon City, using a sample 12 kWp system size. This is example content, not completed Techouse work. Equipment, roof suitability and final sizing require a site assessment."
+  },
+  {
+    "id": "illustrative-commercial-02",
+    "title": "Office rooftop solar plan",
+    "sector": "commercial",
+    "location": "Makati",
+    "capacity": "20 kWp",
+    "system": "Grid-tied solar concept",
+    "sample": true,
+    "reference": false,
+    "status": "published",
+    "image": "assets/solar-story/commercial.jpg",
+    "gallery": [
+      {
+        "src": "assets/solar-story/commercial.jpg",
+        "caption": "Illustrative commercial setting \u00b7 Unsplash photograph; not a Techouse installation"
+      }
+    ],
+    "description": "Illustrative commercial project concept in Makati, using a sample 20 kWp system size. This is example content, not completed Techouse work. Equipment, roof suitability and final sizing require a site assessment."
+  },
+  {
+    "id": "illustrative-commercial-03",
+    "title": "Grocery store solar plan",
+    "sector": "commercial",
+    "location": "Pasig",
+    "capacity": "30 kWp",
+    "system": "Grid-tied solar concept",
+    "sample": true,
+    "reference": false,
+    "status": "published",
+    "image": "assets/solar-story/store-selected.jpg",
+    "gallery": [
+      {
+        "src": "assets/solar-story/store-selected.jpg",
+        "caption": "Illustrative commercial setting \u00b7 Unsplash photograph; not a Techouse installation"
+      }
+    ],
+    "description": "Illustrative commercial project concept in Pasig, using a sample 30 kWp system size. This is example content, not completed Techouse work. Equipment, roof suitability and final sizing require a site assessment."
+  },
+  {
+    "id": "illustrative-commercial-04",
+    "title": "Retail center solar plan",
+    "sector": "commercial",
+    "location": "Cavite",
+    "capacity": "40 kWp",
+    "system": "Grid-tied solar concept",
+    "sample": true,
+    "reference": false,
+    "status": "published",
+    "image": "assets/solar-story/commercial.jpg",
+    "gallery": [
+      {
+        "src": "assets/solar-story/commercial.jpg",
+        "caption": "Illustrative commercial setting \u00b7 Unsplash photograph; not a Techouse installation"
+      }
+    ],
+    "description": "Illustrative commercial project concept in Cavite, using a sample 40 kWp system size. This is example content, not completed Techouse work. Equipment, roof suitability and final sizing require a site assessment."
+  },
+  {
+    "id": "illustrative-commercial-05",
+    "title": "Business hub solar plan",
+    "sector": "commercial",
+    "location": "Laguna",
+    "capacity": "60 kWp",
+    "system": "Grid-tied solar concept",
+    "sample": true,
+    "reference": false,
+    "status": "published",
+    "image": "assets/solar-story/store-selected.jpg",
+    "gallery": [
+      {
+        "src": "assets/solar-story/store-selected.jpg",
+        "caption": "Illustrative commercial setting \u00b7 Unsplash photograph; not a Techouse installation"
+      }
+    ],
+    "description": "Illustrative commercial project concept in Laguna, using a sample 60 kWp system size. This is example content, not completed Techouse work. Equipment, roof suitability and final sizing require a site assessment."
+  },
+  {
+    "id": "illustrative-industrial-01",
+    "title": "Workshop solar plan",
+    "sector": "industrial",
+    "location": "Cavite",
+    "capacity": "100 kWp",
+    "system": "Grid-tied solar concept",
+    "sample": true,
+    "reference": false,
+    "status": "published",
+    "image": "assets/solar-story/factory-selected.jpg",
+    "gallery": [
+      {
+        "src": "assets/solar-story/factory-selected.jpg",
+        "caption": "Illustrative industrial setting \u00b7 Unsplash photograph; not a Techouse installation"
+      }
+    ],
+    "description": "Illustrative industrial project concept in Cavite, using a sample 100 kWp system size. This is example content, not completed Techouse work. Equipment, roof suitability and final sizing require a site assessment."
+  },
+  {
+    "id": "illustrative-industrial-02",
+    "title": "Manufacturing facility solar plan",
+    "sector": "industrial",
+    "location": "Laguna",
+    "capacity": "150 kWp",
+    "system": "Grid-tied solar concept",
+    "sample": true,
+    "reference": false,
+    "status": "published",
+    "image": "assets/solar-story/industrial.jpg",
+    "gallery": [
+      {
+        "src": "assets/solar-story/industrial.jpg",
+        "caption": "Illustrative industrial setting \u00b7 Unsplash photograph; not a Techouse installation"
+      }
+    ],
+    "description": "Illustrative industrial project concept in Laguna, using a sample 150 kWp system size. This is example content, not completed Techouse work. Equipment, roof suitability and final sizing require a site assessment."
+  },
+  {
+    "id": "illustrative-industrial-03",
+    "title": "Warehouse rooftop solar plan",
+    "sector": "industrial",
+    "location": "Bulacan",
+    "capacity": "250 kWp",
+    "system": "Grid-tied solar concept",
+    "sample": true,
+    "reference": false,
+    "status": "published",
+    "image": "assets/solar-story/factory-selected.jpg",
+    "gallery": [
+      {
+        "src": "assets/solar-story/factory-selected.jpg",
+        "caption": "Illustrative industrial setting \u00b7 Unsplash photograph; not a Techouse installation"
+      }
+    ],
+    "description": "Illustrative industrial project concept in Bulacan, using a sample 250 kWp system size. This is example content, not completed Techouse work. Equipment, roof suitability and final sizing require a site assessment."
+  }
+]

@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Account security · Techouse</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="/assets/fonts/dm-sans-latin-468d56b6b25b.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/assets/fonts/manrope-latin-8bd97e6bbbc1.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="/styles.css?v=615fafb4d010" />
+    <link rel="stylesheet" href="/design-system.css?v=a1483a390b3e" />
+    <link rel="stylesheet" href="/admin.css?v=6b04d5b7cd3a" />
+    <script src="/vendor/qrcodegen.js?v=2511bc17f40a" defer></script>
+    <script src="/admin.js?v=bda42c5f53f9" defer></script>
+  </head>
+  <body class="account-page">
+    <header id="header">
+      <div class="account-container account-header">
+        <a href="/office.html#/office" aria-label="Techouse back office"
+          ><img
+            class="brand-logo"
+            src="/assets/techouse-logo-horizontal.png"
+            width="2172"
+            height="724"
+            alt="Techouse"
+        /></a>
+        <span class="account-header-title">Back office</span>
+        <a class="button small account-site-link" href="/">Back to website</a>
+        <button class="button outline account-signout" id="logout" hidden>Sign out</button>
+      </div>
+    </header>
+    <main class="account-container account-main">
+      <p id="notice" role="status" aria-live="polite"></p>
+      <section id="auth" class="account-auth-card auth-layout" data-step="login">
+        <aside class="auth-context"
+          ><span class="eyebrow">TECHOUSE WORKSPACE</span><h1 id="auth-heading">Welcome back.</h1
+          ><p id="auth-description"
+            >Sign in to manage your website content, projects and inquiries.</p
+          ><ol class="auth-steps"
+            ><li data-auth-step="login" aria-current="step"
+              ><span>01</span
+              ><div
+                ><strong>Your account</strong
+                ><small>Sign in with your email and password.</small></div
+              ></li
+            ><li data-auth-step="mfa"
+              ><span>02</span
+              ><div
+                ><strong>Verify it’s you</strong
+                ><small>Confirm with your authenticator.</small></div
+              ></li
+            ></ol
+          ><p class="auth-privacy-note"
+            >Your account is protected by two-step verification.</p
+          ></aside
+        >
+        <div class="auth-form-panel"
+          ><span class="eyebrow" id="auth-step-label">01 / YOUR ACCOUNT</span>
+          <form id="setup" hidden>
+            <h2>Create your administrator password</h2>
+            <p>Your setup link works once and expires after 30 minutes.</p>
+            <label
+              >New password<input
+                type="password"
+                name="password"
+                autocomplete="new-password"
+                minlength="16"
+                maxlength="256"
+                required
+            /></label>
+            <label
+              >Confirm password<input
+                type="password"
+                name="confirmation"
+                autocomplete="new-password"
+                minlength="16"
+                maxlength="256"
+                required
+            /></label>
+            <button class="button">Create administrator account</button>
+          </form>
+          <form id="login"
+            ><h2>Sign in</h2>
+            <label
+              >Email address<input
+                type="email"
+                name="email"
+                autocomplete="username"
+                placeholder="you@company.com"
+                required
+            /></label>
+            <label for="login-password">Password</label
+            ><div class="auth-password-field"
+              ><input
+                id="login-password"
+                type="password"
+                name="password"
+                autocomplete="current-password"
+                maxlength="256"
+                required
+              /><button
+                type="button"
+                class="auth-password-toggle"
+                aria-controls="login-password"
+                aria-pressed="false"
+                >Show</button
+              ></div
+            >
+            <button class="button auth-primary" type="submit">Continue to verification →</button>
+          </form>
+          <form id="mfa" hidden>
+            <h2 id="mfa-title">Verify your sign-in</h2><p class="auth-email" id="auth-email"></p
+            ><p id="auth-code-help">Enter the 6-digit code from your authenticator app.</p>
+            <div id="enrollment" hidden>
+              <p>Scan the QR code with your authenticator, or enter the private setup key.</p>
+              <canvas id="mfa-qr" aria-label="Scan this QR code with your authenticator"></canvas>
+              <details
+                ><summary>Enter the setup key manually</summary><code id="secret"></code
+                ><p>Techouse · 6 digits · SHA-1 · 30 seconds</p></details
+              >
+            </div>
+            <label id="auth-code-label" for="auth-code">Authenticator code</label
+            ><input
+              class="auth-code-input"
+              id="auth-code"
+              name="code"
+              autocomplete="one-time-code"
+              inputmode="numeric"
+              pattern="[0-9]{6}"
+              maxlength="6"
+              aria-describedby="auth-code-help"
+              placeholder="000000"
+              required
+            />
+            <button
+              class="auth-recovery-toggle text-link"
+              type="button"
+              id="use-recovery"
+              aria-pressed="false"
+              >Use a recovery code instead</button
+            >
+            <div class="account-form-actions"
+              ><button class="button" type="submit">Verify and sign in →</button
+              ><button class="button outline" type="button" id="restart"
+                >← Back to sign in</button
+              ></div
+            >
+          </form>
+        </div>
+      </section>
+      <section id="recovery" class="account-auth-card" hidden>
+        <span class="eyebrow">KEEP THESE SAFE</span><h1>Save your recovery codes</h1>
+        <p
+          >Each code works once if your authenticator is unavailable. Save them in your password
+          manager; they will not be shown again.</p
+        >
+        <pre id="recovery-codes"></pre
+        ><button class="button" id="saved-codes">I have saved these codes</button>
+      </section>
+      <section id="account-security" hidden>
+        <a class="back-link" href="/office.html#/office">← Back to overview</a>
+        <div class="account-page-heading"
+          ><span class="eyebrow">ACCOUNT SETTINGS</span><h1>Account security</h1
+          ><p>Manage your password and authenticator.</p></div
+        >
+        <div class="account-security-note"
+          >For your protection, changes require your current password and a fresh authenticator or
+          unused recovery code. You’ll be signed out on every device.</div
+        >
+        <div class="account-security-grid">
+          <article class="entry security-panel">
+            <span class="security-section-number">01 / PASSWORD</span><h2>Change password</h2
+            ><p>Choose a unique password with at least 16 characters.</p>
+            <form id="change-password">
+              <label
+                >Current password<input
+                  type="password"
+                  name="password"
+                  autocomplete="current-password"
+                  maxlength="256"
+                  required
+              /></label>
+              <label
+                >New password<input
+                  type="password"
+                  name="newPassword"
+                  autocomplete="new-password"
+                  minlength="16"
+                  maxlength="256"
+                  required
+              /></label>
+              <label
+                >Confirm new password<input
+                  type="password"
+                  name="confirmation"
+                  autocomplete="new-password"
+                  minlength="16"
+                  maxlength="256"
+                  required
+              /></label>
+              <label
+                >Authenticator or recovery code<input
+                  name="code"
+                  autocomplete="one-time-code"
+                  maxlength="64"
+                  required
+              /></label>
+              <button class="button">Update password</button>
+            </form>
+          </article>
+          <article class="entry security-panel security-panel-sensitive">
+            <span class="security-section-number">02 / AUTHENTICATOR</span
+            ><h2>Remove authenticator</h2
+            ><p>Disconnect your current authenticator before setting up a replacement.</p>
+            <div class="account-caution"
+              >Your recovery codes will also be removed. You must enroll an authenticator again
+              before returning to the back office.</div
+            >
+            <form id="remove-mfa">
+              <label
+                >Current password<input
+                  type="password"
+                  name="password"
+                  autocomplete="current-password"
+                  maxlength="256"
+                  required
+              /></label>
+              <label
+                >Authenticator or recovery code<input
+                  name="code"
+                  autocomplete="one-time-code"
+                  maxlength="64"
+                  required
+              /></label>
+              <label class="account-checkbox"
+                ><input type="checkbox" name="acknowledge" required /><span
+                  >I understand that I’ll need to set up my authenticator again.</span
+                ></label
+              >
+              <button class="button account-sensitive-action">Remove authenticator</button>
+            </form>
+          </article>
+        </div>
+      </section>
+      <!-- Legacy editor hooks remain hidden; authenticated editing uses the original office UI. -->
+      <section id="cms" hidden
+        ><nav
+          ><button data-tab="text">Text</button><button data-tab="images">Images</button
+          ><button data-tab="projects">Projects</button><button data-tab="posts">Posts</button></nav
+        ><div id="editor"></div><span id="dirty"></span><button id="save">Save</button
+        ><button id="discard">Discard</button></section
+      >
+    </main>
+    <footer class="account-footer"
+      ><div class="account-container account-footer-inner"
+        ><div><strong>Techouse · Back office</strong><p>Website content management</p></div
+        ><span>Staff workspace · Sign out when you’re finished.</span></div
+      ></footer
+    >
+  </body>
+</html>

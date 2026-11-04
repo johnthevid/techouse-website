@@ -1,0 +1,90 @@
+/* Account pages share the public/back-office tokens and square component geometry. */
+body.account-page { min-height: 100dvh; display: grid; grid-template-rows: auto 1fr auto; }
+.account-container { width: min(1440px, calc(100% - 64px)); margin-inline: auto; }
+.account-header { display: flex; align-items: center; gap: 24px; min-height: 84px; padding-block: 14px; }
+.account-header .brand-logo { display: block; width: 190px; height: auto; aspect-ratio: 3 / 1; object-fit: contain; }
+.account-header-title { padding-left: 24px; border-left: 1px solid var(--line); color: var(--ink); font-size: 1.1rem; font-weight: 600; }
+.account-signout { margin-left: auto; min-height: 42px; padding: 9px 18px; }
+.account-main { padding-block: 36px 48px; min-width: 0; }
+.account-main label { display: block; font-size: 15px; font-weight: 600; margin: 20px 0; }
+.account-main input { width: 100%; min-height: 48px; margin-top: 8px; padding: 12px 14px; border: 1px solid #bec8bb; border-radius: 0; background: #fff; font: inherit; color: var(--ink); }
+.account-page-heading { margin: 24px 0; }
+.account-page-heading h1 { font-size: clamp(32px, 3vw, 46px); line-height: 1.15; letter-spacing: -.035em; margin: 14px 0 12px; }
+.account-page-heading p, .security-panel > p { color: var(--muted); margin: 0; line-height: 1.7; }
+.account-security-note { padding: 18px 22px; background: #eceee3; color: #4c5e50; border-left: 3px solid #809174; line-height: 1.7; margin-bottom: 28px; }
+.account-security-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; align-items: start; }
+.security-panel { border: 1px solid var(--line); padding: clamp(22px, 3vw, 34px); background: #fffdf7; min-width: 0; }
+.security-panel h2 { font-size: 25px; line-height: 1.25; margin: 14px 0 12px; letter-spacing: -.025em; }
+.security-section-number { font-size: 12px; font-weight: 600; letter-spacing: .12em; color: #7b644b; }
+.security-panel form > .button { margin-top: 8px; }
+.account-caution { margin-top: 22px; padding: 16px 18px; background: #f3eee3; color: #66503c; line-height: 1.65; }
+.account-main .account-checkbox { display: flex; align-items: flex-start; gap: 12px; font-weight: 400; line-height: 1.6; }
+.account-main .account-checkbox input { flex: 0 0 18px; width: 18px; min-height: 18px; height: 18px; margin-top: 4px; accent-color: #244d3d; }
+.account-sensitive-action { background: transparent; color: #78442d; border-color: #bc947e; }
+.account-sensitive-action:hover { background: #f1e7dd; color: #623822; }
+.account-footer { padding: 22px 0; border-top: 1px solid var(--line); }
+.account-footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; color: var(--muted); font-size: .9rem; }
+.account-footer strong { color: var(--ink); }
+.account-footer p { margin: 6px 0 0; }
+.account-auth-card { max-width: 540px; padding: 32px; margin: 16px auto; background: #fffdf7; border: 1px solid var(--line); }
+.account-auth-card h1 { font-size: 32px; margin: 14px 0; }
+.account-auth-card h2 { margin-top: 24px; }
+.account-auth-card p { color: var(--muted); }
+.account-form-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+#mfa-qr { display: block; width: min(100%, 300px); height: auto; margin: 20px auto; image-rendering: pixelated; }
+#notice { white-space: pre-line; color: #813f2e; padding: 14px 18px; border-left: 3px solid #bc6e3a; background: #f3ece2; margin: 0 0 24px; }
+#notice:empty { display: none; }
+code, #recovery-codes { display: block; white-space: pre-wrap; overflow-wrap: anywhere; padding: 16px; margin: 12px 0; background: #edf0e5; }
+[hidden] { display: none !important; }
+@media(max-width: 850px) { .account-security-grid { grid-template-columns: 1fr; } }
+@media(max-width: 600px) {
+  .account-container { width: calc(100% - 32px); }
+  .account-header { min-height: 72px; gap: 10px; }
+  .account-header .brand-logo { width: 120px; }
+  .account-header-title { padding-left: 10px; font-size: 1rem; }
+  .account-signout { padding: 8px 10px; white-space: nowrap; }
+  .account-main { padding-block: 24px 32px; }
+  .account-footer-inner { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .account-auth-card { padding: 22px; }
+  .security-panel .button { width: 100%; }
+}
+
+/* Sign-in and verification form one clear, consistent two-step flow. */
+.account-auth-card.auth-layout { max-width: 1040px; display: grid; grid-template-columns: .9fr 1.1fr; padding: 0; margin: 28px auto; }
+.auth-context { padding: clamp(26px,4vw,46px); background: #edf0e6; border-right: 1px solid var(--line); }
+.auth-context h1 { font-size: clamp(32px,3vw,44px); line-height: 1.15; margin: 24px 0 18px; letter-spacing: -.035em; }
+.auth-context > p { line-height: 1.7; }
+.auth-steps { list-style: none; padding: 0; margin: 38px 0; display: grid; gap: 24px; }
+.auth-steps li { display: flex; gap: 14px; color: #6b756c; }
+.auth-steps li > span { display: grid; place-items: center; width: 36px; height: 36px; flex: 0 0 36px; border: 1px solid #bdc9b6; font-size: .85rem; }
+.auth-steps li[aria-current] { color: #203e30; }
+.auth-steps li[aria-current] > span { background: #244d3d; color: #fff; border-color: #244d3d; }
+.auth-steps strong,.auth-steps small { display: block; }
+.auth-steps small { font-size: .9rem; margin-top: 4px; line-height: 1.6; }
+.auth-context .auth-privacy-note { font-size: .9rem; border-top: 1px solid #ccd6c4; padding-top: 18px; }
+.auth-form-panel { padding: clamp(26px,4vw,46px); min-width: 0; }
+.auth-form-panel h2 { margin: 24px 0 12px; font-size: 28px; letter-spacing: -.025em; line-height: 1.25; }
+.auth-form-panel .auth-primary { width: 100%; margin-top: 22px; }
+.auth-password-field { position: relative; }
+.account-main .auth-password-field input { padding-right: 76px; margin-top: 0; }
+.auth-password-toggle { position: absolute; inset: 1px 1px 1px auto; width: 68px; border: 0; border-left: 1px solid var(--line); background: #f1f3eb; color: #294535; font: inherit; font-size: .85rem; }
+.auth-email { overflow-wrap: anywhere; font-weight: 600; }
+.account-main .auth-code-input { font-family: var(--display); font-size: 28px; letter-spacing: .35em; text-align: center; min-height: 64px; }
+.account-main .auth-code-input.is-recovery-code { font-size: 16px; letter-spacing: .04em; }
+.auth-recovery-toggle { display: block; border: 0; background: none; color: #36533e; font: inherit; font-size: .95rem; padding: 0; margin: 18px 0 26px; }
+.auth-form-panel .account-form-actions { margin-top: 24px; display: grid; gap: 12px; }
+.auth-form-panel #mfa-qr { width: min(100%,240px); border: 1px solid var(--line); margin: 22px auto; }
+.auth-form-panel #enrollment details { font-size: .9rem; margin: 18px 0; }
+@media(max-width: 760px) {
+  .account-auth-card.auth-layout { grid-template-columns: 1fr; margin: 8px auto; }
+  .auth-context { padding: 24px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .auth-context h1 { font-size: 30px; margin: 16px 0 12px; }
+  .auth-steps { grid-template-columns: 1fr 1fr; gap: 12px; margin: 24px 0 0; }
+  .auth-steps small, .auth-context .auth-privacy-note { display: none; }
+  .auth-steps strong { font-size: .85rem; }
+  .auth-form-panel { padding: 24px; }
+}
+
+.account-site-link { margin-left: auto; min-height: 42px; padding: 9px 18px; white-space: nowrap; }
+.account-site-link + .account-signout { margin-left: 0; }
+@media(max-width:520px) { .account-header { flex-wrap: wrap; } .account-site-link { flex-basis: 100%; margin-left: 0; justify-content: center; font-size: 13px; } }

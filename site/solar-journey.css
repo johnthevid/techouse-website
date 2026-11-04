@@ -1,0 +1,167 @@
+/* Initial solar question/education styling; later layers refine these selectors.
+ * Cascade order is defined in index.html. See README.md before moving or deleting overrides. */
+.solar-start {
+  scroll-margin-top: 100px;
+}
+.solar-start form {
+  max-width: 900px;
+}
+.solar-start fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0 0 30px;
+}
+.solar-start legend {
+  font-size: 22px;
+  letter-spacing: -0.025em;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+.solar-choices {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.solar-choices label {
+  cursor: pointer;
+  position: relative;
+}
+.solar-choices input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.solar-choices span {
+  display: flex;
+  align-items: center;
+  min-height: 76px;
+  padding: 20px;
+  border: 1px solid #a7b4aa;
+  border-radius: 3px;
+  font-size: 16px;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.solar-choices input:checked + span {
+  background: #203d32;
+  color: #fff;
+  border-color: #203d32;
+}
+.solar-choices input:focus-visible + span {
+  outline: 3px solid #a85d2c;
+  outline-offset: 4px;
+}
+.solar-location {
+  display: grid;
+  gap: 10px;
+  max-width: 480px;
+}
+.solar-location small {
+  font-weight: 400;
+}
+.solar-location input {
+  padding: 15px;
+  background: transparent;
+  border: 1px solid #a7b4aa;
+  border-radius: 3px;
+  color: inherit;
+  font: inherit;
+  min-width: 0;
+}
+#solar-guidance {
+  max-width: 700px;
+  line-height: 1.7;
+  margin: 25px 0;
+}
+.solar-story-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 35px;
+}
+.solar-story-grid article {
+  border-top: 1px solid #a7b4aa;
+  padding-top: 24px;
+}
+.solar-story-grid article > span {
+  font-size: 11px;
+  letter-spacing: 0.13em;
+}
+.solar-story-grid h3 {
+  font-size: 29px;
+  line-height: 1.18;
+  letter-spacing: -0.035em;
+  margin: 20px 0;
+}
+.solar-story-grid p {
+  line-height: 1.8;
+  font-size: 15px;
+}
+.solar-story-grid summary {
+  cursor: pointer;
+  font-weight: 600;
+  line-height: 1.6;
+}
+.solar-story-grid details {
+  margin-top: 20px;
+}
+.solar-story-grid a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.solar-prefill-note {
+  padding: 20px;
+  background: #e6eee4;
+  border-left: 3px solid #315542;
+  line-height: 1.7;
+  margin-bottom: 25px;
+}
+.estimate-result .button {
+  white-space: normal;
+  line-height: 1.5;
+}
+.solar-learning {
+  background: #e9ece3;
+  padding: 55px 35px !important;
+  border-radius: 4px;
+}
+@media (max-width: 700px) {
+  .solar-choices,
+  .solar-story-grid {
+    grid-template-columns: 1fr;
+  }
+  .solar-choices span {
+    min-height: 58px;
+    padding: 16px;
+  }
+  .solar-start legend {
+    font-size: 20px;
+  }
+  .solar-learning {
+    padding: 35px 22px !important;
+  }
+  .solar-story-grid {
+    gap: 25px;
+  }
+  .division-cover h1 {
+    overflow-wrap: break-word;
+  }
+}
+
+/* A concise comparison guide within the roof lesson. */
+#solar-options .panel-choice-guide { margin-top: 18px; background: #f0f2e9; border: 1px solid #d6ddce; }
+#solar-options .panel-choice-guide > summary { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 15px 18px; list-style: none; font-size: 14px; line-height: 1.5; color: #254a37; }
+#solar-options .panel-choice-guide > summary::-webkit-details-marker { display: none; }
+#solar-options .panel-choice-guide > summary .icon { flex-shrink: 0; transition: transform 180ms ease; }
+#solar-options .panel-choice-guide[open] > summary .icon { transform: rotate(180deg); }
+#solar-options .panel-choice-guide > summary:focus-visible { outline: 2px solid #8d794f; outline-offset: 3px; }
+.panel-choice-content { padding: 0 18px 18px; }
+.panel-choice-content dl { margin: 0; }
+.panel-choice-content dl > div { display: grid; grid-template-columns: 108px minmax(0,1fr); gap: 18px; padding: 12px 0; border-top: 1px solid #d6ddce; }
+.panel-choice-content dt { color: #254a37; font-weight: 600; font-size: 13px; line-height: 1.65; }
+.panel-choice-content dd { margin: 0; color: #536257; font-size: 13px; line-height: 1.65; }
+#solar-options .panel-choice-takeaway { margin: 10px 0 16px; font-size: 12px; line-height: 1.65; color: #61705e; }
+#solar-options .panel-choice-content .text-link { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; text-decoration: none; border-bottom: 1px solid #aebba4; padding-bottom: 5px; }
+@media(max-width:600px) { .panel-choice-content dl > div { grid-template-columns: 1fr; gap: 4px; } }
+@media(prefers-reduced-motion:reduce) { #solar-options .panel-choice-guide > summary .icon { transition: none; } }

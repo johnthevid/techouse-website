@@ -1,0 +1,43 @@
+{
+  "release": "Techouse 1.0",
+  "baseline": "Stable Build 1 \u2014 Final, Code Reviewed",
+  "url": "https://techouse.johndavidceasar.workers.dev",
+  "worker": "techouse",
+  "database_id": "186b525d-4f1c-4f8b-87f0-d83df59355f7",
+  "deployed_version": "9be19ffd-8de2-4e61-b43c-ca5e9f7ac46f",
+  "verified_date": "2026-11-04",
+  "hosted_admin_email": "johndavidceasar@gmail.com",
+  "verified_by_user": [
+    "password setup",
+    "MFA enrollment and recovery-code handling",
+    "draft save survives refresh",
+    "sign-out and sign-in with password and MFA"
+  ],
+  "verified_public_checks": {
+    "projects": 13,
+    "posts": 0,
+    "test_draft_public": false,
+    "signed_out_private_content_status": 401
+  },
+  "remaining": [
+    "Remove Hosting test draft",
+    "Real inquiry delivery and site-visit integration",
+    "Custom domain if desired",
+    "Full hosted production acceptance"
+  ],
+  "loading_update": {
+    "date": "2026-11-04",
+    "animation_source_unchanged": true,
+    "test_groups_passed": 12,
+    "controlled_screenshots_identical": 16,
+    "hero_bytes_before": 3902841,
+    "hero_bytes_after": 3172480
+  },
+  "hover_update": {
+    "date": "2026-11-04",
+    "scope": "desktop layout containment after intro",
+    "animation_source_unchanged": true,
+    "layout_comparisons_passed": 13,
+    "previous_version": "6121f911-614f-4073-9049-23c0c2cf428e"
+  }
+}

@@ -1,0 +1,46 @@
+# Only publish the source tree and selected project records.
+/*
+!/.gitignore
+!/.gitattributes
+!/AGENTS.md
+!/README.md
+!/HANDOFF.md
+!/WORKFLOW.md
+!/STABLE_BUILD_1.md
+!/site/
+!/platform/
+!/deployments/
+!/releases/
+!/deliverables/
+
+# Keep release identities, not the large source/private recovery archives.
+/releases/*
+!/releases/README.md
+!/releases/stable-build-1.json
+!/releases/stable-build-1-pre-review.json
+!/releases/*.manifest.json
+
+# Track the code review; keep contracts, reports, traces and client documents local.
+/deliverables/*
+!/deliverables/Stable_Build_1_Code_Review_2026-11-03.md
+
+# Credentials, runtime state and dependencies on every device.
+**/.data/
+**/.wrangler/
+**/node_modules/
+**/.env
+**/.env.*
+**/.dev.vars
+**/.dev.vars.*
+**/*-secrets*
+**/auth-key
+**/*.sqlite
+**/*.sqlite-*
+**/*.db
+**/*.db-*
+**/*.pem
+**/*.key
+**/.DS_Store
+**/*.log
+**/test-results/
+**/playwright-report/

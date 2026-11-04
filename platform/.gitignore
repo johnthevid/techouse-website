@@ -1,0 +1,6 @@
+.data/
+.dev.vars
+.env*
+node_modules/
+.wrangler/
+*-secrets*

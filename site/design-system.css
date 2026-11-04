@@ -1,0 +1,119 @@
+/* Techouse design contract: Material references, outlined symbols, square cards/actions.
+ * Keep this last in index.html. Small dots, progress markers and the logo are not cards.
+ */
+:root {
+  --corner-card: 0px;
+  --corner-action: 0px;
+  --icon-size: 22px;
+}
+.material-icon {
+  display: inline-block;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  min-width: var(--icon-size);
+  vertical-align: middle;
+  fill: currentColor !important;
+  stroke: none !important;
+  flex-shrink: 0;
+  overflow: visible;
+}
+.material-icon use {
+  fill: currentColor;
+  stroke: none;
+}
+a .material-icon,
+button .material-icon {
+  margin-inline: 3px;
+}
+.material-icon.arrow {
+  font-size: inherit;
+}
+.button,
+.banner-quote,
+.banner-global-quote,
+.reading-size,
+.skip-intro,
+.back-to-top,
+.catalogue-tabs a,
+.filter-buttons button,
+.modal-actions button {
+  border-radius: var(--corner-action);
+}
+.form-card,
+.scope-panel,
+.post-card,
+.division-card,
+.compact-card,
+.discovery-stage,
+.discovery-visual,
+.solar-lesson-card,
+.learning-visual,
+.company-divisions > a,
+.product-art,
+.catalogue-product,
+.energy-examples article,
+.technical-invite,
+#solar-estimator,
+.solar-learning,
+.solar-prefill-note,
+.estimate-notes > div,
+#solar-options details,
+#modal,
+.project-dialog {
+  border-radius: var(--corner-card);
+}
+.solar-choices span,
+input:not([type='radio']):not([type='checkbox']):not([type='range']),
+select,
+textarea {
+  border-radius: 0;
+}
+.company-scroll-cue .material-icon {
+  width: 22px;
+  height: 24px;
+}
+.header-call .material-icon {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+}
+.office-link .material-icon {
+  width: 19px;
+  height: 19px;
+  min-width: 19px;
+}
+.energy-examples .material-icon {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  color: #dec69b;
+}
+.success-icon .material-icon {
+  width: 32px;
+  height: 32px;
+}
+.modal-close .material-icon {
+  width: 24px;
+  height: 24px;
+}
+.back-to-top > span:first-child {
+  display: flex;
+  align-items: center;
+}
+
+/* The About scroll cue keeps its original pill shape. */
+.company-scroll-cue {
+  border-radius: 999px;
+}
+
+/* Personal staff themes are restricted to back-office routes. */
+.office-header-controls { margin-left: auto; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.office-theme-label { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.office-theme-label select { padding: 9px; background: var(--paper); color: inherit; border: 1px solid var(--line); font: inherit; }
+html[data-office-theme="dark"] .office-page { --paper: #18221f; --ink: #edf2ea; --muted: #bac9bd; --line: #45564c; background: #18221f; color: #edf2ea; color-scheme: dark; }
+html[data-office-theme="grey"] .office-page { --paper: #e4e6e4; --ink: #202a25; --muted: #4c5b52; --line: #b8c1b9; background: #e4e6e4; color: #202a25; }
+html[data-office-theme="dark"] .office-page :is(.office-tool-card,.form-card,.office-overview-stats a,.admin-disclosure,.office-recent-inquiries,.office-footer,#header,.customizer-panel,.project-manager-browser,.entry,.post-table,.post-row,.customizer-savebar) { background: #22312a; color: #edf2ea; border-color: #45564c; }
+html[data-office-theme="dark"] .office-page :is(input,textarea,select) { background: #18221f; color: #edf2ea; border-color: #526658; }
+html[data-office-theme="dark"] .office-page :is(h1,h2,h3,strong,label,.text-link,.admin-tabs a,.button.outline,.office-signout) { color: #edf2ea; }
+html[data-office-theme="grey"] .office-page :is(.office-tool-card,.form-card,.office-overview-stats a,.admin-disclosure,#header,.office-footer,.customizer-panel,.customizer-savebar) { background: #f0f1ef; }
+@media(max-width:650px) { .office-header-bar { flex-wrap: wrap; padding-block: 12px; } .office-header-controls { width: 100%; margin-left: 0; gap: 10px; } }

@@ -1,0 +1,12 @@
+/* Keep desktop hover layout invalidation within the animated panels.
+   Layout containment preserves intrinsic content height; no size containment is used.
+   Intro, return-to-home playback and touch layouts keep their existing rendering. */
+@media (min-width: 901px) and (hover: hover) {
+  .division-landing:not(.intro-playing):not(.banners-arriving) .division-banner {
+    contain: layout paint style;
+  }
+
+  .division-landing:not(.intro-playing):not(.banners-arriving) .banner-content {
+    contain: layout style;
+  }
+}

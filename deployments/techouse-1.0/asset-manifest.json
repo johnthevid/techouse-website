@@ -1,0 +1,105 @@
+{
+  "fonts": [
+    {
+      "family": "DM Sans",
+      "subset": "latin-ext",
+      "source": "https://fonts.gstatic.com/s/dmsans/v17/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu6-K6z9mXgjU0.woff2",
+      "file": "dm-sans-latin-ext-219b02c7d888.woff2",
+      "sha256": "219b02c7d8884817d3d6ad4c8771f2c000ce4c5669a67ef4e2e5617ffa25c4cc",
+      "bytes": 18192
+    },
+    {
+      "family": "DM Sans",
+      "subset": "latin",
+      "source": "https://fonts.gstatic.com/s/dmsans/v17/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K6z9mXg.woff2",
+      "file": "dm-sans-latin-468d56b6b25b.woff2",
+      "sha256": "468d56b6b25b05b70190b6c233d773f6f1770e8579827ce022a57f03fa8002fb",
+      "bytes": 36980
+    },
+    {
+      "family": "Manrope",
+      "subset": "cyrillic-ext",
+      "source": "https://fonts.gstatic.com/s/manrope/v23/xn7gYHE41ni1AdIRggqxSvfedN62Zw.woff2",
+      "file": "manrope-cyrillic-ext-347c589d5713.woff2",
+      "sha256": "347c589d57130c68f9829c2cd24969eed590328078ff921ca6000a56e5a2cc84",
+      "bytes": 2584
+    },
+    {
+      "family": "Manrope",
+      "subset": "cyrillic",
+      "source": "https://fonts.gstatic.com/s/manrope/v23/xn7gYHE41ni1AdIRggOxSvfedN62Zw.woff2",
+      "file": "manrope-cyrillic-93bef303b822.woff2",
+      "sha256": "93bef303b8220d2f59dbe8db119891c9f38d94f48a26d373c28256fb2b50cba7",
+      "bytes": 14368
+    },
+    {
+      "family": "Manrope",
+      "subset": "greek",
+      "source": "https://fonts.gstatic.com/s/manrope/v23/xn7gYHE41ni1AdIRggSxSvfedN62Zw.woff2",
+      "file": "manrope-greek-6b478f45d63e.woff2",
+      "sha256": "6b478f45d63e18352735fd427e92ae4704800a998ec3337c01b59e4f6ef87d44",
+      "bytes": 9308
+    },
+    {
+      "family": "Manrope",
+      "subset": "vietnamese",
+      "source": "https://fonts.gstatic.com/s/manrope/v23/xn7gYHE41ni1AdIRggixSvfedN62Zw.woff2",
+      "file": "manrope-vietnamese-ddbf28cebf2f.woff2",
+      "sha256": "ddbf28cebf2fbbf800d307f020689bed6d1a96c5a22aed50fee23bf7de80d0f1",
+      "bytes": 8356
+    },
+    {
+      "family": "Manrope",
+      "subset": "latin-ext",
+      "source": "https://fonts.gstatic.com/s/manrope/v23/xn7gYHE41ni1AdIRggmxSvfedN62Zw.woff2",
+      "file": "manrope-latin-ext-27eccb1f8944.woff2",
+      "sha256": "27eccb1f8944bc26f6511601bac9284786feb5e5bbb0c8035ff09ac63aaf7c52",
+      "bytes": 15212
+    },
+    {
+      "family": "Manrope",
+      "subset": "latin",
+      "source": "https://fonts.gstatic.com/s/manrope/v23/xn7gYHE41ni1AdIRggexSvfedN4.woff2",
+      "file": "manrope-latin-8bd97e6bbbc1.woff2",
+      "sha256": "8bd97e6bbbc1f602a8f791530eed1064c9a357d5731bbc76e3fc587fb068728f",
+      "bytes": 24436
+    }
+  ],
+  "heroImages": {
+    "solar": {
+      "original": "solar.jpg",
+      "file": "solar.c391b72bc407.jpg",
+      "bytes": 453702,
+      "originalBytes": 453702,
+      "sha256": "c391b72bc407f62cae8811f07dd3df77a6195c7e3c1fa5be8123e8cff5f8bb75"
+    },
+    "construction": {
+      "original": "construction.jpg",
+      "file": "construction.5154dbc7c67d.jpg",
+      "bytes": 443558,
+      "originalBytes": 443558,
+      "sha256": "5154dbc7c67dd73046275fbad7a59ff311055bed9595fd5900b63126b741ccb9"
+    },
+    "prefabrication": {
+      "original": "architecture.jpg",
+      "file": "architecture.26e250a22279.jpg",
+      "bytes": 545139,
+      "originalBytes": 545139,
+      "sha256": "26e250a22279fe76b79c090a48355d85a618ddc1a82d262a0822718d293edf2f"
+    },
+    "development": {
+      "original": "development.jpg",
+      "file": "development.c87084358595.jpg",
+      "bytes": 240999,
+      "originalBytes": 240999,
+      "sha256": "c87084358595c0267b67a67301eeeeae0615c0045f00429b4fcfab2454fafba1"
+    },
+    "elevators": {
+      "original": "Techouse Images/Elevator.png",
+      "file": "Techouse Images/Elevator.b55adcb70afa.webp",
+      "bytes": 1489082,
+      "originalBytes": 2219443,
+      "sha256": "b55adcb70afa5f20e1ec327edcc7c7fec184393822a3bc6598bcf814daf1bcb6"
+    }
+  }
+}

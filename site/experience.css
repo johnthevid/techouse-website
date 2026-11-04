@@ -1,0 +1,1382 @@
+/* Final intro, guided flow, lesson cards, and interaction overrides. Later declarations intentionally win.
+ * Cascade order is defined in index.html. See README.md before moving or deleting overrides. */
+/* Contrast concentrates behind the copy; hover glow has been removed. */
+.banner-shade,
+.is-open .banner-shade {
+  background: linear-gradient(0deg, #091712ed 0%, #091712bd 30%, #09171238 65%, #09171240 100%);
+}
+.division-landing.has-expanded .division-banner:not(.is-open) .banner-shade {
+  background: linear-gradient(0deg, #091712db, #09171255 75%);
+}
+.cover-shade {
+  background:
+    linear-gradient(90deg, #0b211bd9, #0b211b65 55%, #0b211b20),
+    linear-gradient(0deg, #0b211b99, transparent 55%);
+}
+.division-cover {
+  height: auto;
+  min-height: max(700px, 85svh);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 130px 0 90px;
+}
+.cover-copy {
+  padding-top: 0;
+}
+.cover-copy h1 {
+  font-size: clamp(48px, 6vw, 96px);
+  max-width: 1050px;
+}
+.cover-copy p {
+  margin-top: 25px;
+}
+.cover-copy > .button {
+  margin-top: 30px;
+  margin-bottom: 28px;
+}
+.cover-foot {
+  position: static;
+  width: min(1320px, calc(100% - 100px));
+  margin: 0 auto;
+  line-height: 1.6;
+}
+.back-divisions {
+  margin-bottom: 30px;
+}
+.typed-copy {
+  position: relative;
+}
+.typing-reserve {
+  visibility: hidden;
+  display: block;
+}
+.typing-ink {
+  position: absolute;
+  inset: 0;
+}
+.typing-ink:after {
+  content: '▏';
+  color: #b78b50;
+  animation: typing-caret 0.8s steps(1) infinite;
+}
+.typing-done .typing-ink:after {
+  display: none;
+}
+@keyframes typing-caret {
+  50% {
+    opacity: 0;
+  }
+}
+.discovery-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  border: 1px solid #cdd5c8;
+  background: #f9f8f2;
+  box-shadow: 0 16px 45px #243c2d08;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.solar-start #solar-discovery {
+  padding: 36px;
+  max-width: none;
+  min-width: 0;
+}
+.discovery-progress {
+  display: flex;
+  gap: 18px;
+  border-bottom: 1px solid #d7ddd2;
+  margin-bottom: 35px;
+  padding-bottom: 20px;
+}
+.discovery-progress button {
+  background: none;
+  border: 0;
+  color: #6d786b;
+  padding: 8px 0;
+  text-align: left;
+  font-size: 13px;
+  flex: 1;
+}
+.discovery-progress button[aria-current='step'] {
+  color: #254d3c;
+  font-weight: 700;
+  border-bottom: 2px solid #b99258;
+}
+.solar-start fieldset {
+  min-width: 0;
+  animation: step-enter 0.4s both;
+}
+.solar-start legend {
+  font-size: clamp(23px, 2vw, 32px);
+  line-height: 1.35;
+  margin-bottom: 25px;
+}
+.solar-start .solar-choices {
+  grid-template-columns: 1fr;
+}
+.solar-choices span {
+  min-height: 60px;
+  border-radius: 5px;
+  background: #fff;
+  font-size: 17px;
+}
+.solar-choices input:checked + span {
+  background: #234a3c;
+}
+.solar-choices input:checked + span:after {
+  content: '✓';
+  margin-left: auto;
+}
+.discovery-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #e4ebe0;
+  padding: 35px;
+  text-align: center;
+  min-height: 430px;
+  color: #315747;
+}
+.discovery-visual > span {
+  font-size: 11px;
+  letter-spacing: 0.17em;
+}
+.discovery-visual h3 {
+  font-size: 29px;
+  margin: 20px 0 12px;
+}
+.discovery-visual p {
+  font-size: 16px;
+  max-width: 270px;
+}
+.motion-scene {
+  width: min(100%, 340px);
+  height: auto;
+  animation: step-enter 0.5s both;
+  overflow: visible;
+}
+.scene-sun,
+.scene-moon {
+  transform-origin: center;
+  animation: celestial-rise 1.2s both;
+}
+.scene-moon {
+  animation-delay: 0.15s;
+}
+.energy-path {
+  stroke: #b98b43;
+  stroke-dasharray: 200;
+  animation: energy-flow 2s ease both;
+}
+.battery-charge {
+  animation: charge-in 1.2s both;
+}
+.discovery-controls,
+.learning-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 30px;
+}
+.discovery-controls .text-link,
+.learning-controls .text-link {
+  background: none;
+  border: 0;
+  border-bottom: 1px solid #9da99c;
+  padding: 10px 0;
+}
+.discovery-controls button:disabled,
+.learning-controls button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.discovery-count,
+.learning-controls > span {
+  font-size: 14px;
+  color: #63705f;
+}
+.solar-location {
+  margin-top: 25px;
+}
+.solar-start [hidden],
+.solar-learning [hidden] {
+  display: none !important;
+}
+.solar-learning .solar-story-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  align-items: center;
+  min-height: 330px;
+}
+.solar-story-grid article {
+  border: 0;
+  animation: step-enter 0.4s both;
+  padding: 15px 0;
+}
+.learning-visual {
+  background: #dce6d7;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: #315747;
+}
+.solar-story-grid article h3 {
+  font-size: clamp(29px, 3vw, 42px);
+}
+.solar-story-grid article > span {
+  color: #76633f;
+}
+.learning-controls {
+  border-top: 1px solid #bdcbb7;
+  padding-top: 25px;
+}
+.solar-start .section-heading {
+  align-items: start;
+}
+@keyframes step-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes celestial-rise {
+  from {
+    opacity: 0;
+    transform: translateY(45px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes energy-flow {
+  from {
+    stroke-dashoffset: 200;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes charge-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (min-width: 1800px) {
+  .cover-copy h1 {
+    font-size: 120px;
+  }
+  .cover-foot {
+    width: min(1680px, calc(100% - 160px));
+  }
+  .solar-start legend {
+    font-size: 34px;
+  }
+}
+@media (max-width: 900px) {
+  .discovery-stage {
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 0.65fr);
+  }
+  .solar-start #solar-discovery {
+    padding: 25px;
+  }
+  .discovery-visual {
+    padding: 20px;
+  }
+  .discovery-progress {
+    gap: 10px;
+  }
+  .discovery-progress span {
+    display: block;
+  }
+  .cover-foot {
+    width: calc(100% - 48px);
+  }
+}
+@media (max-width: 600px) {
+  .division-cover {
+    min-height: 760px;
+    padding: 125px 0 55px;
+  }
+  .cover-copy h1 {
+    font-size: 48px;
+  }
+  .cover-foot {
+    font-size: 11px;
+  }
+  .discovery-stage {
+    grid-template-columns: 1fr;
+  }
+  .discovery-visual {
+    min-height: 290px;
+    order: -1;
+    padding: 20px;
+  }
+  .discovery-visual .motion-scene {
+    max-width: 190px;
+  }
+  .discovery-visual h3 {
+    font-size: 23px;
+    margin: 4px 0;
+  }
+  .discovery-visual p {
+    font-size: 14px;
+  }
+  .solar-learning .solar-story-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  .learning-visual {
+    min-height: 210px;
+  }
+  .learning-visual .motion-scene {
+    max-width: 220px;
+  }
+  .solar-start legend {
+    font-size: 24px;
+  }
+  .learning-controls,
+  .discovery-controls {
+    gap: 12px;
+  }
+  .discovery-controls .button,
+  .learning-controls .button {
+    font-size: 15px;
+    padding: 12px 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .motion-scene,
+  .scene-sun,
+  .scene-moon,
+  .energy-path,
+  .battery-charge,
+  .solar-start fieldset,
+  .solar-story-grid article {
+    animation: none;
+  }
+  .typing-ink:after {
+    animation: none;
+  }
+}
+/* Logo breathes independently; clicking retains the normal smooth scroll. */
+.banner-company-link .brand-logo {
+  animation: logo-breathe 5s ease-in-out infinite;
+}
+@keyframes logo-breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+.landing-kicker {
+  font-size: clamp(19px, 1.35vw, 31px);
+  color: #fff2d9;
+  font-weight: 750;
+  max-width: 850px;
+  text-shadow:
+    0 2px 5px #000,
+    0 0 16px #0009;
+  line-height: 1.5;
+}
+.landing-intro:before {
+  background: linear-gradient(90deg, #04130f99, #04130f44 65%, transparent);
+}
+.typing-ink:after {
+  color: #ffe0a0;
+}
+/* Compact explanation: one useful idea and its illustration, then a next step. */
+.solar-learning {
+  padding: 30px !important;
+  scroll-margin-top: 90px;
+}
+.solar-learning .section-heading {
+  margin-bottom: 20px;
+  gap: 10px 30px;
+}
+.solar-learning .section-heading h2 {
+  font-size: clamp(28px, 2.7vw, 40px);
+}
+.solar-learning .section-heading p {
+  font-size: 16px;
+  line-height: 1.6;
+}
+.solar-learning .solar-story-grid {
+  grid-template-columns: minmax(180px, 0.65fr) 1.35fr;
+  min-height: 210px;
+  gap: 30px;
+}
+.solar-learning .learning-visual {
+  min-height: 200px;
+  max-height: 230px;
+}
+.solar-learning .learning-visual .motion-scene {
+  max-width: 230px;
+}
+.solar-learning .solar-story-grid h3 {
+  font-size: clamp(25px, 2.2vw, 34px);
+  margin: 12px 0;
+}
+.solar-learning .solar-story-grid p {
+  font-size: 16px;
+  line-height: 1.65;
+}
+.solar-learning .learning-controls {
+  margin-top: 18px;
+  padding-top: 18px;
+}
+#location-suggestions-note {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #63705f;
+}
+.essential-light {
+  animation: essential-glow 2.5s ease-in-out 2;
+  transform-origin: 155px 105px;
+}
+@keyframes essential-glow {
+  50% {
+    filter: drop-shadow(0 0 7px #d7b368);
+  }
+}
+.reveal-once {
+  opacity: 0;
+  transform: translateY(24px);
+}
+.reveal-once.has-entered {
+  animation: estimate-enter 0.7s ease both;
+}
+@keyframes estimate-enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (max-width: 600px) {
+  .solar-learning {
+    padding: 24px !important;
+  }
+  .solar-learning .solar-story-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  .solar-learning .learning-visual {
+    min-height: 160px;
+    max-height: 180px;
+  }
+  .solar-learning .learning-visual .motion-scene {
+    max-width: 180px;
+  }
+  .solar-learning .section-heading h2 {
+    font-size: 30px;
+  }
+  .landing-kicker {
+    font-size: 17px;
+  }
+  .division-landing {
+    padding-top: 390px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .banner-company-link .brand-logo,
+  .essential-light {
+    animation: none;
+  }
+  .reveal-once {
+    opacity: 1;
+    transform: none;
+  }
+  .reveal-once.has-entered {
+    animation: none;
+  }
+}
+/* A distinct lesson card beneath a lighter editorial introduction. */
+#solar-options {
+  background: transparent;
+  padding: 30px 0 !important;
+  border-radius: 0;
+}
+#solar-options > .section-heading {
+  padding: 0 4px;
+  margin-bottom: 22px;
+}
+.solar-lesson-card {
+  background: #fffdf7;
+  border: 1px solid #d2daca;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px #233c2e09;
+  overflow: hidden;
+}
+#solar-options .solar-story-grid {
+  grid-template-columns: minmax(200px, 0.6fr) 1fr;
+  gap: 32px;
+  min-height: 215px;
+}
+#solar-options .learning-visual {
+  background: linear-gradient(145deg, #e4ecdf, #f1f3e9);
+  border-radius: 10px;
+  min-height: 215px;
+  max-height: none;
+}
+#solar-options .solar-story-grid article {
+  padding: 14px 12px 14px 0;
+}
+#solar-options .learning-controls {
+  margin-top: 20px;
+  padding: 18px 0 0;
+  border-top: 1px solid #e0e5d9;
+}
+#solar-options details {
+  background: #eef2e8;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+#solar-options details summary {
+  font-size: 16px;
+}
+#solar-options details p {
+  margin-top: 12px;
+}
+/* Step three packs choices into a row, keeping location and next action close. */
+.solar-start #solar-discovery.priority-step {
+  padding: 24px 30px;
+}
+.priority-step .discovery-progress {
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+}
+.solar-start .priority-step fieldset {
+  margin-bottom: 16px;
+}
+.solar-start .priority-step legend {
+  margin-bottom: 16px;
+  font-size: 26px;
+}
+.priority-step .solar-choices {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+.priority-step .solar-choices span {
+  font-size: 15px;
+  min-height: 76px;
+  padding: 12px;
+  gap: 5px;
+  line-height: 1.4;
+}
+.priority-step .solar-location {
+  margin-top: 12px;
+  gap: 5px;
+  max-width: none;
+}
+.priority-step .solar-location > small {
+  display: none;
+}
+.priority-step .solar-location input {
+  padding: 11px 13px;
+}
+.priority-step #solar-guidance {
+  margin: 14px 0;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.priority-step .discovery-controls {
+  margin-top: 16px;
+}
+.priority-stage .discovery-visual {
+  min-height: 360px;
+  padding: 24px;
+}
+.priority-stage .discovery-visual .motion-scene {
+  max-width: 250px;
+}
+.priority-stage .discovery-visual h3 {
+  font-size: 25px;
+  margin: 10px 0;
+}
+@media (max-width: 700px) {
+  .priority-step .solar-choices {
+    grid-template-columns: 1fr;
+  }
+  .priority-step .solar-choices span {
+    min-height: 48px;
+    padding: 11px 13px;
+  }
+  .solar-start #solar-discovery.priority-step {
+    padding: 22px;
+  }
+  .priority-stage .discovery-visual {
+    min-height: 240px;
+  }
+  .priority-stage .discovery-visual .motion-scene {
+    max-width: 170px;
+  }
+  #solar-options .solar-story-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .solar-lesson-card {
+    padding: 18px;
+  }
+  #solar-options .learning-visual {
+    min-height: 160px;
+  }
+  #solar-options .solar-story-grid article {
+    padding: 0 4px;
+  }
+}
+.larger-text .priority-step .solar-choices span {
+  font-size: 19px;
+}
+.larger-text .priority-step #solar-guidance {
+  font-size: 18px;
+}
+.priority-step .solar-location > small {
+  display: block;
+  font-size: 12px;
+  line-height: 1.35;
+}
+/* About narrative plays once on entry, reserving every line's final footprint. */
+.company-waiting {
+  opacity: 0;
+}
+.company-stream {
+  position: relative;
+}
+.company-stream-reserve {
+  display: block;
+  visibility: hidden;
+}
+.company-stream-ink {
+  position: absolute;
+  inset: 0;
+  white-space: normal;
+}
+.company-stream.is-streaming .company-stream-ink:after {
+  content: '▏';
+  color: #9a7342;
+  animation: typing-caret 0.8s steps(1) infinite;
+}
+.company-divisions strong.company-stream,
+.company-divisions span.company-stream {
+  display: block;
+}
+.company-divisions .company-stream-reserve,
+.company-divisions .company-stream-ink {
+  font: inherit;
+  color: inherit;
+}
+@media (prefers-reduced-motion: reduce) {
+  .company-waiting {
+    opacity: 1;
+  }
+  .company-stream.is-streaming .company-stream-ink:after {
+    animation: none;
+  }
+}
+.intro-waiting {
+  opacity: 0;
+}
+.landing-invitation .intro-step {
+  display: inline-block;
+}
+.banner-hook {
+  font-size: clamp(14px, 0.85vw, 20px);
+  line-height: 1.55;
+  color: #eee9da;
+  margin-top: 14px;
+  min-height: 3.1em;
+  max-width: 290px;
+  text-shadow: 0 1px 4px #0009;
+}
+.company-divisions > a {
+  padding: 17px 20px;
+  border: 1px solid #cdd5c5;
+  border-radius: 10px;
+  background: #fbfaf4;
+  margin-top: 12px;
+  box-shadow: 0 4px 15px #203d2b05;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    transform 0.2s;
+}
+.company-divisions > a:last-child {
+  border: 1px solid #cdd5c5;
+}
+.company-divisions > a:hover {
+  background: #e8eee1;
+  border-color: #7c9271;
+  transform: translateX(4px);
+}
+.company-divisions > a strong {
+  font-size: clamp(17px, 1.15vw, 23px);
+}
+.company-divisions > a span {
+  font-size: 15px;
+}
+.company-divisions h3 {
+  margin-bottom: 18px;
+}
+@media (min-width: 901px) and (hover: hover) {
+  .banner-title-row {
+    min-height: 2.3em;
+    align-items: start;
+  }
+  .banner-title-row h2 {
+    min-height: 2.3em;
+    display: flex;
+    align-items: flex-start;
+  }
+  .banner-content {
+    bottom: 105px;
+  }
+  .banner-rest-hint {
+    margin-top: 14px;
+  }
+  .is-open .banner-hook {
+    min-height: 0;
+    max-width: 460px;
+  }
+  .has-expanded .division-banner:not(.is-open) .banner-hook {
+    font-size: 13px;
+    min-height: 4.65em;
+  }
+  .is-open .banner-title-row h2 {
+    min-height: 0;
+  }
+  .is-open .banner-title-row {
+    min-height: 0;
+  }
+}
+@media (max-width: 900px), (hover: none) {
+  .banner-hook {
+    min-height: 0;
+    max-width: 480px;
+    margin-top: 12px;
+  }
+  .landing-invitation .intro-step {
+    display: inline-block;
+  }
+  .landing-intro p {
+    max-width: 440px;
+  }
+}
+@media (max-width: 550px) {
+  .landing-invitation .intro-step {
+    display: block;
+  }
+  .division-landing {
+    padding-top: 420px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro-waiting {
+    opacity: 1;
+  }
+  .company-divisions > a {
+    transition: none;
+  }
+}
+/* Composited focus hand-off replaces the landing typing loop. */
+.landing-focus-statement {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: min(760px, 100%);
+  font-family: var(--display);
+  font-size: clamp(34px, 3.6vw, 68px);
+  font-weight: 650;
+  line-height: 1.16;
+  letter-spacing: -0.035em;
+  color: #fff5df;
+  text-shadow: 0 2px 6px #0009;
+  transform-origin: top left;
+  pointer-events: none;
+}
+#landing-title {
+  transform-origin: left center;
+}
+.banner-company-link .brand-logo {
+  animation-iteration-count: 2;
+}
+.previous-page-snapshot > .previous-page-content {
+  animation: none;
+}
+.landing-intro:before {
+  filter: none;
+  background: linear-gradient(90deg, #04130f85, transparent);
+}
+@media (max-width: 600px) {
+  .landing-focus-statement {
+    font-size: 32px;
+    max-width: 330px;
+  }
+}
+/* Continuous typography hierarchy: every message remains visible throughout. */
+.landing-intro:before {
+  inset: -65px -130px -85px -80px;
+  background: radial-gradient(
+    ellipse at 35% 45%,
+    #04130f80 0%,
+    #04130f44 35%,
+    #04130f18 58%,
+    transparent 76%
+  );
+  filter: none;
+  border-radius: 50%;
+}
+.landing-intro[data-emphasis] {
+  max-width: min(850px, calc(100vw - 80px));
+}
+.landing-intro[data-emphasis] :is(.landing-kicker, h1, .landing-invitation) {
+  transform-origin: top left;
+  opacity: 1;
+}
+.landing-intro[data-emphasis='promise'] .landing-kicker {
+  font-size: clamp(30px, 3.2vw, 52px);
+  font-weight: 750;
+  line-height: 1.13;
+  max-width: 760px;
+  letter-spacing: -0.03em;
+}
+.landing-intro[data-emphasis='promise'] h1 {
+  font-size: clamp(22px, 2vw, 31px);
+  font-weight: 500;
+  margin: 20px 0 13px;
+  line-height: 1.2;
+}
+.landing-intro[data-emphasis='promise'] h1 br {
+  display: none;
+}
+.landing-intro[data-emphasis='promise'] .landing-invitation {
+  font-size: 16px;
+  font-weight: 450;
+}
+.landing-intro[data-emphasis='question'] .landing-kicker,
+.landing-intro[data-emphasis='invitation'] .landing-kicker {
+  font-size: clamp(17px, 1.3vw, 26px);
+  line-height: 1.5;
+  max-width: 850px;
+}
+.landing-intro[data-emphasis='invitation'] h1 {
+  font-size: clamp(25px, 2.4vw, 36px);
+  font-weight: 550;
+  margin: 18px 0;
+  line-height: 1.2;
+}
+.landing-intro[data-emphasis='invitation'] h1 br {
+  display: none;
+}
+.landing-intro[data-emphasis='invitation'] .landing-invitation {
+  font-size: clamp(24px, 2.8vw, 43px);
+  font-weight: 750;
+  line-height: 1.2;
+  max-width: 650px;
+}
+.landing-intro[data-emphasis='invitation'] .intro-step {
+  display: block;
+}
+@media (max-width: 550px) {
+  .landing-intro[data-emphasis] {
+    max-width: calc(100vw - 48px);
+  }
+  .landing-intro[data-emphasis='promise'] .landing-kicker {
+    font-size: 29px;
+  }
+  .landing-intro[data-emphasis='promise'] h1 {
+    font-size: 21px;
+  }
+  .landing-intro[data-emphasis='invitation'] .landing-invitation {
+    font-size: 27px;
+  }
+  .landing-intro:before {
+    inset: -50px -24px -70px;
+  }
+}
+.landing-intro[data-emphasis] .landing-invitation {
+  font-size: clamp(19px, 1.5vw, 28px);
+  font-weight: 450;
+  line-height: 1.6;
+}
+.landing-intro[data-emphasis='question'] .landing-kicker {
+  font-weight: 500;
+}
+.landing-intro[data-emphasis='question'] h1 {
+  font-weight: 750;
+}
+.landing-company {
+  position: relative;
+}
+.company-pending {
+  position: absolute;
+  top: 140px;
+  left: 72%;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+}
+.company-pending i {
+  width: 7px;
+  height: 7px;
+  background: #84917b;
+  border-radius: 50%;
+  animation: company-dot 1.3s ease-in-out infinite;
+}
+.company-pending i:nth-child(2) {
+  animation-delay: 0.16s;
+}
+.company-pending i:nth-child(3) {
+  animation-delay: 0.32s;
+}
+@keyframes company-dot {
+  0%,
+  70%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  35% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+}
+@media (max-width: 900px) {
+  .company-pending {
+    position: relative;
+    top: auto;
+    left: auto;
+    grid-column: 1;
+    min-height: 40px;
+  }
+  .company-pending + .company-divisions {
+    margin-top: -95px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .company-pending {
+    display: none;
+  }
+  .company-pending i {
+    animation: none;
+  }
+}
+@media (max-width: 900px) {
+  .company-pending {
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    min-height: 36px;
+    transform: translateX(-50%);
+  }
+  .company-pending + .company-divisions {
+    margin-top: 0;
+  }
+}
+/* The same live sentences exchange typography; no scaled copies or opacity handoff. */
+.landing-intro[data-emphasis] {
+  width: min(760px, calc(100vw - 84px));
+  max-width: none;
+}
+.landing-intro[data-emphasis] .landing-kicker {
+  font-family: var(--display);
+  width: 100%;
+  max-width: none;
+  letter-spacing: -0.025em;
+}
+.landing-intro[data-emphasis='promise'] .landing-kicker {
+  font-size: clamp(32px, 3.4vw, 58px);
+  font-weight: 800;
+  line-height: 1.15;
+  color: #fff;
+}
+.landing-intro[data-emphasis='promise'] h1 {
+  font-size: clamp(21px, 1.75vw, 29px);
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  margin: 22px 0 15px;
+  color: #f3f3ed;
+}
+.landing-intro[data-emphasis='question'] .landing-kicker {
+  font-size: clamp(17px, 1.3vw, 26px);
+  font-weight: 450;
+  line-height: 1.5;
+  color: #e4cfb3;
+}
+.landing-intro[data-emphasis='question'] h1 {
+  font-size: clamp(48px, 5.7vw, 82px);
+  font-weight: 750;
+  line-height: 1.03;
+  letter-spacing: -0.045em;
+  margin: 22px 0 17px;
+  color: #fff;
+}
+.landing-intro[data-emphasis] h1 {
+  width: 100%;
+  max-width: none;
+}
+.landing-intro[data-emphasis] h1 br {
+  display: none;
+}
+.landing-intro[data-emphasis] .landing-invitation {
+  font-weight: 450;
+}
+@media (min-width: 1800px) {
+  .landing-intro[data-emphasis] {
+    width: 1100px;
+  }
+  .landing-intro[data-emphasis='question'] h1 {
+    font-size: clamp(82px, 5vw, 128px);
+  }
+}
+@media (max-width: 900px) {
+  .landing-intro[data-emphasis] {
+    width: calc(100vw - 50px);
+  }
+  .landing-intro[data-emphasis='question'] h1 {
+    font-size: clamp(36px, 6.5vw, 54px);
+  }
+}
+@media (max-width: 550px) {
+  .landing-intro[data-emphasis] {
+    width: calc(100vw - 46px);
+  }
+  .landing-intro[data-emphasis='promise'] .landing-kicker {
+    font-size: 29px;
+  }
+  .landing-intro[data-emphasis='promise'] h1 {
+    font-size: 20px;
+  }
+  .landing-intro[data-emphasis='question'] h1 {
+    font-size: 36px;
+  }
+}
+.landing-intro[data-emphasis] .intro-waiting {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-intro[data-emphasis] .intro-waiting {
+    opacity: 1;
+  }
+}
+/* A stronger subtitle, tucked closer to the question after the handoff. */
+.landing-intro[data-emphasis='question'] .landing-kicker {
+  font-size: clamp(18px, 1.4vw, 28px);
+  font-weight: 600;
+  line-height: 1.35;
+}
+.landing-intro[data-emphasis='question'] h1 {
+  margin-top: 12px;
+}
+@media (max-width: 550px) {
+  .landing-intro[data-emphasis='question'] .landing-kicker {
+    font-size: 18px;
+  }
+}
+.landing-intro[data-emphasis='question'] .landing-kicker {
+  margin-top: 10px;
+}
+/* Opening statement commands the headline area, then rises into its subtitle position. */
+.landing-intro[data-emphasis] {
+  width: 70vw;
+  max-width: 70vw;
+}
+.landing-intro[data-emphasis='promise'] {
+  top: clamp(185px, 26svh, 310px);
+}
+.landing-intro[data-emphasis='promise'] .landing-kicker {
+  font-size: clamp(48px, 5.7vw, 82px);
+  font-weight: 800;
+  line-height: 1.03;
+  letter-spacing: -0.045em;
+}
+.landing-intro[data-emphasis='question'] h1 {
+  max-width: 760px;
+}
+@media (min-width: 1800px) {
+  .landing-intro[data-emphasis='promise'] .landing-kicker {
+    font-size: clamp(82px, 5vw, 128px);
+  }
+  .landing-intro[data-emphasis='question'] h1 {
+    max-width: 1100px;
+  }
+}
+@media (max-width: 900px), (hover: none) {
+  .landing-intro[data-emphasis] {
+    width: calc(100vw - 50px);
+    max-width: none;
+  }
+  .landing-intro[data-emphasis='promise'] {
+    top: 150px;
+  }
+  .landing-intro[data-emphasis='promise'] .landing-kicker {
+    font-size: clamp(36px, 6.5vw, 54px);
+  }
+  .division-landing {
+    padding-top: 470px;
+  }
+}
+@media (max-width: 550px) {
+  .landing-intro[data-emphasis] {
+    width: calc(100vw - 46px);
+  }
+  .landing-intro[data-emphasis='promise'] {
+    top: 150px;
+  }
+  .landing-intro[data-emphasis='promise'] .landing-kicker {
+    font-size: 36px;
+  }
+  .division-landing {
+    padding-top: 490px;
+  }
+}
+
+/* Let the intro finish before any banner expands or navigation transition begins. */
+.division-landing.intro-playing .banner-trigger,
+.division-landing.intro-playing .banner-quote {
+  pointer-events: none;
+}
+.division-landing.intro-playing .banner-trigger {
+  cursor: default;
+}
+html.intro-scroll-locked {
+  overflow: hidden;
+  overscroll-behavior: none;
+  scrollbar-gutter: stable;
+}
+body.intro-scroll-locked {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+.intro-playing .banner-content,
+.intro-scroll-locked .banner-nav-right,
+.intro-scroll-locked .company-scroll-cue,
+.intro-playing .landing-bottom {
+  opacity: 0 !important;
+  visibility: hidden;
+}
+.intro-scroll-locked .back-to-top {
+  display: none;
+}
+.skip-intro {
+  position: fixed;
+  right: 25px;
+  bottom: 27px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 48px;
+  padding: 12px 20px;
+  background: #0d1d16bd;
+  border: 1px solid #ffffff80;
+  color: #fff;
+  font-size: 15px;
+  line-height: 1.3;
+  cursor: pointer;
+  box-shadow: 0 3px 16px #0002;
+}
+.skip-intro:hover {
+  background: #f1eee2;
+  color: #182522;
+}
+.skip-intro:focus-visible {
+  outline: 3px solid #e3bd83;
+  outline-offset: 4px;
+}
+.intro-typing {
+  position: relative;
+}
+.intro-type-reserve {
+  display: block;
+  visibility: hidden;
+}
+.intro-type-ink {
+  position: absolute;
+  inset: 0;
+}
+.intro-type-ink:after {
+  content: '▏';
+  /* Keep the cursor out of text flow so it cannot push the last word onto another line. */
+  position: absolute;
+  margin-left: 0.06em;
+  color: #e7cca3;
+  animation: typing-caret 0.8s steps(1) infinite;
+}
+@media (max-width: 600px) {
+  .skip-intro {
+    right: 16px;
+    bottom: 20px;
+    font-size: 14px;
+    padding: 11px 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro-type-ink:after {
+    animation: none;
+  }
+}
+@media (min-width: 901px) and (hover: hover) {
+  .banner-number {
+    white-space: normal;
+    min-height: 2.8em;
+    align-items: flex-start;
+    line-height: 1.4;
+  }
+  .banner-number > span {
+    margin-top: 0.6em;
+    flex-shrink: 0;
+  }
+  .banner-title-row h2 {
+    font-size: clamp(24px, 2.15vw, 44px);
+  }
+  .is-open .banner-title-row h2 {
+    font-size: clamp(34px, 3.15vw, 58px);
+  }
+}
+
+/* Fixed gradients crossfade through opacity instead of switching backgrounds. */
+@media(min-width:901px) {
+  .division-landing .division-banner > .banner-shade,
+  .division-landing.has-expanded .division-banner > .banner-shade,
+  .division-landing.has-expanded .division-banner.is-open > .banner-shade {
+    background: linear-gradient(0deg,#091712ed 0%,#091712bd 30%,#09171238 65%,#09171240 100%);
+    opacity: 1;
+    transition: opacity .7s cubic-bezier(.22,.7,.2,1);
+  }
+  .division-landing.has-expanded .division-banner.is-open > .banner-shade { opacity: .72; }
+  .division-banner > .banner-shade::after {
+    content: ''; position: absolute; inset: 0; background: #091711;
+    opacity: 0; transition: opacity .7s cubic-bezier(.22,.7,.2,1);
+  }
+  .division-landing.has-expanded .division-banner:not(.is-open) > .banner-shade::after { opacity: .3; }
+  .division-landing .landing-intro { transition: opacity .65s ease,transform .65s ease; }
+  .division-landing .division-banner { border-right: 0; clip-path: inset(0); }
+  .division-landing .banner-background { overflow: hidden; }
+  .division-landing .banner-background > img,
+  .division-landing.has-expanded .division-banner:not(.is-open) .banner-background > img {
+    display: block; backface-visibility: hidden;
+    filter: saturate(.8);
+    transition: transform .9s cubic-bezier(.22,.7,.2,1);
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  .division-landing .banner-shade,.division-landing .banner-shade::after,
+  .division-landing .landing-intro { transition: none !important; }
+}
+/* Keep color constant while isolating expansion behavior. */
+@media(min-width:901px) {
+  .division-landing .banner-background > img,
+  .division-landing.has-expanded .division-banner:not(.is-open) .banner-background > img,
+  .division-landing.has-expanded .division-banner.is-open .banner-background > img {
+    filter: none;
+    transition: transform .9s cubic-bezier(.22,.7,.2,1);
+  }
+}
+@media(prefers-reduced-motion:reduce) { .division-landing .banner-background > img { transition: none !important; } }
+/* Fixed grayscale base and color overlay use identical image geometry. */
+@media(min-width:901px) {
+  .division-landing .banner-background { isolation: isolate; }
+  .division-landing .banner-background > img.banner-grayscale-base,
+  .division-landing.has-expanded .division-banner .banner-background > img.banner-grayscale-base { position: absolute; inset: 0; z-index: 0; filter: grayscale(1); opacity: 1; }
+  .division-landing .banner-background > img.banner-color-layer { position: absolute; inset: 0; z-index: 1; filter: none; opacity: 1; transition: transform .9s cubic-bezier(.22,.7,.2,1), opacity .6s ease; }
+  .division-landing.has-expanded .division-banner:not(.is-open) .banner-background > img.banner-color-layer { opacity: 0; }
+  .division-landing.has-expanded .division-banner.is-open .banner-background > img.banner-color-layer { opacity: 1; }
+}
+@media(max-width:900px) { .banner-grayscale-base { display: none; } }
+.division-curtain .banner-grayscale-base { display: none; }
+@media(prefers-reduced-motion:reduce) { .division-landing .banner-background > img.banner-color-layer { transition: none; } }
+/* High-pixel-count displays: retain expansion and crossfade without concurrent zoom. */
+@media (min-width:2560px), (min-width:1200px) and (min-resolution:2dppx) {
+  .division-landing .division-banner .banner-background > img,
+  .division-landing.has-expanded .division-banner .banner-background > img { transform: none; }
+}
+.intro-skip-hint { position: absolute; bottom: 84px; right: 32px; z-index: 20; color: #f2eee4; font-size: 13px; letter-spacing: .02em; pointer-events: none; }
+.division-landing.intro-playing { touch-action: manipulation; }
+@media(max-width:650px) { .intro-skip-hint { right: 20px; font-size: 12px; } }
+#company .company-intro > p { text-align: left; }
+/* Variable-font emphasis follows the selected banner and eases back at rest. */
+.division-landing .banner-title-row h2 { font-weight: 500; transition: font-size .5s ease,font-weight .6s cubic-bezier(.22,.7,.2,1); }
+.division-landing .division-banner.is-open .banner-title-row h2 { font-weight: 750; }
+@media(prefers-reduced-motion:reduce) { .division-landing .banner-title-row h2 { transition: none; } }
+/* A fitted label plate appears only on the selected division. */
+.division-landing .banner-number { position: relative; display: inline-flex; width: fit-content; isolation: isolate; transition: color .35s ease; }
+.division-landing .banner-number::before { content: ''; position: absolute; inset: -6px -8px; z-index: -1; background: #e3c6a1; opacity: 0; transition: opacity .35s ease; pointer-events: none; }
+.division-landing .division-banner.is-open .banner-number { color: #193a2b; }
+.division-landing .division-banner.is-open .banner-number::before { opacity: 1; }
+.division-landing .division-banner.is-open .banner-number span { background: #193a2b80; }
+@media(prefers-reduced-motion:reduce) { .division-landing .banner-number,.division-landing .banner-number::before { transition: none; } }
+/* Division-label highlight echoes the rounded About us control. */
+.division-landing .banner-number::before { border-radius: 999px; inset: -7px -12px; }
+/* Frosted label: match the About us pill rather than a solid gold badge. */
+.division-landing .banner-number::before { background: #10251b99; border: 1px solid #ffffff85; border-radius: 25px; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); box-shadow: none; }
+.division-landing .division-banner.is-open .banner-number { color: #fff; }
+.division-landing .division-banner.is-open .banner-number span { background: #ffffff85; }
+/* Center the division label within its black glass capsule. */
+.division-landing .banner-number { align-items: center; min-height: 24px; line-height: 24px; }
+.division-landing .banner-number::before { inset: -6px -12px; background: #000000a6; }
+.division-landing .division-banner.is-open .banner-number { color: #fff; }
+.division-landing .banner-number > span { display: block; flex: 0 0 20px; align-self: center; height: 1px; margin: 0; padding: 0; line-height: 0; transform: none; }
+.division-landing .banner-number::before { background: rgb(0 0 0 / 90%); }
+/* Subtle glass label keeps emphasis on the division headline. */
+.division-landing .banner-number::before { inset: -4px -10px; background: rgb(10 22 17 / 35%); border-color: rgb(255 255 255 / 28%); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+.division-landing .division-banner.is-open .banner-number { color: #f0f2eb; font-weight: 400; }
+.division-landing .division-banner.is-open .banner-number > span { background: rgb(255 255 255 / 45%); }
+.discovery-stage > .discovery-photo-visual { position: relative; overflow: hidden; padding: 0; display: flex; align-items: flex-end; min-height: 380px; isolation: isolate; }
+.discovery-story-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.discovery-photo-shade { position: absolute; inset: 0; background: linear-gradient(0deg,#0b2417f2 0%,#10291ba8 42%,#10291b00 80%); z-index: 1; }
+.discovery-photo-copy { position: relative; z-index: 2; text-align: left; color: #fffdf3; padding: clamp(24px,3vw,38px); width: 100%; }
+.discovery-photo-copy > span { font-size: 10px; letter-spacing: .14em; color: #eadbb6; }
+.discovery-photo-visual .discovery-photo-copy h3 { color: #fffdf3; font-size: clamp(25px,2.4vw,36px); line-height: 1.2; margin: 18px 0 14px; }
+.discovery-photo-visual .discovery-photo-copy p { color: #e0e9dc; font-size: 16px; line-height: 1.6; margin: 0 0 22px; }
+.discovery-photo-copy small { color: #c7d2c2; font-size: 10px; line-height: 1.5; display: block; }
+@media(max-width:700px) { .discovery-stage > .discovery-photo-visual { min-height: 300px; } }
+
+/* Photographic solar explanations share a steady frame across all slides. */
+#solar-options .learning-visual { position: relative; overflow: hidden; padding: 0; align-self: stretch; min-height: 220px; }
+#solar-options .learning-visual > img { display: block; width: 100%; height: 100%; position: absolute; inset: 0; object-fit: cover; }
+#solar-options .learning-visual > small { position: absolute; bottom: 10px; left: 12px; color: #fff; background: #152c25b8; padding: 3px 7px; font-size: 10px; }
+@media(max-width:600px) { #solar-options .learning-visual { min-height: 210px; } }
+
+/* Keep the story subject above the text overlay in the taller discovery frame. */
+.discovery-photo-visual[data-story="Residential"] .discovery-story-photo { object-position: 42% center; }
+.discovery-photo-visual[data-story="Commercial"] .discovery-story-photo { object-position: 48% center; }
+.discovery-photo-visual[data-story="Lower electricity costs"] .discovery-story-photo { object-position: 63% center; }
+.discovery-photo-visual[data-story="Energy after sunset"] .discovery-story-photo { object-position: 42% center; }
+.discovery-photo-visual[data-story="Backup for essentials"] .discovery-story-photo { object-position: 46% center; }
+
+.discovery-stage > .discovery-photo-visual { justify-content: flex-end; }
+
+#solar-options .learning-visual[data-lesson="0"] > img { object-position: center 78%; }
+#solar-options .learning-visual[data-lesson="1"] > img { object-position: center 53%; }
+#solar-options .learning-visual[data-lesson="2"] > img { object-position: 43% center; }
+.skip-intro { overflow: hidden; }
+.skip-intro-progress { position: absolute; left: 0; bottom: 0; width: 100%; height: 2px; background: #e3bd83; transform: scaleX(0); transform-origin: left; pointer-events: none; }

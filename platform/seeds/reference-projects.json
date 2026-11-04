@@ -1,0 +1,392 @@
+[
+  {
+    "title": "Acacia Estates rooftop",
+    "location": "Acacia Estates, Taguig City",
+    "sector": "residential",
+    "provider": "SolarNRG",
+    "source": "https://solarnrg.ph/projects/residential/?slideId=residential-acacia-estates-taguig-city",
+    "photoSource": "https://solarnrg.ph/wp-content/uploads/2022/10/Residential-Main_Acacia-Estates-Taguig-City_1.png",
+    "id": "reference-residential-01",
+    "capacity": "1.5 kWp",
+    "system": "Grid-tied rooftop solar",
+    "sample": false,
+    "reference": true,
+    "status": "published",
+    "image": "assets/reference-projects/reference-residential-01.jpg",
+    "description": "1.5 kWp rooftop installation in Acacia Estates, Taguig City. Project location and capacity are listed by SolarNRG.",
+    "projectCost": "₱67,500 — estimate",
+    "roi": "4.2 years simple payback — estimate",
+    "annualMaintenance": "₱675 / year — estimate",
+    "roofType": "Metal roofing — assumed for preview",
+    "engineeringChallenges": "Preview assumption: arrange the array around roof obstructions, keep maintenance access clear, and check mounting loads and cable routes during design.",
+    "clientFeedback": "Preview copy: “The team explained the system clearly and helped us understand our energy savings.” This is not a sourced client testimonial.",
+    "previewAssumptions": "Preview assumptions: installed cost ₱45,000/kWp; annual maintenance 1% of cost. Simple payback uses the displayed savings model less maintenance, excluding financing and tariff changes. Roofing and engineering notes are assumed; feedback is fictional preview copy.",
+    "gallery": [
+      {
+        "src": "assets/reference-projects/reference-residential-01.jpg",
+        "caption": "Acacia Estates rooftop · Photo: SolarNRG",
+        "source": "https://solarnrg.ph/projects/residential/?slideId=residential-acacia-estates-taguig-city"
+      }
+    ]
+  },
+  {
+    "title": "BF Homes rooftop",
+    "location": "BF Homes, Quezon City",
+    "sector": "residential",
+    "provider": "SolarNRG",
+    "source": "https://solarnrg.ph/projects/residential/?slideId=residential-bf-homes-quezon-city",
+    "photoSource": "https://solarnrg.ph/wp-content/uploads/2022/10/Residential-Main_BF-Homes-Quezon-City_1.png",
+    "id": "reference-residential-02",
+    "capacity": "10 kWp",
+    "system": "Grid-tied rooftop solar",
+    "sample": false,
+    "reference": true,
+    "status": "published",
+    "image": "assets/reference-projects/reference-residential-02.jpg",
+    "description": "10 kWp rooftop installation in BF Homes, Quezon City. Project location and capacity are listed by SolarNRG.",
+    "projectCost": "₱450,000 — estimate",
+    "roi": "4.2 years simple payback — estimate",
+    "annualMaintenance": "₱4,500 / year — estimate",
+    "roofType": "Pitched tile roof — inferred from project photo",
+    "engineeringChallenges": "Preview assumption: arrange the array around roof obstructions, keep maintenance access clear, and check mounting loads and cable routes during design.",
+    "clientFeedback": "Preview copy: “The team explained the system clearly and helped us understand our energy savings.” This is not a sourced client testimonial.",
+    "previewAssumptions": "Preview assumptions: installed cost ₱45,000/kWp; annual maintenance 1% of cost. Simple payback uses the displayed savings model less maintenance, excluding financing and tariff changes. Roofing and engineering notes are assumed; feedback is fictional preview copy.",
+    "gallery": [
+      {
+        "src": "assets/reference-projects/reference-residential-02.jpg",
+        "caption": "BF Homes rooftop · Photo: SolarNRG",
+        "source": "https://solarnrg.ph/projects/residential/?slideId=residential-bf-homes-quezon-city"
+      }
+    ]
+  },
+  {
+    "title": "La Vista rooftop",
+    "location": "La Vista, Quezon City",
+    "sector": "residential",
+    "provider": "SolarNRG",
+    "source": "https://solarnrg.ph/projects/residential/?slideId=residential-la-vista-quezon-city",
+    "photoSource": "https://solarnrg.ph/wp-content/uploads/2022/10/La-Vista-.jpg",
+    "id": "reference-residential-03",
+    "capacity": "8 kWp",
+    "system": "Grid-tied rooftop solar",
+    "sample": false,
+    "reference": true,
+    "status": "published",
+    "image": "assets/reference-projects/reference-residential-03.jpg",
+    "description": "8 kWp rooftop installation in La Vista, Quezon City. Project location and capacity are listed by SolarNRG.",
+    "projectCost": "₱360,000 — estimate",
+    "roi": "4.2 years simple payback — estimate",
+    "annualMaintenance": "₱3,600 / year — estimate",
+    "roofType": "Metal roofing — assumed for preview",
+    "engineeringChallenges": "Preview assumption: arrange the array around roof obstructions, keep maintenance access clear, and check mounting loads and cable routes during design.",
+    "clientFeedback": "Preview copy: “The team explained the system clearly and helped us understand our energy savings.” This is not a sourced client testimonial.",
+    "previewAssumptions": "Preview assumptions: installed cost ₱45,000/kWp; annual maintenance 1% of cost. Simple payback uses the displayed savings model less maintenance, excluding financing and tariff changes. Roofing and engineering notes are assumed; feedback is fictional preview copy.",
+    "gallery": [
+      {
+        "src": "assets/reference-projects/reference-residential-03.jpg",
+        "caption": "La Vista rooftop · Photo: SolarNRG",
+        "source": "https://solarnrg.ph/projects/residential/?slideId=residential-la-vista-quezon-city"
+      }
+    ]
+  },
+  {
+    "title": "White Plains rooftop",
+    "location": "White Plains, Quezon City",
+    "sector": "residential",
+    "provider": "SolarNRG",
+    "source": "https://solarnrg.ph/projects/residential/?slideId=residential-white-plains-quezon-city",
+    "photoSource": "https://solarnrg.ph/wp-content/uploads/2022/10/Residential-Main_White-Plains-Quezon-City_1.png",
+    "id": "reference-residential-04",
+    "capacity": "4 kWp",
+    "system": "Grid-tied rooftop solar",
+    "sample": false,
+    "reference": true,
+    "status": "published",
+    "image": "assets/reference-projects/reference-residential-04.jpg",
+    "description": "4 kWp rooftop installation in White Plains, Quezon City. Project location and capacity are listed by SolarNRG.",
+    "projectCost": "₱180,000 — estimate",
+    "roi": "4.2 years simple payback — estimate",
+    "annualMaintenance": "₱1,800 / year — estimate",
+    "roofType": "Metal roofing — assumed for preview",
+    "engineeringChallenges": "Preview assumption: arrange the array around roof obstructions, keep maintenance access clear, and check mounting loads and cable routes during design.",
+    "clientFeedback": "Preview copy: “The team explained the system clearly and helped us understand our energy savings.” This is not a sourced client testimonial.",
+    "previewAssumptions": "Preview assumptions: installed cost ₱45,000/kWp; annual maintenance 1% of cost. Simple payback uses the displayed savings model less maintenance, excluding financing and tariff changes. Roofing and engineering notes are assumed; feedback is fictional preview copy.",
+    "gallery": [
+      {
+        "src": "assets/reference-projects/reference-residential-04.jpg",
+        "caption": "White Plains rooftop · Photo: SolarNRG",
+        "source": "https://solarnrg.ph/projects/residential/?slideId=residential-white-plains-quezon-city"
+      }
+    ]
+  },
+  {
+    "title": "Jollibee",
+    "location": "La Union",
+    "sector": "commercial",
+    "provider": "Solartech Renewable Solutions",
+    "source": "https://www.solartech.ph/projects",
+    "photoSource": "https://static.wixstatic.com/media/b1c290_17071b3dbb8c43a7aed301d81651b6b2~mv2.jpeg",
+    "id": "reference-commercial-01",
+    "capacity": "25 kWp",
+    "system": "Grid-tied rooftop solar",
+    "sample": false,
+    "reference": true,
+    "status": "published",
+    "image": "assets/reference-projects/reference-commercial-01.jpg",
+    "description": "25 kWp rooftop installation in La Union. Project location and capacity are listed by Solartech Renewable Solutions.",
+    "projectCost": "₱900,000 — estimate",
+    "roi": "3.4 years simple payback — estimate",
+    "annualMaintenance": "₱9,000 / year — estimate",
+    "roofType": "Metal roofing — assumed for preview",
+    "engineeringChallenges": "Preview assumption: arrange the array around roof obstructions, keep maintenance access clear, and check mounting loads and cable routes during design.",
+    "clientFeedback": "Preview copy: “The team explained the system clearly and helped us understand our energy savings.” This is not a sourced client testimonial.",
+    "previewAssumptions": "Preview assumptions: installed cost ₱36,000/kWp; annual maintenance 1% of cost. Simple payback uses the displayed savings model less maintenance, excluding financing and tariff changes. Roofing and engineering notes are assumed; feedback is fictional preview copy.",
+    "gallery": [
+      {
+        "src": "assets/reference-projects/reference-commercial-01.jpg",
+        "caption": "Jollibee · Photo: Solartech Renewable Solutions",
+        "source": "https://www.solartech.ph/projects"
+      }
+    ]
+  },
+  {
+    "title": "KFC",
+    "location": "Dinalupihan, Bataan",
+    "sector": "commercial",
+    "provider": "Solartech Renewable Solutions",
+    "source": "https://www.solartech.ph/projects",
+    "photoSource": "https://static.wixstatic.com/media/b1c290_6a651f9121e249c9a9680d6d86fd8620~mv2.jpeg",
+    "id": "reference-commercial-02",
+    "capacity": "25 kWp",
+    "system": "Grid-tied rooftop solar",
+    "sample": false,
+    "reference": true,
+    "status": "published",
+    "image": "assets/reference-projects/reference-commercial-02.jpg",
+    "description": "25 kWp rooftop installation in Dinalupihan, Bataan. Project location and capacity are listed by Solartech Renewable Solutions.",
+    "projectCost": "₱900,000 — estimate",
+    "roi": "3.4 years simple payback — estimate",
+    "annualMaintenance": "₱9,000 / year — estimate",
+    "roofType": "Metal roofing — assumed for preview",
+    "engineeringChallenges": "Preview assumption: arrange the array around roof obstructions, keep maintenance access clear, and check mounting loads and cable routes during design.",
+    "clientFeedback": "Preview copy: “The team explained the system clearly and helped us understand our energy savings.” This is not a sourced client testimonial.",
+    "previewAssumptions": "Preview assumptions: installed cost ₱36,000/kWp; annual maintenance 1% of cost. Simple payback uses the displayed savings model less maintenance, excluding financing and tariff changes. Roofing and engineering notes are assumed; feedback is fictional preview copy.",
+    "gallery": [
+      {
+        "src": "assets/reference-projects/reference-commercial-02.jpg",
+        "caption": "KFC · Photo: Solartech Renewable Solutions",
+        "source": "https://www.solartech.ph/projects"
+      }
+    ]
+  },
+  {
+    "title": "Ford Imus",
+    "location": "Imus, Cavite",
+    "sector": "commercial",
+    "provider": "Solartech Renewable Solutions",
+    "source": "https://www.solartech.ph/projects",
+    "photoSource": "https://static.wixstatic.com/media/b1c290_9cb4b7ebdf174e52b50b2c85bb4d443d~mv2.jpeg",
+    "id": "reference-commercial-03",
+    "capacity": "50 kWp",
+    "system": "Grid-tied rooftop solar",
+    "sample": false,
+    "reference": true,
+    "status": "published",
+    "image": "assets/reference-projects/reference-commercial-03.jpg",
+    "description": "50 kWp rooftop installation in Imus, Cavite. Project location and capacity are listed by Solartech Renewable Solutions.",
+    "projectCost": "₱1,800,000 — estimate",
+    "roi": "3.4 years simple payback — estimate",
+    "annualMaintenance": "₱18,000 / year — estimate",
+    "roofType": "Metal roofing — assumed for preview",
+    "engineeringChallenges": "Preview assumption: arrange the array around roof obstructions, keep maintenance access clear, and check mounting loads and cable routes during design.",
+    "clientFeedback": "Preview copy: “The team explained the system clearly and helped us understand our energy savings.” This is not a sourced client testimonial.",
+    "previewAssumptions": "Preview assumptions: installed cost ₱36,000/kWp; annual maintenance 1% of cost. Simple payback uses the displayed savings model less maintenance, excluding financing and tariff changes. Roofing and engineering notes are assumed; feedback is fictional preview copy.",
+    "gallery": [
+      {
+        "src": "assets/reference-projects/reference-commercial-03.jpg",
+        "caption": "Ford Imus · Photo: Solartech Renewable Solutions",
+        "source": "https://www.solartech.ph/projects"
+      }
+    ]
+  },
+  {
+    "title": "Ford Calamba",
+    "location": "Calamba, Laguna",
+    "sector": "commercial",
+    "provider": "Solartech Renewable Solutions",
+    "source": "https://www.solartech.ph/projects",
+    "photoSource": "https://static.wixstatic.com/media/b1c290_080342732e6a4214a2ab3713a9cd84a3~mv2.jpeg",
+    "id": "reference-commercial-04",
+    "capacity": "100 kWp",
+    "system": "Grid-tied rooftop solar",
+    "sample": false,
+    "reference": true,
+    "status": "published",
+    "image": "assets/reference-projects/reference-commercial-04.jpg",
+    "description": "100 kWp rooftop installation in Calamba, Laguna. Project location and capacity are listed by Solartech Renewable Solutions.",
+    "projectCost": "₱3,600,000 — estimate",
+    "roi": "3.4 years simple payback — estimate",
+    "annualMaintenance": "₱36,000 / year — estimate",
+    "roofType": "Metal roofing — assumed for preview",
+    "engineeringChallenges": "Preview assumption: arrange the array around roof obstructions, keep maintenance access clear, and check mounting loads and cable routes during design.",
+    "clientFeedback": "Preview copy: “The team explained the system clearly and helped us understand our energy savings.” This is not a sourced client testimonial.",
+    "previewAssumptions": "Preview assumptions: installed cost ₱36,000/kWp; annual maintenance 1% of cost. Simple payback uses the displayed savings model less maintenance, excluding financing and tariff changes. Roofing and engineering notes are assumed; feedback is fictional preview copy.",
+    "gallery": [
+      {
+        "src": "assets/reference-projects/reference-commercial-04.jpg",
+        "caption": "Ford Calamba · Photo: Solartech Renewable Solutions",
+        "source": "https://www.solartech.ph/projects"
+      }
+    ]
+  },
+  {
+    "title": "Honda Cars",
+    "location": "Batangas City",
+    "sector": "commercial",
+    "provider": "Solartech Renewable Solutions",
+    "source": "https://www.solartech.ph/projects",
+    "photoSource": "https://static.wixstatic.com/media/b1c290_e38aef93aba5495583292d1f520bad75~mv2.jpeg",
+    "id": "reference-commercial-05",
+    "capacity": "100 kWp",
+    "system": "Grid-tied rooftop solar",
+    "sample": false,
+    "reference": true,
+    "status": "published",
+    "image": "assets/reference-projects/reference-commercial-05.jpg",
+    "description": "100 kWp rooftop installation in Batangas City. Project location and capacity are listed by Solartech Renewable Solutions.",
+    "projectCost": "₱3,600,000 — estimate",
+    "roi": "3.4 years simple payback — estimate",
+    "annualMaintenance": "₱36,000 / year — estimate",
+    "roofType": "Metal roofing — assumed for preview",
+    "engineeringChallenges": "Preview assumption: arrange the array around roof obstructions, keep maintenance access clear, and check mounting loads and cable routes during design.",
+    "clientFeedback": "Preview copy: “The team explained the system clearly and helped us understand our energy savings.” This is not a sourced client testimonial.",
+    "previewAssumptions": "Preview assumptions: installed cost ₱36,000/kWp; annual maintenance 1% of cost. Simple payback uses the displayed savings model less maintenance, excluding financing and tariff changes. Roofing and engineering notes are assumed; feedback is fictional preview copy.",
+    "gallery": [
+      {
+        "src": "assets/reference-projects/reference-commercial-05.jpg",
+        "caption": "Honda Cars · Photo: Solartech Renewable Solutions",
+        "source": "https://www.solartech.ph/projects"
+      }
+    ]
+  },
+  {
+    "title": "Jecson Medical Center",
+    "location": "Dagupan City",
+    "sector": "commercial",
+    "provider": "Solartech Renewable Solutions",
+    "source": "https://www.solartech.ph/projects",
+    "photoSource": "https://static.wixstatic.com/media/b1c290_7b64cedcdc904905a64ea22cf5596d8d~mv2.jpeg",
+    "id": "reference-commercial-06",
+    "capacity": "100 kWp",
+    "system": "Grid-tied rooftop solar",
+    "sample": false,
+    "reference": true,
+    "status": "published",
+    "image": "assets/reference-projects/reference-commercial-06.jpg",
+    "description": "100 kWp rooftop installation in Dagupan City. Project location and capacity are listed by Solartech Renewable Solutions.",
+    "projectCost": "₱3,600,000 — estimate",
+    "roi": "3.4 years simple payback — estimate",
+    "annualMaintenance": "₱36,000 / year — estimate",
+    "roofType": "Metal roofing — assumed for preview",
+    "engineeringChallenges": "Preview assumption: arrange the array around roof obstructions, keep maintenance access clear, and check mounting loads and cable routes during design.",
+    "clientFeedback": "Preview copy: “The team explained the system clearly and helped us understand our energy savings.” This is not a sourced client testimonial.",
+    "previewAssumptions": "Preview assumptions: installed cost ₱36,000/kWp; annual maintenance 1% of cost. Simple payback uses the displayed savings model less maintenance, excluding financing and tariff changes. Roofing and engineering notes are assumed; feedback is fictional preview copy.",
+    "gallery": [
+      {
+        "src": "assets/reference-projects/reference-commercial-06.jpg",
+        "caption": "Jecson Medical Center · Photo: Solartech Renewable Solutions",
+        "source": "https://www.solartech.ph/projects"
+      }
+    ]
+  },
+  {
+    "title": "Mega Fishing Corporation (Mega Sardines)",
+    "location": "Talisayan, Zamboanga City",
+    "sector": "industrial",
+    "provider": "Solartech Renewable Solutions",
+    "source": "https://www.solartech.ph/projects",
+    "photoSource": "https://static.wixstatic.com/media/b1c290_451c1ddbe8824d1db9897a8dab63d177~mv2.jpg",
+    "id": "reference-industrial-01",
+    "capacity": "1000 kWp",
+    "system": "Grid-tied rooftop solar",
+    "sample": false,
+    "reference": true,
+    "status": "published",
+    "image": "assets/reference-projects/reference-industrial-01.jpg",
+    "description": "1000 kWp rooftop installation in Talisayan, Zamboanga City. Project location and capacity are listed by Solartech Renewable Solutions.",
+    "projectCost": "₱32,000,000 — estimate",
+    "roi": "3.0 years simple payback — estimate",
+    "annualMaintenance": "₱320,000 / year — estimate",
+    "roofType": "Metal roofing — assumed for preview",
+    "engineeringChallenges": "Preview assumption: arrange the array around roof obstructions, keep maintenance access clear, and check mounting loads and cable routes during design.",
+    "clientFeedback": "Preview copy: “The team explained the system clearly and helped us understand our energy savings.” This is not a sourced client testimonial.",
+    "previewAssumptions": "Preview assumptions: installed cost ₱32,000/kWp; annual maintenance 1% of cost. Simple payback uses the displayed savings model less maintenance, excluding financing and tariff changes. Roofing and engineering notes are assumed; feedback is fictional preview copy.",
+    "gallery": [
+      {
+        "src": "assets/reference-projects/reference-industrial-01.jpg",
+        "caption": "Mega Fishing Corporation (Mega Sardines) · Photo: Solartech Renewable Solutions",
+        "source": "https://www.solartech.ph/projects"
+      }
+    ]
+  },
+  {
+    "title": "Mega Prime Foods Inc. (Mega Sardines)",
+    "location": "Sto. Tomas, Batangas",
+    "sector": "industrial",
+    "provider": "Solartech Renewable Solutions",
+    "source": "https://www.solartech.ph/projects",
+    "photoSource": "https://static.wixstatic.com/media/b1c290_8e9981ec9ab7447d82cca31557df68bf~mv2.png",
+    "id": "reference-industrial-02",
+    "capacity": "400 kWp",
+    "system": "Grid-tied rooftop solar",
+    "sample": false,
+    "reference": true,
+    "status": "published",
+    "image": "assets/reference-projects/reference-industrial-02.jpg",
+    "description": "400 kWp rooftop installation in Sto. Tomas, Batangas. Project location and capacity are listed by Solartech Renewable Solutions.",
+    "projectCost": "₱12,800,000 — estimate",
+    "roi": "3.0 years simple payback — estimate",
+    "annualMaintenance": "₱128,000 / year — estimate",
+    "roofType": "Metal roofing — assumed for preview",
+    "engineeringChallenges": "Preview assumption: arrange the array around roof obstructions, keep maintenance access clear, and check mounting loads and cable routes during design.",
+    "clientFeedback": "Preview copy: “The team explained the system clearly and helped us understand our energy savings.” This is not a sourced client testimonial.",
+    "previewAssumptions": "Preview assumptions: installed cost ₱32,000/kWp; annual maintenance 1% of cost. Simple payback uses the displayed savings model less maintenance, excluding financing and tariff changes. Roofing and engineering notes are assumed; feedback is fictional preview copy.",
+    "gallery": [
+      {
+        "src": "assets/reference-projects/reference-industrial-02.jpg",
+        "caption": "Mega Prime Foods Inc. (Mega Sardines) · Photo: Solartech Renewable Solutions",
+        "source": "https://www.solartech.ph/projects"
+      }
+    ]
+  },
+  {
+    "title": "Celebes Coconut Corporation",
+    "location": "Butuan City",
+    "sector": "industrial",
+    "provider": "Solartech Renewable Solutions",
+    "source": "https://www.solartech.ph/projects",
+    "photoSource": "https://static.wixstatic.com/media/b1c290_bbf81e89b54147af932232149841e024~mv2.jpg",
+    "id": "reference-industrial-03",
+    "capacity": "1500 kWp",
+    "system": "Grid-tied rooftop solar",
+    "sample": false,
+    "reference": true,
+    "status": "published",
+    "image": "assets/reference-projects/reference-industrial-03.jpg",
+    "description": "1500 kWp rooftop installation in Butuan City. Project location and capacity are listed by Solartech Renewable Solutions.",
+    "projectCost": "₱48,000,000 — estimate",
+    "roi": "3.0 years simple payback — estimate",
+    "annualMaintenance": "₱480,000 / year — estimate",
+    "roofType": "Metal roofing — assumed for preview",
+    "engineeringChallenges": "Preview assumption: arrange the array around roof obstructions, keep maintenance access clear, and check mounting loads and cable routes during design.",
+    "clientFeedback": "Preview copy: “The team explained the system clearly and helped us understand our energy savings.” This is not a sourced client testimonial.",
+    "previewAssumptions": "Preview assumptions: installed cost ₱32,000/kWp; annual maintenance 1% of cost. Simple payback uses the displayed savings model less maintenance, excluding financing and tariff changes. Roofing and engineering notes are assumed; feedback is fictional preview copy.",
+    "gallery": [
+      {
+        "src": "assets/reference-projects/reference-industrial-03.jpg",
+        "caption": "Celebes Coconut Corporation · Photo: Solartech Renewable Solutions",
+        "source": "https://www.solartech.ph/projects"
+      }
+    ]
+  }
+]
