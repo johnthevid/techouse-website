@@ -11,11 +11,13 @@ Updated: 4 November 2026.
 - Last website validation: 12 regression groups passed; 13 hover layout comparisons passed; five live pointer activations and exit behavior passed. No animation source/timing changes were made.
 - User reports substantially smoother hover. Exact user-device FPS difference has not been reproduced in automated testing.
 
-## Active task: GitHub setup
+## Active task: repository documentation
 
-Prepared root ignore rules, project instructions and cross-device workflow. Origin is https://github.com/johnthevid/techouse-website.git. Initial local source checkpoint is prepared; no source has been uploaded. Local Git authentication is not configured, and the connected GitHub app currently returns 404 for this repository. Next: user signs in on this laptop, verify private visibility and remote history, then push main without force. Do not enable automatic deployment during this setup.
+GitHub Desktop successfully pushed initial commit `30fffe5` to `johnthevid/techouse-website`; local origin/main records that push and the user confirmed the files on GitHub. The connected GitHub app still returns 404 for this repository, and terminal Git has no usable HTTPS credentials. Use the signed-in GitHub Desktop to push local commits until separate terminal authentication is configured.
 
-The current working source is newer than the original stable archive. Preserve this distinction when creating commits or release tags.
+Expanded README.md with verified features, limitations, local setup, dependencies, deployment, cross-device workflow and recovery. Added CHANGELOG.md, RELEASES.md and GITHUB_ABOUT.md. No GitHub version tags, GitHub Releases, published packages or automatic deployment have been created. GitHub About metadata is prepared as text and still needs applying in the repository sidebar.
+
+The current working source is newer than the original stable archive. Preserve this distinction when creating commits or release tags. This documentation update changes no website behavior and requires no Cloudflare deployment.
 
 ## Limits and private state
 
