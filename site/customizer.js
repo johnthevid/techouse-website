@@ -89,7 +89,10 @@ window.TechouseContent = (() => {
   async function persist(next) {
     if (window.TechouseAdmin) {
       try {
-        const saved = await window.TechousePlatform.saveContent(next);
+        const saved = await window.TechousePlatform.saveContent({
+          ...next,
+          pages: window.TechouseBoot.pages,
+        });
         data = saved;
         return true;
       } catch (error) {

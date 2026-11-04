@@ -10,7 +10,11 @@ window.TechousePlatform = (() => {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': window.TechouseAdmin.csrf },
         body: JSON.stringify({
-          content: { ...next, posts: window.TechouseBoot.posts },
+          content: {
+            ...next,
+            pages: next.pages ?? window.TechouseBoot.pages,
+            posts: window.TechouseBoot.posts,
+          },
           version: window.TechouseAdmin.version,
         }),
       });

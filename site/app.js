@@ -337,8 +337,13 @@ function postCard(p) {
 }
 function divisionPage(id) {
   const d = getDivision(id);
-  return d ? window.TechouseDivisions.page(d, divisions, elevatorArt, arrow) : notFound();
+  if (!d) return notFound();
+  const original = window.TechouseDivisions.page(d, divisions, elevatorArt, arrow);
+  return id === 'construction'
+    ? window.TechousePageBuilder.published(original) || original
+    : original;
 }
+
 function about() {
   return `${breadcrumb('About Techouse')}<section class="container page-hero about-introduction"><div class="eyebrow">GET TO KNOW TECHOUSE</div><h1>New ways to build.<br>More ways forward.</h1><p>Techouse brings construction technologies and solar energy solutions to the Philippines—connecting your plans with possibilities for the spaces you build and the energy you use.</p></section><div class="container content-columns about-company"><div><span class="eyebrow">CONSTRUCTION. ENERGY. POSSIBILITY.</span><h2>One company.<br>Five ways to move forward.</h2><p>Techouse Technology Construction Corp brings together construction, solar energy, prefabricated buildings, real estate development and elevator engineering. Each division offers a different starting point for your project.</p><p>Whether you’re exploring rooftop solar, planning a building or considering a new use for your property, start with what you want to achieve. Explore the relevant division, share your requirements, and discuss the next step with our team.</p><a class="text-link" href="#/divisions">Find your division ${arrow}</a></div>${window.TechouseAbout.panel()}</div><section class="container about-pathways"><div class="section-heading"><span>WHAT ARE YOU PLANNING?</span><h2>Start with your next step.</h2></div><div>${divisions.map((d) => `<a href="#/divisions/${d.id}"><span>${d.number}</span><strong>${esc(d.short)}</strong>${arrow}</a>`).join('')}</div></section>${cta('Have a project in mind?', 'Tell us what you’re planning. We’ll help you find the right conversation to start.')}`;
 }
@@ -568,6 +573,7 @@ function adminTabs(active) {
     ['inquiries', 'Inquiries', '/office/inquiries'],
     ['projects', 'Projects', '/office/projects'],
     ['customizer', 'Website & company info', '/office/customizer'],
+    ['builder', 'Page builder', '/office/page-builder'],
     ['posts', 'Updates', '/office/posts'],
   ];
   return `<nav class="admin-tabs" aria-label="Back office sections">${items.map(([id, label, path]) => `<a href="#${path}" class="${active === id ? 'active' : ''}">${label}${id === 'inquiries' ? ` <span class="tab-count">${inquiries.length}</span>` : ''}</a>`).join('')}</nav>`;
@@ -719,6 +725,9 @@ function render() {
   } else if (path === '/office/posts') {
     title = 'Website posts · Back office';
     html = adminPosts();
+  } else if (path === '/office/page-builder') {
+    title = 'Construction page builder';
+    html = `<div class="container builder-office">${window.TechousePageBuilder.editor(adminTop, adminTabs, window.TechouseDivisions.page(getDivision('construction'), divisions, elevatorArt, arrow))}</div>`;
   } else if (path === '/office/customizer') {
     title = 'Website customizer';
     html = window.TechouseContent.page(
@@ -744,6 +753,12 @@ function render() {
     html = notFound();
   }
   $('#main').innerHTML = html;
+  if (
+    window.parent !== window &&
+    path === '/divisions/construction' &&
+    params.get('builder-canvas') === '1'
+  )
+    return;
   window.TechouseContent?.apply(path);
   if (path === '/') window.TechouseBanner.mount(returningHome);
   window.TechouseDivisions.mount();
@@ -753,6 +768,7 @@ function render() {
   window.TechouseExperience?.mount();
   window.TechouseSolarExtras?.mount();
   window.TechouseOfficeUI?.mount();
+  window.TechousePageBuilder?.mount();
   syncInquiryCta();
   document.title = `${title} — Techouse`;
   window.scrollTo({ top: 0, left: 0, behavior: 'instant' });

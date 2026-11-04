@@ -8,6 +8,12 @@ Created and checked out `feature/page-builder` directly from annotated release t
 
 Publishing the new branch was attempted, but terminal Git cannot authenticate to the private GitHub repository. In the signed-in GitHub Desktop, select `feature/page-builder` and click **Publish branch**. Do not claim remote publication until verified. Next work is the website-builder prototype; preserve existing features and approved animations. No tests needed for branch creation and this handoff-only change.
 
+## Construction builder prototype — local demo
+
+Implemented three basic modules (hero, text/image, CTA) on `feature/page-builder`. Access through `/office.html#/office/page-builder` after protected sign-in. Includes drag reorder and keyboard arrows, add/remove/hide, editable copy, allowlisted destinations, colour/image positioning, image replacement (up to 1 MB), desktop/mobile preview. Ten sections/one hero maximum. Server validates schema with existing authenticated/CSRF/versioned saves and excludes drafts from public bootstrap. Draft and publish are separate; Construction keeps its existing page until explicitly published. Other CMS saves preserve builder data. No schema migration (existing content JSON).
+
+Full isolated suite: 21 tests passed, no failures/skips. New validation/privacy and authenticated browser save/reload/reorder/publish/responsive tests. Desktop/mobile screenshots inspected. Existing approved intro/hover/catalogue source unchanged. Local server on 8787. Test publication used disposable data, not actual local/hosted content. No revision-history recovery or freeform design controls yet. Local/uncommitted for review; no GitHub push or Cloudflare deployment.
+
 ## Latest: approved 1.0.1 GitHub source release
 
 The user approved publishing the reviewed 1.0.1 source to GitHub on 4 November 2026. Prepare/commit the approved branch, fast-forward `main`, and create annotated tag `v1.0.1`. Cloudflare publication is **not** authorized by this request and remains unchanged.
@@ -96,3 +102,35 @@ Compressed the saved-request banner with a side-by-side confirmation icon and te
 Baseline suite passed. Additional component checks reproduced and fixed three bugs: malformed visit siblings hiding valid visits, date-button rebuild losing keyboard focus, and other-tab storage notifications discarding an open calendar. Added `platform/tests/release-101-components.test.mjs`; final complete suite passed 19 tests (14 top-level groups, five new component scenarios), no skips/failures. Inquiry CSS extracted to `site/inquiry.css` immediately after `solar-extras.css`, preserving rule order and visual behavior. 48 JS/module syntax checks passed; checked local references and fingerprints clean.
 
 Compared 31 desktop/mobile views with a pre-review working-copy snapshot: 30 exact matches; remaining difference limited to unchanged mobile header-logo rasterization, with no layout change. Approved intro/banner/hover/slider sources byte-identical. Detailed local report and QA evidence: `deliverables/1.0.1-review-20261104/Techouse_1.0.1_System_and_Component_Review.md` (ignored/private). No data migration, push, merge, tag or Cloudflare deployment. Await owner's final visual review/release instruction.
+
+## Visual canvas redesign — local review
+
+Reworked the Construction builder at the user's request: full-width, viewport-height desktop workspace; draggable module library on left; editable canvas in centre with insertion targets, visible selected sections, click-to-edit and move handles; inspector on right with independent scrolling. Palette modules can also be clicked to insert after selection. Page outline retained as a compact disclosure with keyboard reorder arrows. Added full-screen native-dialog draft preview, Escape/close and focus restoration. Draft/publish backend and public renderer remain intact. Mobile stacks controls and canvas.
+
+Updated isolated builder checks pass: actual palette-to-canvas drop, outline reorder, canvas selection, fullscreen/Escape, draft privacy/save/reload/publish, 2560px and mobile containment. Wide/desktop/mobile screenshots inspected. Earlier full suite passed 21 checks; targeted builder suite rerun after this UI redesign (2 passed). No deployment/push or real-content publication.
+
+## Live actual-page canvas — local review
+
+Replaced the simplified canvas with a same-origin public-page iframe: actual Construction navigation, photographic full-width cover, native introduction/essentials, division navigation and footer. New unsaved pages import their starter values from the actual existing Construction markup rather than a redesigned split hero. Existing saved draft fields are preserved. Hero and original introduction now reuse native page markup; extra modules use the same renderer in canvas, fullscreen and publication. Original page tail remains included. Edits repaint only iframe main content and retain scroll, without reload or publication. Desktop uses a 1440px responsive viewport scaled to available canvas width; mobile uses 390px. The iframe has normal public content only; draft is painted from the protected parent and never sent to public bootstrap. Preview navigation is disabled and website animation mounts are skipped only for the embedded Construction preview.
+
+Cross-frame module drops, click-to-edit, original hero/header/footer presence, live text edits, draft privacy and published rendering verified in the updated builder tests. Wide screenshot reviewed. No hosted changes or Git push.
+
+Final verification after live-page integration: complete suite passed 21 tests with no failures/skips. Fullscreen test now waits for draft painting rather than counting the initial public iframe document. Wide and mobile screenshots inspected; diff whitespace check clean. Cloudflare and real page content unchanged.
+
+## Compact editor chrome and external section controls — local review
+
+Addressed laptop-window feedback (1274×796): reduced back-office header/title/navigation/toolbar heights only while the builder is open; moved Desktop/Mobile into main toolbar; constrained library/inspector widths with independent thin scrollbars and a larger remaining canvas. Module library now uses detailed photographic/layout thumbnails and content descriptions instead of abstract blocks. Settings labels/fields and explanatory copy are compact. Selected section name, drag handle and up/down controls are in the parent editor bar, entirely outside the public-page iframe; no title/move labels cover the banner. Public native banner/header/footer markup unchanged. Consolidated builder CSS to remove accumulated overrides while retaining public module styling.
+
+Updated builder suite: 2 tests passed, including draft privacy, live editing, palette cross-frame drop, external reorder controls, fullscreen, save/reload/publication and responsive checks. Added 1274×796 bounds assertions (canvas ≥520px tall, toolbar ≤70px, no horizontal overflow) and absence of section tool labels inside iframe. Laptop screenshot inspected. No GitHub push, deployment, or real-content publication. Earlier full suite result remains 21 passed before this UI-only refinement.
+
+## Context actions, removable hero and expanded modules — local demo
+
+Added right-click menus on canvas sections/insertion areas and an accessible Actions button: move up/down, duplicate (non-hero), hide/show, remove, and insert any supported module. Keyboard menu arrows/Home/End/Escape supported. External editor bar shows selected type, hover type, and visible remove action; toolbar alignment uses constrained grid columns. Hero is removable and re-addable; draft can be empty, while publication requires at least one visible module. Navigation switches to a readable light header when there is no hero.
+
+Added adjustable spacing (24/48/96/160px), project highlights, and project tabs with working category/keyboard selection. Project modules use only published library entries; private projects stay excluded and reference markers/provider credits remain visible. Default projects heading makes no claim of completed Construction work. Server validates module settings; no SQL migration is needed. Local server restarted (8787) to load updated validation, without changing real content/accounts. New tests exercise right-click removal/reload, hover label, spacing, project modules and published tabs, empty draft/re-add hero, and menu Escape. Test data are disposable. No GitHub push or Cloudflare deployment.
+
+Validation after these additions: full suite passed all 21 tests, no failures/skips; laptop module-layout screenshot reviewed; diff whitespace check clean.
+
+## Approved simple demo checkpoint
+
+The user approved the Construction page-builder prototype as a simple demo and requested publishing it on `feature/page-builder`. Commit the reviewed implementation and tests on this branch only; do not merge into main, bump the release version, or deploy Cloudflare. Latest validation: 21 tests passed; no source changes since that validation. Terminal Git still cannot authenticate to GitHub (fetch fails with missing HTTPS username); use the signed-in GitHub Desktop Push origin action to publish this checkpoint if terminal push is also unavailable. No private/local account data or credentials are included.

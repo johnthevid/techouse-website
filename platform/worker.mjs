@@ -251,6 +251,91 @@ function image(value) {
     return value;
   fail(400, "Use a local asset or JPEG, PNG or WebP image.");
 }
+function validatePages(pages = {}) {
+  if (
+    !pages ||
+    typeof pages !== "object" ||
+    Array.isArray(pages) ||
+    Object.keys(pages).some((k) => k !== "construction")
+  )
+    fail(400, "Unknown builder page.");
+  const result = {};
+  for (const [key, page] of Object.entries(pages)) {
+    if (!page || typeof page !== "object" || Array.isArray(page))
+      fail(400, "Invalid builder page.");
+    result[key] = {};
+    for (const state of ["draft", "published"]) {
+      if (page[state] === undefined) continue;
+      if (!Array.isArray(page[state]) || page[state].length > 10)
+        fail(400, "Use up to ten sections.");
+      const ids = new Set();
+      result[key][state] = page[state].map((section) => {
+        if (
+          !section ||
+          ![
+            "hero",
+            "text-image",
+            "cta",
+            "spacer",
+            "projects",
+            "project-tabs",
+          ].includes(section.type) ||
+          typeof section.id !== "string" ||
+          !/^[a-zA-Z0-9-]{1,80}$/.test(section.id) ||
+          ids.has(section.id)
+        )
+          fail(400, "Invalid builder section.");
+        ids.add(section.id);
+        if (typeof section.hidden !== "boolean")
+          fail(400, "Invalid visibility.");
+        if (!["light", "green"].includes(section.tone))
+          fail(400, "Invalid section colour.");
+        if (!["left", "right"].includes(section.layout))
+          fail(400, "Invalid image position.");
+        if (
+          ![
+            "#/inquiry?division=construction",
+            "#/divisions",
+            "#/about",
+          ].includes(section.link)
+        )
+          fail(400, "Invalid section destination.");
+        const space = section.space ?? 48;
+        const sector = section.sector ?? "all";
+        const count = section.count ?? 3;
+        if (
+          ![24, 48, 96, 160].includes(space) ||
+          !["all", "residential", "commercial", "industrial"].includes(
+            sector,
+          ) ||
+          ![3, 6].includes(count)
+        )
+          fail(400, "Invalid module settings.");
+        return {
+          space,
+          sector,
+          count,
+          id: section.id,
+          type: section.type,
+          hidden: section.hidden,
+          tone: section.tone,
+          layout: section.layout,
+          title: text(section.title, 160),
+          body: text(section.body, 2400),
+          image: image(section.image),
+          alt: text(section.alt, 250),
+          label: text(section.label, 80),
+          link: section.link,
+        };
+      });
+      if (result[key][state].filter((s) => s.type === "hero").length > 1)
+        fail(400, "Use only one hero.");
+      if (state === "published" && !result[key][state].some((s) => !s.hidden))
+        fail(400, "Keep at least one visible section.");
+    }
+  }
+  return result;
+}
 export function validateContent(input) {
   if (!input || typeof input !== "object" || Array.isArray(input))
     fail(400, "Invalid content.");
@@ -260,6 +345,7 @@ export function validateContent(input) {
     projects: [],
     posts: [],
     portfolioVersion: 2,
+    pages: validatePages(input.pages),
   };
   for (const field of ["text", "images"])
     if (
@@ -369,6 +455,14 @@ async function getContent(env, published = false) {
   if (published)
     for (const type of ["posts", "projects"])
       value[type] = value[type].filter((p) => p.status === "published");
+  if (published && value.pages) {
+    value.pages = Object.fromEntries(
+      Object.entries(value.pages).map(([key, page]) => [
+        key,
+        page.published ? { published: page.published } : {},
+      ]),
+    );
+  }
   return { content: value, version: row?.version || 0 };
 }
 async function route(request, env) {
