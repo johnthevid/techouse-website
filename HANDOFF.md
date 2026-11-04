@@ -2,6 +2,12 @@
 
 Updated: 4 November 2026.
 
+## Active: page-builder prototype branch
+
+Created and checked out `feature/page-builder` directly from annotated release tag `v1.0.1` (source `1d2e16e`) on 4 November 2026, at the user's request. No application changes or version bump yet. The later deployment-record commit remains on `main`; this branch intentionally starts from the exact release source. Cloudflare remains on the deployed 1.0.1 version.
+
+Publishing the new branch was attempted, but terminal Git cannot authenticate to the private GitHub repository. In the signed-in GitHub Desktop, select `feature/page-builder` and click **Publish branch**. Do not claim remote publication until verified. Next work is the website-builder prototype; preserve existing features and approved animations. No tests needed for branch creation and this handoff-only change.
+
 ## Latest: approved 1.0.1 GitHub source release
 
 The user approved publishing the reviewed 1.0.1 source to GitHub on 4 November 2026. Prepare/commit the approved branch, fast-forward `main`, and create annotated tag `v1.0.1`. Cloudflare publication is **not** authorized by this request and remains unchanged.
