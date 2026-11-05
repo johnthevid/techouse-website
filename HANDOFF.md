@@ -1,6 +1,15 @@
 # Current handoff
 
-Updated: 4 November 2026.
+Updated: 5 November 2026.
+
+## Accepted PHP 55,000 scope and independent Tip — 5 November 2026
+
+Client selected the PHP 55,000 quotation, not the PHP 65,000 builder package. Preserve feature/page-builder and feature/staff-chatbot as archived demo history; do not include builder in the delivery. Created feature/tip-assistant directly from v1.0.1 (1d2e16e). Extracted only staff-helper.js/css and minimal app/index hooks, renamed Pip to Tip, removed all builder guides, intents and dependencies. Tip remains a complimentary deterministic back-office guide for projects, text/images and inquiry review/deletion, without a connected AI service or automatic save/delete actions. Existing CMS browser test passed. Independent Tip test verifies no builder global, no builder topic, guide routing, no remote writes and mobile bounds; responsive positioning corrected and targeted test rerun. Source is local/uncommitted; no merge/push/deployment.
+
+Client meeting: signing expected 6 November; initial payment expected next Friday (13 November). Formal kickoff remains subject to signed agreement, initial payment and required inputs/access. User authorizes working ahead locally and wants delivery, testing, documentation, video guide and orientation planned end-to-end. Important scope/schedule mismatch to reconcile before signing: latest supplied PHP55k quotation targets initial review in 3 weeks, content by end week5, up to 2 follow-up batches and final integration/testing/handover within 2 weeks after final batch/approvals. Do not silently promise all staggered content in 3 weeks. Accepted 55k includes partner banner/page/inquiry category, email OTP, Google Maps pin + manual roof outline/area in ticket, one Google Calendar/appointment type, baseline CMS/content population and 90-minute orientation. Builder, retainer and photography remain separate.
+
+Next delivery priority: reconcile signed scope/milestones and content dates, collect approved technical calculator/product inputs and provider access, then implement real inquiry storage/inbox notification and remaining CMS product management before dependent OTP, maps/ticket, calendar and partner flow. Keep local previews distinct from functional live integrations. Reserve testing, hosted acceptance, handover/quick-start documentation and walkthrough recording time. No new paid services, live emails or publication implied by local preparation.
+
 
 ## Latest: approved 1.0.1 GitHub source release
 
