@@ -150,3 +150,7 @@ Separated the contact dialog into copy/actions and QR/handoff wrappers, with a d
 ## Contact layout rollback and Safari compatibility — local
 
 At user's request restored the original flat contact dialog markup and horizontal layout. Dedicated compatibility stylesheet keeps the original 820px/300px-column layout, explicit content-sized dialog height, viewport bounds and square SVG dimensions to avoid intrinsic-size stretching, plus prefixed backdrop blur for Safari. Original phone/Viber flow and entrance retained. Automated WebKit unavailable on this machine (browser binary missing), so no Safari-specific verification claimed. Chrome responsive check rerun after restoring dimensions. Fonts confirmed in styles.css: DM Sans body, Manrope display. No deployment.
+
+## Staff chatbot branch — 5 November 2026
+
+Created `feature/staff-chatbot` from `feature/page-builder` at `3691dc8`, the committed and synchronized builder update. User intends a chatbot helper for staff in the protected back office. No chatbot implementation or scope decisions yet. Main and Cloudflare unchanged. Branch creation needs no application tests. Publish branch through GitHub Desktop when ready; no remote publication claimed.
