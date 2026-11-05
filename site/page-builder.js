@@ -12,6 +12,64 @@ window.TechousePageBuilder = (() => {
     spacer: 'Spacing',
     projects: 'Project highlights',
     'project-tabs': 'Project tabs',
+    services: 'Service cards',
+    benefits: 'Benefits cards',
+    process: 'Process steps',
+    faq: 'FAQ accordion',
+  };
+  const cardTemplates = {
+    services: {
+      title: 'Construction services',
+      body: 'Example services. Replace these with your approved offerings.',
+      items: [
+        {
+          title: 'New construction',
+          body: 'Describe the building types and scope your team offers.',
+        },
+        { title: 'Renovations', body: 'Explain the approved renovation or improvement services.' },
+        { title: 'Project coordination', body: 'Describe how clients work with your team.' },
+      ],
+    },
+    benefits: {
+      title: 'What matters in your project',
+      body: 'Edit these example priorities to reflect your approach.',
+      items: [
+        {
+          title: 'Clear scope',
+          body: 'Explain how you agree the requirements before work begins.',
+        },
+        { title: 'Visible progress', body: 'Describe how you keep clients informed.' },
+        { title: 'Defined handover', body: 'Explain what clients can expect at completion.' },
+      ],
+    },
+    process: {
+      title: 'Your project, step by step',
+      body: 'An example journey for discussion. Confirm your actual process before publishing.',
+      items: [
+        { title: 'Discuss your project', body: 'Share the location, intended use and priorities.' },
+        { title: 'Confirm the scope', body: 'Review requirements and the proposed work.' },
+        { title: 'Plan the work', body: 'Agree responsibilities and a schedule.' },
+        { title: 'Review completion', body: 'Inspect the agreed deliverables and handover.' },
+      ],
+    },
+    faq: {
+      title: 'Your questions, answered',
+      body: 'Edit these answers with your team before publishing.',
+      items: [
+        {
+          title: 'What should I prepare for an initial discussion?',
+          body: 'Share your site location, intended use, approximate area and any available drawings.',
+        },
+        {
+          title: 'Can I ask about an existing property?',
+          body: 'Tell the team about its current condition and your plans. The team will confirm what assessment is needed.',
+        },
+        {
+          title: 'How will we agree the project timeline?',
+          body: 'Discuss the scope, site conditions and required approvals with the team before confirming dates.',
+        },
+      ],
+    },
   };
   const destinations = {
     '#/inquiry?division=construction': 'Construction inquiry',
@@ -48,6 +106,7 @@ window.TechousePageBuilder = (() => {
     space: 48,
     sector: 'all',
     count: 3,
+    items: [],
   });
   let baseHTML = '';
   const baseDocument = () => new DOMParser().parseFromString(baseHTML, 'text/html');
@@ -137,6 +196,10 @@ window.TechousePageBuilder = (() => {
     });
   }
   function renderSection(s) {
+    if (cardTemplates[s.type]) {
+      const items = s.items || [];
+      return `<section class="builder-cards-module builder-${s.tone}"><div class="container"><span class="eyebrow">${s.type === 'process' ? 'HOW IT WORKS' : s.type === 'faq' ? 'COMMON QUESTIONS' : 'CONSTRUCTION'}</span><h2>${esc(s.title)}</h2><p>${esc(s.body)}</p>${s.type === 'faq' ? `<div class="builder-faq-list">${items.map((item) => `<details><summary>${esc(item.title)}</summary><p>${esc(item.body)}</p></details>`).join('')}</div>` : `<div class="builder-service-grid">${items.map((item, i) => `<article>${s.type === 'process' ? `<span class="builder-step-number">${String(i + 1).padStart(2, '0')}</span>` : window.TechouseIcons.icon(s.type === 'services' ? 'construction' : 'check')}<h3>${esc(item.title)}</h3><p>${esc(item.body)}</p></article>`).join('')}</div>`}</div></section>`;
+    }
     if (s.type === 'spacer')
       return `<div class="builder-spacer" style="height:${[24, 48, 96, 160].includes(s.space) ? s.space : 48}px" aria-hidden="true"></div>`;
     if (['projects', 'project-tabs'].includes(s.type)) return projectModule(s);
@@ -184,12 +247,12 @@ window.TechousePageBuilder = (() => {
   }
   function editor(top, tabs, original) {
     baseHTML = original;
-    return `<div class="builder-heading"><div><span class="eyebrow">WEBSITE / CONSTRUCTION</span><h1>Page builder</h1></div><a class="text-link" href="#/office">Back to overview</a></div>${tabs('builder')}<div id="page-builder"><div class="builder-toolbar"><div><strong>Construction page</strong><span id="builder-status" role="status">Draft preview · not published</span></div><div class="builder-viewport-controls" role="group" aria-label="Preview screen size"><button data-builder="desktop" aria-pressed="true">Desktop</button><button data-builder="mobile" aria-pressed="false">Mobile</button></div><div><button type="button" data-builder="fullscreen">${window.TechouseIcons.icon('arrow_outward')} Full screen</button><button type="button" data-builder="save">Save draft</button><button type="button" class="button" data-builder="publish">Publish page</button><a class="text-link" href="#/divisions/construction">View page ↗</a></div></div><div class="builder-workspace"><aside class="builder-sidebar"><span class="eyebrow">MODULE LIBRARY</span><h2>Add a module</h2><p>Drag onto the page, or click to insert.</p><div class="builder-palette">${Object.entries(
+    return `<div class="builder-heading"><div><span class="eyebrow">WEBSITE / CONSTRUCTION</span><h1>Page builder</h1></div><a class="text-link" href="#/office">Back to overview</a></div>${tabs('builder')}<div id="page-builder"><div class="builder-toolbar"><div><strong>Construction page</strong><span id="builder-status" role="status">Draft preview · not published</span></div><div class="builder-history-controls" role="group" aria-label="Page edit history"><button type="button" data-builder="undo" disabled>Undo</button><button type="button" data-builder="redo" disabled>Redo</button><button type="button" data-builder="reset">Reset page</button></div><div class="builder-viewport-controls" role="group" aria-label="Preview screen size"><button data-builder="desktop" aria-pressed="true">Desktop</button><button data-builder="mobile" aria-pressed="false">Mobile</button></div><div><button type="button" data-builder="fullscreen">${window.TechouseIcons.icon('arrow_outward')} Full screen</button><button type="button" data-builder="save">Save draft</button><button type="button" class="button" data-builder="publish">Publish page</button><a class="text-link" href="#/divisions/construction">View page ↗</a></div></div><div class="builder-workspace"><aside class="builder-sidebar"><span class="eyebrow">MODULE LIBRARY</span><h2>Add a module</h2><p>Drag onto the page, or click to insert.</p><label class="builder-module-search">Find a module<input type="search" id="builder-module-search" placeholder="Services, FAQ, projects…"></label><div class="builder-palette">${Object.entries(
       names,
     )
       .map(
         ([type, name]) =>
-          `<button type="button" class="builder-module" draggable="true" data-module="${type}"><span class="builder-module-preview module-preview-${type}" aria-hidden="true">${type === 'spacer' ? `<span class="mini-spacer">↕<b>Breathing room</b><small>24 · 48 · 96 · 160 px</small></span>` : ['projects', 'project-tabs'].includes(type) ? `<span class="mini-projects"><small>${type === 'project-tabs' ? 'ALL / RESIDENTIAL / COMMERCIAL' : 'PROJECT HIGHLIGHTS'}</small><span><i></i><i></i><i></i></span><b>Projects from your library</b></span>` : type === 'hero' ? `<img src="assets/construction.5154dbc7c67d.jpg" alt=""><span class="mini-cover"><small>TECHOUSE / CONSTRUCTION</small><b>Build your<br>next chapter.</b><em>Let’s talk ↗</em></span>` : type === 'text-image' ? `<span class="mini-copy"><small>BUILD WITH POSSIBILITY</small><b>A clearer<br>starting point.</b><i></i><i></i><em>Explore more ↗</em></span><img src="assets/construction.5154dbc7c67d.jpg" alt="">` : `<span class="mini-cta"><small>YOUR NEXT STEP</small><b>Have a project<br>in mind?</b><i></i><em>Start a conversation ↗</em></span>`}</span><strong>${name}</strong><small>${type === 'spacer' ? 'Adjustable vertical breathing room' : type === 'projects' ? 'Published project cards from the library' : type === 'project-tabs' ? 'Projects with working category filters' : type === 'hero' ? 'Full-width image, heading and button' : type === 'cta' ? 'A focused message and action button' : 'Side-by-side copy, image and link'}</small><span class="builder-module-add">${window.TechouseIcons.icon('add')} Add module</span></button>`,
+          `<button type="button" class="builder-module" draggable="true" data-module="${type}"><span class="builder-module-preview module-preview-${type}" aria-hidden="true">${cardTemplates[type] ? `<span class="mini-projects"><small>${esc(names[type]).toUpperCase()}</small><span><i></i><i></i><i></i></span><b>${type === 'faq' ? 'Expandable answers' : 'Editable headings and descriptions'}</b></span>` : type === 'spacer' ? `<span class="mini-spacer">↕<b>Breathing room</b><small>24 · 48 · 96 · 160 px</small></span>` : ['projects', 'project-tabs'].includes(type) ? `<span class="mini-projects"><small>${type === 'project-tabs' ? 'ALL / RESIDENTIAL / COMMERCIAL' : 'PROJECT HIGHLIGHTS'}</small><span><i></i><i></i><i></i></span><b>Projects from your library</b></span>` : type === 'hero' ? `<img src="assets/construction.5154dbc7c67d.jpg" alt=""><span class="mini-cover"><small>TECHOUSE / CONSTRUCTION</small><b>Build your<br>next chapter.</b><em>Let’s talk ↗</em></span>` : type === 'text-image' ? `<span class="mini-copy"><small>BUILD WITH POSSIBILITY</small><b>A clearer<br>starting point.</b><i></i><i></i><em>Explore more ↗</em></span><img src="assets/construction.5154dbc7c67d.jpg" alt="">` : `<span class="mini-cta"><small>YOUR NEXT STEP</small><b>Have a project<br>in mind?</b><i></i><em>Start a conversation ↗</em></span>`}</span><strong>${name}</strong><small>${cardTemplates[type] ? (type === 'faq' ? 'Questions with expandable answers' : 'One to six editable entries') : type === 'spacer' ? 'Adjustable vertical breathing room' : type === 'projects' ? 'Published project cards from the library' : type === 'project-tabs' ? 'Projects with working category filters' : type === 'hero' ? 'Full-width image, heading and button' : type === 'cta' ? 'A focused message and action button' : 'Side-by-side copy, image and link'}</small><span class="builder-module-add">${window.TechouseIcons.icon('add')} Add module</span></button>`,
       )
       .join(
         '',
@@ -215,6 +278,28 @@ window.TechousePageBuilder = (() => {
     selected = sections[0]?.id;
     dirty = false;
     busy = false;
+    let savedSnapshot = JSON.stringify(sections);
+    let history = [{ sections: JSON.stringify(sections), selected }],
+      historyIndex = 0,
+      lastGroup = '',
+      lastEditTime = 0;
+    function updateHistoryButtons() {
+      root.querySelector('[data-builder=undo]').disabled = busy || historyIndex === 0;
+      root.querySelector('[data-builder=redo]').disabled =
+        busy || historyIndex === history.length - 1;
+    }
+    function restoreHistory(direction) {
+      const next = historyIndex + direction;
+      if (next < 0 || next >= history.length) return;
+      historyIndex = next;
+      sections = JSON.parse(history[next].sections);
+      selected = history[next].selected;
+      dirty = JSON.stringify(sections) !== savedSnapshot;
+      lastGroup = '';
+      closeContext();
+      refresh();
+      status(dirty ? 'Unsaved changes' : 'Saved draft restored');
+    }
     const status = (msg) => (root.querySelector('#builder-status').textContent = msg);
     const canvas = root.querySelector('#builder-preview');
     let frame,
@@ -340,18 +425,65 @@ window.TechousePageBuilder = (() => {
         root.querySelector('#builder-fields').innerHTML =
           `<h2>${names[s.type]}</h2>${project ? `<label>Heading<input data-field="title" maxlength="160" value="${esc(s.title)}"></label><label>Description<textarea data-field="body" maxlength="2400" rows="3">${esc(s.body)}</textarea></label><label>${s.type === 'project-tabs' ? 'Starting category' : 'Category'}<select data-field="sector">${['all', 'residential', 'commercial', 'industrial'].map((key) => `<option value="${key}" ${key === (s.sector || 'all') ? 'selected' : ''}>${key === 'all' ? 'All projects' : key[0].toUpperCase() + key.slice(1)}</option>`).join('')}</select></label><label>Project cards<select data-field="count">${[3, 6].map((n) => `<option ${n === (s.count || 3) ? 'selected' : ''}>${n}</option>`).join('')}</select></label><p>Uses published library entries. Manage titles, photos and publication in the Projects tab.</p>` : `<label>Vertical space<select data-field="space">${[24, 48, 96, 160].map((n) => `<option value="${n}" ${n === (s.space || 48) ? 'selected' : ''}>${n}px · ${n === 24 ? 'Small' : n === 48 ? 'Medium' : n === 96 ? 'Large' : 'Extra large'}</option>`).join('')}</select></label><p>Spacing is blank on the published website. Its outline is visible only while editing.</p>`}<label class="builder-check"><input type="checkbox" data-field="hidden" ${s.hidden ? 'checked' : ''}> Hide this section</label><button data-builder="remove">Remove section</button>`;
       }
+      if (s && cardTemplates[s.type]) {
+        root.querySelector('#builder-fields').innerHTML =
+          `<h2>${names[s.type]}</h2><label>Section heading<input data-field="title" maxlength="160" value="${esc(s.title)}"></label><label>Introduction<textarea data-field="body" maxlength="2400" rows="3">${esc(s.body)}</textarea></label><label>Background<select data-field="tone"><option value="light" ${s.tone === 'light' ? 'selected' : ''}>Warm white</option><option value="green" ${s.tone === 'green' ? 'selected' : ''}>Techouse green</option></select></label><div class="builder-card-entries">${(s.items || []).map((item, i) => `<fieldset><legend>${s.type === 'faq' ? 'Question' : 'Entry'} ${i + 1}</legend><label>Heading<input data-item-index="${i}" data-item-field="title" maxlength="120" value="${esc(item.title)}"></label><label>${s.type === 'faq' ? 'Answer' : 'Description'}<textarea data-item-index="${i}" data-item-field="body" maxlength="800" rows="3">${esc(item.body)}</textarea></label><button type="button" data-remove-entry="${i}" ${(s.items || []).length <= 1 ? 'disabled' : ''}>Remove entry</button></fieldset>`).join('')}</div><button type="button" data-builder="add-entry" ${(s.items || []).length >= 6 ? 'disabled' : ''}>Add ${s.type === 'faq' ? 'question' : 'entry'}</button><p>Example content only. Confirm your actual services and promises before publishing.</p><label class="builder-check"><input type="checkbox" data-field="hidden" ${s.hidden ? 'checked' : ''}> Hide this section</label><button data-builder="remove">Remove section</button>`;
+      }
       const tools = root.querySelector('#builder-selection-tools');
       const index = sections.findIndex((section) => section.id === selected);
       tools.innerHTML = s
         ? `<div class="builder-selected-label"><span class="builder-editor-badge">EDITING</span><strong>${names[s.type]}</strong><span id="builder-hover-label" aria-live="polite"></span></div><div class="builder-section-actions"><button type="button" draggable="true" data-drag-section="${s.id}" aria-label="Drag ${names[s.type]} to reorder">Drag</button><button type="button" data-move="-1" data-id="${s.id}" ${index === 0 ? 'disabled' : ''} aria-label="Move selected section up">${window.TechouseIcons.icon('arrow_upward')}</button><button type="button" data-move="1" data-id="${s.id}" ${index === sections.length - 1 ? 'disabled' : ''} aria-label="Move selected section down">${window.TechouseIcons.icon('arrow_downward')}</button><button type="button" data-builder="more" aria-label="More section actions" aria-haspopup="menu">Actions</button><button type="button" data-builder="remove" aria-label="Remove selected section">${window.TechouseIcons.icon('close')}</button></div>`
         : '<span>No section selected · add a module or right-click the canvas.</span><span id="builder-hover-label"></span>';
+      updateHistoryButtons();
       preview();
     }
-    const changed = () => {
-      dirty = true;
-      status('Unsaved changes');
+    const changed = (group = '') => {
+      const snapshot = JSON.stringify(sections),
+        now = Date.now();
+      if (snapshot !== history[historyIndex].sections) {
+        const atEnd = historyIndex === history.length - 1;
+        history = history.slice(0, historyIndex + 1);
+        const entry = { sections: snapshot, selected };
+        if (group && group === lastGroup && now - lastEditTime < 750 && atEnd && historyIndex > 0)
+          history[historyIndex] = entry;
+        else {
+          history.push(entry);
+          historyIndex++;
+        }
+        while (
+          history.length > 2 &&
+          (history.length > 30 ||
+            history.reduce((n, item) => n + item.sections.length, 0) > 12000000)
+        ) {
+          history.shift();
+          historyIndex--;
+        }
+      }
+      lastGroup = group;
+      lastEditTime = now;
+      dirty = snapshot !== savedSnapshot;
+      status(dirty ? 'Unsaved changes' : 'Saved draft restored');
+      updateHistoryButtons();
     };
     root.addEventListener('input', (e) => {
+      if (e.target.id === 'builder-module-search') {
+        const query = e.target.value.toLowerCase().trim();
+        root
+          .querySelectorAll('.builder-palette [data-module]')
+          .forEach((el) => (el.hidden = !el.textContent.toLowerCase().includes(query)));
+        return;
+      }
+      if (e.target.dataset.itemField) {
+        const s = sections.find((s) => s.id === selected);
+        const index = Number(e.target.dataset.itemIndex),
+          key = e.target.dataset.itemField;
+        if (s?.items?.[index] && ['title', 'body'].includes(key)) {
+          s.items[index][key] = e.target.value;
+          changed(`${s.id}:item:${index}:${key}`);
+          preview();
+        }
+        return;
+      }
       const key = e.target.dataset.field;
       if (!key) return;
       const s = sections.find((s) => s.id === selected);
@@ -361,7 +493,7 @@ window.TechousePageBuilder = (() => {
           : ['space', 'count'].includes(key)
             ? Number(e.target.value)
             : e.target.value;
-      changed();
+      changed(`${s.id}:${key}`);
       preview();
       if (key === 'title')
         root.querySelector(`[data-select="${s.id}"] strong`).textContent =
@@ -399,6 +531,13 @@ window.TechousePageBuilder = (() => {
         return;
       }
       const section = starter(type);
+      if (cardTemplates[type]) {
+        Object.assign(section, structuredClone(cardTemplates[type]), {
+          tone: 'light',
+          image: '',
+          label: '',
+        });
+      }
       if (['projects', 'project-tabs'].includes(type)) {
         section.title = 'Explore project examples.';
         section.body = 'Browse published projects from our library.';
@@ -535,6 +674,15 @@ window.TechousePageBuilder = (() => {
       clearDrop();
     });
     onCanvas('keydown', (e) => {
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        !e.altKey &&
+        (e.key.toLowerCase() === 'z' || e.key.toLowerCase() === 'y')
+      ) {
+        e.preventDefault();
+        if (!busy) restoreHistory(e.key.toLowerCase() === 'y' || e.shiftKey ? 1 : -1);
+        return;
+      }
       if (!contextMenu.hidden && e.key === 'Escape') {
         e.preventDefault();
         closeContext();
@@ -573,6 +721,7 @@ window.TechousePageBuilder = (() => {
         addModule(button.dataset.module, insertIndex);
         return;
       }
+      if (e.target.closest('.builder-faq-list summary')) return;
       const canvasSection = e.target.closest('[data-canvas-id]');
       if (canvasSection && !e.target.closest('[data-drag-section]')) {
         e.preventDefault();
@@ -596,7 +745,47 @@ window.TechousePageBuilder = (() => {
         }
         return;
       }
+      if (button.dataset.removeEntry !== undefined) {
+        const s = sections.find((s) => s.id === selected);
+        if (s?.items?.length > 1) {
+          s.items.splice(Number(button.dataset.removeEntry), 1);
+          changed();
+          refresh();
+        }
+        return;
+      }
       const action = button.dataset.builder;
+      if (action === 'undo' || action === 'redo') {
+        restoreHistory(action === 'undo' ? -1 : 1);
+        return;
+      }
+      if (action === 'reset') {
+        if (
+          confirm(
+            'Reset this draft to the original Construction layout? You can undo this. The published page stays unchanged until you publish.',
+          )
+        ) {
+          sections = defaults();
+          selected = sections[0]?.id;
+          closeContext();
+          changed();
+          refresh();
+          status('Page reset · unsaved · Undo can restore your changes');
+        }
+        return;
+      }
+      if (action === 'add-entry') {
+        const s = sections.find((s) => s.id === selected);
+        if (s && cardTemplates[s.type] && s.items.length < 6) {
+          s.items.push({
+            title: s.type === 'faq' ? 'New question' : 'New entry',
+            body: 'Add your approved description.',
+          });
+          changed();
+          refresh();
+        }
+        return;
+      }
       const dialog = root.querySelector('#builder-fullscreen');
       if (action === 'fullscreen') {
         fullFrame = createFrame(false);
@@ -675,6 +864,8 @@ window.TechousePageBuilder = (() => {
         if (action === 'publish') next.pages.construction.published = structuredClone(sections);
         await window.TechousePlatform.saveContent(next);
         dirty = false;
+        savedSnapshot = JSON.stringify(sections);
+        lastGroup = '';
         status(
           action === 'publish'
             ? 'Published · Construction page updated'

@@ -279,6 +279,10 @@ function validatePages(pages = {}) {
             "spacer",
             "projects",
             "project-tabs",
+            "services",
+            "benefits",
+            "process",
+            "faq",
           ].includes(section.type) ||
           typeof section.id !== "string" ||
           !/^[a-zA-Z0-9-]{1,80}$/.test(section.id) ||
@@ -311,7 +315,21 @@ function validatePages(pages = {}) {
           ![3, 6].includes(count)
         )
           fail(400, "Invalid module settings.");
+        const items = section.items ?? [];
+        if (
+          !Array.isArray(items) ||
+          items.length > 6 ||
+          (["services", "benefits", "process", "faq"].includes(section.type) &&
+            items.length < 1)
+        )
+          fail(400, "Use one to six card entries.");
+        const cleanItems = items.map((item) => {
+          if (!item || typeof item !== "object" || Array.isArray(item))
+            fail(400, "Invalid card entry.");
+          return { title: text(item.title, 120), body: text(item.body, 800) };
+        });
         return {
+          items: cleanItems,
           space,
           sector,
           count,

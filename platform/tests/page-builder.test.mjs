@@ -56,6 +56,30 @@ test("Construction builder validates sections and keeps drafts private", async (
       },
     }),
   );
+  assert.throws(() =>
+    validateContent({
+      ...value,
+      pages: {
+        construction: { draft: [{ ...section, type: "services", items: [] }] },
+      },
+    }),
+  );
+  assert.throws(() =>
+    validateContent({
+      ...value,
+      pages: {
+        construction: {
+          draft: [
+            {
+              ...section,
+              type: "faq",
+              items: [{ title: "x", body: "y".repeat(801) }],
+            },
+          ],
+        },
+      },
+    }),
+  );
   const current = await f.request("/api/admin/content");
   assert.equal(
     (
@@ -344,5 +368,101 @@ test("Construction builder edits, reorders, saves drafts and publishes through p
   await page.locator('[data-builder="more"]').click();
   await page.keyboard.press("Escape");
   assert(await page.locator("#builder-context").isHidden());
+  await page.locator('.builder-palette [data-module="services"]').click();
+  assert.equal(await live.locator(".builder-service-grid article").count(), 3);
+  await page
+    .locator('[data-item-index="0"][data-item-field="title"]')
+    .fill("Custom approved service");
+  await page.locator('[data-builder="undo"]').click();
+  assert.equal(
+    await page
+      .locator('[data-item-index="0"][data-item-field="title"]')
+      .inputValue(),
+    "New construction",
+  );
+  await page.locator('[data-builder="redo"]').click();
+  assert.equal(
+    await page
+      .locator('[data-item-index="0"][data-item-field="title"]')
+      .inputValue(),
+    "Custom approved service",
+  );
+  await page.locator('[data-builder="add-entry"]').click();
+  assert.equal(await live.locator(".builder-service-grid article").count(), 4);
+  await page.locator('[data-remove-entry="3"]').click();
+  assert.equal(await live.locator(".builder-service-grid article").count(), 3);
+  await page.locator("#builder-module-search").fill("process");
+  assert.equal(
+    await page.locator(".builder-palette [data-module]:visible").count(),
+    1,
+  );
+  await page.locator("#builder-module-search").fill("");
+  await page.locator('.builder-palette [data-module="benefits"]').click();
+  await page.locator('.builder-palette [data-module="process"]').click();
+  await page.locator('.builder-palette [data-module="faq"]').click();
+  await live.locator(".builder-faq-list summary").first().click();
+  assert(
+    await live
+      .locator(".builder-faq-list details")
+      .first()
+      .evaluate((el) => el.open),
+  );
+  const beforeReset = await live.locator(".builder-canvas-section").count();
+  page.removeAllListeners("dialog");
+  page.once("dialog", (d) => d.dismiss());
+  await page.locator('[data-builder="reset"]').click();
+  assert.equal(
+    await live.locator(".builder-canvas-section").count(),
+    beforeReset,
+  );
+  page.on("dialog", (d) => d.accept());
+  await page.locator('[data-builder="reset"]').click();
+  assert.equal(await live.locator(".builder-canvas-section").count(), 2);
+  await page.locator('[data-builder="undo"]').click();
+  assert.equal(
+    await live.locator(".builder-canvas-section").count(),
+    beforeReset,
+  );
+  assert.equal(
+    await live.getByText("Custom approved service", { exact: true }).count(),
+    1,
+  );
+  await page.locator('[data-builder="redo"]').click();
+  assert.equal(await live.locator(".builder-canvas-section").count(), 2);
+  await page.keyboard.press("Meta+z");
+  assert.equal(
+    await live.locator(".builder-canvas-section").count(),
+    beforeReset,
+  );
+  await page.locator('[data-builder="save"]').click();
+  await page.getByText("Draft saved · public page unchanged").waitFor();
+  await page.reload();
+  await live.locator(".builder-faq-list").waitFor();
+  assert(await page.locator('[data-builder="undo"]').isDisabled());
+  await page.screenshot({
+    path: "/tmp/techouse-builder-history.png",
+    fullPage: true,
+  });
+  await page.locator('[data-builder="publish"]').click();
+  await page.getByText("Published · Construction page updated").waitFor();
+  await page.goto(f.env.APP_ORIGIN + "/#/divisions/construction");
+  await page.locator(".builder-faq-list summary").first().click();
+  assert(
+    await page
+      .locator(".builder-faq-list details")
+      .first()
+      .evaluate((el) => el.open),
+  );
+  assert.equal(await page.locator(".builder-service-grid").count(), 3);
+  assert.equal(
+    await page.getByText("Custom approved service", { exact: true }).count(),
+    1,
+  );
+  await page.setViewportSize({ width: 390, height: 844 });
+  assert(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  );
   assert.deepEqual(errors, []);
 });

@@ -134,3 +134,19 @@ Validation after these additions: full suite passed all 21 tests, no failures/sk
 ## Approved simple demo checkpoint
 
 The user approved the Construction page-builder prototype as a simple demo and requested publishing it on `feature/page-builder`. Commit the reviewed implementation and tests on this branch only; do not merge into main, bump the release version, or deploy Cloudflare. Latest validation: 21 tests passed; no source changes since that validation. Terminal Git still cannot authenticate to GitHub (fetch fails with missing HTTPS username); use the signed-in GitHub Desktop Push origin action to publish this checkpoint if terminal push is also unavailable. No private/local account data or credentials are included.
+
+## Reset, undo/redo and Construction cards — 5 November 2026
+
+Added Reset page (confirmed, draft-only, undoable) restoring the original native Construction hero/introduction. Undo/redo covers text, per-card content, visibility, additions/removals, ordering, uploaded image replacements and reset. Keyboard Cmd/Ctrl+Z, Shift+Cmd/Ctrl+Z and Ctrl+Y supported. History is per mounted editing session, bounded to 30 snapshots/approximately 12 MB with a minimum of two snapshots; refresh starts a new history. Saved draft contents remain persistent. Saving establishes a new dirty-state baseline without clearing undo history.
+
+Four new modules: service cards, benefits cards, process steps and FAQ accordion. Each has editable heading/introduction, background, one to six entries with heading/body, add/remove entry controls and visibility. Defaults are explicitly example copy for client approval, with no fabricated performance claims. FAQs open in preview and published page. Module search added to expanded library. Server validates all new types and bounded entry shapes; no SQL migration.
+
+Full suite: 21 tests passed, no failures/skips, including reset cancel/accept, undo reset, redo, shortcut undo, card edits/add/remove, module search, saved reload, publication and public FAQ/mobile containment. Laptop screenshot inspected; diff check clean. Local server restarted on 8787 to load new validation. No real-content publication, Git commit/push, version bump or Cloudflare deployment.
+
+## Contact card sizing correction — 5 November 2026
+
+Separated the contact dialog into copy/actions and QR/handoff wrappers, with a dedicated contact-options.css loaded after existing contact styles. Card now caps at 820px border-box, height fits content with viewport-limited scrolling, square QR caps at 260px, and narrow screens stack at 699px. Existing phone/Viber actions, large number, blur/entrance, close handling and scroll lock retained. Targeted browser check covers 2560×1440, 1440×900, 1274×796, 900×600 and 390×844, plus QR geometry, Viber/phone switching and Escape cleanup. Laptop screenshot inspected. No deployment/push or account/content changes.
+
+## Contact layout rollback and Safari compatibility — local
+
+At user's request restored the original flat contact dialog markup and horizontal layout. Dedicated compatibility stylesheet keeps the original 820px/300px-column layout, explicit content-sized dialog height, viewport bounds and square SVG dimensions to avoid intrinsic-size stretching, plus prefixed backdrop blur for Safari. Original phone/Viber flow and entrance retained. Automated WebKit unavailable on this machine (browser binary missing), so no Safari-specific verification claimed. Chrome responsive check rerun after restoring dimensions. Fonts confirmed in styles.css: DM Sans body, Manrope display. No deployment.
