@@ -769,6 +769,7 @@ function render() {
   window.TechouseSolarExtras?.mount();
   window.TechouseOfficeUI?.mount();
   window.TechousePageBuilder?.mount();
+  window.TechouseStaffHelper?.mount();
   syncInquiryCta();
   document.title = `${title} — Techouse`;
   window.scrollTo({ top: 0, left: 0, behavior: 'instant' });

@@ -154,3 +154,11 @@ At user's request restored the original flat contact dialog markup and horizonta
 ## Staff chatbot branch — 5 November 2026
 
 Created `feature/staff-chatbot` from `feature/page-builder` at `3691dc8`, the committed and synchronized builder update. User intends a chatbot helper for staff in the protected back office. No chatbot implementation or scope decisions yet. Main and Cloudflare unchanged. Branch creation needs no application tests. Publish branch through GitHub Desktop when ready; no remote publication claimed.
+
+## Pip staff helper prototype — 5 November 2026
+
+Implemented an original green/gold paperclip character inspired by classic office assistants on `feature/staff-chatbot`. Protected back-office routes only: expandable helper panel, local intent-matching question box, task choices and step-by-step guides for page building, project entry, basic text/images, inquiry review and inquiry deletion. Targets highlight real visible controls. Builder guide advances after a staff member adds a module; other steps use Back/Next. Empty inquiries show honest guidance rather than creating records. Close/Escape, reduced motion, mobile bounds and highlight cleanup included. The helper never clicks save/publish/delete, sends requests to an AI service, or stores/transmits entered questions. Builder unsaved edits require confirmation before guide navigation to another section.
+
+This is a deterministic local guide, not a connected language model. The mascot is new inline SVG artwork; the attached Microsoft character image was a visual reference and was not copied into site assets. Public pages and unauthenticated sign-in do not show the helper. Dormant panel contents are removed while minimised so hidden helper form controls do not interfere with existing editor selectors. Existing homepage intro/animations untouched.
+
+Validation: dedicated isolated staff-helper browser test passed, including private/public visibility, actual page-builder interaction and auto-advance, no remote writes during all guides, unsaved-draft cancellation, question routing, mobile bounds and Escape cleanup. Desktop/mobile screenshots inspected. Initial full suite passed 22/23, finding the dormant form-control conflict; corrected by clearing the minimised panel and reran the affected CMS browser and helper tests. No Git push/deployment or real-content edits.
