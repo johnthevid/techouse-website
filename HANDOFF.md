@@ -186,3 +186,7 @@ Simplified the homepage About section (not the separate #/about route): removed 
 Removed the second About paragraph from editor fields and active backend schema, while accepting/discarding its retired selector on future saves for compatibility. Local backend restarted to load this rule; no remote content/schema changes.
 
 Checks: four targeted tests passed (responsive banner geometry/arrow/About flow; intro lifecycle; retired-content API compatibility; protected CMS preview/save). Desktop/laptop/mobile screenshots inspected. JS syntax and whitespace checks passed. Safari remains untested locally. No push, merge or Cloudflare deployment.
+
+
+### Arrow label and expanded division labels
+Solar's down arrow now morphs from a 48px circle into a 136px capsule on hover or keyboard focus, revealing About us to its right. Arrow position and surrounding layout remain fixed; reduced motion disables the transition. Expanded desktop division labels use a single line with their final-width box, including Real estate development and Elevator engineering. Checked both labels fit inside their panels and arrow expansion/label visibility at 1440px and 1024px. Syntax/whitespace checks passed. Local only; no push/deployment.
