@@ -90,3 +90,10 @@ Compressed the saved-request banner with a side-by-side confirmation icon and te
 Baseline suite passed. Additional component checks reproduced and fixed three bugs: malformed visit siblings hiding valid visits, date-button rebuild losing keyboard focus, and other-tab storage notifications discarding an open calendar. Added `platform/tests/release-101-components.test.mjs`; final complete suite passed 19 tests (14 top-level groups, five new component scenarios), no skips/failures. Inquiry CSS extracted to `site/inquiry.css` immediately after `solar-extras.css`, preserving rule order and visual behavior. 48 JS/module syntax checks passed; checked local references and fingerprints clean.
 
 Compared 31 desktop/mobile views with a pre-review working-copy snapshot: 30 exact matches; remaining difference limited to unchanged mobile header-logo rasterization, with no layout change. Approved intro/banner/hover/slider sources byte-identical. Detailed local report and QA evidence: `deliverables/1.0.1-review-20261104/Techouse_1.0.1_System_and_Component_Review.md` (ignored/private). No data migration, push, merge, tag or Cloudflare deployment. Await owner's final visual review/release instruction.
+
+
+## Official development branch setup — 9 November 2026
+
+Created local `demo/1.0.1` and `develop` directly from `update/1.0.1` (1d2e16e). Current branch: `develop`. Demo branch preserves the unmodified reviewed demo; release tag v1.0.1 remains unchanged. `main` was not moved. Tip remains on `feature/tip-assistant` (eb2ebbe), pending deliberate integration without the discontinued page builder.
+
+User intends visual improvements, removal of redundant elements and a less obstructive homepage intro. No website source, styling, animation, data or version number changed in this setup. Updated WORKFLOW.md with branch roles. Verified clean starting tree and branch commit identities; no browser tests necessary for branch/documentation setup. Branches have not been published to GitHub and Cloudflare has not been deployed. Next: publish both branches using GitHub Desktop, then create focused work branches from develop.
