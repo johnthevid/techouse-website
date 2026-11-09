@@ -97,3 +97,18 @@ Compared 31 desktop/mobile views with a pre-review working-copy snapshot: 30 exa
 Created local `demo/1.0.1` and `develop` directly from `update/1.0.1` (1d2e16e). Current branch: `develop`. Demo branch preserves the unmodified reviewed demo; release tag v1.0.1 remains unchanged. `main` was not moved. Tip remains on `feature/tip-assistant` (eb2ebbe), pending deliberate integration without the discontinued page builder.
 
 User intends visual improvements, removal of redundant elements and a less obstructive homepage intro. No website source, styling, animation, data or version number changed in this setup. Updated WORKFLOW.md with branch roles. Verified clean starting tree and branch commit identities; no browser tests necessary for branch/documentation setup. Branches have not been published to GitHub and Cloudflare has not been deployed. Next: publish both branches using GitHub Desktop, then create focused work branches from develop.
+
+
+## Homepage refinement — 9 November 2026
+
+Current branch `feature/homepage-refinement`, created from `develop`. Simplified homepage division panels to the existing main heading, division name and a larger Discover more action; removed division eyebrows, explanatory copy, bullet lists and hover/tap instruction text. Expanded desktop headings now reach clamp(48px, 5.2vw, 84px). Action buttons have a reversible CSS ripple-like hover/focus fill. Removed obsolete hook/description inputs from the legacy homepage customizer without deleting stored content.
+
+Made the overlay scrollbar wider and Techouse red, preserving its transparent gutter and native scrolling. The homepage About cue now uses an 850ms eased scroll, interruptible by wheel, touch, pointer or keyboard input and canceled on route teardown; ordinary wheel/trackpad scrolling remains native. Existing intro timing/choreography was not changed in this pass.
+
+Image previews now wait for decoding, reveal through a 550ms blur transition and respect reduced motion. Homepage image loads delayed beyond 1.5 seconds show a small Techouse loading indicator; errors stop the pulse and show Image unavailable. Cached images bypass the reveal animation; stale source callbacks are ignored. Product previews still clear after decode to avoid transparent-image artifacts. Asset cache hashes refreshed locally.
+
+Validation: JS syntax and diff whitespace checks passed. Full regression run passed 19/20 checks initially, exposing product-preview cleanup timing; corrected it and the affected 1.0.1 browser suite then passed. New responsive homepage checks cover 1440/1024/390px, full and reduced motion, keyboard expansion, CTA navigation, overflow, delayed and failed images, and About scrolling. Desktop/mobile screenshots inspected. Final targeted homepage/editor rerun is recorded below. Safari was not tested (no local WebKit test runtime available).
+
+Local server started on http://127.0.0.1:8787 for owner review. No release/version bump, GitHub push, merge or Cloudflare deployment. Demo and main branches unchanged. Pending owner visual review before publishing/merging.
+
+Final targeted verification passed: homepage responsive/full-motion/reduced-motion/loading/error/navigation/scroll test and existing protected-editor browser workflow. Initial new scroll test required restoring keyboard focus before clicking the re-collapsed CTA; test corrected without changing application behavior. Formatting, syntax and whitespace checks passed.

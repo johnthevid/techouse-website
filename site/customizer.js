@@ -80,11 +80,7 @@ window.TechouseContent = (() => {
   ];
   const divisions = ['solar', 'construction', 'prefabrication', 'development', 'elevators'];
   for (const id of divisions)
-    for (const [sel, label] of [
-      ['h2', 'heading'],
-      ['.banner-hook', 'subtitle'],
-      ['.banner-description', 'description'],
-    ])
+    for (const [sel, label] of [['h2', 'heading']])
       fields.push(['home', `[data-banner="${id}"] ${sel}`, `${id}: ${label}`]);
   async function persist(next) {
     if (window.TechouseAdmin) {

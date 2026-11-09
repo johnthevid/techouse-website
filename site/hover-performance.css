@@ -10,3 +10,122 @@
     contain: layout style;
   }
 }
+
+/* Homepage refinement: compact division copy and deliberate action states. */
+.banner-division-label {
+  color: #f4f0e8;
+  font-size: clamp(14px, 1.1vw, 18px);
+  line-height: 1.5;
+  margin: 16px 0 24px;
+}
+.division-banner .banner-title-row {
+  margin-top: 0;
+}
+.division-banner .banner-quote {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 60px;
+  padding: 18px 24px;
+  gap: 32px;
+  font-size: 15px;
+  background: #ece8da;
+  transition:
+    box-shadow 400ms ease,
+    color 400ms ease;
+}
+.division-banner .banner-quote::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -100%;
+  border-radius: 50%;
+  background: #fff;
+  transform: scale(0);
+  transition: transform 650ms cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.division-banner .banner-quote:hover::before,
+.division-banner .banner-quote:focus-visible::before {
+  transform: scale(1);
+}
+.division-banner .banner-quote:hover {
+  background: #ece8da;
+}
+.division-banner .banner-quote:focus-visible {
+  outline: 3px solid #e0bc77;
+  outline-offset: 4px;
+}
+.banner-load-status {
+  display: none;
+  position: absolute;
+  top: 140px;
+  left: 24px;
+  right: 24px;
+  z-index: 2;
+  color: white;
+  font-size: 12px;
+  line-height: 1.5;
+  text-shadow: 0 1px 4px #000;
+  pointer-events: none;
+}
+.division-banner.is-image-slow .banner-load-status,
+.division-banner.is-image-error .banner-load-status {
+  display: block;
+}
+.banner-load-status::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  background: #e21d28;
+  border-radius: 50%;
+  animation: techouse-loading 1.2s ease-in-out infinite alternate;
+}
+.division-banner.is-image-error .banner-load-status::before {
+  animation: none;
+}
+@keyframes techouse-loading {
+  to {
+    opacity: 0.35;
+    transform: scale(0.7);
+  }
+}
+.page-scroll-thumb {
+  right: 2px;
+  width: 10px;
+  background: #d71920;
+  border: 1px solid #ffffff80;
+  box-shadow: 0 0 0 1px #0002;
+  cursor: grab;
+  transition: background 200ms ease;
+}
+.page-scroll-thumb:hover {
+  background: #b51017;
+}
+.page-scroll-thumb:active {
+  cursor: grabbing;
+}
+@media (min-width: 901px) and (hover: hover) {
+  .division-banner.is-open .banner-title-row h2 {
+    font-size: clamp(48px, 5.2vw, 84px);
+    line-height: 1.05;
+  }
+}
+@media (max-width: 900px), (hover: none) {
+  .division-banner .banner-title-row h2 {
+    font-size: clamp(34px, 6vw, 56px);
+  }
+  .banner-load-status {
+    top: 26px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .division-banner .banner-quote,
+  .division-banner .banner-quote::before {
+    transition: none;
+  }
+  .banner-load-status::before {
+    animation: none;
+  }
+}
