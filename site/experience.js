@@ -198,237 +198,183 @@ window.TechouseExperience = (() => {
         title.focus({ preventScroll: true });
       };
     }
+    const landing = document.querySelector('.division-landing');
+    const intro = document.querySelector('.landing-intro');
+    intro.dataset.emphasis = 'question';
     if (window.techouseIntroStarted || reduced()) return;
     window.techouseIntroStarted = true;
-    const title = document.querySelector('#landing-title'),
-      invitation = document.querySelector('.landing-invitation'),
-      intro = kicker.closest('.landing-intro'),
-      landing = document.querySelector('.division-landing'),
-      steps = [...(invitation?.querySelectorAll('.intro-step') || [])];
-    const sentence = kicker.textContent,
-      animations = new Set(),
-      localTimers = new Set();
-    let done = false;
-    const captions = [
-      ...document.querySelectorAll('.division-banner .banner-content'),
-      document.querySelector('.banner-nav-right'),
-    ].filter(Boolean);
-    const blocked = [
-      document.querySelector('.division-banners'),
-      document.querySelector('.banner-nav-right'),
-      document.querySelector('.banner-company-link'),
-      document.querySelector('#company'),
-      document.querySelector('#footer'),
-    ].filter(Boolean);
-    const pause = (ms) =>
-      new Promise((resolve) => {
-        const t = setTimeout(() => {
-          localTimers.delete(t);
-          resolve();
-        }, ms);
-        localTimers.add(t);
-      });
-    const animate = (el, frames, options) => {
-      const animation = el.animate(frames, options);
-      animations.add(animation);
-      return animation.finished.finally(() => animations.delete(animation));
-    };
-    intro.dataset.emphasis = 'promise';
-    kicker.classList.add('intro-waiting');
-    title.classList.add('intro-waiting');
-    steps.forEach((el) => el.classList.add('intro-waiting'));
+    const overlay = document.createElement('div');
+    overlay.className = 'brand-intro';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Welcome to Techouse');
+    overlay.dataset.phase = 'mark';
+    overlay.innerHTML = `<div class="brand-intro-center"><div class="brand-intro-lockup" aria-hidden="true"><img class="brand-intro-symbol" src="assets/techouse-logo-horizontal.png" alt=""><img class="brand-intro-wordmark" src="assets/techouse-logo-horizontal.png" alt=""></div><p class="brand-intro-message"></p></div><button class="skip-intro" type="button">Skip intro ↗</button>`;
+    overlay.querySelector('.brand-intro-message').textContent = kicker.textContent;
+    document.body.append(overlay);
+    const symbol = overlay.querySelector('.brand-intro-symbol');
+    const wordmark = overlay.querySelector('.brand-intro-wordmark');
+    const message = overlay.querySelector('.brand-intro-message');
+    const skip = overlay.querySelector('button');
+    const blocked = ['#header', '#main', '#footer']
+      .map((sel) => document.querySelector(sel))
+      .filter(Boolean);
+    const pageCopy = [intro, ...landing.querySelectorAll('.banner-content')];
+    const originalOpacity = pageCopy.map((el) => el.style.opacity);
+    pageCopy.forEach((el) => {
+      el.style.opacity = '0';
+    });
+    const originalInert = blocked.map((el) => el.inert);
+    blocked.forEach((el) => {
+      el.inert = true;
+    });
     landing.classList.add('intro-playing');
     document.documentElement.classList.add('intro-scroll-locked');
     document.body.classList.add('intro-scroll-locked');
-    blocked.forEach((el) => (el.inert = true));
-    const skip = document.createElement('button');
-    skip.type = 'button';
-    skip.className = 'skip-intro';
-    skip.innerHTML = 'Skip intro <span aria-hidden="true">▸│</span><span class="skip-intro-progress" aria-hidden="true"></span>';
-    const skipHint = document.createElement('span');
-    skipHint.className = 'intro-skip-hint';
-    skipHint.textContent = matchMedia('(pointer: coarse)').matches ? 'Double tap to skip' : 'Double click to skip';
-    landing.append(skip, skipHint);
-    let lastTap = null;
-    let skipping = false;
-    let skipFade = null;
-    function doubleClickSkip(event) { if (!event.target.closest('button,a')) requestSkip(); }
-    function tapSkip(event) {
-      if (event.pointerType !== 'touch' || !event.isPrimary || event.target.closest('button,a')) return;
-      const now = performance.now();
-      if (lastTap && now-lastTap.time < 350 && Math.hypot(event.clientX-lastTap.x,event.clientY-lastTap.y)<40) { lastTap=null; requestSkip(); }
-      else lastTap={time:now,x:event.clientX,y:event.clientY};
-    }
-    landing.addEventListener('dblclick', doubleClickSkip);
-    landing.addEventListener('pointerup', tapSkip);
-    function unlock() {
+    const animations = new Set();
+    let done = false;
+    let exiting = false;
+    let safety;
+    const animate = async (element, frames, duration, delay = 0) => {
+      const animation = element.animate(frames, {
+        duration,
+        delay,
+        easing: 'cubic-bezier(.22,.7,.2,1)',
+        fill: 'forwards',
+      });
+      animations.add(animation);
+      await animation.finished.catch(() => {});
+    };
+    const finish = () => {
+      if (done) return;
+      done = true;
+      clearTimeout(safety);
+      animations.forEach((animation) => animation.cancel());
+      animations.clear();
+      overlay.remove();
       landing.classList.remove('intro-playing');
-      landing.dispatchEvent(new Event('intro-ready'));
+      landing.dataset.revealPhase = 'complete';
+      pageCopy.forEach((el, index) => {
+        el.style.opacity = originalOpacity[index];
+      });
       document.documentElement.classList.remove('intro-scroll-locked');
       document.body.classList.remove('intro-scroll-locked');
-      blocked.forEach((el) => (el.inert = false));
-      skip.remove();
-      skipHint.remove();
-      landing.removeEventListener('dblclick', doubleClickSkip);
-      landing.removeEventListener('pointerup', tapSkip);
-    }
-    // Both normal completion and Skip use this single exit path to restore the page.
-    function finish(skipped = false) {
-      if (done) return;
-      done = true;
-      localTimers.forEach(clearTimeout);
-      animations.forEach((a) => a.cancel());
-      animations.clear();
-      kicker.textContent = sentence;
-      kicker.removeAttribute('aria-label');
-      kicker.classList.remove('intro-typing', 'intro-waiting');
-      title.classList.remove('intro-waiting');
-      steps.forEach((el) => el.classList.remove('intro-waiting'));
-      intro.dataset.emphasis = 'question';
-      unlock();
-      captions.forEach((el, i) => {
-        el.style.opacity = '1';
-        if (el.isConnected)
-          el.animate(
-            skipped
-              ? [{ opacity: 0 }, { opacity: 1 }]
-              : [
-                  { opacity: 0, transform: 'translateY(32px)' },
-                  { opacity: 1, transform: 'translateY(0)' },
-                ],
-            {
-              duration: skipped ? 550 : 750,
-              delay: skipped ? 0 : i * 85,
-              easing: 'cubic-bezier(.22,.7,.2,1)',
-              fill: 'backwards',
-            },
-          );
+      blocked.forEach((el, index) => {
+        el.inert = originalInert[index];
       });
-      if (skipped) document.querySelector('#main').focus({ preventScroll: true });
-    }
-    async function requestSkip() {
-      if (done || skipping) return;
-      skipping = true;
-      skip.disabled = true;
-      localTimers.forEach(clearTimeout);
-      animations.forEach(animation => animation.pause());
-      try {
-        // Transition the headline only; banner photography stays visible.
-        skipFade = intro.animate([{ opacity: 1 }, { opacity: 0 }], {
-          duration: 220, easing: 'ease-in-out', fill: 'forwards',
-        });
-        await skipFade.finished;
-        if (!landing.isConnected || done) return;
-        finish(true);
-        const fadeOut = skipFade;
-        skipFade = intro.animate([{ opacity: 0 }, { opacity: 1 }], {
-          duration: 550, easing: 'cubic-bezier(.22,.7,.2,1)', fill: 'both',
-        });
-        fadeOut.cancel();
-        await skipFade.finished;
-        skipFade.cancel();
-        skipFade = null;
-      } catch {
-        // Navigation cancels the fade and the normal cleanup restores the page.
-      }
-    }
-    skip.onclick = requestSkip;
-    cleanupIntro = () => {
-      skipFade?.cancel();
-      done = true;
-      localTimers.forEach(clearTimeout);
-      animations.forEach((a) => a.cancel());
-      unlock();
+      landing.dispatchEvent(new Event('intro-ready'));
     };
-    const safety = setTimeout(() => finish(true), 18000);
-    localTimers.add(safety);
-    async function play() {
-      await Promise.race([document.fonts.ready, pause(1200)]);
-      if (done || !intro.isConnected) return;
-      const typingDelays = Array.from(sentence).map(char => 22 + Math.random() * 44 + (char === ',' ? 100 : 0));
-      const totalDuration = typingDelays.reduce((a, b) => a + b, 0) + 400 + 650 + 1600 + 1800 + steps.length * 770;
-      const progress = skip.querySelector('.skip-intro-progress').animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration: totalDuration, easing: 'linear', fill: 'forwards' });
-      animations.add(progress);
-      kicker.setAttribute('aria-label', sentence);
-      kicker.classList.add('intro-typing');
-      const reserve = document.createElement('span');
-      reserve.className = 'intro-type-reserve';
-      reserve.setAttribute('aria-hidden', 'true');
-      reserve.textContent = sentence;
-      const ink = document.createElement('span');
-      ink.className = 'intro-type-ink';
-      ink.setAttribute('aria-hidden', 'true');
-      kicker.replaceChildren(reserve, ink);
-      kicker.classList.remove('intro-waiting');
-      for (const [index, char] of Array.from(sentence).entries()) {
-        if (done) return;
-        ink.textContent += char;
-        await pause(typingDelays[index]);
-      }
-      if (done) return;
-      kicker.textContent = sentence;
-      kicker.classList.remove('intro-typing');
-      await pause(400);
-      if (done) return;
-      title.classList.remove('intro-waiting');
-      await animate(
-        title,
-        [
-          { opacity: 0, transform: 'translateY(6px)' },
-          { opacity: 1, transform: 'translateY(0)' },
-        ],
-        { duration: 650, easing: 'ease-out' },
-      );
-      await pause(1600);
-      if (done || !intro.isConnected) return;
-      const properties = [
-          'fontSize',
-          'fontWeight',
-          'lineHeight',
-          'letterSpacing',
-          'color',
-          'marginTop',
-          'marginBottom',
-        ],
-        elements = [kicker, title];
-      const before = elements.map((el) => {
-          const style = getComputedStyle(el);
-          return Object.fromEntries(properties.map((key) => [key, style[key]]));
-        }),
-        top = getComputedStyle(intro).top;
-      intro.dataset.emphasis = 'question';
-      const after = elements.map((el) => {
-        const style = getComputedStyle(el);
-        return Object.fromEntries(properties.map((key) => [key, style[key]]));
-      });
-      await Promise.all([
-        animate(intro, [{ top }, { top: getComputedStyle(intro).top }], {
-          duration: 1800,
-          easing: 'cubic-bezier(.4,0,.2,1)',
-        }),
-        ...elements.map((el, i) =>
-          animate(el, [before[i], after[i]], { duration: 1800, easing: 'cubic-bezier(.4,0,.2,1)' }),
-        ),
-      ]);
-      for (const el of steps) {
-        await pause(220);
-        if (done) return;
-        el.classList.remove('intro-waiting');
+    const exit = async (skipRequested = false) => {
+      if (done || exiting) return;
+      exiting = true;
+      overlay.dataset.phase = 'reveal';
+      skip.disabled = true;
+      if (skipRequested) {
+        await animate(overlay, [{ opacity: 1 }, { opacity: 0 }], 180);
+        if (!done) finish();
+      } else {
         await animate(
-          el,
+          overlay.querySelector('.brand-intro-center'),
+          [{ opacity: 1 }, { opacity: 0 }],
+          180,
+        );
+        if (done) return;
+        await animate(
+          overlay,
+          [{ transform: 'translateY(0)' }, { transform: 'translateY(100%)' }],
+          950,
+        );
+        if (done) return;
+        landing.classList.remove('intro-playing');
+        landing.dataset.revealPhase = 'headline';
+        await animate(
+          intro,
           [
-            { opacity: 0, transform: 'translateY(-9px)' },
+            { opacity: 0, transform: 'translateY(18px)' },
             { opacity: 1, transform: 'translateY(0)' },
           ],
-          { duration: 550, easing: 'ease-out' },
+          600,
         );
+        if (done) return;
+        landing.dataset.revealPhase = 'divisions';
+        await Promise.all(
+          pageCopy.slice(1).map((element, index) =>
+            animate(
+              element,
+              [
+                { opacity: 0, transform: 'translateY(20px)' },
+                { opacity: 1, transform: 'translateY(0)' },
+              ],
+              550,
+              index * 85,
+            ),
+          ),
+        );
+        if (!done) finish();
       }
-      finish();
-    }
-    play().catch(() => {
-      if (!done) finish(true);
+      document.querySelector('#main')?.focus({ preventScroll: true });
+    };
+    skip.addEventListener('click', () => exit(true));
+    overlay.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') exit(true);
+      if (event.key === 'Tab') {
+        event.preventDefault();
+        skip.focus();
+      }
     });
+    skip.focus({ preventScroll: true });
+    safety = setTimeout(finish, 10000);
+    cleanupIntro = finish;
+    async function play() {
+      // Decoding is bounded: a failed or slow logo must never trap the visitor.
+      await Promise.race([
+        Promise.all([symbol.decode(), wordmark.decode()]).catch(() => {}),
+        new Promise((resolve) => setTimeout(resolve, 700)),
+      ]);
+      if (done || exiting) return;
+      await animate(
+        symbol,
+        [
+          { transform: 'translateX(33%) scale(1.8)', opacity: 0 },
+          { transform: 'translateX(33%) scale(1)', opacity: 1 },
+        ],
+        700,
+      );
+      if (done || exiting) return;
+      overlay.dataset.phase = 'wordmark';
+      await Promise.all([
+        animate(
+          symbol,
+          [{ transform: 'translateX(33%) scale(1)' }, { transform: 'translateX(0) scale(1)' }],
+          650,
+        ),
+        animate(
+          wordmark,
+          [
+            { opacity: 0, transform: 'translateX(18px)' },
+            { opacity: 1, transform: 'translateX(0)' },
+          ],
+          550,
+          150,
+        ),
+      ]);
+      if (done || exiting) return;
+      overlay.dataset.phase = 'message';
+      await animate(
+        message,
+        [
+          { opacity: 0, transform: 'translateY(12px)' },
+          { opacity: 1, transform: 'translateY(0)' },
+        ],
+        450,
+      );
+      if (done || exiting) return;
+      await animate(message, [{ opacity: 1 }, { opacity: 1 }], 2100);
+      if (!done && !exiting) await exit();
+    }
+    play().catch(finish);
   }
+
   // Called after route markup exists. Add new page enhancements after cleaning up the previous route.
   function mount() {
     cleanupIntro();

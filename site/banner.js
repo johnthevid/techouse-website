@@ -18,7 +18,7 @@ window.TechouseBanner = (() => {
   }
   // LANDING MARKUP: intro, banners, About section, and right-edge About cue.
   function html(divisions, art, arrow) {
-    return `<section class="division-landing" aria-labelledby="landing-title"><div class="landing-intro"><h1 id="landing-title">What are you <br>building next?</h1><span class="landing-kicker">We bring the newest technology to the Philippines.</span></div><div class="division-banners" aria-label="Explore Techouse business divisions">${divisions
+    return `<section class="division-landing" aria-labelledby="landing-title"><div class="landing-intro"><h1 id="landing-title">What are you <br>building next?</h1><span class="landing-kicker" hidden>We bring the newest technology to the Philippines.</span></div><div class="division-banners" aria-label="Explore Techouse business divisions">${divisions
       .map((d) => {
         const c = copy[d.id];
         return `<section class="division-banner banner-${d.id}" data-banner="${d.id}" aria-labelledby="banner-title-${d.id}"><div class="banner-background" aria-hidden="true">${d.image ? `<img src="assets/${d.image}" alt="" ${d.id === 'solar' ? 'fetchpriority="high"' : ''}>` : `<div class="elevator-backdrop">${art}</div>`}</div><div class="banner-shade"></div><button class="banner-trigger" aria-label="Explore ${d.short}"></button><div class="banner-content"><div class="banner-title-row"><h2 id="banner-title-${d.id}">${c.title}</h2><span class="banner-plus" aria-hidden="true">+</span></div><p class="banner-division-label">${d.short}</p></div><span class="banner-load-status" aria-hidden="true">Techouse · Loading image</span></section>`;
@@ -85,6 +85,7 @@ window.TechouseBanner = (() => {
       ),
     );
     let observer;
+    const textMotions = new Map();
     let keyboardMode = false;
     let awaitingFreshMovement = false;
     let lastPointer = null;
@@ -116,8 +117,32 @@ window.TechouseBanner = (() => {
         host.classList.contains('banners-arriving')
       )
         return;
+      const textNodes = panels.flatMap((p) => [...p.querySelectorAll('h2,.banner-division-label')]);
+      const before = textNodes.map((node) => {
+        const style = getComputedStyle(node);
+        const scale = style.transform === 'none' ? 1 : new DOMMatrixReadOnly(style.transform).a;
+        return parseFloat(style.fontSize) * scale;
+      });
+      textMotions.forEach((animation) => animation.cancel());
+      textMotions.clear();
       panels.forEach((p) => state(p, p === panel));
       host.classList.toggle('has-expanded', !!panel);
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        textNodes.forEach((node, index) => {
+          const target = parseFloat(getComputedStyle(node).fontSize);
+          if (Math.abs(before[index] - target) < 0.1) return;
+          const animation = node.animate(
+            [{ transform: `scale(${before[index] / target})` }, { transform: 'scale(1)' }],
+            { duration: 650, easing: 'cubic-bezier(.22,.7,.2,1)' },
+          );
+          textMotions.set(node, animation);
+          animation.finished
+            .catch(() => {})
+            .finally(() => {
+              if (textMotions.get(node) === animation) textMotions.delete(node);
+            });
+        });
+      }
     }
     function setup() {
       observer?.disconnect();
@@ -285,6 +310,7 @@ window.TechouseBanner = (() => {
         });
     }
     teardown = () => {
+      textMotions.forEach((animation) => animation.cancel());
       stopScroll();
       arrivalAnimations.forEach((a) => a.cancel());
       controller.abort();

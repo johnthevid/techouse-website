@@ -51,12 +51,17 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
     );
     assert.equal(await page.locator('.banner-division-label').count(), 5);
     assert.equal(await page.locator('.landing-invitation').count(), 0);
+    assert.equal(await page.locator('.landing-kicker').isVisible(), false);
     assert.equal(await page.locator('.banner-quote,.banner-details').count(), 0);
     assert.equal(
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
       true,
     );
     if (width > 900) {
+      const anchor = await page
+        .locator('.banner-division-label')
+        .first()
+        .evaluate((el) => el.getBoundingClientRect().top);
       await page.locator('.banner-trigger').first().focus();
       await page.waitForTimeout(800);
       assert.equal(
@@ -83,6 +88,20 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
         .first()
         .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
       assert.ok(title >= 48);
+      const labelTop = await page
+        .locator('.banner-division-label')
+        .first()
+        .evaluate((el) => el.getBoundingClientRect().top);
+      assert.ok(Math.abs(labelTop - anchor) < 1, `Label moved ${labelTop - anchor}px`);
+      await page.locator('.banner-trigger').nth(2).focus();
+      await page.waitForTimeout(100);
+      const midTop = await page
+        .locator('.banner-division-label')
+        .first()
+        .evaluate((el) => el.getBoundingClientRect().top);
+      assert.ok(Math.abs(midTop - anchor) < 1);
+      await page.locator('.banner-trigger').first().focus();
+      await page.waitForTimeout(800);
       assert.ok(
         (await page
           .locator('.banner-division-label')
@@ -150,4 +169,89 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
     }
     await page.close();
   }
+});
+
+test('Brand opening completes, skips and cleans up navigation and failed imagery', async (t) => {
+  const f = await fixture(t);
+  const browser = await chromium.launch({ channel: 'chrome', headless: true });
+  t.after(() => browser.close());
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const errors = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.route('**/*', async (route) => {
+    const req = route.request();
+    if (!req.url().startsWith(f.env.APP_ORIGIN)) return route.abort();
+    const res = await worker.fetch(
+      new Request(req.url(), { headers: await req.allHeaders() }),
+      f.env,
+    );
+    await route.fulfill({
+      status: res.status,
+      headers: Object.fromEntries(res.headers),
+      body: Buffer.from(await res.arrayBuffer()),
+    });
+  });
+  const unlocked = async () => {
+    await page.waitForSelector('.brand-intro', { state: 'detached', timeout: 8000 });
+    assert.equal(
+      await page.evaluate(
+        () =>
+          document.documentElement.classList.contains('intro-scroll-locked') ||
+          document.querySelector('#main').inert,
+      ),
+      false,
+    );
+  };
+  await page.goto(f.env.APP_ORIGIN + '/');
+  await page.waitForSelector('.brand-intro[data-phase="mark"]');
+  assert.equal(
+    await page.locator('.brand-intro').evaluate((el) => getComputedStyle(el).backgroundColor),
+    'rgb(255, 255, 255)',
+  );
+  await page.waitForTimeout(350);
+  await page.screenshot({ path: '/private/tmp/techouse-brand-mark.png' });
+  await page.waitForSelector('.brand-intro[data-phase="wordmark"]');
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: '/private/tmp/techouse-brand-wordmark.png' });
+  await page.waitForSelector('.brand-intro[data-phase="message"]');
+  assert.equal(
+    await page.locator('.brand-intro-message').textContent(),
+    await page.locator('.landing-kicker').textContent(),
+  );
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: '/private/tmp/techouse-brand-message.png' });
+  await page.waitForTimeout(1000);
+  assert.equal(await page.locator('.brand-intro').getAttribute('data-phase'), 'message');
+  await page.waitForSelector('[data-reveal-phase="headline"]');
+  assert.equal(
+    await page
+      .locator('.banner-content')
+      .first()
+      .evaluate((el) => getComputedStyle(el).opacity),
+    '0',
+  );
+  await page.waitForSelector('[data-reveal-phase="divisions"]');
+  await unlocked();
+  await page.screenshot({ path: '/private/tmp/techouse-brand-complete.png' });
+  await page.goto(f.env.APP_ORIGIN + '/');
+  await page.locator('.skip-intro').press('Enter');
+  await unlocked();
+  await page.goto(f.env.APP_ORIGIN + '/');
+  await page.waitForSelector('.brand-intro');
+  await page.evaluate(() => {
+    location.hash = '/about';
+  });
+  await unlocked();
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(f.env.APP_ORIGIN + '/');
+  assert.equal(await page.locator('.brand-intro').count(), 0);
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.route('**/techouse-logo-horizontal.png', (route) => route.abort());
+  await page.goto(f.env.APP_ORIGIN + '/');
+  await page.waitForSelector('.brand-intro');
+  await unlocked();
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+  assert.deepEqual(errors, []);
+  await page.close();
 });

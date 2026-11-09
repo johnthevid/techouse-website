@@ -1,0 +1,62 @@
+/* Brand opening uses only transform and opacity; the actual page stays fully laid out. */
+.brand-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  overflow: hidden;
+  background: #fff;
+  color: #182522;
+}
+.brand-intro-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(520px, 84vw);
+  transform: translate(-50%, -50%);
+}
+.brand-intro-lockup {
+  position: relative;
+  aspect-ratio: 3;
+}
+.brand-intro-lockup img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+}
+.brand-intro-symbol {
+  clip-path: inset(0 72% 0 0);
+  transform-origin: 17% 50%;
+}
+.brand-intro-wordmark {
+  clip-path: inset(0 0 0 29%);
+}
+.brand-intro-message {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin: 20px 0 0;
+  font:
+    400 clamp(17px, 1.6vw, 23px) / 1.5 'DM Sans',
+    Arial,
+    sans-serif;
+  text-align: center;
+  opacity: 0;
+}
+.brand-intro .skip-intro {
+  color: #182522;
+  background: transparent;
+  border: 1px solid #18252255;
+  transition: background-color 250ms ease;
+}
+.brand-intro .skip-intro:hover,
+.brand-intro .skip-intro:focus-visible {
+  background: #eef0e9;
+}
+.brand-intro .skip-intro:focus-visible {
+  outline: 2px solid #bc2026;
+  outline-offset: 4px;
+}

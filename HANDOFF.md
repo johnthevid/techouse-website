@@ -156,3 +156,20 @@ Enlarged the final opening headline to clamp(56px, 6.8vw, 98px) and tagline to c
 Removed the homepage About us scroll button at owner's request. Company section and header-logo scroll action remain. Removed the cue-only scroll listener and adjusted the existing regression to verify absence and exercise the retained logo action. Syntax/whitespace checks passed; no push/deployment.
 
 Opening tagline updated to “We bring the newest technology to the Philippines.” (corrected spelling). Local only; no deployment.
+
+
+## Brand opening, hover stability and CMS review — 9 November 2026
+
+Current branch feature/homepage-refinement. Previous visual work saved locally at ccfcb70 before replacing the intro. No GitHub push, merge, version bump or Cloudflare deployment. Local server restarted on port 8787 to load backend changes.
+
+Replaced the older typing/typography-morph opening with a white brand curtain: zoom-out of the symbol, symbol moves left while the existing Techouse wordmark appears, then the editable company promise. Final requested promise hold is 2100ms (100ms shorter than the requested longer 2200ms hold). The white curtain slides down over 950ms, then the homepage question reveals first (600ms), followed by staggered division copy (550ms, 85ms stagger). About button remains removed. Company promise no longer renders beneath the homepage headline; its hidden source remains editable for the intro only. No external logo/typeface assets copied from the reference site.
+
+Opening retains visible Skip, Escape, reduced-motion bypass, bounded image decoding, a 10-second cleanup failsafe, navigation cleanup and restoration of original inert/opacity states. Animations use transform/opacity instead of per-character typing or animated font metrics. Added site/brand-intro.css.
+
+Hover text now uses inverse-scale transitions rather than frame-by-frame font-size/weight interpolation. Desktop heading rows and label slots reserve consistent heights: heading baseline and label start remain fixed across idle, expanded and rapid switching states. Existing photo expansion and panel navigation remain. Quote hover uses a background-color fade.
+
+CMS review found stale invitation/hook/description fields still accepted by the server. Removed those fields from the active editor/schema; new division labels are editable alongside headings/images. Backend safely validates and discards retired keys on the next save so old drafts do not fail; unknown selectors remain rejected. No database migration or automatic rewriting of stored client copy. Editor descriptions now explain intro-only promise and division labels.
+
+Verification: initial complete suite passed 22 tests. Latest targeted tests passed for stable hover anchors at 1440/1024/390px; full opening/Skip/reduced motion/navigation/failed logo; retired-field compatibility; and protected CMS label edit/live-preview/save. Inspected desktop opening/draining/headline-only/expanded views and mobile opening/final views. Safari/WebKit unavailable locally, so Safari remains a manual review item. Final complete regression result recorded below.
+
+Final complete regression: 22 tests passed, zero failures/skips (including five calendar/storage component scenarios). Edited JS syntax and diff whitespace checks passed. Local visual captures inspected for draining curtain, headline-first reveal, fixed hover anchors and mobile intro/final page. Await owner review before push/merge/deployment.

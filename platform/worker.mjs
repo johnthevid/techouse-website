@@ -211,8 +211,6 @@ function csrf(request, record) {
 const selectors = [
   ".landing-kicker",
   "#landing-title",
-  ".landing-invitation .intro-step:first-child",
-  ".landing-invitation .intro-step:last-child",
   "#company-title",
   ".company-intro p:nth-of-type(1)",
   ".company-intro p:nth-of-type(2)",
@@ -233,8 +231,16 @@ const divisions = [
   "elevators",
 ];
 for (const id of divisions)
-  for (const sel of ["h2", ".banner-hook", ".banner-description"])
+  for (const sel of ["h2", ".banner-division-label"])
     selectors.push(`[data-banner="${id}"] ${sel}`);
+// Retired homepage fields are accepted only to clean older saved drafts on their next save.
+const retiredSelectors = new Set([
+  ".landing-invitation .intro-step:first-child",
+  ".landing-invitation .intro-step:last-child",
+  ...divisions.flatMap((id) =>
+    [".banner-hook", ".banner-description"].map((sel) => `[data-banner="${id}"] ${sel}`),
+  ),
+]);
 function text(value, limit = 5000) {
   if (typeof value !== "string" || value.length > limit)
     fail(400, "Invalid or oversized text.");
@@ -270,6 +276,10 @@ export function validateContent(input) {
     )
       fail(400, "Invalid content fields.");
   for (const [key, value] of Object.entries(input.text || {})) {
+    if (retiredSelectors.has(key)) {
+      text(value);
+      continue;
+    }
     if (!selectors.includes(key)) fail(400, "Unknown text field.");
     content.text[key] = text(value);
   }

@@ -255,3 +255,54 @@
     font-size: clamp(18px, 2.4vw, 22px);
   }
 }
+
+/* Text scales visually instead of interpolating font metrics on every frame. */
+.division-landing .banner-title-row h2,
+.division-landing .banner-division-label {
+  transition: none;
+  transform-origin: left bottom;
+}
+@media (min-width: 901px) and (hover: hover) {
+  .division-landing .banner-title-row h2 {
+    display: block;
+  }
+  .division-landing.has-expanded .division-banner.is-open h2 {
+    width: calc(50vw - 2 * var(--landing-gutter));
+    max-width: none;
+  }
+  .division-landing.has-expanded .division-banner:not(.is-open) h2 {
+    width: calc(12.5vw - 40px);
+    max-width: none;
+  }
+}
+.banner-global-quote {
+  transition:
+    background-color 350ms ease,
+    color 350ms ease,
+    border-color 350ms ease;
+}
+
+/* Reserve stable text slots so panel resizing cannot push copy vertically. */
+@media (min-width: 901px) and (hover: hover) {
+  .division-landing .division-banner .banner-title-row {
+    height: clamp(120px, 12vw, 200px);
+    min-height: 0;
+    flex: 0 0 auto;
+    align-items: flex-end;
+    margin: 0;
+  }
+  .division-landing .division-banner .banner-title-row h2 {
+    min-height: 0;
+    margin: 0;
+  }
+  .division-landing .division-banner .banner-division-label {
+    height: 90px;
+    min-height: 90px;
+    margin: 18px 0 0;
+    transform-origin: left top;
+  }
+}
+/* The company promise is retained as editable intro copy, not repeated on the homepage. */
+.division-landing .landing-kicker {
+  display: none;
+}
