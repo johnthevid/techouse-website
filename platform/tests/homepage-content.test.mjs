@@ -7,6 +7,7 @@ test('Homepage content saves active labels and retires old copy without rejectin
   await f.login();
   const record = await f.request('/api/admin/content');
   const draft = content('A client-approved headline');
+  draft.text['.company-intro p:nth-of-type(2)'] = 'Retired second paragraph';
   draft.text['.landing-kicker'] = 'An editable company promise';
   draft.text['[data-banner="solar"] .banner-division-label'] = 'Solar energy';
   draft.text['.landing-invitation .intro-step:first-child'] = 'Old invitation';
@@ -29,6 +30,7 @@ test('Homepage content saves active labels and retires old copy without rejectin
     ),
     false,
   );
+  assert.equal(Object.hasOwn(read.value.content.text, '.company-intro p:nth-of-type(2)'), false);
   const invalid = structuredClone(draft);
   invalid.text['#unapproved-selector'] = 'Should be rejected';
   assert.equal(

@@ -21,11 +21,11 @@ window.TechouseBanner = (() => {
     return `<section class="division-landing" aria-labelledby="landing-title"><div class="landing-intro"><h1 id="landing-title">What are you <br>building next?</h1><span class="landing-kicker" hidden>We bring the newest technology to the Philippines.</span></div><div class="division-banners" aria-label="Explore Techouse business divisions">${divisions
       .map((d) => {
         const c = copy[d.id];
-        return `<section class="division-banner banner-${d.id}" data-banner="${d.id}" aria-labelledby="banner-title-${d.id}"><div class="banner-background" aria-hidden="true">${d.image ? `<img src="assets/${d.image}" alt="" ${d.id === 'solar' ? 'fetchpriority="high"' : ''}>` : `<div class="elevator-backdrop">${art}</div>`}</div><div class="banner-shade"></div><button class="banner-trigger" aria-label="Explore ${d.short}"></button><div class="banner-content"><div class="banner-title-row"><h2 id="banner-title-${d.id}">${c.title}</h2><span class="banner-plus" aria-hidden="true">+</span></div><p class="banner-division-label">${d.short}</p></div><span class="banner-load-status" aria-hidden="true">Techouse · Loading image</span></section>`;
+        return `<section class="division-banner banner-${d.id}" data-banner="${d.id}" aria-labelledby="banner-title-${d.id}"><div class="banner-background" aria-hidden="true">${d.image ? `<img src="assets/${d.image}" alt="" ${d.id === 'solar' ? 'fetchpriority="high"' : ''}>` : `<div class="elevator-backdrop">${art}</div>`}</div><div class="banner-shade"></div><button class="banner-trigger" aria-label="Explore ${d.short}"></button><div class="banner-content"><div class="banner-title-row"><h2 id="banner-title-${d.id}">${c.title}</h2><span class="banner-plus" aria-hidden="true">+</span></div><p class="banner-division-label">${d.short}</p>${d.id === 'solar' ? `<a class="banner-scroll-cue" href="#company" aria-label="Scroll down to learn about Techouse">${window.TechouseIcons.icon('arrow_downward')}</a>` : ''}</div><span class="banner-load-status" aria-hidden="true">Techouse · Loading image</span></section>`;
       })
       .join(
         '',
-      )}</div></section><section class="landing-company" id="company" aria-labelledby="company-title"><div class="company-intro"><span class="eyebrow">GET TO KNOW TECHOUSE</span><h2 id="company-title">New ways to build.<br>More ways forward.</h2><p>Techouse brings construction technologies and solar energy solutions to the Philippines. From prefabricated spaces to rooftop solar, we help you explore options for the way you build and the energy you use.</p><p>Planning a home, a business space or your next development? Our five divisions give you a clear place to start. Choose what you need, explore the possibilities, and talk to our team about your project.</p><a class="button" href="#/about">More about Techouse ↗</a></div><div class="company-divisions"><h3>What are you planning?</h3><a href="#/divisions/solar"><strong>Lower your electricity costs</strong><span>Explore solar energy ↗</span></a><a href="#/divisions/construction"><strong>Bring a building project to life</strong><span>Explore construction ↗</span></a><a href="#/divisions/prefabrication"><strong>Explore another way to create space</strong><span>Explore prefabricated buildings ↗</span></a><a href="#/divisions/development"><strong>Consider your property’s next chapter</strong><span>Explore real estate development ↗</span></a><a href="#/divisions/elevators"><strong>Connect the floors of your building</strong><span>Explore elevator engineering ↗</span></a></div></section>`;
+      )}</div></section><section class="landing-company" id="company" aria-labelledby="company-title"><div class="company-intro"><h2 id="company-title">New ways to build.<br>More ways forward.</h2><p>Techouse brings together solar energy, construction, prefabricated buildings, real estate development and elevator engineering. Explore the possibilities for your property, then talk with our team about your next step.</p><a class="button" href="#/about">More about Techouse ↗</a></div></section>`;
   }
   function mount(returningHome = false) {
     teardown();
@@ -72,7 +72,7 @@ window.TechouseBanner = (() => {
       };
       scrollFrame = requestAnimationFrame(tick);
     }
-    document.querySelectorAll('.banner-company-link').forEach((link) =>
+    document.querySelectorAll('.banner-company-link,.banner-scroll-cue').forEach((link) =>
       link.addEventListener(
         'click',
         (event) => {
@@ -85,7 +85,6 @@ window.TechouseBanner = (() => {
       ),
     );
     let observer;
-    const textMotions = new Map();
     let keyboardMode = false;
     let awaitingFreshMovement = false;
     let lastPointer = null;
@@ -117,33 +116,10 @@ window.TechouseBanner = (() => {
         host.classList.contains('banners-arriving')
       )
         return;
-      const textNodes = panels.flatMap((p) => [...p.querySelectorAll('h2,.banner-division-label')]);
-      const before = textNodes.map((node) => {
-        const style = getComputedStyle(node);
-        const scale = style.transform === 'none' ? 1 : new DOMMatrixReadOnly(style.transform).a;
-        return parseFloat(style.fontSize) * scale;
-      });
-      textMotions.forEach((animation) => animation.cancel());
-      textMotions.clear();
       panels.forEach((p) => state(p, p === panel));
       host.classList.toggle('has-expanded', !!panel);
-      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        textNodes.forEach((node, index) => {
-          const target = parseFloat(getComputedStyle(node).fontSize);
-          if (Math.abs(before[index] - target) < 0.1) return;
-          const animation = node.animate(
-            [{ transform: `scale(${before[index] / target})` }, { transform: 'scale(1)' }],
-            { duration: 650, easing: 'cubic-bezier(.22,.7,.2,1)' },
-          );
-          textMotions.set(node, animation);
-          animation.finished
-            .catch(() => {})
-            .finally(() => {
-              if (textMotions.get(node) === animation) textMotions.delete(node);
-            });
-        });
-      }
     }
+
     function setup() {
       observer?.disconnect();
       panels.forEach((p) => {
@@ -310,7 +286,6 @@ window.TechouseBanner = (() => {
         });
     }
     teardown = () => {
-      textMotions.forEach((animation) => animation.cancel());
       stopScroll();
       arrivalAnimations.forEach((a) => a.cancel());
       controller.abort();

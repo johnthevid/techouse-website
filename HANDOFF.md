@@ -173,3 +173,16 @@ CMS review found stale invitation/hook/description fields still accepted by the 
 Verification: initial complete suite passed 22 tests. Latest targeted tests passed for stable hover anchors at 1440/1024/390px; full opening/Skip/reduced motion/navigation/failed logo; retired-field compatibility; and protected CMS label edit/live-preview/save. Inspected desktop opening/draining/headline-only/expanded views and mobile opening/final views. Safari/WebKit unavailable locally, so Safari remains a manual review item. Final complete regression result recorded below.
 
 Final complete regression: 22 tests passed, zero failures/skips (including five calendar/storage component scenarios). Edited JS syntax and diff whitespace checks passed. Local visual captures inspected for draining curtain, headline-first reveal, fixed hover anchors and mobile intro/final page. Await owner review before push/merge/deployment.
+
+
+## Fixed-layout banner copy and simplified homepage About — 9 November 2026
+
+Desktop banner copy now uses its full expanded layout width in every state, with constant font metrics and reserved heading/label slots. CSS transforms alone grow/shrink the text; removed the JS inverse-size measurement/animation loop. Inner text offsets no longer switch between idle/active positions. Responsive tests assert identical text-box width/font size before/after hover and unchanged vertical anchors during rapid switching.
+
+Added an accessible arrow-only circular scroll link beneath the Solar copy, pointing to #company. It shares the existing smooth, interruptible scroll helper and reveals with Solar text. On touch layouts it remains in normal content flow.
+
+Simplified the homepage About section (not the separate #/about route): removed Get to know Techouse, the right-hand planning links and the second paragraph; centered the heading, shorter summary and retained More about Techouse action. Replaced the slow multi-stage alignment/typing choreography with a 420ms reveal and 60ms stagger. Mobile heading fits a compact two-line layout. Be a partner deferred to a separate branch as requested.
+
+Removed the second About paragraph from editor fields and active backend schema, while accepting/discarding its retired selector on future saves for compatibility. Local backend restarted to load this rule; no remote content/schema changes.
+
+Checks: four targeted tests passed (responsive banner geometry/arrow/About flow; intro lifecycle; retired-content API compatibility; protected CMS preview/save). Desktop/laptop/mobile screenshots inspected. JS syntax and whitespace checks passed. Safari remains untested locally. No push, merge or Cloudflare deployment.

@@ -213,7 +213,6 @@ const selectors = [
   "#landing-title",
   "#company-title",
   ".company-intro p:nth-of-type(1)",
-  ".company-intro p:nth-of-type(2)",
   ".page-hero h1",
   ".page-hero p",
   ".content-columns h2",
@@ -235,6 +234,7 @@ for (const id of divisions)
     selectors.push(`[data-banner="${id}"] ${sel}`);
 // Retired homepage fields are accepted only to clean older saved drafts on their next save.
 const retiredSelectors = new Set([
+  ".company-intro p:nth-of-type(2)",
   ".landing-invitation .intro-step:first-child",
   ".landing-invitation .intro-step:last-child",
   ...divisions.flatMap((id) =>

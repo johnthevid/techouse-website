@@ -80,102 +80,37 @@ window.TechouseExperience = (() => {
             : '<path d="m62 110 93-61 93 61M79 100v111h153V100"/><rect x="46" y="140" width="48" height="78" rx="7" fill="#edf1e6"/><path d="M62 134h16v6M58 158h23m-23 13h23"/><path class="energy-path" d="M94 180h35v-49h26m0 0v49h46" stroke="#bd9452"/><g class="essential-light"><path d="M142 113a14 14 0 1 1 25 0l-5 8h-14Z" fill="#e4c174"/><path d="M149 127h13m-12 5h11"/></g><rect x="181" y="158" width="29" height="47" rx="3"/><path d="M181 179h29m-6-13v6m0 16v6M113 207h35m-17 0v-8m-12-7a12 12 0 0 1 24 0m-19-1a7 7 0 0 1 14 0"/><circle cx="131" cy="194" r="1"/>';
     return `<svg viewBox="0 0 320 270" role="img" aria-label="${value}" class="motion-scene"><path d="M30 240h260" stroke="#b9c8ba" fill="none"/><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${art}</g></svg>`;
   }
-  // ABOUT SEQUENCE: short paragraph fades, pending dots, and staggered division-card entrances.
-  async function companyEntrance() {
-    await document.fonts.ready;
+  // ABOUT: a brief, centered reveal with no sequential reading delays or alignment morphs.
+  function companyEntrance() {
     const company = document.querySelector('#company');
     if (!company || companySeen || reduced()) return;
-    const intro = company.querySelector('.company-intro');
-    const heading = intro.querySelector('h2');
-    const planning = company.querySelector('.company-divisions');
-    const originalLines = heading.innerHTML.split(/<br\s*\/?>/i);
-    const lines = originalLines.length === 2 ? originalLines.map(html => {
-      const span = document.createElement('span');
-      span.innerHTML = html;
-      span.style.display = 'block';
-      return span;
-    }) : [heading];
-    if (lines[0] !== heading) heading.replaceChildren(...lines);
-    const body = [...intro.querySelectorAll('p, a.button')];
-    const eyebrow = intro.querySelector('.eyebrow');
-    const cards = [...planning.querySelectorAll('h3, a')];
-    [...lines, ...body, eyebrow, planning].forEach(el => el.style.opacity = '0');
-    planning.inert = true;
-    const wide = matchMedia('(min-width: 901px)').matches;
-    const companyBounds = company.getBoundingClientRect();
-    const introBounds = intro.getBoundingClientRect();
-    const offset = wide ? companyBounds.left + (companyBounds.width - introBounds.width) / 2 - introBounds.left : 0;
-    intro.style.transform = `translateX(${offset}px)`;
-    // Animate actual line positions: text-align itself cannot interpolate.
-    const alignmentRuns = [];
-    const originals = [];
-    function centeredRun(container, text) {
-      const row = document.createElement('span'); row.style.display = 'block';
-      const ink = document.createElement('span'); ink.textContent = text;
-      ink.style.display = 'inline-block'; row.append(ink); container.append(row);
-      // Paragraphs have a narrower max-width than the heading column.
-      // Center every line on the same intro axis, not each paragraph's box.
-      const inset = container.getBoundingClientRect().left - intro.getBoundingClientRect().left;
-      const shift = (intro.clientWidth-ink.getBoundingClientRect().width)/2 - inset;
-      ink.style.transform = `translateX(${shift}px)`;
-      alignmentRuns.push({ink,shift});
-    }
-    if (wide) {
-      for (const element of [...lines, ...intro.querySelectorAll('p')]) {
-        originals.push({element,html:element.innerHTML});
-        const text = element.textContent;
-        const style = getComputedStyle(element);
-        const context = document.createElement('canvas').getContext('2d');
-        context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-        const max = element.clientWidth;
-        const rows = []; let row = '';
-        for (const word of text.split(/\s+/)) {
-          const candidate = row ? row+' '+word : word;
-          if(row && context.measureText(candidate).width > max-8) {rows.push(row);row=word;} else row=candidate;
-        }
-        if(row)rows.push(row);
-        element.replaceChildren(); rows.forEach(value=>centeredRun(element,value));
-      }
-      // The label/button keep their own layout so their entrance motion stays independent.
-      intro.style.textAlign = 'center';
-      heading.style.textAlign='left';
-      intro.querySelectorAll('p').forEach(el=>el.style.textAlign='left');
-    }
-
-    async function reveal(element, duration = 550) {
-      if (!company.isConnected) return;
-      element.style.opacity = '1';
-      await element.animate([{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'translateY(0)'}],{duration,easing:'cubic-bezier(.2,.7,.2,1)'}).finished.catch(()=>{});
-    }
-    async function play() {
-      await reveal(lines[0]);
-      if (lines[1]) await reveal(lines[1]);
-      await new Promise(resolve => { const timer=setTimeout(()=>{timers.delete(timer);resolve();},500);timers.add(timer); });
-      if (!company.isConnected) return;
-      reveal(eyebrow,350);
-      for (const paragraph of body) await reveal(paragraph,450);
-      if (!company.isConnected) return;
-      const alignmentAnimations = alignmentRuns.map(({ink,shift}) => ink.animate([{transform:`translateX(${shift}px)`},{transform:'translateX(0)'}],{duration:900,easing:'cubic-bezier(.22,.7,.2,1)',fill:'forwards'}));
-      if(wide) {
-        const button = intro.querySelector('a.button');
-        const before = button.getBoundingClientRect().left;
-        intro.style.textAlign = 'left';
-        const shift = before-button.getBoundingClientRect().left;
-        alignmentAnimations.push(button.animate([{transform:`translateX(${shift}px)`},{transform:'translateX(0)'}],{duration:900,easing:'cubic-bezier(.22,.7,.2,1)'}));
-      }
-      await intro.animate([{transform:`translateX(${offset}px)`},{transform:'translateX(0)'}],{duration:900,easing:'cubic-bezier(.22,.7,.2,1)',fill:'forwards'}).finished.catch(()=>{});
-      intro.style.transform = '';
-      originals.forEach(({element,html})=>{element.innerHTML=html;element.style.textAlign='';});
-      alignmentAnimations.forEach(animation=>animation.cancel());
-      if (!company.isConnected) return;
-      planning.style.opacity = '1';
-      cards.forEach((card,index) => card.animate([{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'translateY(0)'}],{duration:500,delay:index*100,easing:'ease-out',fill:'backwards'}));
-      planning.inert = false;
-    }
-    companyObserver = new IntersectionObserver(entries => {
-      if (!entries.some(entry => entry.isIntersecting)) return;
-      companyObserver.disconnect(); companySeen = true; play();
-    }, {threshold:.15});
+    const items = [...company.querySelectorAll('h2,p,a.button')];
+    items.forEach((element) => {
+      element.style.opacity = '0';
+    });
+    companyObserver = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        companyObserver.disconnect();
+        companySeen = true;
+        items.forEach((element, index) => {
+          element.style.opacity = '';
+          element.animate(
+            [
+              { opacity: 0, transform: 'translateY(12px)' },
+              { opacity: 1, transform: 'translateY(0)' },
+            ],
+            {
+              duration: 420,
+              delay: index * 60,
+              easing: 'cubic-bezier(.22,.7,.2,1)',
+              fill: 'backwards',
+            },
+          );
+        });
+      },
+      { threshold: 0.15 },
+    );
     companyObserver.observe(company);
   }
   // INTRO: once per page load; cleanupIntro must always release scroll locks and inert controls.
@@ -508,16 +443,47 @@ window.TechouseExperience = (() => {
       const value = new FormData(form).get(names[step]);
       const sector = new FormData(form).get('sector') || 'Residential';
       const photos = {
-        Residential: ['assets/solar-story/home-selected.jpg', 'A bright home interior with a sofa, houseplant and resting dog', 'Make room for a brighter everyday.', 'Explore solar for the place you call home.'],
-        Commercial: ['assets/solar-story/store-selected.jpg', 'A bright supermarket aisle with stocked shelves', 'Put your roof to work for your business.', 'Explore solar for the spaces that keep your business moving.'],
-        Industrial: ['assets/solar-story/factory-selected.jpg', 'Engineers working together inside a bright manufacturing facility', 'Think bigger. Start with your roof.', 'Explore solar for your facility’s energy needs.'],
+        Residential: [
+          'assets/solar-story/home-selected.jpg',
+          'A bright home interior with a sofa, houseplant and resting dog',
+          'Make room for a brighter everyday.',
+          'Explore solar for the place you call home.',
+        ],
+        Commercial: [
+          'assets/solar-story/store-selected.jpg',
+          'A bright supermarket aisle with stocked shelves',
+          'Put your roof to work for your business.',
+          'Explore solar for the spaces that keep your business moving.',
+        ],
+        Industrial: [
+          'assets/solar-story/factory-selected.jpg',
+          'Engineers working together inside a bright manufacturing facility',
+          'Think bigger. Start with your roof.',
+          'Explore solar for your facility’s energy needs.',
+        ],
       };
       const priorities = {
-        'Lower electricity costs': ['assets/solar-story/peso-meralco-bill.jpg', 'A person reviewing an illustrative Meralco electricity bill in Philippine pesos', 'Lower my electricity bill', 'Explore how daytime solar could offset electricity you buy from the grid.'],
-        'Energy after sunset': ['assets/solar-story/night-home.jpg', 'A house with warmly illuminated windows at night', 'Keep the day going.', 'Discuss battery storage for using stored solar energy after sunset.'],
-        'Backup for essentials': ['assets/solar-story/essential-light.jpg', 'A single light illuminating otherwise dark surroundings', 'Keep the essentials connected.', 'Plan backup for essential lights, Wi-Fi and selected appliances, with battery capacity matched to your needs.'],
+        'Lower electricity costs': [
+          'assets/solar-story/peso-meralco-bill.jpg',
+          'A person reviewing an illustrative Meralco electricity bill in Philippine pesos',
+          'Lower my electricity bill',
+          'Explore how daytime solar could offset electricity you buy from the grid.',
+        ],
+        'Energy after sunset': [
+          'assets/solar-story/night-home.jpg',
+          'A house with warmly illuminated windows at night',
+          'Keep the day going.',
+          'Discuss battery storage for using stored solar energy after sunset.',
+        ],
+        'Backup for essentials': [
+          'assets/solar-story/essential-light.jpg',
+          'A single light illuminating otherwise dark surroundings',
+          'Keep the essentials connected.',
+          'Plan backup for essential lights, Wi-Fi and selected appliances, with battery capacity matched to your needs.',
+        ],
       };
-      const [image,alt,title,description] = (step === 1 ? priorities[value] : photos[sector]) || photos.Residential;
+      const [image, alt, title, description] =
+        (step === 1 ? priorities[value] : photos[sector]) || photos.Residential;
       visual.classList.add('discovery-photo-visual');
       visual.dataset.story = step === 0 ? sector : value;
       visual.innerHTML = `<img class="discovery-story-photo" src="${image}" alt="${alt}"><div class="discovery-photo-shade"></div><div class="discovery-photo-copy"><span>YOUR SOLAR STORY / ${step === 0 ? sector.toUpperCase() : 'YOUR PRIORITY'}</span><h3>${title}</h3><p>${description}</p><small>${step === 1 && value === 'Lower electricity costs' ? 'Illustrative bill image' : 'Photo · Unsplash · illustrative'}</small></div>`;
@@ -585,7 +551,10 @@ window.TechouseExperience = (() => {
       cards.forEach((c, i) => (c.hidden = i !== slide));
       const lessons = [
         ['assets/solar-story/lesson-daytime.jpg', 'A home fitted with rooftop solar panels'],
-        ['assets/solar-story/lesson-equipment.jpg', 'Electrical enclosures and wiring mounted on a building'],
+        [
+          'assets/solar-story/lesson-equipment.jpg',
+          'Electrical enclosures and wiring mounted on a building',
+        ],
         ['assets/solar-story/lesson-roof.jpg', 'A worker preparing a residential roof'],
       ];
       illustration.dataset.lesson = String(slide);

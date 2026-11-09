@@ -53,11 +53,21 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
     assert.equal(await page.locator('.landing-invitation').count(), 0);
     assert.equal(await page.locator('.landing-kicker').isVisible(), false);
     assert.equal(await page.locator('.banner-quote,.banner-details').count(), 0);
+    assert.equal(await page.locator('.banner-scroll-cue').count(), 1);
+    assert.equal(await page.locator('#company .eyebrow,#company .company-divisions').count(), 0);
+    assert.equal(await page.locator('#company p').count(), 1);
     assert.equal(
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
       true,
     );
     if (width > 900) {
+      const initialMetrics = await page
+        .locator('.banner-content')
+        .first()
+        .evaluate((el) => ({
+          width: el.offsetWidth,
+          font: getComputedStyle(el.querySelector('h2')).fontSize,
+        }));
       const anchor = await page
         .locator('.banner-division-label')
         .first()
@@ -88,6 +98,14 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
         .first()
         .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
       assert.ok(title >= 48);
+      const expandedMetrics = await page
+        .locator('.banner-content')
+        .first()
+        .evaluate((el) => ({
+          width: el.offsetWidth,
+          font: getComputedStyle(el.querySelector('h2')).fontSize,
+        }));
+      assert.deepEqual(expandedMetrics, initialMetrics);
       const labelTop = await page
         .locator('.banner-division-label')
         .first()
@@ -121,9 +139,14 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
         await page.locator('.landing-kicker').evaluate((el) => getComputedStyle(el).fontWeight),
         '300',
       );
-      await page.locator('.banner-company-link').click();
+      await page.locator('.banner-scroll-cue').click();
       await page.waitForTimeout(1000);
       assert.ok(await page.evaluate(() => scrollY > 100));
+      assert.equal(
+        await page.locator('#company-title').evaluate((el) => getComputedStyle(el).textAlign),
+        'center',
+      );
+      assert.equal(await page.locator('#company a.button').getAttribute('href'), '#/about');
       await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
     }
     // A delayed source shows branding, then reveals; a failed replacement keeps its fallback state.

@@ -306,3 +306,116 @@
 .division-landing .landing-kicker {
   display: none;
 }
+
+/* The text box is already its final width; only visual scale changes with hover. */
+@media (min-width: 901px) and (hover: hover) {
+  .division-landing .division-banner .banner-content,
+  .division-landing.has-expanded .division-banner .banner-content {
+    width: calc(50vw - 2 * var(--landing-gutter));
+    left: 27px;
+    right: auto;
+  }
+  .division-landing .division-banner:first-child .banner-content {
+    left: var(--landing-gutter);
+  }
+  .division-landing .division-banner .banner-title-row h2,
+  .division-landing.has-expanded .division-banner .banner-title-row h2 {
+    width: calc(50vw - 2 * var(--landing-gutter));
+    font-size: clamp(48px, 5.2vw, 84px);
+    line-height: 1.05;
+    font-weight: 750;
+    transform: scale(0.42);
+    transform-origin: left bottom;
+    transition: transform 650ms cubic-bezier(0.22, 0.7, 0.2, 1);
+  }
+  .division-landing.has-expanded .division-banner:not(.is-open) .banner-title-row h2 {
+    transform: scale(0.29);
+  }
+  .division-landing.has-expanded .division-banner.is-open .banner-title-row h2 {
+    transform: scale(1);
+  }
+  .division-landing .division-banner .banner-division-label {
+    width: 220px;
+    font-size: clamp(22px, 2vw, 30px);
+    transform: scale(0.65);
+    transition: transform 650ms cubic-bezier(0.22, 0.7, 0.2, 1);
+  }
+  .division-landing.has-expanded .division-banner.is-open .banner-division-label {
+    transform: scale(1);
+  }
+  .division-landing.has-expanded .division-banner:not(.is-open) .banner-division-label {
+    transform: scale(0.58);
+  }
+}
+.banner-scroll-cue {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid #ffffffa6;
+  border-radius: 50%;
+  color: #fff;
+  background: #10251b66;
+  pointer-events: auto;
+  transition:
+    background-color 350ms ease,
+    color 350ms ease;
+}
+.banner-scroll-cue:hover,
+.banner-scroll-cue:focus-visible {
+  background: #fff;
+  color: #182522;
+}
+.banner-scroll-cue:focus-visible {
+  outline: 3px solid #e0bc77;
+  outline-offset: 4px;
+}
+.landing .landing-company {
+  display: block;
+  padding: clamp(64px, 7vw, 110px) var(--landing-gutter);
+  text-align: center;
+}
+.landing-company .company-intro {
+  max-width: 900px;
+  margin-inline: auto;
+}
+.landing-company .company-intro h2 {
+  margin: 0 0 24px;
+}
+.landing-company .company-intro p {
+  max-width: 680px;
+  margin: 0 auto 24px;
+}
+@media (max-width: 900px), (hover: none) {
+  .banner-scroll-cue {
+    position: relative;
+    top: auto;
+    margin-top: 24px;
+    flex-shrink: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .division-landing .division-banner .banner-title-row h2,
+  .division-landing .division-banner .banner-division-label,
+  .banner-scroll-cue {
+    transition: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .division-landing .banner-title-row h2,
+  .division-landing .banner-division-label {
+    transition: none !important;
+  }
+}
+#company .company-intro > p {
+  text-align: center;
+}
+@media (max-width: 550px) {
+  .landing-company .company-intro h2 {
+    font-size: clamp(32px, 8vw, 40px);
+  }
+}
