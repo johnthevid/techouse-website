@@ -484,20 +484,20 @@
 
 /* Text-led company story: a clear headline, followed by possibility and purpose. */
 .landing-company .company-intro {
-  max-width: 1120px;
-  text-align: left;
+  max-width: 900px;
+  text-align: center;
 }
 .landing-company .company-intro h2 {
   max-width: 900px;
-  margin-bottom: 48px;
+  margin: 0 auto 36px;
 }
 .company-story {
   max-width: 680px;
-  margin-left: auto;
+  margin-inline: auto;
 }
 #company .company-story > p {
   margin: 0 0 24px;
-  text-align: left;
+  text-align: center;
 }
 #company .company-story > p:first-child {
   font-size: clamp(21px, 2vw, 29px);
@@ -589,6 +589,136 @@
 @media (prefers-reduced-motion: reduce) {
   #header .banner-nav .banner-global-quote,
   #header .banner-nav .banner-global-quote::before {
+    transition: none;
+  }
+}
+
+/* Public footer: consistent gutters, stronger navigation and a separate brand block. */
+#footer:not(.office-footer) {
+  padding: 56px 0 48px;
+}
+#footer:not(.office-footer) > .container {
+  width: calc(100% - 2 * clamp(24px, 5vw, 96px));
+  max-width: 1440px;
+}
+#footer .footer-top {
+  grid-template-columns: minmax(260px, 1.45fr) repeat(3, minmax(0, 1fr));
+  gap: clamp(24px, 4vw, 64px);
+  align-items: start;
+}
+#footer .footer-brand {
+  padding-right: 28px;
+  border-right: 1px solid #dce1d7;
+}
+#footer .footer-brand .brand-logo {
+  width: 220px;
+  max-width: 100%;
+  height: auto;
+}
+#footer .footer-company-name {
+  max-width: 320px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 20px;
+}
+#footer .footer-brand > p:last-child {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #65716b;
+  margin-top: 10px;
+}
+#footer .footer-col {
+  gap: 10px;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+#footer .footer-col > span:first-child {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  margin: 0 0 12px;
+  line-height: 1.6;
+}
+#footer .footer-col a {
+  width: fit-content;
+  max-width: 100%;
+  text-underline-offset: 4px;
+  overflow-wrap: anywhere;
+}
+#footer .footer-socials a {
+  text-decoration: none;
+}
+#footer .footer-col a:hover,
+#footer .footer-col a:focus-visible {
+  text-decoration: underline;
+}
+#footer .footer-socials > .social-pending {
+  font-size: 12px;
+  line-height: 1.6;
+}
+@media (max-width: 900px) {
+  #footer .footer-top {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 30px 24px;
+  }
+  #footer .footer-brand {
+    grid-column: 1 / -1;
+    padding: 0 0 24px;
+    border-right: 0;
+    border-bottom: 1px solid #dce1d7;
+  }
+}
+@media (max-width: 600px) {
+  #footer:not(.office-footer) {
+    padding: 40px 0 64px;
+  }
+  #footer .footer-top {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  #footer .footer-brand .brand-logo {
+    width: 200px;
+  }
+  #footer .footer-col {
+    font-size: 13px;
+  }
+}
+/* Reverse the quote-button fade: dark fill clears, while the outline stays dark. */
+#company .company-story .button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: transparent;
+  border: 1px solid #182522;
+  color: #fff;
+  transform: none;
+  transition: color 450ms ease;
+}
+#company .company-story .button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #182522;
+  opacity: 1;
+  transition: opacity 450ms ease;
+}
+#company .company-story .button:hover,
+#company .company-story .button:focus-visible {
+  background: transparent;
+  color: #182522;
+  border-color: #182522;
+  transform: none;
+}
+#company .company-story .button:hover::before,
+#company .company-story .button:focus-visible::before {
+  opacity: 0;
+}
+#company .company-story .button .arrow {
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  #company .company-story .button,
+  #company .company-story .button::before {
     transition: none;
   }
 }

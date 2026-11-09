@@ -201,3 +201,15 @@ Moved public social links into a Social column alongside Explore and Let's talk.
 Raised intro logo/message group 42px for optical centering. Solar down-arrow icon now sits in a fixed grid-centered 46px interior container; measured center offsets were exactly 0px on both axes at rest. Capsule hover behavior remains. Quote action uses an opacity-animated white layer (450ms), with header-specific selectors so the existing header transition rule cannot override the text-color fade. Measured intermediate opacities ~0.43 in / ~0.65 out, confirming a gradual transition rather than a snap.
 
 Verification: updated homepage/CMS/intro/security/catalogue/component checks passed. Complete run initially reported one mobile inquiry scroll-restoration assertion; a 390px isolated rerun and then the full four-width inquiry suite passed unchanged. Kept the strict assertion, added viewport/layout diagnostics and optional TECHOUSE_TEST_WIDTH for focused investigation; no inquiry behavior changed. Desktop story/footer and raised-intro screenshots and mobile overflow inspected. Local backend restarted for story field rules. No push/merge/deployment; Safari still requires manual review.
+
+
+### Centered homepage story — 10 November 2026
+Centered the company headline, story paragraphs and CTA on one shared axis. Retained the larger story introduction and quieter closing line, with a 680px reading width. Reduced heading-to-story gap to 36px on desktop (existing 28px mobile spacing retained). Updated existing alignment assertion. Local only; no push/deployment.
+
+
+### Footer refinement and reverse About-button fade — 10 November 2026
+Improved the public footer with consistent page gutters, aligned four-column desktop navigation, a divided brand block, stronger company-name hierarchy and larger readable links. Tablet/mobile layouts stack the brand above three/two navigation columns with a horizontal divider. Existing destinations and pending LinkedIn state preserved; office footer excluded from public padding rules.
+
+More about Techouse now fades its dark fill away over 450ms, revealing the section background with dark text while retaining the original dark border. Hover/focus no longer lifts the button or shifts its arrow. Reduced motion remains supported.
+
+Checked footer layouts at 1440/1024/390px with no horizontal overflow; inspected desktop/mobile screenshots. Measured an intermediate About-fill opacity and verified fully transparent hover plus unchanged border. Formatting/whitespace checks passed. Local only; no push, merge or Cloudflare deployment.

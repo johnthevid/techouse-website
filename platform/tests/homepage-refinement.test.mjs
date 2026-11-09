@@ -147,7 +147,7 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
       assert.ok(await page.evaluate(() => scrollY > 100));
       assert.equal(
         await page.locator('#company-title').evaluate((el) => getComputedStyle(el).textAlign),
-        'left',
+        'center',
       );
       assert.equal(await page.locator('#company a.button').getAttribute('href'), '#/about');
       await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
