@@ -204,7 +204,7 @@ window.TechouseExperience = (() => {
       invitation = document.querySelector('.landing-invitation'),
       intro = kicker.closest('.landing-intro'),
       landing = document.querySelector('.division-landing'),
-      steps = [...invitation.querySelectorAll('.intro-step')];
+      steps = [...(invitation?.querySelectorAll('.intro-step') || [])];
     const sentence = kicker.textContent,
       animations = new Set(),
       localTimers = new Set();

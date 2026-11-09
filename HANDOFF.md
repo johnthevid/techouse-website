@@ -112,3 +112,19 @@ Validation: JS syntax and diff whitespace checks passed. Full regression run pas
 Local server started on http://127.0.0.1:8787 for owner review. No release/version bump, GitHub push, merge or Cloudflare deployment. Demo and main branches unchanged. Pending owner visual review before publishing/merging.
 
 Final targeted verification passed: homepage responsive/full-motion/reduced-motion/loading/error/navigation/scroll test and existing protected-editor browser workflow. Initial new scroll test required restoring keyboard focus before clicking the re-collapsed CTA; test corrected without changing application behavior. Formatting, syntax and whitespace checks passed.
+
+
+### Scrollbar visual follow-up
+User requested solid white, rounded ends and golden-ratio height. Overlay thumb now remains white on hover and uses viewport height / phi (approximately 61.8%). Existing position and drag calculations use the actual thumb height. Transparent gutter and scroll-lock handling unchanged. Local only; no push or deployment.
+
+Scrollbar follow-up: owner selected the shorter complementary golden-ratio proportion (38.2% of viewport height), retaining solid white rounded ends. Border remains zero and outline-like box shadow removed. Syntax/whitespace checks passed; local only, no deployment.
+
+
+### Homepage copy and category ordering
+Removed the two opening invitation lines. Intro playback now tolerates the absent invitation, avoiding a null-reference failure and removing its unused animation steps. Division labels remain below idle headings and appear above expanded desktop headings (including keyboard expansion); touch layouts keep the original below-heading ordering. Responsive homepage checks passed at 1440/1024/390px, including an assertion that the expanded label is above the heading. Tagline destination was unspecified; asked the owner and used below the main question as a reversible default pending feedback. No push/deployment.
+
+
+### Homepage action placement and circular ripple
+Owner confirmed tagline below the main question. Moved About us into the intro directly below that tagline, preserving the existing scroll action and dismissal logic. Quote and About actions now have reversible circular white fills on hover/focus, dark text in the light state, and reduced-motion handling. Increased header/intro horizontal gutters to clamp(28px, 5vw, 96px), with responsive width constraints. Photography remains full bleed.
+
+Responsive homepage browser checks passed at 1440/1024/390px, including expanded-label position, About button below tagline, desktop gutter, circular fill state, scroll action and existing loading/navigation cases. Whitespace and formatting checks passed. Local preview remains on port 8787; no push, merge or deployment.

@@ -94,14 +94,15 @@
 .page-scroll-thumb {
   right: 2px;
   width: 10px;
-  background: #d71920;
-  border: 1px solid #ffffff80;
-  box-shadow: 0 0 0 1px #0002;
+  background: #fff;
+  border: 0;
+  border-radius: 999px;
+  box-shadow: none;
   cursor: grab;
   transition: background 200ms ease;
 }
 .page-scroll-thumb:hover {
-  background: #b51017;
+  background: #fff;
 }
 .page-scroll-thumb:active {
   cursor: grabbing;
@@ -127,5 +128,103 @@
   }
   .banner-load-status::before {
     animation: none;
+  }
+}
+
+/* Keep the category below an idle heading; lead with it on desktop expansion. */
+.division-banner .banner-content {
+  display: flex;
+  flex-direction: column;
+}
+.division-banner .banner-title-row {
+  order: 0;
+}
+.division-banner .banner-division-label {
+  order: 1;
+}
+.division-banner .banner-details {
+  order: 2;
+}
+@media (min-width: 901px) and (hover: hover) {
+  .division-banner.is-open .banner-division-label {
+    order: -1;
+    margin: 0 0 18px;
+  }
+  .division-banner.is-open .banner-title-row {
+    margin-bottom: 24px;
+  }
+}
+
+/* Shared circular light-fill for the two homepage navigation actions. */
+.banner-global-quote,
+.landing-intro .company-scroll-cue {
+  isolation: isolate;
+  overflow: hidden;
+  background: #10251b66;
+  color: #fff;
+  transition:
+    color 350ms ease,
+    border-color 350ms ease;
+}
+.banner-global-quote {
+  position: relative;
+}
+.banner-global-quote::before,
+.landing-intro .company-scroll-cue::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #fff;
+  clip-path: circle(0% at 50% 50%);
+  transition: clip-path 600ms cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.banner-global-quote:hover,
+.banner-global-quote:focus-visible,
+.landing-intro .company-scroll-cue:hover,
+.landing-intro .company-scroll-cue:focus-visible {
+  background: #10251b66;
+  color: #182522;
+  border-color: #fff;
+}
+.banner-global-quote:hover::before,
+.banner-global-quote:focus-visible::before,
+.landing-intro .company-scroll-cue:hover::before,
+.landing-intro .company-scroll-cue:focus-visible::before {
+  clip-path: circle(150% at 50% 50%);
+}
+.landing-intro .company-scroll-cue {
+  position: relative;
+  inset: auto;
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 24px;
+  transform: none;
+  pointer-events: auto;
+}
+.landing {
+  --landing-gutter: clamp(28px, 5vw, 96px);
+}
+.landing .banner-nav {
+  padding-inline: var(--landing-gutter);
+}
+.division-landing .landing-intro {
+  left: var(--landing-gutter);
+  right: var(--landing-gutter);
+  width: min(70vw, calc(100% - 2 * var(--landing-gutter)));
+  max-width: calc(100% - 2 * var(--landing-gutter));
+}
+@media (max-width: 900px), (hover: none) {
+  .division-landing .landing-intro {
+    width: auto;
+    max-width: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .banner-global-quote,
+  .banner-global-quote::before,
+  .landing-intro .company-scroll-cue,
+  .landing-intro .company-scroll-cue::before {
+    transition: none;
   }
 }

@@ -50,6 +50,7 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
       0,
     );
     assert.equal(await page.locator('.banner-division-label').count(), 5);
+    assert.equal(await page.locator('.landing-invitation').count(), 0);
     assert.equal(await page.locator('.banner-quote').count(), 5);
     assert.equal(
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
@@ -64,6 +65,17 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
           .first()
           .getAttribute('class')
           .then((c) => c.includes('is-open')),
+        true,
+      );
+      assert.equal(
+        await page
+          .locator('.division-banner')
+          .first()
+          .evaluate(
+            (panel) =>
+              panel.querySelector('.banner-division-label').getBoundingClientRect().bottom <=
+              panel.querySelector('.banner-title-row').getBoundingClientRect().top,
+          ),
         true,
       );
       const title = await page
@@ -83,6 +95,20 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
       fullPage: width === 390,
     });
     if (width === 1440) {
+      await page.locator('.banner-global-quote').focus();
+      await page.waitForTimeout(800);
+      const cue = await page.locator('.company-scroll-cue').boundingBox();
+      const tagline = await page.locator('.landing-kicker').boundingBox();
+      assert.ok(cue.y >= tagline.y + tagline.height);
+      assert.ok(cue.x >= 70);
+      await page.locator('.company-scroll-cue').hover();
+      await page.waitForTimeout(700);
+      assert.equal(
+        await page
+          .locator('.company-scroll-cue')
+          .evaluate((el) => getComputedStyle(el, '::before').clipPath),
+        'circle(150% at 50% 50%)',
+      );
       await page.locator('.company-scroll-cue').click();
       await page.waitForTimeout(1000);
       assert.ok(await page.evaluate(() => scrollY > 100));
