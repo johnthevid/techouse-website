@@ -18,10 +18,10 @@ window.TechouseBanner = (() => {
   }
   // LANDING MARKUP: intro, banners, About section, and right-edge About cue.
   function html(divisions, art, arrow) {
-    return `<section class="division-landing" aria-labelledby="landing-title"><div class="landing-intro"><h1 id="landing-title">What are you <br>building next?</h1><span class="landing-kicker">Techouse brings the newest technology to the Philippines.</span><a class="company-scroll-cue" href="#company" aria-label="Scroll down to learn about Techouse" title="About Techouse"><span class="scroll-cue-label">About us</span>${window.TechouseIcons.icon('arrow_downward')}</a></div><div class="division-banners" aria-label="Explore Techouse business divisions">${divisions
+    return `<section class="division-landing" aria-labelledby="landing-title"><div class="landing-intro"><h1 id="landing-title">What are you <br>building next?</h1><span class="landing-kicker">We bring the newest technology to the Philippines.</span></div><div class="division-banners" aria-label="Explore Techouse business divisions">${divisions
       .map((d) => {
         const c = copy[d.id];
-        return `<section class="division-banner banner-${d.id}" data-banner="${d.id}" aria-labelledby="banner-title-${d.id}"><div class="banner-background" aria-hidden="true">${d.image ? `<img src="assets/${d.image}" alt="" ${d.id === 'solar' ? 'fetchpriority="high"' : ''}>` : `<div class="elevator-backdrop">${art}</div>`}</div><div class="banner-shade"></div><button class="banner-trigger" aria-label="Explore ${d.short}" aria-expanded="false" aria-controls="banner-details-${d.id}"></button><div class="banner-content"><div class="banner-title-row"><h2 id="banner-title-${d.id}">${c.title}</h2><span class="banner-plus" aria-hidden="true">+</span></div><p class="banner-division-label">${d.short}</p><div class="banner-details" id="banner-details-${d.id}" aria-hidden="true" inert><div class="banner-details-inner"><a class="banner-quote" aria-label="Explore ${d.short}" href="#/divisions/${d.id}"><span>Discover more</span> ${arrow}</a></div></div></div><span class="banner-load-status" aria-hidden="true">Techouse · Loading image</span></section>`;
+        return `<section class="division-banner banner-${d.id}" data-banner="${d.id}" aria-labelledby="banner-title-${d.id}"><div class="banner-background" aria-hidden="true">${d.image ? `<img src="assets/${d.image}" alt="" ${d.id === 'solar' ? 'fetchpriority="high"' : ''}>` : `<div class="elevator-backdrop">${art}</div>`}</div><div class="banner-shade"></div><button class="banner-trigger" aria-label="Explore ${d.short}"></button><div class="banner-content"><div class="banner-title-row"><h2 id="banner-title-${d.id}">${c.title}</h2><span class="banner-plus" aria-hidden="true">+</span></div><p class="banner-division-label">${d.short}</p></div><span class="banner-load-status" aria-hidden="true">Techouse · Loading image</span></section>`;
       })
       .join(
         '',
@@ -47,7 +47,6 @@ window.TechouseBanner = (() => {
     const media = matchMedia('(max-width: 900px), (hover: none)');
     const controller = new AbortController();
     const options = { signal: controller.signal };
-    const cue = document.querySelector('.company-scroll-cue');
     let scrollFrame = 0;
     const stopScroll = () => cancelAnimationFrame(scrollFrame);
     for (const type of ['wheel', 'touchstart', 'pointerdown', 'keydown'])
@@ -73,7 +72,7 @@ window.TechouseBanner = (() => {
       };
       scrollFrame = requestAnimationFrame(tick);
     }
-    document.querySelectorAll('.company-scroll-cue,.banner-company-link').forEach((link) =>
+    document.querySelectorAll('.banner-company-link').forEach((link) =>
       link.addEventListener(
         'click',
         (event) => {
@@ -85,11 +84,6 @@ window.TechouseBanner = (() => {
         options,
       ),
     );
-    function updateCue() {
-      cue?.classList.toggle('is-dismissed', scrollY > 100);
-    }
-    window.addEventListener('scroll', updateCue, { ...options, passive: true });
-    updateCue();
     let observer;
     let keyboardMode = false;
     let awaitingFreshMovement = false;
@@ -113,11 +107,6 @@ window.TechouseBanner = (() => {
     function state(panel, open) {
       if (panel.classList.contains('is-open') === open) return;
       panel.classList.toggle('is-open', open);
-      const trigger = panel.querySelector('.banner-trigger'),
-        details = panel.querySelector('.banner-details');
-      trigger.setAttribute('aria-expanded', String(open));
-      details.setAttribute('aria-hidden', String(!open));
-      details.inert = !open;
     }
     // Intro playback blocks expansion; intro-ready requires fresh pointer movement afterward.
     function desktopOpen(panel) {
@@ -170,17 +159,6 @@ window.TechouseBanner = (() => {
         options,
       );
     });
-    host.addEventListener(
-      'click',
-      (event) => {
-        const link = event.target.closest('.banner-quote');
-        if (link) {
-          event.preventDefault();
-          window.TechouseDivisions.enter(link.closest('.division-banner'));
-        }
-      },
-      options,
-    );
     document.addEventListener(
       'keydown',
       (event) => {

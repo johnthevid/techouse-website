@@ -51,7 +51,7 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
     );
     assert.equal(await page.locator('.banner-division-label').count(), 5);
     assert.equal(await page.locator('.landing-invitation').count(), 0);
-    assert.equal(await page.locator('.banner-quote').count(), 5);
+    assert.equal(await page.locator('.banner-quote,.banner-details').count(), 0);
     assert.equal(
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
       true,
@@ -73,8 +73,8 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
           .first()
           .evaluate(
             (panel) =>
-              panel.querySelector('.banner-division-label').getBoundingClientRect().bottom <=
-              panel.querySelector('.banner-title-row').getBoundingClientRect().top,
+              panel.querySelector('.banner-division-label').getBoundingClientRect().top >=
+              panel.querySelector('.banner-title-row').getBoundingClientRect().bottom,
           ),
         true,
       );
@@ -85,9 +85,9 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
       assert.ok(title >= 48);
       assert.ok(
         (await page
-          .locator('.banner-quote')
+          .locator('.banner-division-label')
           .first()
-          .evaluate((el) => el.getBoundingClientRect().height)) >= 60,
+          .evaluate((el) => parseFloat(getComputedStyle(el).fontSize))) >= 22,
       );
     }
     await page.screenshot({
@@ -97,19 +97,12 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
     if (width === 1440) {
       await page.locator('.banner-global-quote').focus();
       await page.waitForTimeout(800);
-      const cue = await page.locator('.company-scroll-cue').boundingBox();
-      const tagline = await page.locator('.landing-kicker').boundingBox();
-      assert.ok(cue.y >= tagline.y + tagline.height);
-      assert.ok(cue.x >= 70);
-      await page.locator('.company-scroll-cue').hover();
-      await page.waitForTimeout(700);
+      assert.equal(await page.locator('.company-scroll-cue').count(), 0);
       assert.equal(
-        await page
-          .locator('.company-scroll-cue')
-          .evaluate((el) => getComputedStyle(el, '::before').clipPath),
-        'circle(150% at 50% 50%)',
+        await page.locator('.landing-kicker').evaluate((el) => getComputedStyle(el).fontWeight),
+        '300',
       );
-      await page.locator('.company-scroll-cue').click();
+      await page.locator('.banner-company-link').click();
       await page.waitForTimeout(1000);
       assert.ok(await page.evaluate(() => scrollY > 100));
       await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
@@ -152,7 +145,7 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
     if (width > 900) {
       await page.locator('.banner-trigger').first().focus();
       await page.waitForTimeout(800);
-      await page.locator('.banner-quote').first().click();
+      await page.locator('.banner-trigger').first().press('Enter');
       await page.waitForURL('**/#/divisions/solar');
     }
     await page.close();

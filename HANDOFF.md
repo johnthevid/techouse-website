@@ -128,3 +128,31 @@ Removed the two opening invitation lines. Intro playback now tolerates the absen
 Owner confirmed tagline below the main question. Moved About us into the intro directly below that tagline, preserving the existing scroll action and dismissal logic. Quote and About actions now have reversible circular white fills on hover/focus, dark text in the light state, and reduced-motion handling. Increased header/intro horizontal gutters to clamp(28px, 5vw, 96px), with responsive width constraints. Photography remains full bleed.
 
 Responsive homepage browser checks passed at 1440/1024/390px, including expanded-label position, About button below tagline, desktop gutter, circular fill state, scroll action and existing loading/navigation cases. Whitespace and formatting checks passed. Local preview remains on port 8787; no push, merge or deployment.
+
+
+### Homepage action fade follow-up
+Replaced all three homepage button ripple fills with 350ms background/color fades. Discover more is dark with a subtle outline and white text by default, highlighting white on hover or keyboard focus. About us moved out of the intro to the landing section's bottom-left (24px from the bottom, aligned to the intro gutter). Existing scroll action, reduced-motion preference and dismissal behavior retained. Updated targeted layout test to check bottom-left placement and white hover state. Local only; no push/deployment.
+
+On touch/narrow screens the About action sits at the bottom of the opening text area, above the vertically stacked panels, so it remains visible before scrolling dismisses the cue.
+
+Headline shadow follow-up: widened the radial gradient and reduced its center opacity with additional transparent falloff stops. Narrow-screen extent stays bounded to the side gutters. No animated blur added; text/layout unchanged. Local only.
+
+
+### Homepage hierarchy follow-up
+Moved About us to bottom-center, separating the company scroll destination from the Solar panel; narrow screens retain the cue in the opening text area's lower region. Tagline weight is now 300. Restored the quote action to transparent/outlined at rest with a white fading hover/focus highlight. Updated responsive placement and weight assertions. No push or deployment.
+
+
+### Simplified hovered division hierarchy
+Division names now remain below their headlines in idle and expanded states, with larger type (17–21px idle, 22–30px expanded desktop). Removed the Discover more actions and empty details wrappers. Panel click and keyboard activation remain the navigation path. Removed obsolete details/CTA handlers and updated responsive hierarchy/navigation checks. Quote and About controls remain available. No push/deployment.
+
+Division copy alignment: outer desktop text edges and expanded panels now use the shared page gutter; compressed inactive panels retain readable internal spacing. Touch/mobile copy uses the same horizontal gutter as the headline and navigation. Local only.
+
+Opening message position: lowered headline and tagline together by 32px on desktop and 24px on touch/narrow layouts, preserving their internal spacing and intro choreography. Local only; no deployment.
+
+
+### Opening-message font exploration
+Enlarged the final opening headline to clamp(56px, 6.8vw, 98px) and tagline to clamp(20px, 1.65vw, 28px), with mobile sizes 42–64px and 18–22px. Trying the already self-hosted DM Sans on this message only, retaining the light tagline and original promise-stage size rules. Manrope comparison captured at identical sizes; no new font downloads or global type changes. Checked 1440/1024/390px: no horizontal overflow or page errors, mobile message clears About cue. Comparison PNGs are outside the source repository in workspace outputs/homepage-type-exploration. Local only; no push/deployment.
+
+Removed the homepage About us scroll button at owner's request. Company section and header-logo scroll action remain. Removed the cue-only scroll listener and adjusted the existing regression to verify absence and exercise the retained logo action. Syntax/whitespace checks passed; no push/deployment.
+
+Opening tagline updated to “We bring the newest technology to the Philippines.” (corrected spelling). Local only; no deployment.

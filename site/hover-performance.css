@@ -21,40 +21,6 @@
 .division-banner .banner-title-row {
   margin-top: 0;
 }
-.division-banner .banner-quote {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  min-height: 60px;
-  padding: 18px 24px;
-  gap: 32px;
-  font-size: 15px;
-  background: #ece8da;
-  transition:
-    box-shadow 400ms ease,
-    color 400ms ease;
-}
-.division-banner .banner-quote::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  inset: -100%;
-  border-radius: 50%;
-  background: #fff;
-  transform: scale(0);
-  transition: transform 650ms cubic-bezier(0.22, 0.7, 0.2, 1);
-}
-.division-banner .banner-quote:hover::before,
-.division-banner .banner-quote:focus-visible::before {
-  transform: scale(1);
-}
-.division-banner .banner-quote:hover {
-  background: #ece8da;
-}
-.division-banner .banner-quote:focus-visible {
-  outline: 3px solid #e0bc77;
-  outline-offset: 4px;
-}
 .banner-load-status {
   display: none;
   position: absolute;
@@ -122,84 +88,53 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .division-banner .banner-quote,
-  .division-banner .banner-quote::before {
-    transition: none;
-  }
   .banner-load-status::before {
     animation: none;
   }
 }
 
-/* Keep the category below an idle heading; lead with it on desktop expansion. */
+/* Keep the division label below its headline in every interaction state. */
 .division-banner .banner-content {
   display: flex;
   flex-direction: column;
 }
-.division-banner .banner-title-row {
-  order: 0;
-}
 .division-banner .banner-division-label {
-  order: 1;
-}
-.division-banner .banner-details {
-  order: 2;
+  margin: 18px 0 0;
+  font-size: clamp(17px, 1.3vw, 21px);
 }
 @media (min-width: 901px) and (hover: hover) {
   .division-banner.is-open .banner-division-label {
-    order: -1;
-    margin: 0 0 18px;
-  }
-  .division-banner.is-open .banner-title-row {
-    margin-bottom: 24px;
+    font-size: clamp(22px, 2vw, 30px);
   }
 }
-
-/* Shared circular light-fill for the two homepage navigation actions. */
+/* Homepage actions fade between their dark and light states. */
 .banner-global-quote,
-.landing-intro .company-scroll-cue {
-  isolation: isolate;
-  overflow: hidden;
+.division-landing > .company-scroll-cue {
   background: #10251b66;
   color: #fff;
   transition:
+    background 350ms ease,
     color 350ms ease,
     border-color 350ms ease;
 }
-.banner-global-quote {
-  position: relative;
-}
-.banner-global-quote::before,
-.landing-intro .company-scroll-cue::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: #fff;
-  clip-path: circle(0% at 50% 50%);
-  transition: clip-path 600ms cubic-bezier(0.22, 0.7, 0.2, 1);
-}
 .banner-global-quote:hover,
 .banner-global-quote:focus-visible,
-.landing-intro .company-scroll-cue:hover,
-.landing-intro .company-scroll-cue:focus-visible {
-  background: #10251b66;
+.division-landing > .company-scroll-cue:hover,
+.division-landing > .company-scroll-cue:focus-visible {
+  background: #fff;
   color: #182522;
   border-color: #fff;
 }
-.banner-global-quote:hover::before,
-.banner-global-quote:focus-visible::before,
-.landing-intro .company-scroll-cue:hover::before,
-.landing-intro .company-scroll-cue:focus-visible::before {
-  clip-path: circle(150% at 50% 50%);
-}
-.landing-intro .company-scroll-cue {
-  position: relative;
-  inset: auto;
+.division-landing > .company-scroll-cue {
+  position: absolute;
+  top: auto;
+  bottom: 24px;
+  left: 50%;
+  right: auto;
   display: inline-flex;
   width: fit-content;
-  margin-top: 24px;
-  transform: none;
+  margin: 0;
+  transform: translateX(-50%);
   pointer-events: auto;
 }
 .landing {
@@ -215,6 +150,10 @@
   max-width: calc(100% - 2 * var(--landing-gutter));
 }
 @media (max-width: 900px), (hover: none) {
+  .division-landing > .company-scroll-cue {
+    top: 400px;
+    bottom: auto;
+  }
   .division-landing .landing-intro {
     width: auto;
     max-width: none;
@@ -223,8 +162,96 @@
 @media (prefers-reduced-motion: reduce) {
   .banner-global-quote,
   .banner-global-quote::before,
-  .landing-intro .company-scroll-cue,
-  .landing-intro .company-scroll-cue::before {
+  .division-landing > .company-scroll-cue,
+  .division-landing > .company-scroll-cue::before {
     transition: none;
+  }
+}
+
+/* A wider, softer falloff keeps headline contrast without a visible shadow edge. */
+.division-landing .landing-intro::before {
+  inset: -100px -180px -120px -120px;
+  background: radial-gradient(
+    ellipse at 35% 45%,
+    #04130f66 0%,
+    #04130f38 28%,
+    #04130f18 52%,
+    #04130f08 70%,
+    transparent 90%
+  );
+  filter: none;
+}
+@media (max-width: 900px), (hover: none) {
+  .division-landing .landing-intro::before {
+    inset: -80px -28px -95px;
+  }
+}
+
+/* A quiet tagline and an outline-only quote action keep the main heading dominant. */
+.division-landing .landing-intro .landing-kicker,
+.division-landing .landing-intro[data-emphasis] .landing-kicker {
+  font-weight: 300;
+}
+.banner-global-quote {
+  background: transparent;
+}
+.banner-global-quote:hover,
+.banner-global-quote:focus-visible {
+  background: #fff;
+}
+
+/* Align the outer division copy and expanded panels with the page gutters. */
+@media (min-width: 901px) and (hover: hover) {
+  .division-banner:first-child .banner-content {
+    left: var(--landing-gutter);
+  }
+  .division-banner:last-child .banner-content {
+    right: var(--landing-gutter);
+  }
+  .division-banner.is-open .banner-content {
+    left: var(--landing-gutter);
+    right: var(--landing-gutter);
+  }
+  .has-expanded .division-banner:not(.is-open) .banner-content {
+    left: 20px;
+    right: 20px;
+  }
+}
+@media (max-width: 900px), (hover: none) {
+  .division-banner .banner-content {
+    padding-inline: var(--landing-gutter);
+  }
+}
+
+/* Lower the opening message as one block, keeping its internal spacing intact. */
+.division-landing .landing-intro {
+  margin-top: 32px;
+}
+@media (max-width: 900px), (hover: none) {
+  .division-landing .landing-intro {
+    margin-top: 24px;
+  }
+}
+
+/* Opening-message type exploration, scoped to the homepage. */
+.division-landing .landing-intro:not([data-emphasis='promise']) h1,
+.division-landing .landing-intro[data-emphasis='question'] h1 {
+  font-family: 'DM Sans', Arial, sans-serif;
+  font-size: clamp(56px, 6.8vw, 98px);
+  max-width: 900px;
+}
+.division-landing .landing-intro:not([data-emphasis='promise']) .landing-kicker,
+.division-landing .landing-intro[data-emphasis='question'] .landing-kicker {
+  font-family: 'DM Sans', Arial, sans-serif;
+  font-size: clamp(20px, 1.65vw, 28px);
+}
+@media (max-width: 900px), (hover: none) {
+  .division-landing .landing-intro:not([data-emphasis='promise']) h1,
+  .division-landing .landing-intro[data-emphasis='question'] h1 {
+    font-size: clamp(42px, 6.8vw, 64px);
+  }
+  .division-landing .landing-intro:not([data-emphasis='promise']) .landing-kicker,
+  .division-landing .landing-intro[data-emphasis='question'] .landing-kicker {
+    font-size: clamp(18px, 2.4vw, 22px);
   }
 }
