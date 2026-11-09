@@ -10,7 +10,7 @@
 .brand-intro-center {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: calc(50% - 42px);
   width: min(520px, 84vw);
   transform: translate(-50%, -50%);
 }

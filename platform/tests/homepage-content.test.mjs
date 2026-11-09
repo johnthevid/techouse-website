@@ -8,6 +8,9 @@ test('Homepage content saves active labels and retires old copy without rejectin
   const record = await f.request('/api/admin/content');
   const draft = content('A client-approved headline');
   draft.text['.company-intro p:nth-of-type(2)'] = 'Retired second paragraph';
+  draft.text['.company-intro p:nth-of-type(1)'] = 'Old summary';
+  draft.text['.company-story p:nth-of-type(1)'] = 'An approved story';
+  draft.text['.company-story-close'] = 'An approved closing line';
   draft.text['.landing-kicker'] = 'An editable company promise';
   draft.text['[data-banner="solar"] .banner-division-label'] = 'Solar energy';
   draft.text['.landing-invitation .intro-step:first-child'] = 'Old invitation';
@@ -31,6 +34,9 @@ test('Homepage content saves active labels and retires old copy without rejectin
     false,
   );
   assert.equal(Object.hasOwn(read.value.content.text, '.company-intro p:nth-of-type(2)'), false);
+  assert.equal(read.value.content.text['.company-story p:nth-of-type(1)'], 'An approved story');
+  assert.equal(read.value.content.text['.company-story-close'], 'An approved closing line');
+  assert.equal(Object.hasOwn(read.value.content.text, '.company-intro p:nth-of-type(1)'), false);
   const invalid = structuredClone(draft);
   invalid.text['#unapproved-selector'] = 'Should be rejected';
   assert.equal(

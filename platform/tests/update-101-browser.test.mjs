@@ -30,7 +30,10 @@ test("1.0.1 inquiry actions, annual estimate and visit lifecycle", async (t) => 
     .run(JSON.stringify(content));
   const browser = await chromium.launch({ headless: true, channel: "chrome" });
   t.after(() => browser.close());
-  for (const width of [2560, 1440, 768, 390]) {
+  const widths = process.env.TECHOUSE_TEST_WIDTH
+    ? [Number(process.env.TECHOUSE_TEST_WIDTH)]
+    : [2560, 1440, 768, 390];
+  for (const width of widths) {
     const page = await browser.newPage({
       viewport: { width, height: width === 2560 ? 1440 : 900 },
     });
@@ -348,6 +351,8 @@ test("1.0.1 inquiry actions, annual estimate and visit lifecycle", async (t) => 
         const before = await page.evaluate(() => ({
           hash: location.hash,
           scroll: scrollY,
+          height: document.documentElement.scrollHeight,
+          ctaTop: document.querySelector('#solar-estimate-inquiry').getBoundingClientRect().top,
         }));
         await inquiry.click();
         await page.waitForSelector("#repeat-inquiry-dialog[open]");
@@ -368,8 +373,14 @@ test("1.0.1 inquiry actions, annual estimate and visit lifecycle", async (t) => 
           state: "detached",
         });
         assert.equal(await page.evaluate(() => location.hash), before.hash);
+        const after = await page.evaluate(() => ({
+          scroll: scrollY,
+          height: document.documentElement.scrollHeight,
+          ctaTop: document.querySelector('#solar-estimate-inquiry').getBoundingClientRect().top,
+        }));
         assert.ok(
-          Math.abs((await page.evaluate(() => scrollY)) - before.scroll) < 2,
+          Math.abs(after.scroll - before.scroll) < 2,
+          `Cancel scroll changed at ${width}px: before ${JSON.stringify(before)}, after ${JSON.stringify(after)}`,
         );
         await inquiry.click();
         await page.keyboard.press("Escape");

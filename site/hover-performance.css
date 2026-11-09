@@ -429,13 +429,24 @@
     background-color 350ms ease,
     color 350ms ease;
 }
-.banner-scroll-cue > .material-icon {
+.banner-scroll-icon {
   position: absolute;
-  left: 12px;
-  top: 12px;
+  left: 0;
+  top: 0;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+}
+.banner-scroll-icon .material-icon {
+  position: static;
+  display: block;
   width: 24px;
   height: 24px;
+  margin: 0;
+  transform: none;
 }
+
 .banner-scroll-label {
   position: absolute;
   left: 48px;
@@ -467,6 +478,117 @@
 @media (prefers-reduced-motion: reduce) {
   .banner-scroll-cue,
   .banner-scroll-label {
+    transition: none;
+  }
+}
+
+/* Text-led company story: a clear headline, followed by possibility and purpose. */
+.landing-company .company-intro {
+  max-width: 1120px;
+  text-align: left;
+}
+.landing-company .company-intro h2 {
+  max-width: 900px;
+  margin-bottom: 48px;
+}
+.company-story {
+  max-width: 680px;
+  margin-left: auto;
+}
+#company .company-story > p {
+  margin: 0 0 24px;
+  text-align: left;
+}
+#company .company-story > p:first-child {
+  font-size: clamp(21px, 2vw, 29px);
+  line-height: 1.55;
+  color: #182522;
+}
+#company .company-story > .company-story-close {
+  font-size: clamp(16px, 1.2vw, 19px);
+  color: #5a6662;
+}
+.company-story .button {
+  margin-top: 8px;
+}
+#footer .footer-top {
+  grid-template-columns: 1.45fr 0.8fr 1.1fr 0.65fr;
+  gap: 36px;
+}
+#footer .footer-company-name {
+  font-size: 12px;
+  line-height: 1.6;
+  margin-top: 16px;
+}
+#footer .footer-brand > p:last-child {
+  margin-top: 8px;
+}
+#footer .footer-socials {
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  gap: 9px;
+}
+#footer .footer-socials > .social-pending {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0;
+  margin: 0;
+}
+#footer {
+  padding-bottom: 40px;
+}
+#header .banner-nav .banner-global-quote {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+  transition:
+    color 450ms ease,
+    border-color 450ms ease;
+}
+#header .banner-nav .banner-global-quote::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #fff;
+  opacity: 0;
+  transition: opacity 450ms ease;
+}
+#header .banner-nav .banner-global-quote:hover,
+#header .banner-nav .banner-global-quote:focus-visible {
+  background: transparent;
+  color: #182522;
+}
+#header .banner-nav .banner-global-quote:hover::before,
+#header .banner-nav .banner-global-quote:focus-visible::before {
+  opacity: 1;
+}
+@media (max-width: 900px) {
+  #footer .footer-top {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px 20px;
+  }
+  #footer .footer-brand {
+    grid-column: 1 / -1;
+  }
+  .landing-company .company-intro h2 {
+    margin-bottom: 28px;
+  }
+}
+@media (max-width: 600px) {
+  #footer .footer-top {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  #footer .footer-col {
+    min-width: 0;
+  }
+  #footer .footer-col a {
+    overflow-wrap: anywhere;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #header .banner-nav .banner-global-quote,
+  #header .banner-nav .banner-global-quote::before {
     transition: none;
   }
 }

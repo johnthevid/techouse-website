@@ -190,3 +190,14 @@ Checks: four targeted tests passed (responsive banner geometry/arrow/About flow;
 
 ### Arrow label and expanded division labels
 Solar's down arrow now morphs from a 48px circle into a 136px capsule on hover or keyboard focus, revealing About us to its right. Arrow position and surrounding layout remain fixed; reduced motion disables the transition. Expanded desktop division labels use a single line with their final-width box, including Real estate development and Elevator engineering. Checked both labels fit inside their panels and arrow expansion/label visibility at 1440px and 1024px. Syntax/whitespace checks passed. Local only; no push/deployment.
+
+
+## About story, footer hierarchy and button polish — 9 November 2026
+
+Reworked the homepage About block into a text-only story: headline on the left, larger possibility-led introduction and a quieter closing line below/right, with More about Techouse retained. Added editable story/closing fields; retired prior summary selectors are safely discarded on future saves. No automatic database rewrite or remote migration.
+
+Moved public social links into a Social column alongside Explore and Let's talk. Moved the full company name beneath the footer logo and removed the lower footer row. Existing official Facebook/TikTok destinations and non-linked pending LinkedIn label retained. Responsive footer wraps to three/two navigation columns below the brand.
+
+Raised intro logo/message group 42px for optical centering. Solar down-arrow icon now sits in a fixed grid-centered 46px interior container; measured center offsets were exactly 0px on both axes at rest. Capsule hover behavior remains. Quote action uses an opacity-animated white layer (450ms), with header-specific selectors so the existing header transition rule cannot override the text-color fade. Measured intermediate opacities ~0.43 in / ~0.65 out, confirming a gradual transition rather than a snap.
+
+Verification: updated homepage/CMS/intro/security/catalogue/component checks passed. Complete run initially reported one mobile inquiry scroll-restoration assertion; a 390px isolated rerun and then the full four-width inquiry suite passed unchanged. Kept the strict assertion, added viewport/layout diagnostics and optional TECHOUSE_TEST_WIDTH for focused investigation; no inquiry behavior changed. Desktop story/footer and raised-intro screenshots and mobile overflow inspected. Local backend restarted for story field rules. No push/merge/deployment; Safari still requires manual review.

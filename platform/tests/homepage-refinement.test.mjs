@@ -55,7 +55,10 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
     assert.equal(await page.locator('.banner-quote,.banner-details').count(), 0);
     assert.equal(await page.locator('.banner-scroll-cue').count(), 1);
     assert.equal(await page.locator('#company .eyebrow,#company .company-divisions').count(), 0);
-    assert.equal(await page.locator('#company p').count(), 1);
+    assert.equal(await page.locator('#company p').count(), 2);
+    assert.equal(await page.locator('#footer .footer-bottom').count(), 0);
+    assert.equal(await page.locator('#footer .footer-top .footer-socials a').count(), 2);
+    assert.equal(await page.locator('#footer .footer-brand .footer-company-name').count(), 1);
     assert.equal(
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
       true,
@@ -144,7 +147,7 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
       assert.ok(await page.evaluate(() => scrollY > 100));
       assert.equal(
         await page.locator('#company-title').evaluate((el) => getComputedStyle(el).textAlign),
-        'center',
+        'left',
       );
       assert.equal(await page.locator('#company a.button').getAttribute('href'), '#/about');
       await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
