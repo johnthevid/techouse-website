@@ -1177,7 +1177,7 @@ body.intro-scroll-locked {
   overscroll-behavior: none;
 }
 .intro-playing .banner-content,
-.intro-scroll-locked .banner-nav-right,
+.intro-scroll-locked .banner-nav-right:not(.intro-actions-revealing),
 .intro-scroll-locked .company-scroll-cue,
 .intro-playing .landing-bottom {
   opacity: 0 !important;

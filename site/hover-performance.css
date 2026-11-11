@@ -722,3 +722,322 @@
     transition: none;
   }
 }
+
+/* Quieter homepage controls and a consistent footer grid. */
+.banner-scroll-cue:hover,
+.banner-scroll-cue:focus-visible {
+  width: 178px;
+}
+.landing .landing-company {
+  padding-block: clamp(96px, 10vw, 160px);
+}
+#footer .footer-top {
+  grid-template-columns: minmax(250px, 1.4fr) repeat(3, minmax(0, 1fr));
+  gap: 40px;
+}
+#footer .footer-brand {
+  border: 0;
+  padding-right: 0;
+}
+#footer .footer-brand > .footer-copyright {
+  font-size: 11px;
+  line-height: 1.6;
+  margin-top: 10px;
+  color: #65716b;
+}
+#footer .footer-col > span:first-child {
+  min-height: 18px;
+  margin-bottom: 16px;
+}
+.solar-planning-pages {
+  border: 1px solid #d4dacd;
+  background: #faf9f2;
+}
+.solar-planning-pages > [hidden] {
+  display: none !important;
+}
+.solar-planning-pages .discovery-stage {
+  border: 0;
+}
+.solar-planning-pages #estimator {
+  margin: 0;
+  padding: 28px;
+}
+.solar-estimate-back {
+  margin-bottom: 20px;
+}
+.solar-planning-pages .discovery-photo-copy small {
+  position: absolute;
+  bottom: 16px;
+  font-size: 10px;
+  opacity: 0.65;
+}
+.solar-planning-pages #solar-discovery fieldset {
+  margin-bottom: 24px;
+}
+@media (max-width: 900px) {
+  #footer .footer-top {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+  }
+}
+@media (max-width: 600px) {
+  #footer .footer-top {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .solar-planning-pages #estimator {
+    padding: 20px;
+  }
+}
+
+/* Keep the established calculator split at the full planner width. */
+.solar-planning-pages {
+  background: transparent;
+  border: 0;
+}
+.solar-planning-pages > .discovery-progress {
+  padding: 20px 28px;
+  background: #faf9f2;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.solar-planning-pages #estimator {
+  padding: 32px 0 35px;
+  border: 0;
+}
+.solar-planning-pages #solar-estimator {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+}
+.solar-planning-pages .discovery-stage {
+  border: 1px solid #d4dacd;
+}
+@media (max-width: 600px) {
+  .solar-planning-pages > .discovery-progress {
+    padding: 16px 12px;
+    gap: 8px;
+  }
+  .solar-planning-pages > .discovery-progress button {
+    padding-inline: 4px;
+    font-size: 12px;
+  }
+}
+
+/* Align public hero/footer content with the division page's content column. */
+.division-page .cover-copy,
+#footer:not(.office-footer) > .container {
+  width: min(1240px, calc(100% - 100px));
+  max-width: 1240px;
+  margin-inline: auto;
+}
+@media (max-width: 900px) {
+  .division-page .cover-copy,
+  #footer:not(.office-footer) > .container {
+    width: calc(100% - 48px);
+  }
+}
+
+/* The banner gutter is the public site's shared horizontal rhythm. */
+:root {
+  --site-gutter: clamp(28px, 5vw, 96px);
+}
+.landing {
+  --landing-gutter: var(--site-gutter);
+}
+body:not(.office-page) .container,
+body:not(.office-page) .division-wrap,
+body:not(.office-page) .division-page .cover-copy,
+body:not(.office-page).division-page .cover-copy,
+body:not(.office-page) #footer:not(.office-footer) > .container {
+  width: calc(100% - 2 * var(--site-gutter));
+  max-width: none;
+  margin-inline: auto;
+}
+/* A single frame connects all three stages; active green and gold match the site. */
+.solar-planning-pages {
+  border: 1px solid #cdd5c8;
+  background: #faf9f2;
+}
+.solar-planning-pages > .discovery-progress {
+  padding: 0;
+  gap: 0;
+  border-bottom: 1px solid #cdd5c8;
+  background: #f0f1e9;
+}
+.solar-planning-pages > .discovery-progress button {
+  margin: 0;
+  padding: 24px 28px;
+  border: 0;
+  border-right: 1px solid #d7ddd2;
+  border-bottom: 3px solid transparent;
+  font-size: 14px;
+  transition:
+    background-color 200ms,
+    color 200ms;
+}
+.solar-planning-pages > .discovery-progress button:last-child {
+  border-right: 0;
+}
+.solar-planning-pages > .discovery-progress button[aria-current='step'] {
+  background: #173b30;
+  color: #fff;
+  border-bottom-color: #b99258;
+}
+.solar-planning-pages > .discovery-progress button:hover:not([aria-current='step']) {
+  background: #e4e9df;
+  color: #173b30;
+}
+.solar-planning-pages .discovery-stage {
+  border: 0;
+  box-shadow: none;
+}
+.solar-planning-pages #estimator {
+  padding: 0;
+}
+.solar-planning-pages #solar-estimator {
+  border: 0;
+}
+.solar-planning-pages #estimator > details {
+  margin: 20px 28px;
+}
+@media (max-width: 600px) {
+  .solar-planning-pages > .discovery-progress button {
+    padding: 16px 10px;
+    font-size: 12px;
+  }
+  .solar-planning-pages > .discovery-progress span {
+    display: block;
+    margin-top: 6px;
+  }
+  .solar-planning-pages #solar-discovery {
+    padding: 24px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .solar-planning-pages > .discovery-progress button {
+    transition: none;
+  }
+}
+
+/* Connected progress markers make the solar journey read as a sequence. */
+.solar-planning-pages > .discovery-progress {
+  padding: 28px 24px 24px;
+  background: #faf9f2;
+  border-bottom: 1px solid #d7ddd2;
+}
+.solar-planning-pages > .discovery-progress button,
+.solar-planning-pages > .discovery-progress button[aria-current='step'],
+.solar-planning-pages > .discovery-progress button:hover:not([aria-current='step']) {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px;
+  border: 0;
+  background: transparent;
+  color: #67746b;
+  text-align: center;
+}
+.solar-planning-pages > .discovery-progress button:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  height: 2px;
+  top: 21px;
+  left: calc(50% + 27px);
+  width: calc(100% - 54px);
+  background: #d3dacf;
+}
+.solar-planning-pages > .discovery-progress button.is-complete::after {
+  background: #254d3c;
+}
+.solar-planning-pages > .discovery-progress .step-marker {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  border: 1px solid #bac6bb;
+  border-radius: 50%;
+  background: #faf9f2;
+  font-size: 15px;
+  font-weight: 700;
+}
+.solar-planning-pages > .discovery-progress .step-label {
+  display: block;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.solar-planning-pages > .discovery-progress button.is-complete .step-marker {
+  background: #254d3c;
+  border-color: #254d3c;
+  color: white;
+}
+.solar-planning-pages > .discovery-progress button[aria-current='step'] {
+  color: #173b30;
+}
+.solar-planning-pages > .discovery-progress button[aria-current='step'] .step-marker {
+  background: #173b30;
+  border-color: #173b30;
+  color: #fff;
+  box-shadow: 0 0 0 4px #e5dbc5;
+}
+.solar-planning-pages > .discovery-progress button:hover .step-label {
+  color: #173b30;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.solar-planning-pages > .discovery-progress button:focus-visible {
+  outline: 2px solid #b99258;
+  outline-offset: 6px;
+}
+@media (max-width: 600px) {
+  .solar-planning-pages > .discovery-progress {
+    padding: 24px 8px 20px;
+  }
+  .solar-planning-pages > .discovery-progress .step-label {
+    font-size: 12px;
+  }
+}
+
+/* Match discovery's warm form surface and white field treatment. */
+.solar-planning-pages #solar-estimator .estimate-inputs {
+  background: #f9f8f2;
+}
+.solar-planning-pages #solar-estimator .solar-bill-control,
+.solar-planning-pages #solar-estimator .solar-offset-control {
+  background: #fff;
+  border-color: #cdd5c8;
+}
+.solar-planning-pages #solar-estimator input:not([type='range']),
+.solar-planning-pages #solar-estimator select {
+  background: #fff;
+  border-color: #cdd5c8;
+  color: #182522;
+}
+/* One clear destination per equipment card, including the photograph. */
+.skyworth-range-card {
+  position: relative;
+}
+.skyworth-range-card .skyworth-range-copy {
+  min-height: 0;
+}
+.skyworth-range-card .skyworth-range-copy h3 {
+  margin-bottom: 20px;
+}
+.skyworth-range-card .text-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.skyworth-range-card:focus-within {
+  outline: 2px solid #254d3c;
+  outline-offset: 3px;
+}
+.skyworth-range-card:hover {
+  border-color: #254d3c;
+}

@@ -59,6 +59,8 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
     assert.equal(await page.locator('#footer .footer-bottom').count(), 0);
     assert.equal(await page.locator('#footer .footer-top .footer-socials a').count(), 2);
     assert.equal(await page.locator('#footer .footer-brand .footer-company-name').count(), 1);
+    assert.match(await page.locator('.footer-copyright').innerText(), /All rights reserved/);
+    assert.equal(await page.locator('.banner-scroll-label').innerText(), 'About Techouse');
     assert.equal(
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
       true,

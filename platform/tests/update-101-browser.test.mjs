@@ -343,11 +343,17 @@ test("1.0.1 inquiry actions, annual estimate and visit lifecycle", async (t) => 
       });
       if (sector === "residential") {
         await page.goto(f.env.APP_ORIGIN + "/#/divisions/solar");
+        await page.locator('[data-scroll="estimator"]').click();
         await page.waitForSelector("#solar-estimator");
         await page.locator('#solar-estimator input[name="bill"]').fill("6000");
         await page.locator("#solar-estimator .calculate-cost").click();
         const inquiry = page.locator("#solar-estimate-inquiry");
         await inquiry.scrollIntoViewIfNeeded();
+        await page.evaluate(() => new Promise(resolve => {
+          let previous = scrollY, stable = 0;
+          const check = () => { stable = Math.abs(scrollY - previous) < 0.1 ? stable + 1 : 0; previous = scrollY; if (stable >= 8) resolve(); else requestAnimationFrame(check); };
+          requestAnimationFrame(check);
+        }));
         const before = await page.evaluate(() => ({
           hash: location.hash,
           scroll: scrollY,

@@ -1,0 +1,15 @@
+# Techouse cleaned presentation demo
+
+Worker: `techouse-cleaned`. Expected address: https://techouse-cleaned.johndavidceasar.workers.dev
+
+Uses the public static site with browser-local demo inquiries. No production database, secrets, scheduled jobs or staff accounts are bound. Staff/API paths are unavailable. This is separate from the existing `techouse` deployment.
+
+Deploy manually from this folder using pinned Wrangler 4.157.0:
+
+```sh
+wrangler deploy --config wrangler.cleaned.jsonc
+```
+
+Git branch: feature/homepage-refinement. Do not merge into main or overwrite the existing Worker as part of this demo.
+
+Status: prepared and tested locally; Cloudflare sign-in required before deployment. No successful deployment recorded yet.

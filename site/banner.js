@@ -21,11 +21,11 @@ window.TechouseBanner = (() => {
     return `<section class="division-landing" aria-labelledby="landing-title"><div class="landing-intro"><h1 id="landing-title">What are you <br>building next?</h1><span class="landing-kicker" hidden>We bring the newest technology to the Philippines.</span></div><div class="division-banners" aria-label="Explore Techouse business divisions">${divisions
       .map((d) => {
         const c = copy[d.id];
-        return `<section class="division-banner banner-${d.id}" data-banner="${d.id}" aria-labelledby="banner-title-${d.id}"><div class="banner-background" aria-hidden="true">${d.image ? `<img src="assets/${d.image}" alt="" ${d.id === 'solar' ? 'fetchpriority="high"' : ''}>` : `<div class="elevator-backdrop">${art}</div>`}</div><div class="banner-shade"></div><button class="banner-trigger" aria-label="Explore ${d.short}"></button><div class="banner-content"><div class="banner-title-row"><h2 id="banner-title-${d.id}">${c.title}</h2><span class="banner-plus" aria-hidden="true">+</span></div><p class="banner-division-label">${d.short}</p>${d.id === 'solar' ? `<a class="banner-scroll-cue" href="#company" aria-label="Scroll down to learn about Techouse"><span class="banner-scroll-icon" aria-hidden="true">${window.TechouseIcons.icon('arrow_downward')}</span><span class="banner-scroll-label" aria-hidden="true">About us</span></a>` : ''}</div><span class="banner-load-status" aria-hidden="true">Techouse · Loading image</span></section>`;
+        return `<section class="division-banner banner-${d.id}" data-banner="${d.id}" aria-labelledby="banner-title-${d.id}"><div class="banner-background" aria-hidden="true">${d.image ? `<img src="assets/${d.image}" alt="" ${d.id === 'solar' ? 'fetchpriority="high"' : ''}>` : `<div class="elevator-backdrop">${art}</div>`}</div><div class="banner-shade"></div><button class="banner-trigger" aria-label="Explore ${d.short}"></button><div class="banner-content"><div class="banner-title-row"><h2 id="banner-title-${d.id}">${c.title}</h2><span class="banner-plus" aria-hidden="true">+</span></div><p class="banner-division-label">${d.short}</p>${d.id === 'solar' ? `<a class="banner-scroll-cue" href="#company" aria-label="Scroll down to learn about Techouse"><span class="banner-scroll-icon" aria-hidden="true">${window.TechouseIcons.icon('arrow_downward')}</span><span class="banner-scroll-label" aria-hidden="true">About Techouse</span></a>` : ''}</div><span class="banner-load-status" aria-hidden="true">Techouse · Loading image</span></section>`;
       })
       .join(
         '',
-      )}</div></section><section class="landing-company" id="company" aria-labelledby="company-title"><div class="company-intro"><h2 id="company-title">New ways to build.<br>More ways forward.</h2><div class="company-story"><p>Every project starts with a possibility. A roof that could generate energy. A space ready for a new purpose. A building ready for its next chapter.</p><p class="company-story-close">Techouse brings the technology and the people together to help you explore what comes next.</p><a class="button" href="#/about">More about Techouse ↗</a></div></div></section>`;
+      )}</div></section><section class="landing-company" id="company" aria-labelledby="company-title"><div class="company-intro"><h2 id="company-title">New ways to build.<br>More ways forward.</h2><div class="company-story"><p>Every project starts with a possibility. A roof that could generate energy. A space ready for a new purpose. A building ready for its next chapter.</p><p class="company-story-close">Techouse brings the newest technology to the Philippines.</p><a class="button" href="#/about">More about Techouse ↗</a></div></div></section>`;
   }
   function mount(returningHome = false) {
     teardown();
@@ -148,7 +148,8 @@ window.TechouseBanner = (() => {
       panel.addEventListener(
         'focusin',
         () => {
-          if (!media.matches) desktopOpen(panel);
+          if (!media.matches)
+            desktopOpen(panel.querySelector('.banner-scroll-cue:focus') ? null : panel);
         },
         options,
       );
@@ -190,6 +191,11 @@ window.TechouseBanner = (() => {
         lastPointer = point;
         awaitingFreshMovement = false;
         keyboardMode = false;
+        const bottom = host.getBoundingClientRect().bottom;
+        if (point.y >= bottom - 112 || event.target.closest('.banner-scroll-cue')) {
+          desktopOpen(null);
+          return;
+        }
         const panel = event.target.closest('.division-banner');
         if (!panel || panel.classList.contains('is-open')) return;
         if (
@@ -231,6 +237,11 @@ window.TechouseBanner = (() => {
       (event) => {
         if (event.key === 'Escape') {
           if (media.matches) {
+            const bottom = host.getBoundingClientRect().bottom;
+            if (point.y >= bottom - 112 || event.target.closest('.banner-scroll-cue')) {
+              desktopOpen(null);
+              return;
+            }
             const panel = event.target.closest('.division-banner');
             if (panel) {
               panel.dataset.manual = 'true';

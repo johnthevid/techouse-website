@@ -31,11 +31,13 @@ test('Solar equipment navigation, official imagery and responsive catalogue', as
   assert.equal(await page.locator('.solar-subnav-call').getAttribute('href'), 'tel:+639855626888');
   await page.evaluate(() => scrollTo(0, 0));
   await page.waitForFunction(() => document.querySelector('.solar-subnav-call').inert);
+  await page.locator('[data-scroll="estimator"]').click();
   const slider = page.locator('.solar-offset-control input');
   await slider.focus();
   const previous = +(await slider.inputValue());
   await slider.press('ArrowLeft');
   assert.equal(+(await slider.inputValue()), previous - 5);
+  await page.locator('.discovery-progress [data-step="0"]').click();
   await page.locator('#solar-discovery').scrollIntoViewIfNeeded();
   assert.match(await page.locator('.discovery-story-photo').getAttribute('alt'), /home interior/);
   await page.locator('[data-next]').click();

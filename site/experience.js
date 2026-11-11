@@ -155,6 +155,9 @@ window.TechouseExperience = (() => {
       .map((sel) => document.querySelector(sel))
       .filter(Boolean);
     const pageCopy = [intro, ...landing.querySelectorAll('.banner-content')];
+    const actionGroup = document.querySelector('#header .banner-nav-right');
+    const originalActionOpacity = actionGroup?.style.opacity;
+    if (actionGroup) actionGroup.style.opacity = '0';
     const originalOpacity = pageCopy.map((el) => el.style.opacity);
     pageCopy.forEach((el) => {
       el.style.opacity = '0';
@@ -187,6 +190,10 @@ window.TechouseExperience = (() => {
       animations.forEach((animation) => animation.cancel());
       animations.clear();
       overlay.remove();
+      if (actionGroup) {
+        actionGroup.classList.remove('intro-actions-revealing');
+        actionGroup.style.opacity = originalActionOpacity;
+      }
       landing.classList.remove('intro-playing');
       landing.dataset.revealPhase = 'complete';
       pageCopy.forEach((el, index) => {
@@ -222,6 +229,10 @@ window.TechouseExperience = (() => {
         if (done) return;
         landing.classList.remove('intro-playing');
         landing.dataset.revealPhase = 'headline';
+        if (actionGroup) {
+          actionGroup.classList.add('intro-actions-revealing');
+          animate(actionGroup, [{ opacity: 0 }, { opacity: 1 }], 650);
+        }
         await animate(
           intro,
           [
@@ -486,43 +497,89 @@ window.TechouseExperience = (() => {
         (step === 1 ? priorities[value] : photos[sector]) || photos.Residential;
       visual.classList.add('discovery-photo-visual');
       visual.dataset.story = step === 0 ? sector : value;
-      visual.innerHTML = `<img class="discovery-story-photo" src="${image}" alt="${alt}"><div class="discovery-photo-shade"></div><div class="discovery-photo-copy"><span>YOUR SOLAR STORY / ${step === 0 ? sector.toUpperCase() : 'YOUR PRIORITY'}</span><h3>${title}</h3><p>${description}</p><small>${step === 1 && value === 'Lower electricity costs' ? 'Illustrative bill image' : 'Photo · Unsplash · illustrative'}</small></div>`;
+      visual.innerHTML = `<img class="discovery-story-photo" src="${image}" alt="${alt}"><div class="discovery-photo-shade"></div><div class="discovery-photo-copy"><h3>${title}</h3><p>${description}</p><small>${step === 1 && value === 'Lower electricity costs' ? 'Illustrative bill image' : 'Photo · Unsplash · illustrative'}</small></div>`;
     }
+    const estimator = document.querySelector('#estimator');
+    const planning = document.createElement('div');
+    planning.className = 'solar-planning-pages';
+    layout.before(planning);
+    planning.append(progress, layout, estimator);
+    progress.setAttribute('aria-label', 'Solar planning steps');
+    const heading = document.querySelector('#solar-start > .section-heading');
+    const originalTitle = heading.querySelector('h2').innerHTML;
+    const originalDescription = heading.querySelector('p').textContent;
+    const costHeading = estimator.querySelector('.section-heading');
+    const costTitle = costHeading.querySelector('h2').textContent;
+    const costDescription = costHeading.querySelector('p').textContent;
+    costHeading.remove();
     function show(focus = false) {
-      form.classList.toggle('priority-step', step === steps.length - 1);
-      layout.classList.toggle('priority-stage', step === steps.length - 1);
-      steps.forEach((s, i) => (s.hidden = i !== step));
-      extras.forEach((e) => (e.hidden = step !== steps.length - 1));
-      progress.innerHTML = ['Your property', 'Your priority']
+      heading.querySelector('h2').innerHTML = step === 2 ? costTitle : originalTitle;
+      heading.querySelector('p').textContent = step === 2 ? costDescription : originalDescription;
+      planning.dataset.step = String(step + 1);
+      layout.hidden = step === 2;
+      estimator.hidden = step !== 2;
+      layout.classList.toggle('priority-stage', step === 1);
+      form.classList.toggle('priority-step', step === 1);
+      steps.forEach((section, index) => (section.hidden = index !== step));
+      extras.forEach((element) => (element.hidden = step !== 1));
+      form.querySelector('[data-solar-next]').hidden = true;
+      progress.innerHTML = ['Your area type', 'Your needs', 'Cost calculation']
         .map(
-          (v, i) =>
-            `<button type="button" data-step="${i}" aria-current="${i === step ? 'step' : 'false'}">0${i + 1} <span>${v}</span></button>`,
+          (label, index) =>
+            `<button type="button" data-step="${index}" class="${index < step ? 'is-complete' : ''}" aria-current="${index === step ? 'step' : 'false'}" aria-label="Step ${index + 1} of 3: ${label}${index < step ? ', completed' : index === step ? ', current' : ''}"><span class="step-marker" aria-hidden="true">${index < step ? window.TechouseIcons.icon('check') : index + 1}</span><span class="step-label">${label}</span></button>`,
         )
         .join('');
-      controls.querySelector('[data-back]').disabled = step === 0;
-      controls.querySelector('[data-next]').hidden = step === steps.length - 1;
-      controls.querySelector('.discovery-count').textContent = `${step + 1} / ${steps.length}`;
+      controls.querySelector('[data-back]').hidden = step === 0;
+      controls.querySelector('[data-next]').textContent =
+        step === 0 ? 'Continue →' : 'Calculate your cost →';
+      controls.querySelector('.discovery-count').textContent = `${step + 1} / 3`;
       draw();
+      // Cancel an interrupted reveal before starting the next; no delayed state changes.
+      for (const target of [layout, estimator])
+        target.getAnimations().forEach((animation) => animation.cancel());
+      if (focus && !reduced()) {
+        (step === 2 ? estimator : layout).animate(
+          [
+            { opacity: 0.3, filter: 'blur(5px)' },
+            { opacity: 1, filter: 'blur(0px)' },
+          ],
+          { duration: 320, easing: 'cubic-bezier(.2,.7,.2,1)' },
+        );
+      }
       if (focus) {
-        steps[step].querySelector('legend').tabIndex = -1;
-        steps[step].querySelector('legend').focus({ preventScroll: true });
+        const target =
+          step === 2 ? heading.querySelector('h2') : steps[step].querySelector('legend');
+        target.tabIndex = -1;
+        target.focus({ preventScroll: true });
       }
     }
-    controls.querySelector('[data-back]').onclick = () => {
-      step = Math.max(0, step - 1);
-      show(true);
-    };
     controls.querySelector('[data-next]').onclick = () => {
-      step = Math.min(steps.length - 1, step + 1);
+      step = Math.min(2, step + 1);
       show(true);
     };
-    progress.onclick = (e) => {
-      const b = e.target.closest('[data-step]');
-      if (b) {
-        step = +b.dataset.step;
+    controls.querySelector('[data-back]').onclick = () => {
+      step = 0;
+      show(true);
+    };
+    progress.onclick = (event) => {
+      const button = event.target.closest('[data-step]');
+      if (button) {
+        step = Number(button.dataset.step);
         show(true);
       }
     };
+    document
+      .querySelectorAll('[data-scroll="estimator"], [data-scroll="solar-start"]')
+      .forEach((link) => {
+        link.addEventListener(
+          'click',
+          () => {
+            step = link.dataset.scroll === 'estimator' ? 2 : 0;
+            show();
+          },
+          { capture: true },
+        );
+      });
     form.addEventListener('change', draw);
     show();
     const learning = document.querySelector('.solar-learning');

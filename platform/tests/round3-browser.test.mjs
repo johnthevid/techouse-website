@@ -272,6 +272,7 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
     await page.waitForSelector("#main h1");
   }
   await page.goto(f.env.APP_ORIGIN + '/#/divisions/solar');
+  await page.locator('[data-scroll="estimator"]').click();
   await page.waitForSelector('#solar-estimator');
   await page.locator('#solar-estimator .calculate-cost').click();
   await page.waitForSelector('.estimate-economics');
@@ -284,6 +285,7 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
   assert(await page.locator('.calculate-cost').isVisible());
   assert.equal(await page.locator('.estimate-economics').count(),0);
   await page.goto(f.env.APP_ORIGIN + '/#/divisions/solar');
+  await page.locator('[data-scroll="estimator"]').click();
   await page.waitForSelector('#solar-estimator');
   await page.locator('#solar-estimator input[name="bill"]').fill('6000');
   await page.locator('#solar-estimator input[name="offset"]').evaluate(input => {

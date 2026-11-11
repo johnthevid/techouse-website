@@ -288,7 +288,7 @@ function renderFooter(path) {
     return;
   }
   $('#footer').innerHTML =
-    `<div class="container"><div class="footer-top"><div class="footer-brand"><a href="#/" aria-label="Techouse home">${brand}</a><p class="footer-company-name">Techouse Technology Construction Corp</p><p>Construction. Energy. New possibilities.<br>Building your next possibility.</p></div><div class="footer-col"><span>EXPLORE</span><a href="#/divisions">Our divisions</a><a href="#/about">About Techouse</a><a href="#/updates">Company updates</a><a href="#/office">Employee back office</a></div><div class="footer-col"><span>LET’S TALK</span><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a><a href="tel:+639855626888">+63 985 562 6888</a><a href="#/inquiry">Start a project ${arrow}</a></div><nav class="footer-col footer-socials" aria-label="Social media"><span>SOCIAL</span><a href="https://www.facebook.com/profile.php?id=61590728812899" target="_blank" rel="noopener noreferrer">Facebook ↗</a><a href="https://www.tiktok.com/@asiatechouse" target="_blank" rel="noopener noreferrer">TikTok ↗</a><span class="social-pending">LinkedIn · coming soon</span></nav></div></div>`;
+    `<div class="container"><div class="footer-top"><div class="footer-brand"><a href="#/" aria-label="Techouse home">${brand}</a><p class="footer-company-name">Techouse Technology Construction Corp</p><p class="footer-copyright">© ${new Date().getFullYear()} Techouse. All rights reserved.</p><p>Construction. Energy. New possibilities.<br>Building your next possibility.</p></div><div class="footer-col"><span>EXPLORE</span><a href="#/divisions">Our divisions</a><a href="#/about">About Techouse</a><a href="#/updates">Company updates</a><a href="#/office">Employee back office</a></div><div class="footer-col"><span>LET’S TALK</span><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a><a href="tel:+639855626888">+63 985 562 6888</a><a href="#/inquiry">Start a project ${arrow}</a></div><nav class="footer-col footer-socials" aria-label="Social media"><span>SOCIAL</span><a href="https://www.facebook.com/profile.php?id=61590728812899" target="_blank" rel="noopener noreferrer">Facebook ↗</a><a href="https://www.tiktok.com/@asiatechouse" target="_blank" rel="noopener noreferrer">TikTok ↗</a><span class="social-pending">LinkedIn · coming soon</span></nav></div></div>`;
 }
 const breadcrumb = (title) =>
   `<div class="container breadcrumb"><a href="#/">Home</a><span>/</span><span>${esc(title)}</span></div>`;
@@ -685,7 +685,7 @@ function render() {
   if (path === '/') html = window.TechouseBanner.html(divisions, elevatorArt, arrow);
   else if (path === '/divisions') {
     title = 'Our divisions';
-    html = `${breadcrumb('Our divisions')}<section class="container page-hero divisions-introduction"><div><div class="eyebrow">ONE TECHOUSE. MORE POSSIBILITIES.</div><h1>What are you<br>building next?</h1></div><p>A lower electricity bill. A new space. A building brought to life. Explore our five divisions and find the right place to begin.</p></section>${divisionDirectory()}${cta()}`;
+    html = `${breadcrumb('Our divisions')}<section class="container page-hero divisions-introduction"><div><h1>What are you<br>building next?</h1></div><p>A lower electricity bill. A new space. A building brought to life. Explore our five divisions and find the right place to begin.</p></section>${divisionDirectory()}${cta()}`;
   } else if (path.startsWith('/divisions/solar/projects/')) {
     title = 'Solar project portfolio';
     html = divisionPage('solar');

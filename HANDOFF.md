@@ -213,3 +213,45 @@ Improved the public footer with consistent page gutters, aligned four-column des
 More about Techouse now fades its dark fill away over 450ms, revealing the section background with dark text while retaining the original dark border. Hover/focus no longer lifts the button or shifts its arrow. Reduced motion remains supported.
 
 Checked footer layouts at 1440/1024/390px with no horizontal overflow; inspected desktop/mobile screenshots. Measured an intermediate About-fill opacity and verified fully transparent hover plus unchanged border. Formatting/whitespace checks passed. Local only; no push, merge or Cloudflare deployment.
+
+
+## Homepage/footer simplification and unified solar planner — 10 November 2026
+Renamed the down-arrow label to About Techouse; desktop pointer movement in the bottom 112px no longer opens division panels. Added more vertical company-story space and restored the closing tagline about bringing the newest technology to the Philippines. Public footer uses consistent column spacing, removes the brand divider, and includes a current-year copyright beneath the company name.
+Removed Solar cover eyebrow/footer slogan, property/estimate/project section eyebrows, divisions-directory eyebrow and next-division eyebrow. Photo overlays retain only heading/subtext, with understated source credit. Solar property and priorities now share page one; the existing calculator is page two within the same planner panel, with a back action preserving selections. Existing section navigation switches the correct planner page before scrolling. Calculator formulas and inquiry handoff unchanged. Existing browser workflows now explicitly open the estimate step.
+Validation: dedicated two-page planner browser check passed at 1440/390px (selection preservation, estimate calculation, navigation, no horizontal overflow, no page errors); both homepage responsive/intro lifecycle tests passed. Mobile full-page screenshot inspected. Whitespace check passed. Entire regression suite not rerun; Safari remains a manual check. Local only, no push/merge/deployment. Preview already listening on port 8787; attempted second start correctly reported address in use.
+
+
+### Three-step solar flow and calculator restoration — 10 November 2026
+Owner revised the two-page planner to three steps: Your area type, Your needs, Cost calculation. Only the relevant fieldset is visible in each discovery step; priority imagery now updates again on the needs step. Shared progress supports direct navigation; Back preserves selections and calculation values. Calculator retains its original split input/results design, restored to the full planner width without the inset border/padding. Section navigation labels now match the flow. Targeted desktop/mobile browser test passed, including hidden-step behavior, needs selection, backtracking, full calculator width, calculation, section navigation and overflow. Desktop full-page capture inspected. Local only; no push/deployment.
+
+### Shared hero/footer margins — 10 November 2026
+Aligned division hero copy and public footer container with the existing division-wrap width: max 1240px with 50px minimum desktop gutters, 24px gutters at <=900px. Full-bleed imagery/footer backgrounds retained. Added desktop/mobile geometric equality assertion to planner browser coverage. Local only; no deployment.
+
+### Banner-aligned public margins and cohesive planner — 10 November 2026
+Owner requested the banner gutter across public pages. Added shared --site-gutter clamp(28px,5vw,96px) and applied it to public containers, division wraps, cover copy and footer contents; office workspace excluded. Full-bleed backgrounds retained. Removed the standalone Your needs calculator back button. The shared three-step header now uses equal segments, green active state and gold underline, joined to one bordered content frame. A single outer heading/description changes for the cost step; removed the duplicate inner calculator heading. Step-header navigation preserves all selections and calculator values. Existing calculator split retained.
+Checks: homepage responsive/intro lifecycle plus three-step planner tests passed (3 tests), including desktop/mobile margin equality, calculation, selection persistence, absence of removed back button and no overflow. Mobile full-page planner capture inspected. Whitespace check and asset cache refresh passed. Local only; no push/merge/deployment.
+
+### Connected solar progress indicator — 10 November 2026
+Replaced rectangular step tabs with numbered circular markers and connecting lines. Prior steps show checkmarks/green connectors; current step has a green marker and gold focus ring; upcoming steps remain outlined. Labels stay beneath markers, including mobile. Click/keyboard navigation and aria-current preserved, with explicit accessible step/status names. Planner desktop/mobile test passed, including calculation, backtracking, margins and overflow. Asset refresh and whitespace checks passed. Local only; no push/deployment.
+
+### Solar polish and simpler equipment entry cards — 10 November 2026
+Added a 320ms, 5px blur/opacity reveal when switching planner steps. Running reveals are cancelled on subsequent selection; reduced motion bypasses it. Calculator input surface now matches discovery's warm form background with white fields/cards and muted green borders. Removed optional-guide/technical-reference eyebrows and the Your solar starting point result eyebrow. Equipment overview cards now contain category image, heading and one View all models destination, stretched across the full card; removed featured-model/rating/datasheet clutter from this overview only. Product category pages and their datasheets remain intact. Browser coverage checks all three destinations, removed content, rapid-switch blur cleanup, calculator behavior and desktop/mobile margins. Local only; no push/deployment.
+
+
+### Equipment banner copy cleanup — 10 November 2026
+Removed Techouse × Skyworth eyebrow and equipment-range/datasheet availability caption from the shared category banner template (panels, inverters, batteries). Category headings, descriptions, tabs, model cards and datasheet actions unchanged. JS syntax/whitespace checks passed; local only, no deployment.
+
+### Intro choreography exploration — 10 November 2026
+Owner requested a new intro sequence: retain symbol/wordmark reveal, shrink the lockup to 72%, introduce a large 30–64px company promise from above, hold 2.4s, fade content and drop the white curtain. Homepage question then reveals at viewport center, holds 1.1s and moves to its original location over 800ms before division copy reveals. Headline geometry/line breaks remain unchanged; movement uses transforms. Skip/Escape, reduced-motion bypass and original style/inert restoration retained; failsafe raised to 13s to cover the additional reading beats. Desktop promise screenshot inspected. Local only; no release/push/deployment. Intro test timeout updated to cover longer user-requested sequence, including failed-logo path.
+
+
+### Intro experiment reverted — 10 November 2026
+Owner rejected the latest intro experiment. Restored previous logo/wordmark reveal, small promise with 2.1s hold, white curtain drop, headline reveal in its original position and then division copy. Removed logo shrink, oversized message and centered-headline hold/move. Restored 10s failsafe and previous test timeout. All solar/planner/catalogue/footer/margin changes preserved. Local only.
+
+
+### Homepage header-action fade — 10 November 2026
+Call us and Request a quote now fade in together over 650ms when the curtain clears and the homepage headline reveals. Intro scroll lock/inert behavior retained. Skip/navigation/failsafe restore original inline opacity and remove the temporary reveal class; reduced motion still bypasses the intro. Local only; no deployment.
+
+## Cleaned demo publication — 11 November 2026
+User authorized pushing the current feature/homepage-refinement version and creating a separate Cloudflare demo named techouse-cleaned. Contact card now uses Let’s Talk as its heading, with the duplicate eyebrow removed. Prepared isolated wrangler.cleaned.jsonc/cleaned-demo.mjs; no DB/auth secrets/cron bindings, no staff/API routes, noindex headers. Existing techouse Worker unchanged.
+Validation: full suite had 21/23 passing; two tests needed updating for hidden calculator steps and a scroll-settlement race. Calculator test now explicitly selects its step. Cancel test waits for stable scrolling before taking its baseline; strict position assertion unchanged. Both failed groups then passed (catalogue and four-width inquiry lifecycle); other 21 checks passed in the full run. Cloudflare OAuth attempt timed out before authorization; deployment pending user sign-in. Git publication status will be recorded after push.

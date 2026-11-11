@@ -205,8 +205,8 @@ window.TechouseCatalogue = (() => {
     return `<article class="catalogue-page catalogue-refined" data-category="${category}"><div class="container">
       <div class="breadcrumb"><a href="#/">Home</a><span>/</span><a href="#/divisions/solar">Solar</a><span>/</span><span>${labels[category]}</span></div>
       <section class="catalogue-intro catalogue-banner" aria-labelledby="catalogue-title"><img class="catalogue-banner-image" src="assets/skyworth-products/${category}.jpg" alt="Skyworth ${labels[category]} product-family scene" fetchpriority="high"><div class="catalogue-banner-shade"></div>
-        <div><div class="eyebrow">Techouse × Skyworth</div><h1 id="catalogue-title">${labels[category]}.</h1></div>
-        <div class="catalogue-intro-copy"><p>${introductions[category]}</p><span>${String(selected.length).padStart(2, '0')} equipment ranges <span aria-hidden="true">/</span> Manufacturer datasheets available</span></div>
+        <div><h1 id="catalogue-title">${labels[category]}.</h1></div>
+        <div class="catalogue-intro-copy"><p>${introductions[category]}</p></div>
       </section>
       <nav class="catalogue-tabs" aria-label="Product categories">${Object.entries(labels)
         .map(
@@ -242,23 +242,12 @@ window.TechouseCatalogue = (() => {
       ],
     ];
     return `<div class="skyworth-showcase">${groups
-      .map(([category, step, title, image, caption]) => {
-        const featured = {
-          panels: ['QM192AFCD BC Series', 'Highest listed module efficiency'],
-          inverters: ['SW Three Phase On-grid', 'Highest listed on-grid power'],
-          batteries: ['Commercial & Industrial Storage', 'Largest listed storage capacity'],
-        };
-        const [model, criterion] = featured[category];
-        const product =
-          products.find(
-            (item) =>
-              item.title === model && (category !== 'inverters' || item.capacity === '75–125 kW'),
-          ) || products.filter((item) => item.category === category).at(-1);
-        return `<article class="skyworth-range-card"><a class="skyworth-range-visual" href="#/divisions/solar/products/${category}"><img src="assets/skyworth-products/${image}" alt="Skyworth ${caption}" loading="lazy"><span>${step}</span></a><div class="skyworth-range-copy"><h3>${title}</h3><span class="range-model-label">Top of our listed range</span><h4>${product.title}</h4><strong class="range-rating">${product.capacity}</strong><p class="range-selection-reason">${criterion}</p><p class="range-image-note">Product-family illustration.</p><div class="range-actions"><a class="text-link" href="#/divisions/solar/products/${category}">View all models ${window.TechouseIcons.icon('arrow_outward')}</a><a href="${encodeURI(product.pdf)}" target="_blank" rel="noopener" class="text-link">Datasheet ${window.TechouseIcons.icon('arrow_outward')}</a></div></div></article>`;
+      .map(([category, , title, image, caption]) => {
+        return `<article class="skyworth-range-card"><div class="skyworth-range-visual"><img src="assets/skyworth-products/${image}" alt="Skyworth ${caption}" loading="lazy"></div><div class="skyworth-range-copy"><h3>${title}</h3><a class="text-link" href="#/divisions/solar/products/${category}" aria-label="View all ${title.toLowerCase()} models">View all models ${window.TechouseIcons.icon('arrow_outward')}</a></div></article>`;
       })
       .join(
         '',
-      )}</div><p class="catalogue-note">Ratings shown are from the supplied manufacturer datasheets. Images illustrate Skyworth product families; exact model appearance and availability require confirmation.</p>`;
+      )}</div><p class="catalogue-note">Images illustrate Skyworth product families; exact model appearance and availability require confirmation.</p>`;
   }
   const categoryOrder = ['panels', 'inverters', 'batteries'];
   const slideMotion = { duration: 560, easing: 'cubic-bezier(.16,1,.3,1)' };

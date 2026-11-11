@@ -55,7 +55,7 @@ window.TechouseSolar = (() => {
     const intro = document.createElement('section');
     intro.id = 'solar-start';
     intro.className = 'division-section solar-start';
-    intro.innerHTML = `<div class="section-heading"><span>01 / YOUR PROPERTY</span><h2>Your first step to<br>lower electricity bills.</h2><p>Tell us about your property and what matters most to you. Then explore your estimated solar cost.</p></div><form id="solar-discovery"><fieldset><legend>What type of property is this for?</legend>${options('sector', ['Residential', 'Commercial', 'Industrial'])}</fieldset><fieldset><legend>What would you like solar to help with?</legend>${options('goal', ['Lower electricity costs', 'Energy after sunset', 'Backup for essentials'])}</fieldset><label class="solar-location">Where is your property? <small>Optional · city or province</small><input name="location" maxlength="120" placeholder="e.g. Quezon City" value="${escape(choices.location)}"></label><p id="solar-guidance" aria-live="polite"></p><a class="button" href="#estimator" data-solar-next>Next: estimate my solar cost →</a></form>`;
+    intro.innerHTML = `<div class="section-heading"><h2>Your first step to<br>lower electricity bills.</h2><p>Tell us about your property and what matters most to you. Then explore your estimated solar cost.</p></div><form id="solar-discovery"><fieldset><legend>What type of property is this for?</legend>${options('sector', ['Residential', 'Commercial', 'Industrial'])}</fieldset><fieldset><legend>What would you like solar to help with?</legend>${options('goal', ['Lower electricity costs', 'Energy after sunset', 'Backup for essentials'])}</fieldset><label class="solar-location">Where is your property? <small>Optional · city or province</small><input name="location" maxlength="120" placeholder="e.g. Quezon City" value="${escape(choices.location)}"></label><p id="solar-guidance" aria-live="polite"></p><a class="button" href="#estimator" data-solar-next>Next: estimate my solar cost →</a></form>`;
     wrap.prepend(intro);
     const learn = document.createElement('section');
     learn.id = 'solar-options';
@@ -66,7 +66,7 @@ window.TechouseSolar = (() => {
     wrap.closest('.division-experience').classList.add('solar-streamlined');
     estimator.querySelector('.section-heading h2').textContent =
       'Next, let’s see what your solar project could cost.';
-    estimator.querySelector('.section-heading span').textContent = '02 / YOUR STARTING BUDGET';
+    estimator.querySelector('.section-heading span').remove();
     estimator.querySelector('.section-heading p').textContent =
       'Enter your monthly bill to explore an indicative budget. You can adjust the estimate details if needed.';
     host.elements.system.options[0].textContent = 'Daytime solar · grid-tied';
@@ -141,7 +141,7 @@ window.TechouseSolar = (() => {
     products.querySelectorAll(':scope > .catalogue-note').forEach((note, index) => {
       if (index > 0) note.remove();
     });
-    wrap.querySelector('#projects .section-heading span').textContent = '03 / PROJECT EXAMPLES';
+    wrap.querySelector('#projects .section-heading span').remove();
     const partner = wrap.querySelector('.partner-band');
     if (partner) {
       partner.querySelector('span').textContent = 'TECHOUSE × SKYWORTH';
@@ -150,12 +150,12 @@ window.TechouseSolar = (() => {
     }
     const nav = document.querySelector('.division-subnav');
     nav.innerHTML =
-      '<a href="#solar-start" data-scroll="solar-start">1 · Your property</a><a href="#estimator" data-scroll="estimator">2 · Your estimate</a><a href="#projects" data-scroll="projects">Project examples</a><a href="#solar-technical" data-scroll="solar-technical">Technical reference</a>';
+      '<a href="#solar-start" data-scroll="solar-start">Your property &amp; needs</a><a href="#estimator" data-scroll="estimator">Cost calculation</a><a href="#projects" data-scroll="projects">Project examples</a><a href="#solar-technical" data-scroll="solar-technical">Technical reference</a>';
     const learningDetails = document.createElement('details');
     learningDetails.className = 'solar-optional-guide';
     learningDetails.innerHTML =
       '<summary><span>Want to understand your solar options?</span><small>Optional · daytime use, batteries and roof shade</small></summary>';
-    learn.querySelector('.section-heading span').textContent = 'A LITTLE MORE CONTEXT';
+    learn.querySelector('.section-heading span').remove();
     learn.querySelector('.section-heading h2').textContent = 'How solar fits everyday life';
     learn.querySelector('.section-heading p').textContent =
       'Explore these points whenever you want more detail.';
@@ -172,7 +172,7 @@ window.TechouseSolar = (() => {
       partner.innerHTML = `<div class="partner-identity"><span>TECHOUSE × SKYWORTH</span><strong>SKYWORTH</strong><small>Direct solar partner</small></div><div class="partner-message"><h3>Your direct connection<br>to Skyworth solar.</h3><p>Explore panels, inverters and battery storage with your direct Skyworth partner.</p><a class="text-link" href="#/inquiry?division=solar">Talk to our solar team ${window.TechouseIcons.icon('arrow_outward')}</a></div>`;
       technical.append(partner);
     }
-    products.querySelector('.section-heading span').textContent = 'TECHNICAL REFERENCE';
+    products.querySelector('.section-heading span').remove();
     products.querySelector('.section-heading h2').textContent = 'Equipment and specifications';
     products.querySelector('.section-heading p').textContent =
       'Explore product ranges and manufacturer datasheets.';
