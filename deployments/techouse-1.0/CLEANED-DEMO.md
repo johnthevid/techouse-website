@@ -12,4 +12,4 @@ wrangler deploy --config wrangler.cleaned.jsonc
 
 Git branch: feature/homepage-refinement. Do not merge into main or overwrite the existing Worker as part of this demo.
 
-Status: prepared and tested locally; Cloudflare sign-in required before deployment. No successful deployment recorded yet.
+Deployed 11 November 2026. Worker version: baa95920-c363-42d9-bff1-a4ab43ba86f1. Live homepage, contact title, solar calculation, equipment catalogue and blocked staff/API routes verified in Chrome. Only ASSETS binding is present. GitHub push remains blocked by connection resets.
