@@ -12,4 +12,6 @@ wrangler deploy --config wrangler.cleaned.jsonc
 
 Git branch: feature/homepage-refinement. Do not merge into main or overwrite the existing Worker as part of this demo.
 
-Deployed 11 November 2026. Worker version: baa95920-c363-42d9-bff1-a4ab43ba86f1. Live homepage, contact title, solar calculation, equipment catalogue and blocked staff/API routes verified in Chrome. Only ASSETS binding is present. GitHub push remains blocked by connection resets.
+Deployed 11 November 2026. Worker version: 740c32f1-d8c8-4638-b187-1777571d62d1. Live homepage, contact title, solar calculation, equipment catalogue and blocked staff/API routes verified in Chrome. Only ASSETS binding is present. GitHub push remains blocked by connection resets.
+
+CTA update deployed from source commit 801fd24 on 11 November 2026. Live checks verified all five CTAs, Solar reveal and CTA navigation without page errors.

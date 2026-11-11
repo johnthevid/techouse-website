@@ -265,3 +265,7 @@ Cloudflare OAuth completed successfully. Deployed separate techouse-cleaned Work
 
 ## Division CTA placement and slide reveal — 11 November 2026
 Added approved division CTAs under category names on homepage: saving/building/creating/shaping possibilities/elevating. Actions enter the corresponding division using the existing route transition. Desktop copy group shifts up 64px as one fixed-layout block; CTA occupies reserved space, avoiding text reflow. Mobile actions remain visible in normal flow. CTA reveals left-to-right from -28px over 450ms with a soft fade; exit reverses with delayed visibility removal. Reduced motion disables transitions. Previous fixed-anchor test adjusted for the explicitly requested 64px group movement while retaining constant width/font metrics checks. Local only; hosted cleaned demo unchanged.
+
+
+### CTA demo update deployed — 11 November 2026
+User authorized updating techouse-cleaned with committed CTA changes (source 801fd24). Deployed version 740c32f1-d8c8-4638-b187-1777571d62d1 at https://techouse-cleaned.johndavidceasar.workers.dev. Live Chrome verified five CTA links, Solar action reveal and navigation into the solar planner with no page errors. ASSETS-only deployment; original techouse and database untouched. No GitHub push requested/performed in this turn.
