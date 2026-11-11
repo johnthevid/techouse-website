@@ -1132,3 +1132,42 @@ body:not(.office-page) #footer:not(.office-footer) > .container {
     transition: none;
   }
 }
+
+.banner-division-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.banner-division-label > .material-icon {
+  flex: 0 0 auto;
+  width: 1.15em;
+  height: 1.15em;
+  margin-top: 0.08em;
+}
+.directory-image > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.division-category-icon .material-icon {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 600px) {
+  body:not(.office-page):not(.landing) #header .nav {
+    gap: 12px;
+  }
+  body:not(.office-page):not(.landing) #header .brand {
+    min-width: 0;
+    flex-shrink: 1;
+  }
+  body:not(.office-page):not(.landing) #header .brand-logo {
+    width: min(140px, 32vw);
+  }
+  body:not(.office-page):not(.landing) #header .nav-actions {
+    min-width: 0;
+    flex-shrink: 0;
+  }
+}

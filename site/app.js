@@ -323,7 +323,7 @@ function divisionDirectory() {
         : d.image
           ? 'assets/' + d.image
           : '';
-      return `<a class="directory-card" href="#/divisions/${d.id}"><div class="directory-image">${image ? `<img src="${esc(image)}" alt="${esc(d.alt || d.short)}" loading="lazy" width="900" height="600">` : elevatorArt}<span>${d.number} / ${esc(d.short)}</span></div><div class="directory-copy"><h2>${heading}</h2><p>${description}</p><span class="directory-link">Explore ${esc(d.short.toLowerCase())} ${arrow}</span></div></a>`;
+      return `<a class="directory-card" href="#/divisions/${d.id}"><div class="directory-image">${image ? `<img src="${esc(image)}" alt="${esc(d.alt || d.short)}" loading="lazy" width="900" height="600">` : elevatorArt}<span>${window.TechouseIcons.icon({ solar: 'solar_power', construction: 'construction', prefabrication: 'shapes', development: 'real_estate_agent', elevators: 'elevator' }[d.id])} ${esc(d.short)}</span></div><div class="directory-copy"><h2>${heading}</h2><p>${description}</p><span class="directory-link">Explore ${esc(d.short.toLowerCase())} ${arrow}</span></div></a>`;
     })
     .join(
       '',

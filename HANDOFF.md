@@ -269,3 +269,7 @@ Added approved division CTAs under category names on homepage: saving/building/c
 
 ### CTA demo update deployed — 11 November 2026
 User authorized updating techouse-cleaned with committed CTA changes (source 801fd24). Deployed version 740c32f1-d8c8-4638-b187-1777571d62d1 at https://techouse-cleaned.johndavidceasar.workers.dev. Live Chrome verified five CTA links, Solar action reveal and navigation into the solar planner with no page errors. ASSETS-only deployment; original techouse and database untouched. No GitHub push requested/performed in this turn.
+
+
+## Division icons assigned to refinement — 11 November 2026
+Owner clarified banner/division icon changes belong on feature/homepage-refinement. Preserved supplied SVG library, homepage category icons, division directory/header icons and narrow-header fit fix here. Oversized icon experiment remains reverted. Partnership page/banner/inquiry work is saved separately on feature/partnership. No deployment.
