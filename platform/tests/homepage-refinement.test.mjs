@@ -115,14 +115,14 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
         .locator('.banner-division-label')
         .first()
         .evaluate((el) => el.getBoundingClientRect().top);
-      assert.ok(Math.abs(labelTop - anchor) < 1, `Label moved ${labelTop - anchor}px`);
+      assert.ok(Math.abs(labelTop - anchor + 64) < 1, `Label moved ${labelTop - anchor}px`);
       await page.locator('.banner-trigger').nth(2).focus();
       await page.waitForTimeout(100);
       const midTop = await page
         .locator('.banner-division-label')
         .first()
         .evaluate((el) => el.getBoundingClientRect().top);
-      assert.ok(Math.abs(midTop - anchor) < 1);
+      assert.ok(midTop >= anchor - 65 && midTop <= anchor + 1);
       await page.locator('.banner-trigger').first().focus();
       await page.waitForTimeout(800);
       assert.ok(

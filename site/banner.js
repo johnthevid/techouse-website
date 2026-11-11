@@ -7,11 +7,14 @@ window.TechouseBanner = (() => {
   let teardown = () => {};
   // EDITABLE COPY: display labels may change; object keys must match app.js division ids.
   const copy = {
-    solar: { title: 'Power your<br>tomorrow.' },
-    construction: { title: 'Build your<br>next chapter.' },
-    prefabrication: { title: 'Rethink<br>your space.' },
-    development: { title: 'Shape your<br>next address.' },
-    elevators: { title: 'Rise to new<br>possibilities.' },
+    solar: { title: 'Power your<br>tomorrow.', cta: 'Let’s start saving!' },
+    construction: { title: 'Build your<br>next chapter.', cta: 'Let’s start building!' },
+    prefabrication: { title: 'Rethink<br>your space.', cta: 'Let’s start creating!' },
+    development: {
+      title: 'Shape your<br>next address.',
+      cta: 'Let’s start shaping possibilities!',
+    },
+    elevators: { title: 'Rise to new<br>possibilities.', cta: 'Let’s start elevating!' },
   };
   function header(brand, arrow) {
     return `<div class="banner-nav"><a href="#company" class="banner-company-link" aria-label="About Techouse">${brand}</a><div class="banner-nav-right"><a class="header-call" href="tel:+639855626888" aria-label="Call Techouse at +63 985 562 6888">${window.TechouseIcons.icon('call')}<span>Call us</span></a><a class="banner-global-quote" href="#/inquiry">Request a quote ${arrow}</a></div></div>`;
@@ -21,7 +24,7 @@ window.TechouseBanner = (() => {
     return `<section class="division-landing" aria-labelledby="landing-title"><div class="landing-intro"><h1 id="landing-title">What are you <br>building next?</h1><span class="landing-kicker" hidden>We bring the newest technology to the Philippines.</span></div><div class="division-banners" aria-label="Explore Techouse business divisions">${divisions
       .map((d) => {
         const c = copy[d.id];
-        return `<section class="division-banner banner-${d.id}" data-banner="${d.id}" aria-labelledby="banner-title-${d.id}"><div class="banner-background" aria-hidden="true">${d.image ? `<img src="assets/${d.image}" alt="" ${d.id === 'solar' ? 'fetchpriority="high"' : ''}>` : `<div class="elevator-backdrop">${art}</div>`}</div><div class="banner-shade"></div><button class="banner-trigger" aria-label="Explore ${d.short}"></button><div class="banner-content"><div class="banner-title-row"><h2 id="banner-title-${d.id}">${c.title}</h2><span class="banner-plus" aria-hidden="true">+</span></div><p class="banner-division-label">${d.short}</p>${d.id === 'solar' ? `<a class="banner-scroll-cue" href="#company" aria-label="Scroll down to learn about Techouse"><span class="banner-scroll-icon" aria-hidden="true">${window.TechouseIcons.icon('arrow_downward')}</span><span class="banner-scroll-label" aria-hidden="true">About Techouse</span></a>` : ''}</div><span class="banner-load-status" aria-hidden="true">Techouse · Loading image</span></section>`;
+        return `<section class="division-banner banner-${d.id}" data-banner="${d.id}" aria-labelledby="banner-title-${d.id}"><div class="banner-background" aria-hidden="true">${d.image ? `<img src="assets/${d.image}" alt="" ${d.id === 'solar' ? 'fetchpriority="high"' : ''}>` : `<div class="elevator-backdrop">${art}</div>`}</div><div class="banner-shade"></div><button class="banner-trigger" aria-label="Explore ${d.short}"></button><div class="banner-content"><div class="banner-copy-block"><div class="banner-title-row"><h2 id="banner-title-${d.id}">${c.title}</h2><span class="banner-plus" aria-hidden="true">+</span></div><p class="banner-division-label">${d.short}</p><a class="banner-cta" href="#/divisions/${d.id}">${c.cta} ${arrow}</a></div>${d.id === 'solar' ? `<a class="banner-scroll-cue" href="#company" aria-label="Scroll down to learn about Techouse"><span class="banner-scroll-icon" aria-hidden="true">${window.TechouseIcons.icon('arrow_downward')}</span><span class="banner-scroll-label" aria-hidden="true">About Techouse</span></a>` : ''}</div><span class="banner-load-status" aria-hidden="true">Techouse · Loading image</span></section>`;
       })
       .join(
         '',
@@ -153,12 +156,16 @@ window.TechouseBanner = (() => {
         },
         options,
       );
-      panel.querySelector('.banner-trigger').addEventListener(
-        'click',
-        () => {
-          window.TechouseDivisions.enter(panel);
-        },
-        options,
+      panel.querySelectorAll('.banner-trigger, .banner-cta').forEach((action) =>
+        action.addEventListener(
+          'click',
+          (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            window.TechouseDivisions.enter(panel);
+          },
+          options,
+        ),
       );
     });
     document.addEventListener(

@@ -261,3 +261,7 @@ Publication outcome: source commit 48fe3f7 created on feature/homepage-refinemen
 
 ### Cleaned demo deployed — 11 November 2026
 Cloudflare OAuth completed successfully. Deployed separate techouse-cleaned Worker, version baa95920-c363-42d9-bff1-a4ab43ba86f1, at https://techouse-cleaned.johndavidceasar.workers.dev. Only ASSETS binding; no DB/secrets/staff accounts. Verified live homepage, Let’s Talk contact card, solar calculation, catalogue, and 404s for admin/office/API routes with no browser page errors. Existing techouse deployment untouched. Latest GitHub push retry failed with connection reset; user can push feature/homepage-refinement through GitHub Desktop. Deployment records committed locally.
+
+
+## Division CTA placement and slide reveal — 11 November 2026
+Added approved division CTAs under category names on homepage: saving/building/creating/shaping possibilities/elevating. Actions enter the corresponding division using the existing route transition. Desktop copy group shifts up 64px as one fixed-layout block; CTA occupies reserved space, avoiding text reflow. Mobile actions remain visible in normal flow. CTA reveals left-to-right from -28px over 450ms with a soft fade; exit reverses with delayed visibility removal. Reduced motion disables transitions. Previous fixed-anchor test adjusted for the explicitly requested 64px group movement while retaining constant width/font metrics checks. Local only; hosted cleaned demo unchanged.

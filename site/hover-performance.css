@@ -1041,3 +1041,94 @@ body:not(.office-page) #footer:not(.office-footer) > .container {
 .skyworth-range-card:hover {
   border-color: #254d3c;
 }
+
+/* Stable copy group moves as one to reveal the division action. */
+.banner-copy-block {
+  position: relative;
+}
+.banner-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 22px;
+  background: #f4f2e8;
+  color: #173b30;
+  border: 1px solid #f4f2e8;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-decoration: none;
+  pointer-events: auto;
+  transition:
+    opacity 350ms ease,
+    background-color 350ms ease,
+    color 350ms ease;
+}
+.banner-cta:hover,
+.banner-cta:focus-visible {
+  background: transparent;
+  color: #fff;
+}
+.banner-cta:focus-visible {
+  outline: 2px solid #e0bc77;
+  outline-offset: 4px;
+}
+@media (min-width: 901px) and (hover: hover) {
+  .banner-copy-block {
+    transform: translateY(0);
+    transition: transform 650ms cubic-bezier(0.22, 0.7, 0.2, 1);
+  }
+  .division-banner.is-open .banner-copy-block {
+    transform: translateY(-64px);
+  }
+  .banner-cta {
+    position: absolute;
+    left: 0;
+    top: calc(100% - 24px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .division-banner.is-open .banner-cta {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
+@media (max-width: 900px), (hover: none) {
+  .banner-cta {
+    margin-top: 20px;
+  }
+  .banner-scroll-cue {
+    margin-top: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .banner-copy-block,
+  .banner-cta {
+    transition: none;
+  }
+}
+
+/* Division actions slide into their reserved space, reversing smoothly on exit. */
+@media (min-width: 901px) and (hover: hover) {
+  .division-banner .banner-cta {
+    transform: translateX(-28px);
+    transition:
+      opacity 300ms ease,
+      transform 450ms cubic-bezier(0.2, 0.7, 0.2, 1),
+      visibility 0s linear 450ms,
+      background-color 350ms ease,
+      color 350ms ease;
+  }
+  .division-banner.is-open .banner-cta {
+    transform: translateX(0);
+    transition-delay: 0s;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .division-banner .banner-cta {
+    transition: none;
+  }
+}
