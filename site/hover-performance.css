@@ -1171,3 +1171,108 @@ body:not(.office-page) #footer:not(.office-footer) > .container {
     flex-shrink: 0;
   }
 }
+
+/* Let the expanding About action cross the Solar panel edge above its neighbour. */
+@media (min-width: 901px) and (hover: hover) {
+  .division-banner.banner-solar:has(.banner-scroll-cue:hover),
+  .division-banner.banner-solar:has(.banner-scroll-cue:focus-visible) {
+    z-index: 8;
+    contain: layout style;
+    overflow: visible;
+  }
+  .banner-scroll-cue {
+    z-index: 10;
+  }
+}
+/* Public header quote actions match the banner's outlined, fading treatment. */
+body:not(.office-page) #header .nav-actions > a.button {
+  background: transparent;
+  border: 1px solid #182522;
+  color: #182522;
+  transition:
+    background-color 350ms ease,
+    color 350ms ease,
+    border-color 350ms ease;
+}
+body.division-page #header .nav-actions > a.button {
+  border-color: #ffffff80;
+  color: #fff;
+  background: transparent;
+}
+body:not(.office-page) #header .nav-actions > a.button:hover,
+body:not(.office-page) #header .nav-actions > a.button:focus-visible {
+  background: #182522;
+  color: #fff;
+  transform: none;
+}
+body.division-page #header .nav-actions > a.button:hover,
+body.division-page #header .nav-actions > a.button:focus-visible {
+  background: #fff;
+  border-color: #fff;
+  color: #182522;
+}
+@media (prefers-reduced-motion: reduce) {
+  body:not(.office-page) #header .nav-actions > a.button {
+    transition: none;
+  }
+}
+@media (min-width: 901px) and (hover: hover) {
+  .division-landing .division-banner.banner-solar:has(.banner-scroll-cue:hover),
+  .division-landing .division-banner.banner-solar:has(.banner-scroll-cue:focus-visible) {
+    clip-path: none;
+  }
+}
+/* Consistent white default CTA across all five photographic divisions. */
+.division-banner .banner-cta,
+body.division-page #header .nav-actions > a.button,
+body.division-page .cover-copy > a.button {
+  background: #fff;
+  border: 1px solid #fff;
+  color: #173b30;
+  transition:
+    background-color 350ms ease,
+    color 350ms ease,
+    border-color 350ms ease;
+}
+.division-banner .banner-cta:hover,
+.division-banner .banner-cta:focus-visible,
+body.division-page #header .nav-actions > a.button:hover,
+body.division-page #header .nav-actions > a.button:focus-visible,
+body.division-page .cover-copy > a.button:hover,
+body.division-page .cover-copy > a.button:focus-visible {
+  background: transparent;
+  color: #fff;
+  border-color: #fff;
+  transform: none;
+}
+/* Preserve the already approved horizontal entry/exit motion. */
+@media (min-width: 901px) and (hover: hover) {
+  .division-banner .banner-cta {
+    transition:
+      opacity 300ms ease,
+      transform 450ms cubic-bezier(0.2, 0.7, 0.2, 1),
+      visibility 0s linear 450ms,
+      background-color 350ms ease,
+      color 350ms ease;
+  }
+  .division-banner.is-open .banner-cta {
+    transition-delay: 0s;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .division-banner .banner-cta,
+  body.division-page #header .nav-actions > a.button,
+  body.division-page .cover-copy > a.button {
+    transition: none;
+  }
+}
+
+/* Panel-local elevation must never escape above the homepage headline. */
+.division-landing > .division-banners {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+}
+.division-landing > .landing-intro {
+  z-index: 3;
+}

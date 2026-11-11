@@ -444,11 +444,7 @@ window.TechouseExperience = (() => {
     controls.innerHTML =
       '<button type="button" class="text-link" data-back>← Back</button><span class="discovery-count" aria-live="polite"></span><button type="button" class="button" data-next>Continue →</button>';
     form.append(controls);
-    const extras = [
-      form.querySelector('.solar-location'),
-      form.querySelector('#solar-guidance'),
-      form.querySelector('[data-solar-next]'),
-    ];
+    const extras = [form.querySelector('.solar-location'), form.querySelector('[data-solar-next]')];
     function draw() {
       const names = ['sector', 'goal'];
       const value = new FormData(form).get(names[step]);

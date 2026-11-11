@@ -273,3 +273,13 @@ User authorized updating techouse-cleaned with committed CTA changes (source 801
 
 ## Division icons assigned to refinement — 11 November 2026
 Owner clarified banner/division icon changes belong on feature/homepage-refinement. Preserved supplied SVG library, homepage category icons, division directory/header icons and narrow-header fit fix here. Oversized icon experiment remains reverted. Partnership page/banner/inquiry work is saved separately on feature/partnership. No deployment.
+
+
+### Large icon/headline layout reverted — 11 November 2026
+Owner rejected the implemented Shared left edge icon/header arrangement after preview. Removed large heading icon, category repositioning and related typography overrides; restored prior small category icon, below-heading label and approved CTA slide animation. Preview files remain separate from website code. No deployment.
+
+## About layering and division action polish — 11 November 2026
+Owner requested white CTA defaults across all divisions. Homepage banner actions, photographic division header quote actions and hero actions now use white fill/dark text, fading to transparent with white outline/text on hover/focus; approved CTA slide reveal retained. Solar hero icon moved from above its headline into the savings action, replacing the peso glyph. Removed solar-guidance markup and handlers from planner. About cue's expanded capsule can cross above the Construction panel: scoped hover/focus removes Solar clip-path/paint containment and raises its stacking level. Desktop 1024px hit test verified the capsule's far edge remains interactive; checked white header/hero CTAs on all five division pages, removed Solar icon/guidance and planner desktop/mobile checks. Local only; not committed/deployed.
+
+### Homepage layering correction — 11 November 2026
+Review found Solar's elevated About-cue state could escape above the main headline because the division group had no independent stacking context. Set division-banners to a local isolated z-index-0 context; headline remains at layer 3 above the entire group. Panel-local About elevation still works over Construction without competing with headline/header. 1024px hit tests verified both headline-over-Solar and About-over-Construction. Both responsive homepage and intro lifecycle tests passed. Local only; no commit/deployment.

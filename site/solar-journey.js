@@ -55,7 +55,7 @@ window.TechouseSolar = (() => {
     const intro = document.createElement('section');
     intro.id = 'solar-start';
     intro.className = 'division-section solar-start';
-    intro.innerHTML = `<div class="section-heading"><h2>Your first step to<br>lower electricity bills.</h2><p>Tell us about your property and what matters most to you. Then explore your estimated solar cost.</p></div><form id="solar-discovery"><fieldset><legend>What type of property is this for?</legend>${options('sector', ['Residential', 'Commercial', 'Industrial'])}</fieldset><fieldset><legend>What would you like solar to help with?</legend>${options('goal', ['Lower electricity costs', 'Energy after sunset', 'Backup for essentials'])}</fieldset><label class="solar-location">Where is your property? <small>Optional · city or province</small><input name="location" maxlength="120" placeholder="e.g. Quezon City" value="${escape(choices.location)}"></label><p id="solar-guidance" aria-live="polite"></p><a class="button" href="#estimator" data-solar-next>Next: estimate my solar cost →</a></form>`;
+    intro.innerHTML = `<div class="section-heading"><h2>Your first step to<br>lower electricity bills.</h2><p>Tell us about your property and what matters most to you. Then explore your estimated solar cost.</p></div><form id="solar-discovery"><fieldset><legend>What type of property is this for?</legend>${options('sector', ['Residential', 'Commercial', 'Industrial'])}</fieldset><fieldset><legend>What would you like solar to help with?</legend>${options('goal', ['Lower electricity costs', 'Energy after sunset', 'Backup for essentials'])}</fieldset><label class="solar-location">Where is your property? <small>Optional · city or province</small><input name="location" maxlength="120" placeholder="e.g. Quezon City" value="${escape(choices.location)}"></label><a class="button" href="#estimator" data-solar-next>Next: estimate my solar cost →</a></form>`;
     wrap.prepend(intro);
     const learn = document.createElement('section');
     learn.id = 'solar-options';
@@ -181,10 +181,6 @@ window.TechouseSolar = (() => {
       choices = Object.fromEntries(new FormData(discovery));
       const system = host.elements.system;
       system.value = choices.goal === 'Lower electricity costs' ? 'grid' : 'hybrid';
-      intro.querySelector('#solar-guidance').textContent =
-        choices.goal === 'Lower electricity costs'
-          ? 'We’ll start with a daytime solar illustration.'
-          : 'We’ll include a sample battery allowance. Backup capacity needs a site assessment.';
       host.dispatchEvent(new Event('change'));
     }
     discovery.addEventListener('change', update);
