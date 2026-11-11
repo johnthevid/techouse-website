@@ -273,3 +273,7 @@ User authorized updating techouse-cleaned with committed CTA changes (source 801
 
 ## Division icons assigned to refinement — 11 November 2026
 Owner clarified banner/division icon changes belong on feature/homepage-refinement. Preserved supplied SVG library, homepage category icons, division directory/header icons and narrow-header fit fix here. Oversized icon experiment remains reverted. Partnership page/banner/inquiry work is saved separately on feature/partnership. No deployment.
+
+
+## Partnership draft isolated — 11 November 2026
+Branch feature/partnership now builds on the refinement icon commit and contains only partnership additions beyond it: homepage Be a Partner banner, /partnership page, footer entry, and editable browser-local partnership inquiry handoff. Generic content remains for Techouse feedback; no approved commercial terms or live submissions. Desktop/mobile partnership test previously passed and screenshot reviewed. Draft saved locally so development can return to refinement without mixing feature work. No push/deployment.

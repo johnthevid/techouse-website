@@ -288,7 +288,7 @@ function renderFooter(path) {
     return;
   }
   $('#footer').innerHTML =
-    `<div class="container"><div class="footer-top"><div class="footer-brand"><a href="#/" aria-label="Techouse home">${brand}</a><p class="footer-company-name">Techouse Technology Construction Corp</p><p class="footer-copyright">© ${new Date().getFullYear()} Techouse. All rights reserved.</p><p>Construction. Energy. New possibilities.<br>Building your next possibility.</p></div><div class="footer-col"><span>EXPLORE</span><a href="#/divisions">Our divisions</a><a href="#/about">About Techouse</a><a href="#/updates">Company updates</a><a href="#/office">Employee back office</a></div><div class="footer-col"><span>LET’S TALK</span><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a><a href="tel:+639855626888">+63 985 562 6888</a><a href="#/inquiry">Start a project ${arrow}</a></div><nav class="footer-col footer-socials" aria-label="Social media"><span>SOCIAL</span><a href="https://www.facebook.com/profile.php?id=61590728812899" target="_blank" rel="noopener noreferrer">Facebook ↗</a><a href="https://www.tiktok.com/@asiatechouse" target="_blank" rel="noopener noreferrer">TikTok ↗</a><span class="social-pending">LinkedIn · coming soon</span></nav></div></div>`;
+    `<div class="container"><div class="footer-top"><div class="footer-brand"><a href="#/" aria-label="Techouse home">${brand}</a><p class="footer-company-name">Techouse Technology Construction Corp</p><p class="footer-copyright">© ${new Date().getFullYear()} Techouse. All rights reserved.</p><p>Construction. Energy. New possibilities.<br>Building your next possibility.</p></div><div class="footer-col"><span>EXPLORE</span><a href="#/divisions">Our divisions</a><a href="#/about">About Techouse</a><a href="#/updates">Company updates</a><a href="#/partnership">Be a partner</a><a href="#/office">Employee back office</a></div><div class="footer-col"><span>LET’S TALK</span><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a><a href="tel:+639855626888">+63 985 562 6888</a><a href="#/inquiry">Start a project ${arrow}</a></div><nav class="footer-col footer-socials" aria-label="Social media"><span>SOCIAL</span><a href="https://www.facebook.com/profile.php?id=61590728812899" target="_blank" rel="noopener noreferrer">Facebook ↗</a><a href="https://www.tiktok.com/@asiatechouse" target="_blank" rel="noopener noreferrer">TikTok ↗</a><span class="social-pending">LinkedIn · coming soon</span></nav></div></div>`;
 }
 const breadcrumb = (title) =>
   `<div class="container breadcrumb"><a href="#/">Home</a><span>/</span><span>${esc(title)}</span></div>`;
@@ -636,6 +636,13 @@ function inquiryCard(q) {
 function adminInquiries() {
   return `<section class="container admin-shell">${adminTop('Inquiries', 'Review requests and prepare your follow-up.')} ${adminTabs('inquiries')}<div class="office-delivery-note">Email delivery is not connected yet. These requests are saved in this browser.</div><div class="admin-tools"><div class="filter-buttons"><button class="active" data-inquiry-filter="all">All (${inquiries.length})</button><button data-inquiry-filter="new">Awaiting review (${inquiries.filter((q) => !q.reviewedAt).length})</button></div><input id="inquiry-search" class="search-input" type="search" aria-label="Search inquiries" placeholder="Search name, email or location…"></div><div class="inquiry-list">${inquiries.length ? [...inquiries].reverse().map(inquiryCard).join('') : '<div class="empty-state"><h3>No inquiries yet.</h3><p>Requests saved through the inquiry form will appear here.</p><a class="button small" href="#/inquiry">Open inquiry form ' + arrow + '</a></div>'}</div></section>`;
 }
+// Generic partnership presentation; commercial terms remain for Techouse approval.
+function partnershipBanner() {
+  return `<section class="container partnership-banner" aria-labelledby="partnership-banner-title"><div><h2 id="partnership-banner-title">Be a Partner.</h2><p>Have an idea, a project or expertise to share? Let’s explore what we could do together.</p></div><a class="button" href="#/partnership">Be a partner ${arrow}</a></section>`;
+}
+function partnershipPage() {
+  return `${breadcrumb('Be a partner')}<section class="container partnership-hero"><div><h1>Be a Partner.</h1><p>Bring your experience, your network or your next project. Let’s start a conversation about working with Techouse.</p><a class="button" href="#/inquiry?topic=partnership&new=1">Let’s work together ${arrow}</a></div><div class="partnership-hero-side">${window.TechouseIcons.icon('handshake')}<p>A connection today.<br>A possibility for tomorrow.</p></div></section><section class="container partnership-opportunities" aria-labelledby="partnership-opportunities-title"><div class="partnership-section-heading"><h2 id="partnership-opportunities-title">Where could we work together?</h2><p>These are starting points for a conversation. Tell us where you see a fit.</p></div><div class="partnership-cards"><article><span>01</span><h3>Bring a project</h3><p>Explore a property, building or energy opportunity with our team.</p></article><article><span>02</span><h3>Share your expertise</h3><p>Introduce your services, technical experience or capabilities.</p></article><article><span>03</span><h3>Make a connection</h3><p>Connect us with a business, community or team with a shared goal.</p></article></div></section><section class="container partnership-process" aria-labelledby="partnership-process-title"><div><h2 id="partnership-process-title">Start with a conversation.</h2><p>No complicated first step. Tell us who you are and what you have in mind.</p></div><ol><li><strong>Introduce yourself</strong><p>Share your company or background, location and area of interest.</p></li><li><strong>Explore the fit</strong><p>Our team can discuss your proposal and what each side could contribute.</p></li><li><strong>Agree on the next step</strong><p>Any scope, responsibilities and commercial terms would be agreed separately.</p></li></ol></section><section class="container partnership-closing"><h2>What could we build together?</h2><p>Start with an introduction. We’ll take the next step from there.</p><a class="button" href="#/inquiry?topic=partnership&new=1">Let’s work together ${arrow}</a><p class="partnership-note">An inquiry is an expression of interest, not confirmation of a partnership.</p></section>`;
+}
 function notFound() {
   return `<div class="container not-found"><div class="eyebrow" style="justify-content:center">Page unavailable</div><h1>Let’s find your next step.</h1><p>This page or post is not available. Drafts appear only in the back office.</p><a class="button" href="#/">Return home ${arrow}</a></div>`;
 }
@@ -682,8 +689,12 @@ function render() {
       .forEach((link) => link.remove());
   let html;
   let title = 'Building what comes next';
-  if (path === '/') html = window.TechouseBanner.html(divisions, elevatorArt, arrow);
-  else if (path === '/divisions') {
+  if (path === '/')
+    html = window.TechouseBanner.html(divisions, elevatorArt, arrow) + partnershipBanner();
+  else if (path === '/partnership') {
+    title = 'Be a partner';
+    html = partnershipPage();
+  } else if (path === '/divisions') {
     title = 'Our divisions';
     html = `${breadcrumb('Our divisions')}<section class="container page-hero divisions-introduction"><div><h1>What are you<br>building next?</h1></div><p>A lower electricity bill. A new space. A building brought to life. Explore our five divisions and find the right place to begin.</p></section>${divisionDirectory()}${cta()}`;
   } else if (path.startsWith('/divisions/solar/projects/')) {
@@ -754,6 +765,21 @@ function render() {
   window.TechouseSolarExtras?.mount();
   window.TechouseOfficeUI?.mount();
   syncInquiryCta();
+  if (path === '/inquiry' && params.get('topic') === 'partnership') {
+    const form = document.querySelector('#inquiry-form');
+    if (form) {
+      document.querySelector('.page-hero h1').textContent = 'Let’s work together.';
+      document.querySelector('.page-hero > p').textContent =
+        'Introduce yourself and tell us how you would like to collaborate with Techouse.';
+      document.querySelector('#inquiry-form-area h2').textContent =
+        'Tell us about your partnership idea.';
+      document.querySelector('label[for="inquiry-location"]').textContent = 'Your location *';
+      document.querySelector('label[for="inquiry-requirements"]').textContent =
+        'Your partnership idea *';
+      form.elements.requirements.value =
+        'Partnership inquiry\n\nI would like to explore working with Techouse.\n\nAbout me / our company:\nProposed collaboration:\nRelevant experience:\n';
+    }
+  }
   document.title = `${title} — Techouse`;
   window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   if (path.startsWith('/divisions/solar/products/')) window.TechouseCatalogue.revealBanner();
