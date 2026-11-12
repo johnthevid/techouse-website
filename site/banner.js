@@ -271,6 +271,57 @@ window.TechouseBanner = (() => {
     );
     media.addEventListener('change', setup);
     setup();
+    // Quiet desktop showcase; never run offscreen, over a dialog or for reduced motion.
+    let idleTimer,
+      showcaseTimer,
+      showcaseIndex = 0,
+      previousPanel = null;
+    const motion = matchMedia('(prefers-reduced-motion: reduce)');
+    const eligible = () =>
+      !media.matches &&
+      !motion.matches &&
+      !document.hidden &&
+      document.hasFocus() &&
+      scrollY < host.offsetHeight * 0.25 &&
+      !document.querySelector('dialog[open]') &&
+      !host.classList.contains('intro-playing') &&
+      !host.classList.contains('banners-arriving');
+    function stopShowcase() {
+      clearTimeout(idleTimer);
+      clearTimeout(showcaseTimer);
+      if (host.hasAttribute('data-idle-show')) {
+        host.removeAttribute('data-idle-show');
+        desktopOpen(previousPanel);
+        resetPointer();
+      }
+    }
+    function armShowcase() {
+      stopShowcase();
+      if (eligible())
+        idleTimer = setTimeout(() => {
+          if (!eligible()) return;
+          previousPanel = panels.find((panel) => panel.classList.contains('is-open')) || null;
+          host.setAttribute('data-idle-show', '');
+          showcaseIndex = 0;
+          const advance = () => {
+            if (!eligible()) {
+              stopShowcase();
+              return;
+            }
+            desktopOpen(panels[showcaseIndex++ % panels.length]);
+            showcaseTimer = setTimeout(advance, 3800);
+          };
+          advance();
+        }, 30000);
+    }
+    for (const type of ['pointermove', 'pointerdown', 'keydown', 'wheel', 'touchstart', 'scroll'])
+      window.addEventListener(type, armShowcase, { ...options, passive: true, capture: true });
+    window.addEventListener('blur', stopShowcase, options);
+    window.addEventListener('focus', armShowcase, options);
+    document.addEventListener('visibilitychange', armShowcase, options);
+    host.addEventListener('intro-ready', armShowcase, options);
+    motion.addEventListener('change', armShowcase, options);
+    armShowcase();
     // RETURN TRANSITION: the logo and banners re-enter when navigating home from another route.
     const arrivalAnimations = [];
     if (returningHome && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -313,6 +364,7 @@ window.TechouseBanner = (() => {
         });
     }
     teardown = () => {
+      stopShowcase();
       stopScroll();
       arrivalAnimations.forEach((a) => a.cancel());
       controller.abort();

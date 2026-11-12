@@ -274,10 +274,11 @@ function renderHeader(path) {
     return;
   }
   const solarPage = /^\/divisions\/solar(?:\/|$)/.test(path);
-  const inquiryLink = solarPage ? '#/inquiry?division=solar' : '#/inquiry';
+  const divisionId = getDivision(path.split('/')[2])?.id;
+  const inquiryLink = divisionId ? '#/inquiry?division=' + divisionId : '#/inquiry';
   const inquiryLabel = solarPage ? 'Request a solar quote' : 'Start a project';
   $('#header').innerHTML =
-    `<div class="container nav"><a href="#/" aria-label="Techouse home">${brand}</a><nav class="nav-links" id="site-nav" aria-label="Main navigation"><a class="${path.startsWith('/division') ? 'active' : ''}" href="#/divisions">Our divisions</a><a class="${path === '/about' ? 'active' : ''}" href="#/about">About Techouse</a><a class="${path === '/updates' ? 'active' : ''}" href="#/updates">Updates</a><a class="mobile-inquiry" href="${inquiryLink}">${inquiryLabel} ${arrow}</a></nav><div class="nav-actions"><a class="header-call" href="tel:+639855626888" aria-label="Call Techouse at +63 985 562 6888">${window.TechouseIcons.icon('call')}<span>Call us</span></a><a class="button small" href="${inquiryLink}">${inquiryLabel} ${arrow}</a><button class="menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">${window.TechouseIcons.icon('menu')}</button></div></div>`;
+    `<div class="container nav"><a href="#/" aria-label="Techouse home">${brand}</a><nav class="nav-links" id="site-nav" aria-label="Main navigation"><a class="${path.startsWith('/division') ? 'active' : ''}" href="#/divisions">Our divisions</a><a class="${path === '/about' ? 'active' : ''}" href="#/about">About Techouse</a><a class="${path === '/updates' ? 'active' : ''}" href="#/updates">News</a><span class="nav-placeholder" role="link" aria-disabled="true" title="Coming soon">Join Us!</span><a class="mobile-inquiry" href="${inquiryLink}">${inquiryLabel} ${arrow}</a></nav><div class="nav-actions"><a class="header-call" href="tel:+639855626888" aria-label="Call Techouse at +63 985 562 6888">${window.TechouseIcons.icon('call')}<span>Call us</span></a><a class="button small" href="${inquiryLink}">${inquiryLabel} ${arrow}</a><button class="menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">${window.TechouseIcons.icon('menu')}</button></div></div>`;
 }
 function renderFooter(path) {
   const office = path === '/office' || path.startsWith('/office/');
@@ -288,7 +289,7 @@ function renderFooter(path) {
     return;
   }
   $('#footer').innerHTML =
-    `<div class="container"><div class="footer-top"><div class="footer-brand"><a href="#/" aria-label="Techouse home">${brand}</a><p class="footer-company-name">Techouse Technology Construction Corp</p><p class="footer-copyright">© ${new Date().getFullYear()} Techouse. All rights reserved.</p><p>Construction. Energy. New possibilities.<br>Building your next possibility.</p></div><div class="footer-col"><span>EXPLORE</span><a href="#/divisions">Our divisions</a><a href="#/about">About Techouse</a><a href="#/updates">Company updates</a><a href="#/office">Employee back office</a></div><div class="footer-col"><span>LET’S TALK</span><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a><a href="tel:+639855626888">+63 985 562 6888</a><a href="#/inquiry">Start a project ${arrow}</a></div><nav class="footer-col footer-socials" aria-label="Social media"><span>SOCIAL</span><a href="https://www.facebook.com/profile.php?id=61590728812899" target="_blank" rel="noopener noreferrer">Facebook ↗</a><a href="https://www.tiktok.com/@asiatechouse" target="_blank" rel="noopener noreferrer">TikTok ↗</a><span class="social-pending">LinkedIn · coming soon</span></nav></div></div>`;
+    `<div class="container"><div class="footer-top"><div class="footer-brand"><a href="#/" aria-label="Techouse home">${brand}</a><p class="footer-company-name">Techouse Technology Construction Corp</p><p class="footer-copyright">© ${new Date().getFullYear()} Techouse. All rights reserved.</p></div><div class="footer-col"><span>EXPLORE</span><a href="#/divisions">Our divisions</a><a href="#/about">About Techouse</a><a href="#/updates">Company updates</a><a href="#/office">Employee back office</a></div><div class="footer-col"><span>LET’S TALK</span><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a><a href="tel:+639855626888">+63 985 562 6888</a><a href="#/inquiry">Start a project ${arrow}</a></div><nav class="footer-col footer-socials" aria-label="Social media"><span>SOCIAL</span><a href="https://www.facebook.com/profile.php?id=61590728812899" target="_blank" rel="noopener noreferrer">Facebook ↗</a><a href="https://www.tiktok.com/@asiatechouse" target="_blank" rel="noopener noreferrer">TikTok ↗</a><span class="social-pending">LinkedIn · coming soon</span></nav></div></div>`;
 }
 const breadcrumb = (title) =>
   `<div class="container breadcrumb"><a href="#/">Home</a><span>/</span><span>${esc(title)}</span></div>`;
@@ -327,7 +328,7 @@ function divisionDirectory() {
     })
     .join(
       '',
-    )}<a class="directory-card directory-projects" href="#/divisions/solar?section=projects"><div class="directory-projects-intro"><span class="eyebrow">BEYOND THE POSSIBILITIES</span>${window.TechouseIcons.icon('solar_power')}<span class="directory-projects-caption">From the idea<br>to the rooftop.</span></div><div class="directory-copy"><h2>See solar in action.</h2><p>Explore the solar portfolio for project details, images and estimated savings. Approved project stories appear as they’re published.</p><span class="directory-link">Explore project stories ${arrow}</span></div></a><p class="visual-note">Illustrative imagery · photographs are not presented as completed Techouse projects.</p></section>`;
+    )}<a class="directory-card directory-projects" href="#/divisions/solar?section=projects"><div class="directory-projects-intro"><span class="eyebrow">BEYOND THE POSSIBILITIES</span>${window.TechouseIcons.icon('solar_power')}<span class="directory-projects-caption">From the idea<br>to the rooftop.</span></div><div class="directory-copy"><h2>See solar in action.</h2><p>Explore the solar portfolio for project details, images and estimated savings. Approved project stories appear as they’re published.</p><span class="directory-link">Explore project stories ${arrow}</span></div></a></section>`;
 }
 function divisionSection(withTitle = true) {
   return `<section class="section" id="divisions"><div class="container">${withTitle ? '<div class="section-head"><div><div class="eyebrow">01 / Our divisions</div><h2>Different expertise.<br>A connected destination.</h2></div><p>Find the right starting point for your building, energy, or property inquiry.</p></div>' : ''}<div class="division-grid">${divisions.slice(0, 4).map(divisionCard).join('')}</div><a class="additional-division" href="#/divisions/elevators"><span><small>05 / ALSO EXPLORE</small><h3>Elevator engineering</h3></span>${arrow}</a><p class="visual-note">Reference imagery only. The photographs shown are not Techouse projects.</p></div></section>`;
@@ -665,6 +666,7 @@ function render() {
       !path.startsWith('/divisions/solar/projects/'),
   );
   document.body.classList.toggle('landing', path === '/');
+  document.body.classList.toggle('division-content-page', path.startsWith('/divisions/'));
   activePostFilter = 'all';
   document.body.classList.toggle('inquiry-page', path === '/inquiry');
   document.body.classList.remove(
@@ -754,6 +756,15 @@ function render() {
   window.TechouseSolarExtras?.mount();
   window.TechouseOfficeUI?.mount();
   syncInquiryCta();
+  if (
+    path === '/inquiry' &&
+    params.get('division') === 'construction' &&
+    ['residential', 'commercial', 'industrial'].includes(params.get('project'))
+  ) {
+    const form = document.querySelector('#inquiry-form');
+    if (form)
+      form.elements.requirements.value = `I would like to discuss a ${params.get('project')} construction project.\n\nIntended use:\nApproximate floor area:\nAvailable plans:\nTarget schedule:\nBudget range:\n`;
+  }
   document.title = `${title} — Techouse`;
   window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   if (path.startsWith('/divisions/solar/products/')) window.TechouseCatalogue.revealBanner();

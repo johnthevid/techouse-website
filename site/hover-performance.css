@@ -1185,25 +1185,11 @@ body:not(.office-page) #footer:not(.office-footer) > .container {
   }
 }
 /* Public header quote actions match the banner's outlined, fading treatment. */
-body:not(.office-page) #header .nav-actions > a.button {
-  background: transparent;
-  border: 1px solid #182522;
-  color: #182522;
-  transition:
-    background-color 350ms ease,
-    color 350ms ease,
-    border-color 350ms ease;
-}
+
 body.division-page #header .nav-actions > a.button {
   border-color: #ffffff80;
   color: #fff;
   background: transparent;
-}
-body:not(.office-page) #header .nav-actions > a.button:hover,
-body:not(.office-page) #header .nav-actions > a.button:focus-visible {
-  background: #182522;
-  color: #fff;
-  transform: none;
 }
 body.division-page #header .nav-actions > a.button:hover,
 body.division-page #header .nav-actions > a.button:focus-visible {
@@ -1275,4 +1261,341 @@ body.division-page .cover-copy > a.button:focus-visible {
 }
 .division-landing > .landing-intro {
   z-index: 3;
+}
+/* Division detail pages alone use twice the homepage's horizontal gutter. */
+body.division-content-page {
+  --site-gutter: calc(clamp(28px, 5vw, 96px) * 2);
+}
+body.division-page #header {
+  background: linear-gradient(#081b15d9, #081b1599);
+  border-bottom: 1px solid #ffffff2b;
+}
+body.division-page #header .nav-links > a {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-shadow: 0 1px 4px #0009;
+}
+body.division-page #header .nav-links > a.active {
+  color: #e6cf99;
+}
+
+body.division-page .cover-copy > a.button:hover,
+body.division-page .cover-copy > a.button:focus-visible {
+  background: transparent;
+  color: #fff;
+  border-color: #fff;
+}
+body.division-page .division-subnav {
+  padding-inline: var(--site-gutter);
+}
+body.division-page .division-subnav .solar-subnav-call {
+  right: var(--site-gutter);
+}
+@media (max-width: 1200px) {
+  body.division-content-page #header .nav-links:not(.open) {
+    display: none;
+  }
+  body.division-content-page #header .menu-button {
+    display: block;
+  }
+  body.division-content-page #header .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 80px;
+    left: var(--site-gutter);
+    right: var(--site-gutter);
+    padding: 24px;
+    background: #173b30;
+    gap: 16px;
+  }
+}
+@media (max-width: 600px) {
+  body.division-content-page #header .nav-actions > a.button {
+    display: none;
+  }
+  body.division-content-page #header .brand-logo {
+    width: 120px;
+  }
+  body.division-content-page .division-subnav {
+    padding-inline: var(--site-gutter);
+  }
+}
+
+/* Dark header scrim fades into the photo rather than ending as a solid strip. */
+body.division-page #header {
+  background: transparent;
+  border-bottom: 0;
+  isolation: isolate;
+}
+body.division-page #header::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 -64px;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(180deg, #050c0bea 0%, #050c0bb3 38%, #050c0b66 66%, transparent 100%);
+}
+/* Solar's fixed metallic-gold finish replaces its sampled complementary colour. */
+body.division-page .cover-copy > a.button {
+  background: linear-gradient(
+    115deg,
+    #b98626 0%,
+    #e6bf5c 21%,
+    #fff0ad 41%,
+    #dbad45 60%,
+    #f5d77e 79%,
+    #bd8a2c 100%
+  );
+  background-size: 180% 100%;
+  background-position: 0 50%;
+  color: #211b0d;
+  border-color: #e6c46c;
+  box-shadow:
+    inset 0 1px 0 #fff6cdb3,
+    inset 0 -1px 0 #8c601c66;
+  transition:
+    background-position 650ms ease,
+    box-shadow 350ms ease;
+}
+body.division-page .cover-copy > a.button:hover,
+body.division-page .cover-copy > a.button:focus-visible {
+  background-position: 100% 50%;
+  color: #211b0d;
+  border-color: #f5d77e;
+  box-shadow:
+    inset 0 1px 0 #fff6cd,
+    0 3px 18px #d4a94830;
+}
+@media (prefers-reduced-motion: reduce) {
+  body.division-page .cover-copy > a.button {
+    transition: none;
+  }
+}
+
+/* Construction follows Solar's restrained hierarchy and guided next step. */
+.construction-content .division-section {
+  scroll-margin-top: 120px;
+}
+.construction-project-types {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.construction-type {
+  display: flex;
+  flex-direction: column;
+  padding: 28px;
+  border: 1px solid #d1d8cb;
+  background: #fffdf5;
+  color: #182522;
+  text-decoration: none;
+  transition:
+    border-color 250ms ease,
+    background-color 250ms ease;
+}
+.construction-type:hover {
+  border-color: #254d3c;
+  background: #f0f3e9;
+}
+.construction-type-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #315747;
+}
+.construction-type-top .material-icon {
+  width: 32px;
+  height: 32px;
+}
+.construction-type h3 {
+  font-size: clamp(23px, 2vw, 30px);
+  line-height: 1.2;
+  margin: 28px 0 16px;
+}
+.construction-type p {
+  color: #5a6662;
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+.construction-type-action {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid #d1d8cb;
+  padding-top: 18px;
+  margin-top: auto;
+  font-weight: 600;
+}
+.construction-scope-note {
+  margin-top: 24px;
+  font-size: 13px;
+  color: #5a6662;
+}
+.construction-process ol {
+  list-style: none;
+  counter-reset: buildstep;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+}
+.construction-process li {
+  counter-increment: buildstep;
+  padding-top: 24px;
+  border-top: 1px solid #b99258;
+}
+.construction-process li::before {
+  content: '0' counter(buildstep);
+  display: block;
+  color: #896c3b;
+  margin-bottom: 20px;
+}
+.construction-process strong {
+  font-size: 23px;
+}
+.construction-process p {
+  color: #5a6662;
+  line-height: 1.7;
+}
+.construction-brief {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px 48px;
+  padding: 44px;
+  background: #173b30;
+  color: #fffdf5;
+  border-bottom: 3px solid #b99258;
+}
+.construction-brief h2 {
+  font-size: clamp(30px, 3vw, 44px);
+  line-height: 1.15;
+}
+.construction-brief p {
+  color: #d8e1d5;
+}
+.construction-brief ul {
+  padding-left: 20px;
+  line-height: 2;
+  margin: 0;
+}
+.construction-brief .button {
+  width: fit-content;
+  background: #fffdf5;
+  color: #173b30;
+}
+.construction-questions details {
+  padding: 22px 0;
+  border-bottom: 1px solid #d1d8cb;
+}
+.construction-questions summary {
+  font-size: 19px;
+  font-weight: 600;
+}
+.construction-questions details p {
+  max-width: 720px;
+  color: #5a6662;
+  line-height: 1.7;
+  margin-top: 20px;
+}
+.construction-subnav {
+  justify-content: flex-start;
+  gap: 32px;
+}
+@media (max-width: 900px) {
+  .construction-project-types,
+  .construction-process ol {
+    grid-template-columns: 1fr;
+  }
+  .construction-brief {
+    grid-template-columns: 1fr;
+    padding: 28px;
+  }
+  .construction-subnav {
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .construction-type {
+    transition: none;
+  }
+}
+
+/* Join Us is a visual placeholder until the partnership feature is merged. */
+#header .nav-links .nav-placeholder {
+  color: inherit;
+  font-size: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+}
+body.division-page #header .nav-links .nav-placeholder {
+  color: #fff;
+  font-size: 14px;
+  text-shadow: 0 1px 4px #0009;
+}
+body.division-page #header .nav-actions > .header-call {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: #fff;
+  color: #173b30;
+  border: 1px solid #fff;
+  font-weight: 600;
+}
+body.division-page #header .nav-actions > .header-call:hover,
+body.division-page #header .nav-actions > .header-call:focus-visible {
+  background: transparent;
+  color: #fff;
+  border-color: #fff;
+}
+@media (max-width: 600px) {
+  body.division-page #header .nav-actions > .header-call {
+    padding: 8px;
+  }
+  #header .nav-links.open .nav-placeholder {
+    padding-block: 13px;
+  }
+}
+
+/* Solar header keeps Call us secondary while the quote action remains prominent. */
+body.division-page:has(.solar-streamlined)
+  #header
+  .nav-actions:not(.inquiry-cta-replaced)
+  > .header-call {
+  background: transparent;
+  color: #fff;
+  border-color: transparent;
+}
+body.division-page:has(.solar-streamlined)
+  #header
+  .nav-actions:not(.inquiry-cta-replaced)
+  > .header-call:hover,
+body.division-page:has(.solar-streamlined)
+  #header
+  .nav-actions:not(.inquiry-cta-replaced)
+  > .header-call:focus-visible {
+  background: #ffffff14;
+  color: #fff;
+}
+/* Keep the complete metallic finish in both states; only its light band moves. */
+body.division-page .cover-copy > a.button:hover,
+body.division-page .cover-copy > a.button:focus-visible {
+  background-image: linear-gradient(
+    115deg,
+    #b98626 0%,
+    #e6bf5c 21%,
+    #fff0ad 41%,
+    #dbad45 60%,
+    #f5d77e 79%,
+    #bd8a2c 100%
+  );
+  background-color: #dbad45;
+  background-size: 180% 100%;
+  background-position: 100% 50%;
+  color: #211b0d;
+  border-color: #f5d77e;
 }

@@ -13,8 +13,32 @@ window.TechouseDivisions = (() => {
   <article><div class="product-art brochure-art"><img src="assets/solar-catalogue/datasheet-2.jpg" alt="Skyworth SWR battery range brochure" loading="lazy"></div><small>03 / STORE</small><h3>Battery storage</h3><p>Discuss backup priorities and storage options for a system designed around your needs.</p><a href="#/divisions/solar/products/batteries">Explore battery storage ↗</a></article></div><p class="catalogue-note">Skyworth product ranges · Select a category to explore models and datasheets.</p></section>
   <section class="project-showcase division-section" id="projects"><div class="section-heading"><span>02 / IN THE FIELD</span><h2>Energy, put to work.</h2><p>A home for our completed solar installations. Project photos, locations and system details will appear here as the portfolio is added.</p></div><div class="project-placeholder"><img src="assets/solar.jpg" alt="Illustrative solar rooftop, not a completed Techouse installation" loading="lazy"><div><span>PAST PROJECTS / PORTFOLIO PREVIEW</span><h3>The next story<br>starts on a rooftop.</h3><p>Approved Techouse project stories coming soon.</p></div></div></section>
   <section class="estimator division-section" id="estimator"><div class="section-heading"><span>03 / PLAN YOUR PROJECT</span><h2>What could solar<br>look like for you?</h2><p>Get a starting budget using editable sample assumptions. A site assessment and equipment selection will determine your final proposal.</p></div><form id="solar-estimator"><div class="estimate-inputs"><label>Monthly electricity bill (₱)<input name="bill" type="number" min="500" max="1000000" step="100" value="6000" required></label><label>Electricity rate (₱ / kWh)<input name="rate" type="number" min="1" max="100" step="0.1" value="12" required></label><label>Target energy offset (%)<input name="offset" type="range" min="20" max="100" step="5" value="80"><output id="offset-value">80%</output></label><label>System type<select name="system"><option value="grid">Grid-tied</option><option value="hybrid">Hybrid + sample 5 kWh battery</option></select></label><details><summary>Edit budget assumptions</summary><label>Installed base price (₱ / kWp)<input name="price" type="number" min="10000" max="200000" step="1000" value="45000" required></label><label>Battery allowance (₱)<input name="battery" type="number" min="0" max="2000000" step="1000" value="120000" required></label><p>Sample inputs only; these are not Techouse prices.</p></details></div><div class="estimate-result" aria-live="polite" aria-atomic="true" id="estimate-result"></div></form><p class="estimate-disclaimer">Planning illustration only, not a quotation or savings guarantee. Assumes 4 peak sun hours/day, 80% system efficiency and 30 days/month; budget range is ±15%. Energy offset assumes generation can be used on site; no export credits are assumed. Roof suitability, shading, permits, electrical upgrades, actual tariffs and battery sizing need assessment.</p></section>`;
+  function constructionContent() {
+    const icon = window.TechouseIcons.icon('arrow_outward');
+    const types = [
+      [
+        'Residential',
+        'A home for what comes next.',
+        'Tell us about the home you have in mind, the people it is for and your site.',
+        'home_work',
+      ],
+      [
+        'Commercial',
+        'A space for your business.',
+        'Share how the space needs to work for your customers, your team and your daily operations.',
+        'construction',
+      ],
+      [
+        'Industrial',
+        'Room for your operations.',
+        'Start with the intended use, site requirements and the way your facility needs to function.',
+        'factory',
+      ],
+    ];
+    return `<nav class="division-subnav construction-subnav" aria-label="Construction sections"><a href="#construction-start" data-scroll="construction-start">Your project</a><a href="#construction-process" data-scroll="construction-process">The next steps</a><a href="#construction-questions" data-scroll="construction-questions">Common questions</a></nav><div class="division-wrap construction-content"><section id="construction-start" class="division-section"><div class="section-heading"><h2>What are you<br>planning to build?</h2><p>Choose a starting point. Share your requirements so our team can review the scope with you.</p></div><div class="construction-project-types">${types.map(([name, heading, text, symbol]) => `<a class="construction-type" href="#/inquiry?division=construction&project=${name.toLowerCase()}"><div class="construction-type-top">${window.TechouseIcons.icon(symbol)}<span>${name}</span></div><h3>${heading}</h3><p>${text}</p><span class="construction-type-action">Discuss your project ${icon}</span></a>`).join('')}</div><p class="construction-scope-note">Project requirements, service coverage and delivery scope are confirmed with our team.</p></section><section id="construction-process" class="division-section construction-process"><div class="section-heading"><h2>A clear brief.<br>A better starting point.</h2><p>From an early idea to an existing set of plans, start with what you already know.</p></div><ol><li><strong>Share your idea</strong><p>Tell us your location, intended use, approximate floor area and target schedule.</p></li><li><strong>Review the requirements</strong><p>Discuss your plans, site conditions and priorities with our team.</p></li><li><strong>Define the next step</strong><p>Agree on the proposed scope, responsibilities and requirements before proceeding.</p></li></ol></section><section class="construction-brief"><div><h2>Bring what you have.<br>We’ll start there.</h2><p>You don’t need every detail ready to start a conversation.</p></div><ul><li>Site location and approximate area</li><li>Building use and preferred spaces</li><li>Available drawings or reference images</li><li>Target timeline and budget range</li></ul><a class="button" href="#/inquiry?division=construction">Let’s start building ${icon}</a></section><section id="construction-questions" class="division-section construction-questions"><div class="section-heading"><h2>A few useful<br>starting questions.</h2></div><details><summary>Can I inquire without complete plans?</summary><p>Yes. Share your idea, location and any references you have. The information needed for the next stage can be discussed with the team.</p></details><details><summary>Can I get a construction price online?</summary><p>A useful proposal needs a defined scope and project details. Share your area, intended use and available plans so the team can review what is needed.</p></details><details><summary>What if I’m considering a prefabricated building?</summary><p>Explore our Prefabrication division, then discuss the approach that fits your plans.</p><a class="text-link" href="#/divisions/prefabrication">Explore prefabrication ${icon}</a></details></section></div>`;
+  }
   function page(d, divisions, art, arrow) {
-    return `<article class="division-experience"><section class="division-cover">${window.TechouseContent?.snapshot().images[d.id] ? `<img src="${window.TechouseContent.imageURL(window.TechouseContent.snapshot().images[d.id])}" alt="${d.alt || d.short}" fetchpriority="high">` : d.image ? `<img src="assets/${d.image}" alt="${d.alt}" fetchpriority="high">` : art}<div class="cover-shade"></div><div class="cover-copy"><a href="#/" class="back-divisions">← All divisions</a>${d.id === 'solar' ? '' : `<span>TECHOUSE / DIVISION ${d.number}</span>`}${d.id === 'solar' ? '' : `<div class="division-category-icon" aria-hidden="true">${window.TechouseIcons.icon({ solar: 'solar_power', construction: 'construction', prefabrication: 'shapes', development: 'real_estate_agent', elevators: 'elevator' }[d.id])}</div>`}<h1>${d.id === 'solar' ? 'Turn sunlight into<br>everyday savings.' : d.short + '.'}</h1><p>${d.id === 'solar' ? 'Looking at your electricity bill differently? Explore what solar could mean for your property.' : d.tagline}</p><a class="button" href="${d.id === 'solar' ? '#solar-start' : '#/inquiry?division=' + d.id}" ${d.id === 'solar' ? 'data-scroll="solar-start"' : ''}>${d.id === 'solar' ? 'Let’s find your solar savings' : 'Let’s talk'} ${d.id === 'solar' ? window.TechouseIcons.icon('solar_power') : arrow}</a></div>${d.id === 'solar' ? '' : '<span class="cover-foot">YOUR VISION. OUR NEXT CONVERSATION.</span>'}</section>${d.id === 'solar' ? `<nav class="division-subnav" aria-label="Solar sections"><a href="#products" data-scroll="products">Products</a><a href="#projects" data-scroll="projects">Past projects</a><a href="#estimator" data-scroll="estimator">Cost estimator ↗</a></nav><div class="division-wrap">${solar}</div>` : `<div class="division-wrap"><section class="division-section basic-division"><div><span>01 / ${d.short.toUpperCase()}</span><h2>${d.tagline}</h2><p>${d.description}</p><a class="text-link" href="#/inquiry?division=${d.id}">Start a conversation ${arrow}</a></div><div><span>LET’S START WITH THE ESSENTIALS</span><ul>${d.prompts.map((p, i) => `<li><small>0${i + 1}</small>${p}</li>`).join('')}</ul></div></section></div>`}<section class="division-next"><h2>What else are you building?</h2><div>${divisions
+    return `<article class="division-experience"><section class="division-cover">${window.TechouseContent?.snapshot().images[d.id] ? `<img src="${window.TechouseContent.imageURL(window.TechouseContent.snapshot().images[d.id])}" alt="${d.alt || d.short}" fetchpriority="high">` : d.image ? `<img src="assets/${d.image}" alt="${d.alt}" fetchpriority="high">` : art}<div class="cover-shade"></div><div class="cover-copy"><a href="#/" class="back-divisions">← All divisions</a>${['solar', 'construction'].includes(d.id) ? '' : `<span>TECHOUSE / DIVISION ${d.number}</span>`}${['solar', 'construction'].includes(d.id) ? '' : `<div class="division-category-icon" aria-hidden="true">${window.TechouseIcons.icon({ solar: 'solar_power', construction: 'construction', prefabrication: 'shapes', development: 'real_estate_agent', elevators: 'elevator' }[d.id])}</div>`}<h1>${d.id === 'solar' ? 'Turn sunlight into<br>everyday savings.' : d.id === 'construction' ? 'Build your<br>next chapter.' : d.short + '.'}</h1><p>${d.id === 'solar' ? 'Looking at your electricity bill differently? Explore what solar could mean for your property.' : d.tagline}</p><a class="button" href="${d.id === 'solar' ? '#solar-start' : '#/inquiry?division=' + d.id}" ${d.id === 'solar' ? 'data-scroll="solar-start"' : ''}>${d.id === 'solar' ? window.TechouseIcons.icon('solar_power') : d.id === 'construction' ? window.TechouseIcons.icon('construction') : ''}${d.id === 'solar' ? 'Let’s find your solar savings' : d.id === 'construction' ? 'Let’s start building' : 'Let’s talk'} ${['solar', 'construction'].includes(d.id) ? '' : arrow}</a></div>${['solar', 'construction'].includes(d.id) ? '' : '<span class="cover-foot">YOUR VISION. OUR NEXT CONVERSATION.</span>'}</section>${d.id === 'solar' ? `<nav class="division-subnav" aria-label="Solar sections"><a href="#products" data-scroll="products">Products</a><a href="#projects" data-scroll="projects">Past projects</a><a href="#estimator" data-scroll="estimator">Cost estimator ↗</a></nav><div class="division-wrap">${solar}</div>` : d.id === 'construction' ? constructionContent() : `<div class="division-wrap"><section class="division-section basic-division"><div><span>01 / ${d.short.toUpperCase()}</span><h2>${d.tagline}</h2><p>${d.description}</p><a class="text-link" href="#/inquiry?division=${d.id}">Start a conversation ${arrow}</a></div><div><span>LET’S START WITH THE ESSENTIALS</span><ul>${d.prompts.map((p, i) => `<li><small>0${i + 1}</small>${p}</li>`).join('')}</ul></div></section></div>`}<section class="division-next"><h2>What else are you building?</h2><div>${divisions
       .filter((x) => x.id !== d.id)
       .map((x) => `<a href="#/divisions/${x.id}">${x.short} ${arrow}</a>`)
       .join(
@@ -205,7 +229,7 @@ window.TechouseDivisions = (() => {
           ? `${(low / netMonthly / 12).toFixed(1)}–${(high / netMonthly / 12).toFixed(1)} years`
           : 'Not reached';
       calculateButton.hidden = true;
-      out.innerHTML = `<span>YOUR INDICATIVE PROJECT BUDGET</span><h3 class="animated-price" aria-label="${peso(low)} to ${peso(high)}"><span aria-hidden="true" data-price-low>${peso(low)}</span> <span aria-hidden="true" data-price-high>– ${peso(high)}</span></h3><div class="estimate-metrics"><p><strong>${kw.toFixed(1)} kWp</strong>Illustrative solar capacity</p><p><strong>~${Math.ceil(kw * 6)} m²</strong>Indicative panel area</p><p><strong>~${Math.round(generation)} kWh</strong>Generation / month</p></div><a class="button" href="#/inquiry?division=solar&estimate=1" id="solar-estimate-inquiry">Like this starting point? Let’s talk ↗</a><small>Sample pricing · final design and quote require review.</small>`;
+      out.innerHTML = `<span>YOUR INDICATIVE PROJECT BUDGET</span><h3 class="animated-price" aria-label="${peso(low)} to ${peso(high)}"><span aria-hidden="true" data-price-low>${peso(low)}</span> <span aria-hidden="true" data-price-high>– ${peso(high)}</span></h3><div class="estimate-metrics"><p><strong>${kw.toFixed(1)} kWp</strong>Illustrative solar capacity</p><p><strong>~${Math.ceil(kw * 6)} m²</strong>Indicative panel area</p><p><strong>~${Math.round(generation)} kWh</strong>Generation / month</p></div><a class="button" href="#/inquiry?division=solar&estimate=1" id="solar-estimate-inquiry">Like this starting point? Let’s talk ↗</a>`;
       window.TechouseSolarExtras?.updateEnergy(form, generation);
       // Keep the decision and next action prominent; system sizing is optional reference.
       if (document.querySelector('.solar-streamlined')) {
@@ -239,11 +263,6 @@ window.TechouseDivisions = (() => {
         const measured = context.measureText(`${peso(low)} – ${peso(high)}`).width;
         priceHeading.style.fontSize = `clamp(16px, ${9600 / measured}cqw, 64px)`;
 
-        const assumptions = document.createElement('p');
-        assumptions.className = 'estimate-economics-note';
-        assumptions.textContent =
-          'Illustration assumes target energy is used on site. Payback deducts the sample maintenance allowance; excludes financing, degradation, tariff changes and equipment replacement. Adjust the allowance under estimate details.';
-        highlight.append(assumptions);
         const references = document.createElement('div');
         references.className = 'estimate-budget-references';
         [...out.querySelectorAll(':scope > details')].forEach((item) => references.append(item));
@@ -298,17 +317,85 @@ window.TechouseDivisions = (() => {
     document.querySelectorAll('.previous-page-snapshot').forEach((layer) => layer.remove());
     document.body.classList.remove('home-returning');
   }
+  // Generate the transition layer's CSS from current styles rather than a separate design.
+  // IDs become inert data attributes, keeping live-page queries unique during the overlap.
+  function snapshotStyles() {
+    const root = '.previous-page-snapshot';
+    const scope = (selector) =>
+      selector
+        .replace(/#([a-zA-Z_][\w-]*)/g, (_, id) => `:is(#${id}, [data-snapshot-id="${id}"])`)
+        .replace(/\bbody\b/g, root)
+        .replace(
+          /\.(landing|division-page|division-content-page|office-page|inquiry-page|home-returning|has-saved-inquiry|inquiry-overview|inquiry-details|inquiry-new-request|inquiry-inline-details)\b/g,
+          (_, name) => `${root}.${name}`,
+        )
+        .replaceAll(root + root, root);
+    const selectors = (text) => {
+      const result = [];
+      let start = 0,
+        depth = 0,
+        quote = '';
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        if (quote) {
+          if (char === quote && text[i - 1] !== '\\') quote = '';
+          continue;
+        }
+        if (char === '\"' || char === "'") quote = char;
+        else if (char === '(' || char === '[') depth++;
+        else if (char === ')' || char === ']') depth--;
+        else if (char === ',' && depth === 0) {
+          result.push(text.slice(start, i));
+          start = i + 1;
+        }
+      }
+      result.push(text.slice(start));
+      return result;
+    };
+    const rules = (list) =>
+      [...list]
+        .map((rule) => {
+          if (rule.selectorText) {
+            const scoped = selectors(rule.selectorText)
+              .flatMap((text) => {
+                const selector = scope(text.trim());
+                return [`${root}:is(${selector})`, `:where(${root}) :is(${selector})`];
+              })
+              .join(',');
+            return `${scoped} { ${rule.style.cssText} }`;
+          }
+          if (rule.cssRules && rule.conditionText) {
+            const prefix = rule.cssText.slice(0, rule.cssText.indexOf('{'));
+            return `${prefix}{${rules(rule.cssRules)}}`;
+          }
+          return '';
+        })
+        .join('\n');
+    return [...document.styleSheets]
+      .map((sheet) => {
+        try {
+          return rules(sheet.cssRules);
+        } catch {
+          return '';
+        }
+      })
+      .join('\n');
+  }
   // VISUAL SNAPSHOT ONLY: preserves the outgoing viewport during the return-to-home animation.
   function preservePreviousPage() {
     if (document.querySelector('.previous-page-snapshot')) return;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const previousBackground = getComputedStyle(document.body).backgroundColor;
+    const currentStyles = snapshotStyles();
     const snapshot = document.createElement('div');
     snapshot.className = 'previous-page-snapshot ' + document.body.className;
     // Preserve the outgoing page's actual canvas, including its light empty space.
     snapshot.style.backgroundColor = previousBackground;
     snapshot.setAttribute('aria-hidden', 'true');
     snapshot.inert = true;
+    const style = document.createElement('style');
+    style.textContent = currentStyles;
+    snapshot.append(style);
     const content = document.createElement('div');
     content.className = 'previous-page-content';
     for (const source of [document.querySelector('#main'), document.querySelector('#footer')]) {
@@ -322,8 +409,10 @@ window.TechouseDivisions = (() => {
         width: rect.width + 'px',
         margin: '0',
       });
-      clone.removeAttribute('id');
-      clone.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+      for (const element of [clone, ...clone.querySelectorAll('[id]')]) {
+        if (element.id) element.dataset.snapshotId = element.id;
+        element.removeAttribute('id');
+      }
       content.append(clone);
     }
     snapshot.append(content);
