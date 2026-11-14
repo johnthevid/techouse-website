@@ -1966,3 +1966,70 @@ body.division-page #header .menu-button[aria-expanded='true'] {
     transform: none;
   }
 }
+
+/* Short tablet/laptop viewports: fit the essential calculator controls together. */
+@media (min-width: 901px) and (max-width: 1200px) and (max-height: 820px) {
+  .solar-planning-pages > .discovery-progress {
+    padding: 14px 18px;
+  }
+  .solar-planning-pages > .discovery-progress button {
+    gap: 6px;
+  }
+  .solar-planning-pages #solar-estimator .estimate-inputs {
+    padding: 16px;
+    gap: 12px;
+  }
+  #solar-estimator .solar-bill-control,
+  #solar-estimator .solar-offset-control {
+    padding: 12px;
+  }
+  #solar-estimator .solar-bill-control input {
+    min-height: 44px;
+    margin-top: 8px;
+    font-size: 22px;
+  }
+  #solar-estimator .solar-offset-control output {
+    margin: 6px 0;
+    font-size: 24px;
+  }
+  #solar-estimator .solar-coverage-tier {
+    margin-top: 10px;
+    padding-top: 10px;
+    min-height: 0;
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 10px;
+  }
+  #solar-estimator .coverage-sun {
+    width: 36px;
+    height: 36px;
+  }
+  #solar-estimator .solar-coverage-tier strong {
+    font-size: 17px;
+  }
+  #solar-estimator .solar-coverage-tier span {
+    font-size: 13px;
+  }
+  #solar-estimator .solar-offset-control .solar-target-note {
+    margin-top: 8px;
+  }
+  #solar-estimator .estimate-inputs details {
+    margin: 0;
+  }
+  #solar-estimator .calculate-cost {
+    min-height: 44px;
+    padding-block: 10px;
+  }
+  #solar-estimator .estimate-result {
+    padding: 22px;
+  }
+  #solar-estimator .estimate-ready {
+    min-height: 0;
+  }
+  #solar-estimator .estimate-ready h3 {
+    font-size: 30px;
+  }
+  #solar-estimator .estimate-ready p {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+}

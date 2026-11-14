@@ -65,7 +65,7 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
       true,
     );
-    if (width > 900) {
+    if (width > 1100) {
       const initialMetrics = await page
         .locator('.banner-content')
         .first()

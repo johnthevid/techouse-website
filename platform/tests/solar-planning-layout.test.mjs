@@ -51,6 +51,10 @@ test('Three-step solar planner preserves selections, calculation and responsive 
     await page.locator('#solar-estimator input[name="bill"]').fill('6000');
     await page.locator('.calculate-cost').click();
     assert.equal(await page.locator('#solar-estimate-inquiry').isVisible(), true);
+    assert.equal(
+      await page.locator('#estimate-result').evaluate((el) => el.innerText.includes('null')),
+      false,
+    );
     await page.screenshot({ path: `/private/tmp/techouse-planner-${width}.png`, fullPage: true });
     const dimensions = await page.locator('#solar-estimator').evaluate((el) => ({
       width: el.getBoundingClientRect().width,
@@ -68,7 +72,8 @@ test('Three-step solar planner preserves selections, calculation and responsive 
       await page.locator('#solar-discovery input[value="Commercial"]').isChecked(),
       true,
     );
-    await page.locator('[data-scroll="estimator"]').click();
+    await page.locator('.division-subnav [data-scroll="solar-start"]').click();
+    await page.locator('.discovery-progress [data-step="2"]').click();
     assert.equal(await page.locator('#estimator').isVisible(), true);
     assert.equal(
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),

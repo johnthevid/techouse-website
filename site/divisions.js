@@ -239,9 +239,7 @@ window.TechouseDivisions = (() => {
         details.innerHTML = '<summary>View estimated system size</summary>';
         metrics.before(details);
         details.append(metrics);
-        out
-          .querySelector('h3')
-          .after(out.querySelector('#solar-estimate-inquiry'), out.querySelector(':scope > small'));
+        out.querySelector('h3').after(out.querySelector('#solar-estimate-inquiry'));
         const highlight = document.createElement('div');
         highlight.className = 'estimate-budget-highlight';
         out.prepend(highlight);
@@ -249,7 +247,6 @@ window.TechouseDivisions = (() => {
           out.querySelector(':scope > span'),
           out.querySelector('h3'),
           out.querySelector('#solar-estimate-inquiry'),
-          out.querySelector(':scope > small'),
         );
         const economics = document.createElement('dl');
         economics.className = 'estimate-economics';

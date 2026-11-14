@@ -150,7 +150,7 @@ window.TechouseSolar = (() => {
     }
     const nav = document.querySelector('.division-subnav');
     nav.innerHTML =
-      '<a href="#solar-start" data-scroll="solar-start">Your property &amp; needs</a><a href="#estimator" data-scroll="estimator">Cost calculation</a><a href="#projects" data-scroll="projects">Project examples</a><a href="#solar-technical" data-scroll="solar-technical">Technical reference</a>';
+      '<a href="#solar-start" data-scroll="solar-start">Savings calculator</a><a href="#projects" data-scroll="projects">Project examples</a><a href="#solar-technical" data-scroll="solar-technical">Technical reference</a>';
     const learningDetails = document.createElement('details');
     learningDetails.className = 'solar-optional-guide';
     learningDetails.innerHTML =

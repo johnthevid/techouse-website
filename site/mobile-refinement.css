@@ -1,0 +1,637 @@
+/* Phone and touch-tablet refinements; desktop banner choreography stays unchanged. */
+@media (max-width: 1100px), (hover: none) {
+  .landing .division-landing {
+    height: auto;
+    min-height: 100svh;
+    padding: 116px 0 32px;
+    background: #10231d;
+  }
+  .landing .landing-intro {
+    position: relative;
+    inset: auto;
+    margin: 0 24px 24px;
+    width: auto;
+    max-width: none;
+    opacity: 1;
+    transform: none;
+  }
+  .landing .landing-intro::before {
+    display: none;
+  }
+  .landing .landing-intro h1 {
+    font-size: clamp(30px, 5.4vw, 46px);
+    line-height: 1.08;
+    letter-spacing: -0.04em;
+    margin: 0;
+    max-width: 640px;
+  }
+  .landing .division-banners {
+    height: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    overflow: visible;
+  }
+  .landing .division-banner,
+  .landing .division-banner.is-open {
+    min-height: 0;
+    height: auto;
+    display: block;
+    border: 0;
+    border-top: 1px solid #ffffff30;
+    flex: none;
+    clip-path: none;
+    contain: none;
+  }
+  .landing .division-banner .banner-content {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    max-width: none;
+    padding: 24px;
+    transform: none;
+  }
+  .landing .banner-copy-block {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px 20px;
+    transform: none;
+  }
+  .landing .banner-title-row {
+    margin: 0;
+    grid-column: 1;
+  }
+  .landing .division-banner .banner-title-row h2,
+  .landing .division-banner.is-open .banner-title-row h2 {
+    font-size: clamp(23px, 3.6vw, 32px);
+    line-height: 1.12;
+    width: auto;
+    max-width: none;
+    white-space: normal;
+    transform: none;
+    margin: 0;
+  }
+  .landing .banner-title-row h2 br {
+    display: none;
+  }
+  .landing .banner-plus {
+    display: none;
+  }
+  .landing .banner-division-label {
+    grid-column: 1;
+    font-size: 14px;
+    margin: 0;
+    max-width: none;
+    white-space: normal;
+    transform: none;
+    opacity: 1;
+  }
+  .landing .banner-cta {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    min-height: 44px;
+    padding: 12px 16px;
+    gap: 12px;
+    max-width: 230px;
+    font-size: 13px;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    margin: 0;
+  }
+  .landing .division-banner .banner-shade {
+    background: linear-gradient(90deg, #071b17ed, #071b17ad);
+  }
+  .landing .banner-scroll-cue {
+    position: fixed;
+    left: auto;
+    right: 20px;
+    bottom: max(18px, env(safe-area-inset-bottom));
+    top: auto;
+    margin: 0;
+    z-index: 35;
+    background: #173b30;
+    box-shadow: 0 4px 18px #0004;
+  }
+  .landing .landing-company {
+    padding-block: 64px;
+  }
+}
+@media (max-width: 550px) {
+  .landing .division-landing {
+    padding-top: 100px;
+  }
+  .landing .banner-nav {
+    height: 80px;
+    padding-inline: 20px;
+    gap: 12px;
+  }
+  .landing .banner-nav .brand-logo {
+    width: 138px;
+  }
+  .landing .banner-nav-right {
+    gap: 10px;
+  }
+  .landing .banner-nav-right .header-call span {
+    display: none;
+  }
+  .landing .banner-nav-right .header-call {
+    min-width: 44px;
+    min-height: 44px;
+    display: grid;
+    place-items: center;
+  }
+  .landing .banner-global-quote {
+    padding: 10px;
+    gap: 8px;
+    min-height: 44px;
+  }
+  .landing .landing-intro {
+    margin-inline: 20px;
+    margin-bottom: 20px;
+  }
+  .landing .division-banner .banner-content {
+    padding: 20px;
+  }
+  .landing .banner-copy-block {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 9px;
+  }
+  .landing .banner-cta {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+    padding: 9px 13px;
+  }
+}
+/* Content pages: use phone space for the actual task, not large desktop spacing. */
+@media (max-width: 900px) {
+  body.division-content-page {
+    --site-gutter: clamp(20px, 4vw, 36px);
+  }
+  .page-hero {
+    padding-block: 28px 36px;
+  }
+  .page-hero h1 {
+    font-size: clamp(32px, 6vw, 48px);
+    line-height: 1.12;
+  }
+  .page-hero p {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .division-cover .cover-copy h1 {
+    font-size: clamp(36px, 6vw, 60px);
+    line-height: 1.08;
+  }
+  .division-cover .cover-copy p {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .division-wrap > .division-section {
+    padding-block: 40px;
+  }
+  .section-heading {
+    margin-bottom: 24px;
+    gap: 16px;
+  }
+  .section-heading h2 {
+    font-size: clamp(28px, 4.6vw, 40px);
+    line-height: 1.15;
+  }
+  .section-heading p {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .solar-planning-pages #solar-discovery {
+    padding: 24px;
+  }
+  .solar-planning-pages .discovery-photo-visual {
+    min-height: 200px;
+    max-height: 260px;
+  }
+  .about-company {
+    gap: 24px;
+  }
+  .about-company > div,
+  .about-company .about-people-panel {
+    padding: 24px;
+    min-width: 0;
+  }
+  .about-people-tabs {
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .about-people-tabs button {
+    min-height: 44px;
+  }
+  .contact-grid > *,
+  .catalogue-grid > * {
+    min-width: 0;
+  }
+  .inquiry-ticket-body,
+  .form-card {
+    padding: 24px;
+  }
+  #footer .footer-top {
+    gap: 28px;
+  }
+}
+/* Landscape phones/tablets can use two balanced panels instead of a long stack. */
+@media (min-width: 640px) and (max-width: 1100px) and (orientation: landscape) {
+  .solar-planning-pages #solar-estimator {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: stretch;
+  }
+  .solar-planning-pages #solar-estimator > * {
+    min-width: 0;
+  }
+  .solar-planning-pages #solar-estimator .estimate-inputs {
+    padding: 16px;
+    gap: 12px;
+  }
+  .solar-planning-pages #solar-estimator .estimate-result {
+    padding: 20px;
+  }
+  #solar-estimator .solar-bill-control,
+  #solar-estimator .solar-offset-control {
+    padding: 12px;
+  }
+  #solar-estimator .estimate-ready {
+    min-height: 0;
+  }
+  #solar-estimator .estimate-ready h3 {
+    font-size: 28px;
+  }
+  #solar-estimator .estimate-economics > div {
+    gap: 12px;
+  }
+  #solar-estimator .estimate-economics dt,
+  #solar-estimator .estimate-economics dd {
+    font-size: 14px;
+  }
+}
+@media (max-width: 600px) {
+  .division-cover {
+    min-height: 580px;
+  }
+  .division-cover .cover-copy {
+    padding-block: 110px 52px;
+  }
+  .division-subnav {
+    gap: 8px 18px;
+  }
+  .solar-planning-pages > .discovery-progress {
+    padding: 16px 8px;
+  }
+  .solar-planning-pages .step-label {
+    font-size: 12px;
+  }
+  .solar-planning-pages #solar-discovery {
+    padding: 20px;
+  }
+  .solar-planning-pages #solar-estimator .estimate-inputs,
+  .solar-planning-pages #solar-estimator .estimate-result {
+    padding: 20px;
+  }
+  .solar-planning-pages .discovery-photo-visual {
+    min-height: 180px;
+    max-height: 220px;
+  }
+  .discovery-photo-copy {
+    padding: 20px;
+  }
+  .discovery-photo-copy h3 {
+    font-size: 25px;
+  }
+  .inquiry-ticket-heading,
+  .inquiry-ticket-body,
+  .form-card {
+    padding: 20px;
+  }
+  .about-pathways.container {
+    gap: 20px;
+  }
+  #footer .footer-top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  #footer .footer-brand {
+    grid-column: 1;
+  }
+}
+
+/* Scroll-focused mobile accordion: quiet white strips surround one open story. */
+@media (max-width: 1100px), (hover: none) {
+  .landing .division-banner {
+    height: 76px;
+    background: #fffdf8;
+    color: #173b30;
+    overflow: hidden;
+    border-top: 1px solid #d7ddd2;
+    transition:
+      height 440ms cubic-bezier(0.22, 0.7, 0.2, 1),
+      background-color 300ms ease;
+    overflow-anchor: none;
+  }
+  .landing .division-banner.is-open {
+    height: clamp(280px, 43svh, 380px);
+    background: #173b30;
+    color: #fff;
+  }
+  .landing .division-banner .banner-content {
+    position: absolute;
+    inset: 0;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .landing .division-banner .banner-copy-block {
+    width: 100%;
+    display: block;
+    transform: none;
+  }
+  .landing .division-banner .banner-title-row {
+    padding-right: 42px;
+  }
+  .landing .division-banner .banner-title-row h2 {
+    color: #173b30;
+    font-size: clamp(20px, 3vw, 27px);
+  }
+  .landing .division-banner .banner-division-label {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    color: #173b30;
+  }
+  .landing .division-banner:not(.is-open) .banner-division-label > span {
+    display: none;
+  }
+  .landing .division-banner:not(.is-open) .banner-cta {
+    display: none;
+  }
+  .landing .division-banner .banner-background,
+  .landing .division-banner .banner-shade {
+    opacity: 0;
+    transition: opacity 300ms ease;
+  }
+  .landing .division-banner.is-open .banner-background,
+  .landing .division-banner.is-open .banner-shade {
+    opacity: 1;
+  }
+  .landing .division-banner.is-open .banner-content {
+    align-items: flex-end;
+    padding: 28px 24px;
+  }
+  .landing .division-banner.is-open .banner-title-row {
+    padding-right: 0;
+  }
+  .landing .division-banner.is-open .banner-title-row h2 {
+    color: #fff;
+    font-size: clamp(30px, 4.4vw, 44px);
+    max-width: 620px;
+  }
+  .landing .division-banner.is-open .banner-division-label {
+    position: static;
+    transform: none;
+    color: #fff;
+    margin: 14px 0 20px;
+  }
+  .landing .division-banner.is-open .banner-cta {
+    display: inline-flex;
+  }
+  .landing .banner-scroll-cue {
+    background: #fff;
+    color: #173b30;
+    border-color: #fff;
+  }
+}
+@media (max-width: 550px) {
+  .landing .division-banner {
+    height: 72px;
+  }
+  .landing .division-banner .banner-content {
+    padding-inline: 20px;
+  }
+  .landing .division-banner.is-open .banner-content {
+    padding: 26px 20px;
+  }
+  .landing .division-banner .banner-title-row h2 {
+    font-size: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing .division-banner,
+  .landing .division-banner .banner-background,
+  .landing .division-banner .banner-shade {
+    transition: none;
+  }
+}
+
+.compact-banner-scene {
+  display: none;
+}
+/* Let one image set the atmosphere for the complete compact banner section. */
+@media (max-width: 1100px), (hover: none) {
+  .landing .division-landing {
+    padding-top: 0;
+    background: #10231d;
+  }
+  .landing .compact-banner-scene {
+    display: block;
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    margin-bottom: -100svh;
+    width: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .compact-scene-image {
+    position: absolute;
+    inset: -8px;
+    width: calc(100% + 16px);
+    height: calc(100% + 16px);
+    object-fit: cover;
+    opacity: 0;
+    filter: blur(3px);
+    transition: opacity 450ms ease;
+  }
+  .compact-scene-image.is-active {
+    opacity: 1;
+  }
+  .compact-banner-scene::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, #071b17b3, #071b1780 40%, #071b17dc);
+  }
+  .landing .landing-intro {
+    padding-top: 116px;
+  }
+  .landing .division-banners {
+    position: relative;
+    z-index: 1;
+  }
+  .landing .division-banner,
+  .landing .division-banner.is-open {
+    background: transparent;
+    border-top: 1px dashed #ffffff60;
+    color: #fff;
+  }
+  .landing .division-banner .banner-background,
+  .landing .division-banner.is-open .banner-background,
+  .landing .division-banner .banner-shade,
+  .landing .division-banner.is-open .banner-shade {
+    opacity: 0;
+  }
+  .landing .division-banner .banner-title-row h2,
+  .landing .division-banner .banner-division-label {
+    color: #fff;
+  }
+  .landing .division-banner:not(.is-open) .banner-content {
+    background: #ffffff08;
+  }
+  .landing .landing-company {
+    position: relative;
+    background: #f4f2e8;
+  }
+}
+@media (max-width: 550px) {
+  .landing .division-landing {
+    padding-top: 0;
+  }
+  .landing .landing-intro {
+    padding-top: 100px;
+  }
+}
+/* Hide the desktop scroll indicator while retaining normal wheel/keyboard scrolling. */
+@media (hover: hover) and (pointer: fine) {
+  .page-scroll-thumb {
+    display: none !important;
+  }
+  html {
+    scrollbar-width: none;
+  }
+  html::-webkit-scrollbar {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .compact-scene-image {
+    transition: none;
+  }
+}
+
+/* Crisp photos with contrast concentrated behind the reading areas. */
+@media (max-width: 1100px), (hover: none) {
+  .landing .division-landing {
+    overflow-anchor: none;
+  }
+  .compact-scene-image {
+    filter: none;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity 600ms cubic-bezier(0.22, 0.7, 0.2, 1);
+  }
+  .compact-banner-scene::after {
+    background:
+      radial-gradient(ellipse at 15% 28%, #071b17b3, transparent 75%),
+      linear-gradient(0deg, #071b17b3, #071b1726 70%);
+  }
+  .landing .division-banner {
+    height: 56px;
+    transition: height 580ms cubic-bezier(0.22, 0.7, 0.2, 1);
+  }
+  .landing .division-banner.is-open {
+    height: clamp(280px, 43svh, 380px);
+  }
+  .landing .division-banner .banner-title-row h2 {
+    font-size: clamp(18px, 2.6vw, 24px);
+  }
+  .landing .division-banner.is-open .banner-title-row h2 {
+    font-size: clamp(30px, 4.4vw, 44px);
+  }
+  .landing .division-banner .banner-content::before {
+    content: '';
+    position: absolute;
+    inset: -24px 0;
+    background: radial-gradient(ellipse at left center, #071b1780, transparent 80%);
+    pointer-events: none;
+    z-index: -1;
+  }
+  .landing .landing-company {
+    position: relative;
+    z-index: 2;
+    isolation: isolate;
+    background: #f4f2e8;
+  }
+  body:not(.office-page) #footer:not(.office-footer) {
+    position: relative;
+    z-index: 2;
+    isolation: isolate;
+    background: #faf9f3;
+    color: #173b30;
+  }
+}
+@media (max-width: 600px) {
+  body:not(.office-page) #footer:not(.office-footer) {
+    padding-block: 32px;
+  }
+  #footer .footer-top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: 'brand brand' 'contact contact' 'explore social';
+    gap: 24px 20px;
+  }
+  #footer .footer-brand {
+    grid-area: brand;
+    padding: 0 0 20px;
+    border-bottom: 1px solid #d7ddd2;
+  }
+  #footer .footer-brand .brand-logo {
+    width: 168px;
+  }
+  #footer .footer-brand .footer-company-name {
+    margin-top: 12px;
+    max-width: none;
+  }
+  #footer .footer-top > .footer-col:nth-child(2) {
+    grid-area: explore;
+  }
+  #footer .footer-top > .footer-col:nth-child(3) {
+    grid-area: contact;
+  }
+  #footer .footer-socials {
+    grid-area: social;
+  }
+  #footer .footer-col {
+    gap: 2px;
+  }
+  #footer .footer-col > span:first-child {
+    margin-bottom: 6px;
+  }
+  #footer .footer-col a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  #footer .footer-socials .social-pending {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing .division-banner,
+  .compact-scene-image {
+    transition: none;
+  }
+}
