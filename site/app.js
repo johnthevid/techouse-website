@@ -276,7 +276,7 @@ function renderHeader(path) {
   const solarPage = /^\/divisions\/solar(?:\/|$)/.test(path);
   const divisionId = getDivision(path.split('/')[2])?.id;
   const inquiryLink = divisionId ? '#/inquiry?division=' + divisionId : '#/inquiry';
-  const inquiryLabel = solarPage ? 'Request a solar quote' : 'Start a project';
+  const inquiryLabel = solarPage ? 'Request a quote' : 'Start a project';
   $('#header').innerHTML =
     `<div class="container nav"><a href="#/" aria-label="Techouse home">${brand}</a><nav class="nav-links" id="site-nav" aria-label="Main navigation"><a class="${path.startsWith('/division') ? 'active' : ''}" href="#/divisions">Our divisions</a><a class="${path === '/about' ? 'active' : ''}" href="#/about">About Techouse</a><a class="${path === '/updates' ? 'active' : ''}" href="#/updates">News</a><span class="nav-placeholder" role="link" aria-disabled="true" title="Coming soon">Join Us!</span><a class="mobile-inquiry" href="${inquiryLink}">${inquiryLabel} ${arrow}</a></nav><div class="nav-actions"><a class="header-call" href="tel:+639855626888" aria-label="Call Techouse at +63 985 562 6888">${window.TechouseIcons.icon('call')}<span>Call us</span></a><a class="button small" href="${inquiryLink}">${inquiryLabel} ${arrow}</a><button class="menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">${window.TechouseIcons.icon('menu')}</button></div></div>`;
 }
@@ -341,7 +341,7 @@ function divisionPage(id) {
   return d ? window.TechouseDivisions.page(d, divisions, elevatorArt, arrow) : notFound();
 }
 function about() {
-  return `${breadcrumb('About Techouse')}<section class="container page-hero about-introduction"><div class="eyebrow">GET TO KNOW TECHOUSE</div><h1>New ways to build.<br>More ways forward.</h1><p>Techouse brings construction technologies and solar energy solutions to the Philippines—connecting your plans with possibilities for the spaces you build and the energy you use.</p></section><div class="container content-columns about-company"><div><span class="eyebrow">CONSTRUCTION. ENERGY. POSSIBILITY.</span><h2>One company.<br>Five ways to move forward.</h2><p>Techouse Technology Construction Corp brings together construction, solar energy, prefabricated buildings, real estate development and elevator engineering. Each division offers a different starting point for your project.</p><p>Whether you’re exploring rooftop solar, planning a building or considering a new use for your property, start with what you want to achieve. Explore the relevant division, share your requirements, and discuss the next step with our team.</p><a class="text-link" href="#/divisions">Find your division ${arrow}</a></div>${window.TechouseAbout.panel()}</div><section class="container about-pathways"><div class="section-heading"><span>WHAT ARE YOU PLANNING?</span><h2>Start with your next step.</h2></div><div>${divisions.map((d) => `<a href="#/divisions/${d.id}"><span>${d.number}</span><strong>${esc(d.short)}</strong>${arrow}</a>`).join('')}</div></section>${cta('Have a project in mind?', 'Tell us what you’re planning. We’ll help you find the right conversation to start.')}`;
+  return `${breadcrumb('About Techouse')}<section class="container page-hero about-introduction"><div class="eyebrow">GET TO KNOW TECHOUSE</div><h1>New ways to build.<br>More ways forward.</h1><p>Techouse brings construction technologies and solar energy solutions to the Philippines—connecting your plans with possibilities for the spaces you build and the energy you use.</p></section><div class="container content-columns about-company"><div><h2>One company.<br>Five ways to move forward.</h2><p>Techouse Technology Construction Corp brings together construction, solar energy, prefabricated buildings, real estate development and elevator engineering. Each division offers a different starting point for your project.</p><p>Whether you’re exploring rooftop solar, planning a building or considering a new use for your property, start with what you want to achieve. Explore the relevant division, share your requirements, and discuss the next step with our team.</p><a class="text-link" href="#/divisions">Find your division ${arrow}</a></div>${window.TechouseAbout.panel()}</div><section class="container about-pathways"><div class="section-heading"><span>WHAT ARE YOU PLANNING?</span><h2>Start with your next step.</h2></div><div>${divisions.map((d) => `<a href="#/divisions/${d.id}"><span>${d.number}</span><strong>${esc(d.short)}</strong>${arrow}</a>`).join('')}</div></section>${cta('Have a project in mind?', 'Tell us what you’re planning. We’ll help you find the right conversation to start.')}`;
 }
 
 // Returning visitors can review browser-local requests without accidentally creating duplicates.
@@ -365,7 +365,7 @@ function mountInquiryHistory(showCurrent = true) {
       ? '&division=solar&estimate=1'
       : '');
   const visits = readStore('techouse-demo-site-visits-v1', []);
-  history.innerHTML = `<div><h2>Your inquiries <span class="inquiry-count">${saved.length}</span></h2><p>Choose a card to see its details and next steps. Demo requests stay in this browser.</p></div><ul class="saved-inquiry-cards" aria-label="Saved inquiries">${saved
+  history.innerHTML = `<div><h2>Your inquiries <span class="inquiry-count">${saved.length}</span></h2></div><ul class="saved-inquiry-cards" aria-label="Saved inquiries">${saved
     .map((q, index) => {
       const sector = {
         residential: 'Residential',
@@ -459,7 +459,7 @@ function showInquiryOverview() {
   params.delete('new');
   window.history.replaceState(null, '', '#/inquiry' + (params.size ? '?' + params.toString() : ''));
   const hero = document.querySelector('.page-hero');
-  hero.querySelector('.eyebrow').textContent = 'YOUR REQUEST IS SAVED';
+  hero.querySelector('.eyebrow')?.remove();
   hero.querySelector('h1').textContent =
     inquiries.length === 1 ? 'You already have an inquiry.' : 'Your inquiries are saved.';
   hero.querySelector('p').textContent =
@@ -538,7 +538,7 @@ function inquiryPage(selected) {
 }
 function updatesPage() {
   const list = publishedPosts();
-  return `${breadcrumb('Updates')}<section class="container page-hero"><div class="eyebrow">From the team</div><h1>Ideas to build on.<br>News to move you forward.</h1><p>Explore news from Techouse, project stories and ideas for the spaces you build and the energy you use.</p></section><section class="container all-updates"><div class="filter-buttons" aria-label="Filter updates"><button class="active" data-update-filter="all" aria-pressed="true">All updates</button>${divisions
+  return `${breadcrumb('Updates')}<section class="container page-hero"><h1>Ideas to build on.<br>News to move you forward.</h1><p>Explore news from Techouse, project stories and ideas for the spaces you build and the energy you use.</p></section><section class="container all-updates"><div class="filter-buttons" aria-label="Filter updates"><button class="active" data-update-filter="all" aria-pressed="true">All updates</button>${divisions
     .filter((d) => list.some((p) => p.division === d.id))
     .map((d) => `<button data-update-filter="${d.id}" aria-pressed="false">${d.short}</button>`)
     .join(

@@ -303,3 +303,27 @@ Removed partnership-specific inquiry prefill/heading handling from refinement br
 Gold hero CTAs now explicitly retain their metallic gradient on hover/focus, moving only the light band. Solar's header Call us is transparent/secondary when the quote action is present; it may still become the prominent replacement when that quote is suppressed by an in-page action.
 Investigated apparent older design during back-to-home animation: outgoing DOM was cloned live, not an old saved website version, but removal of IDs and destination body-class changes caused styles to be lost or overridden. Transition CSS is now derived automatically from current stylesheet rules and scoped to the inert outgoing layer. Original IDs are recorded as data-snapshot-id aliases, preserving selector priority without duplicate live IDs; route-body selectors resolve against the layer's captured classes instead of the new homepage. Selector lists are split at top level to avoid changing rule priority. Existing staggered banner return, blur/dim timings and layer cleanup remain. No manual parallel page design or persistent copy introduced.
 Checks: desktop/mobile return regression verifies exact hero margin/font/gradient equality, gold retention on hover, no duplicate IDs, cleanup and no page errors. Both homepage responsive and intro lifecycle tests also passed (3 tests total). Full suite not rerun; no cross-browser performance guarantee. Local only; uncommitted, not pushed/deployed.
+
+## Mobile refinement and annotation cleanup — 14 November 2026
+Removed the selected About panel eyebrows, news eyebrow, saved-inquiry hero eyebrow and card-selection explanation. Removed contact QR hint/help markup and its obsolete switching handler; QR/app switching remains functional. Removed remaining prefab/development/elevator hero division labels, standalone icons and bottom slogans. Added soft rounded public-nav hover/focus highlights as explicitly requested; Join Us remains disabled placeholder.
+Phone division gutters now 24px instead of doubled desktop gutters; desktop margins unchanged. Made photo-header menu visible with white icon/border, maintained 44px menu/link targets and bounded scrolling for open menus. Solar phone form precedes supporting photo; footer spacing/wrapping improved. Contact desktop grid reclaims removed text rows. Existing mobile direct-call behavior retained; no intro/hover choreography changes.
+Validation: local Chrome routes About/news/inquiry/all five divisions at 360/390/768/1440px have no horizontal overflow or page errors. Phone menu opens and navigates; desktop Phone/Viber switching and contact close verified. Desktop contact visually reviewed. Existing solar planner regression passed desktop/mobile including selections, calculations and aligned margins. Edited files formatted; asset versions refreshed; diff whitespace check clean. Safari and physical-device testing not performed. Local only; no commit, push or deployment.
+
+## Header fit, compact dropdown and intro hold — 14 November 2026
+Shortened Solar header/mobile inquiry CTA to Request a quote, retaining its solar inquiry destination. Reduced nav gaps/padding and kept labels non-wrapping so desktop links remain a single line with rounded hover/focus highlights. Smaller-screen menus now use compact spacing, green/gold treatment, clear current-page highlight and 220ms downward fade entry; reduced motion disables it. Join Us stays disabled. Intro tagline reading hold reduced exactly 150ms from 2100 to 1950; other choreography unchanged.
+Verified header child bounds do not overlap at 1440 and 1280px, responsive dropdown open/Escape at 1024/768/390, no horizontal overflow, phone menu screenshot visually reviewed. Asset versions refreshed and whitespace checks clean. Local only; no commit/push/deployment.
+
+### Compact left dropdown — 14 November 2026
+Owner requested smaller navigation panel positioned on the left. Division dropdown capped at 280px (clamped to viewport gutters), left-aligned labels, reduced padding with 44px touch targets; existing reveal retained. Intro tagline hold shortened another 200ms, now 1750ms. Local only; no commit or deployment.
+
+### Dropdown alignment correction — 14 November 2026
+Owner clarified the compact dropdown should be on the right. Anchored to right page gutter beneath the menu control; retained width, left-aligned labels and animation. Local only, no deployment.
+
+### Glass dropdown surface — 14 November 2026
+Added translucent green glass background with 24px backdrop blur/saturation, soft inner highlight and shadow; light pages use light glass. Includes WebKit prefix and near-opaque unsupported-browser fallback. Right anchoring, compact width, label contrast and existing reveal retained. Responsive menu checks passed. Local only; no commit/deployment.
+
+### White dropdown surface — 14 November 2026
+Owner replaced glass treatment with white to match About Techouse cue hover. Dropdown now opaque white/dark green labels, subtle green active/hover highlight, no backdrop blur; right placement, compact dimensions and reveal preserved. Local only, not deployed.
+
+### Dropdown option motion — 14 November 2026
+White dropdown opens with 260ms soft downward fade; options reveal over 220ms with 35ms stagger. Menu control has subtle press feedback/open highlight. Reduced-motion disables reveal and press transforms. Responsive menu checks passed; local only, no push/deploy.

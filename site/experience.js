@@ -315,7 +315,7 @@ window.TechouseExperience = (() => {
         450,
       );
       if (done || exiting) return;
-      await animate(message, [{ opacity: 1 }, { opacity: 1 }], 2100);
+      await animate(message, [{ opacity: 1 }, { opacity: 1 }], 1750);
       if (!done && !exiting) await exit();
     }
     play().catch(finish);
