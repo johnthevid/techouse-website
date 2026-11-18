@@ -1,6 +1,10 @@
 # Current handoff
 
-Updated: 4 November 2026.
+Updated: 18 November 2026.
+
+## Latest: project agent skills (feature/homepage-refinement)
+
+Added third-party design skills under `.claude/skills/` so every Claude Code session on this repository loads them: `unslop` (heydamir/unslop, CC BY 4.0, keep the author credit) and `stageshow` (benjitaylor/skills, MIT). Scripts were reviewed before install; no install hooks. `.gitignore` now admits only `.claude/skills/`; other `.claude/` files (local settings, state) stay untracked. No website behavior changed; no deployment. Next: homepage refinement on this branch, starting with an unslop audit. Homepage intro animation remains off-limits without explicit instruction.
 
 ## Latest: approved 1.0.1 GitHub source release
 
