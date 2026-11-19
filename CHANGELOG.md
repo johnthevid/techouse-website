@@ -8,6 +8,8 @@ Recorded milestones for the Techouse website. Dates use the project's Asia/Manil
 - Compare residential setups (daytime, day + 50% night, day + night) or C&I setups (daytime, daytime + 3-hour storage) side by side; the selected setup and equipment carry into the inquiry.
 - Make the calculator's electricity rate editable in the back office (Website customizer → Solar calculator), with an optional source note shown to visitors.
 - Show the electricity rate beside the monthly bill to compact the estimator; trim result-panel notes.
+- Add a day/night electricity-use slider that sizes batteries and updates setup prices.
+- Redesign the phone estimator: stacked bill and rate, tighter spacing, swipeable setup comparison.
 - Add model unit tests; not deployed.
 
 ## 1.0.1 — 4 November 2026

@@ -31,7 +31,7 @@ test('Solar equipment navigation, official imagery and responsive catalogue', as
   assert.equal(await page.locator('.solar-subnav-call').getAttribute('href'), 'tel:+639855626888');
   await page.evaluate(() => scrollTo(0, 0));
   await page.waitForFunction(() => document.querySelector('.solar-subnav-call').inert);
-  const slider = page.locator('.solar-offset-control input');
+  const slider = page.locator('.solar-offset-control input[name="offset"]');
   await slider.focus();
   const previous = +(await slider.inputValue());
   await slider.press('ArrowLeft');

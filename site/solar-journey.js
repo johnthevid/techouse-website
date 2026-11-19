@@ -125,6 +125,26 @@ window.TechouseSolar = (() => {
     };
     host.elements.offset.addEventListener('input', updateTrack);
     updateTrack();
+    // DAY/NIGHT USE: decides how much of the system must be stored in batteries for after sunset.
+    const usage = host.elements.nightShare.closest('label');
+    usage.classList.add('solar-offset-control');
+    usage.firstChild.textContent = '03 / When do you use most of your electricity?';
+    usage.insertAdjacentHTML(
+      'beforeend',
+      '<div class="solar-offset-endpoints" aria-hidden="true"><span>Mostly daytime</span><span>Mostly at night</span></div><div class="solar-usage-split" aria-hidden="true"><p><strong data-day-share></strong>Daytime</p><p><strong data-night-share></strong>After sunset</p></div><small class="solar-target-note">Sets the battery size in the setups with storage.</small>',
+    );
+    const updateUsage = () => {
+      const night = Number(host.elements.nightShare.value);
+      usage.style.setProperty('--night', (night / 90) * 100 + '%');
+      usage.querySelector('[data-day-share]').textContent = 100 - night + '%';
+      usage.querySelector('[data-night-share]').textContent = night + '%';
+      host.elements.nightShare.setAttribute(
+        'aria-valuetext',
+        `${100 - night}% daytime, ${night}% after sunset`,
+      );
+    };
+    host.elements.nightShare.addEventListener('input', updateUsage);
+    updateUsage();
     const advanced = host.querySelector('.estimate-inputs details');
     advanced.querySelector('summary').textContent = 'Adjust estimate details (optional)';
     const products = wrap.querySelector('#products');

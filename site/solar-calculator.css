@@ -111,18 +111,26 @@
 }
 .solar-scenario-figures {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
   padding: 12px 0;
   border-block: 1px solid #dce0d8;
   font-size: 14px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
+/* Label left, value right; a long value drops below its label instead of breaking. */
+.solar-scenario-figures > span {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 2px 12px;
+  white-space: nowrap;
+}
 .solar-scenario-figures small {
   display: block;
-  margin-bottom: 2px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 400;
   color: #64705e;
 }
@@ -194,4 +202,154 @@
   #solar-estimator .solar-bill-row {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+/* Day/night use: a fixed sun-to-night spectrum; the grip marks the visitor's split. */
+#solar-estimator .solar-usage-control input[type='range']::-webkit-slider-runnable-track {
+  background: linear-gradient(to right, #e3c27f, #8a9a6c 50%, #1c352a);
+}
+#solar-estimator .solar-usage-control input[type='range']::-moz-range-track {
+  background: linear-gradient(to right, #e3c27f, #8a9a6c 50%, #1c352a);
+}
+#solar-estimator .solar-usage-control input[type='range']::-moz-range-progress {
+  background: transparent;
+}
+.solar-usage-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 16px;
+  border-top: 1px solid #d3d8cb;
+}
+.solar-usage-split p {
+  margin: 0;
+  padding-top: 12px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #596752;
+}
+.solar-usage-split p + p {
+  padding-left: 16px;
+  border-left: 1px solid #d3d8cb;
+}
+.solar-usage-split strong {
+  display: block;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #244b38;
+  font-variant-numeric: tabular-nums;
+}
+#solar-estimator .solar-usage-control {
+  grid-column: 1 / -1;
+  font-weight: 400;
+}
+
+/* PHONE: stack the bill question, tighten padding, and swipe between setups. */
+@media (max-width: 600px) {
+  #solar-estimator .estimate-inputs {
+    padding: 16px;
+    gap: 12px;
+  }
+  #solar-estimator .solar-bill-control,
+  #solar-estimator .solar-offset-control {
+    padding: 16px;
+  }
+  #solar-estimator .solar-bill-row {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    row-gap: 14px;
+  }
+  #solar-estimator .solar-bill-row > label {
+    grid-row: auto;
+    grid-template-rows: none;
+  }
+  #solar-estimator .solar-rate-control {
+    grid-template-columns: minmax(0, 1fr) 7.5em;
+    align-items: center;
+    column-gap: 12px;
+    padding-top: 14px;
+    border-top: 1px solid #d3d8cb;
+    font-size: 14px;
+  }
+  #solar-estimator .solar-rate-control > input {
+    grid-column: 2;
+    grid-row: 1;
+    margin: 0;
+    min-height: 46px;
+    font-size: 18px;
+  }
+  #solar-estimator .solar-rate-control > small {
+    grid-column: 1 / -1;
+    margin-top: 6px;
+  }
+  .solar-streamlined #estimate-result:has(.estimate-budget-highlight) {
+    padding: 20px 16px;
+  }
+  #estimate-result .estimate-economics > div {
+    padding: 12px 0;
+  }
+  #estimate-result .estimate-economics dt {
+    font-size: 13px;
+  }
+  #estimate-result .estimate-economics dd {
+    font-size: 17px;
+  }
+  .solar-scenarios {
+    padding: 20px 0 24px;
+  }
+  .solar-scenarios > legend {
+    padding: 0 16px;
+  }
+  .solar-scenarios > div {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 84%;
+    gap: 12px;
+    padding: 4px 16px 8px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 16px;
+    overscroll-behavior-x: contain;
+  }
+  .solar-scenario {
+    scroll-snap-align: start;
+    padding: 16px;
+  }
+  .solar-scenario input {
+    top: 16px;
+    right: 16px;
+  }
+}
+.solar-swipe-hint {
+  display: none;
+}
+@media (max-width: 600px) {
+  .solar-swipe-hint {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: #64705e;
+  }
+}
+@media (max-width: 600px) {
+  /* Label above value: long ranges like payback no longer wrap mid-figure. */
+  #estimate-result .estimate-economics > div {
+    display: block;
+  }
+  #estimate-result .estimate-economics dt {
+    max-width: none;
+    margin-bottom: 2px;
+  }
+  #estimate-result .estimate-economics dd {
+    max-width: none;
+    text-align: left;
+  }
+  #solar-estimator .solar-rate-control {
+    grid-template-columns: minmax(0, 1fr) 6.5em;
+  }
+}
+
+/* Results sit at the top of the panel rather than stretching to match a taller input column. */
+.solar-streamlined #estimate-result .estimate-budget-highlight {
+  flex: 0 0 auto;
 }
