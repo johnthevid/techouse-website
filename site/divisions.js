@@ -12,7 +12,7 @@ window.TechouseDivisions = (() => {
   <article><div class="product-art brochure-art"><img src="assets/solar-catalogue/datasheet-5.jpg" alt="Skyworth 3–12 kW hybrid inverter brochure" loading="lazy"></div><small>02 / CONVERT</small><h3>Inverters</h3><p>Connect generation to everyday use. Explore grid-tied or hybrid configurations with the team.</p><a href="#/divisions/solar/products/inverters">Explore inverters ↗</a></article>
   <article><div class="product-art brochure-art"><img src="assets/solar-catalogue/datasheet-2.jpg" alt="Skyworth SWR battery range brochure" loading="lazy"></div><small>03 / STORE</small><h3>Battery storage</h3><p>Discuss backup priorities and storage options for a system designed around your needs.</p><a href="#/divisions/solar/products/batteries">Explore battery storage ↗</a></article></div><p class="catalogue-note">Skyworth product ranges · Select a category to explore models and datasheets.</p></section>
   <section class="project-showcase division-section" id="projects"><div class="section-heading"><span>02 / IN THE FIELD</span><h2>Energy, put to work.</h2><p>A home for our completed solar installations. Project photos, locations and system details will appear here as the portfolio is added.</p></div><div class="project-placeholder"><img src="assets/solar.jpg" alt="Illustrative solar rooftop, not a completed Techouse installation" loading="lazy"><div><span>PAST PROJECTS / PORTFOLIO PREVIEW</span><h3>The next story<br>starts on a rooftop.</h3><p>Approved Techouse project stories coming soon.</p></div></div></section>
-  <section class="estimator division-section" id="estimator"><div class="section-heading"><span>03 / PLAN YOUR PROJECT</span><h2>What could solar<br>look like for you?</h2><p>Get a starting budget using editable sample assumptions. A site assessment and equipment selection will determine your final proposal.</p></div><form id="solar-estimator"><div class="estimate-inputs"><label>Monthly electricity bill (₱)<input name="bill" type="number" min="500" max="1000000" step="100" value="6000" required></label><label>Electricity rate (₱ / kWh)<input name="rate" type="number" min="1" max="100" step="0.1" value="12" required></label><label>Target energy offset (%)<input name="offset" type="range" min="20" max="100" step="5" value="80"><output id="offset-value">80%</output></label><label>System type<select name="system"><option value="grid">Grid-tied</option><option value="hybrid">Hybrid + sample 5 kWh battery</option></select></label><details><summary>Edit budget assumptions</summary><label>Installed base price (₱ / kWp)<input name="price" type="number" min="10000" max="200000" step="1000" value="45000" required></label><label>Battery allowance (₱)<input name="battery" type="number" min="0" max="2000000" step="1000" value="120000" required></label><p>Sample inputs only; these are not Techouse prices.</p></details></div><div class="estimate-result" aria-live="polite" aria-atomic="true" id="estimate-result"></div></form><p class="estimate-disclaimer">Planning illustration only, not a quotation or savings guarantee. Assumes 4 peak sun hours/day, 80% system efficiency and 30 days/month; budget range is ±15%. Energy offset assumes generation can be used on site; no export credits are assumed. Roof suitability, shading, permits, electrical upgrades, actual tariffs and battery sizing need assessment.</p></section>`;
+  <section class="estimator division-section" id="estimator"><div class="section-heading"><span>03 / PLAN YOUR PROJECT</span><h2>What could solar<br>look like for you?</h2><p>Get a starting budget using editable sample assumptions. A site assessment and equipment selection will determine your final proposal.</p></div><form id="solar-estimator"><div class="estimate-inputs"><label>Monthly electricity bill (₱)<input name="bill" type="number" min="500" max="5000000" step="100" value="6000" required></label><label>Target energy offset (%)<input name="offset" type="range" min="20" max="100" step="5" value="80"><output id="offset-value">80%</output></label><details><summary>Edit estimate details</summary><label>Electricity rate (₱ / kWh)<input name="rate" type="number" min="1" max="100" step="0.1" value="16" required></label><label>Panel technology<select name="panel"><option value="topcon">620 W TOPCon</option><option value="bc">660 W back-contact (BC)</option></select></label><label>Electricity used after sunset (%)<input name="nightShare" type="number" min="0" max="90" step="5" value="60" required><small>Typical homes use most power in the evening. Businesses open in daytime use less.</small></label></details></div><div class="estimate-result" aria-live="polite" aria-atomic="true" id="estimate-result"></div></form><p class="estimate-disclaimer">Planning illustration only, not a quotation or savings guarantee. Uses Techouse equipment pricing, 4.5 peak sun hours/day, 20% system losses and 30 days/month. Energy offset assumes generation is used on site; no export credits are assumed. Roof suitability, shading, permits, electrical upgrades, actual tariffs and battery sizing need assessment.</p></section>`;
   function page(d, divisions, art, arrow) {
     return `<article class="division-experience"><section class="division-cover">${window.TechouseContent?.snapshot().images[d.id] ? `<img src="${window.TechouseContent.imageURL(window.TechouseContent.snapshot().images[d.id])}" alt="${d.alt || d.short}" fetchpriority="high">` : d.image ? `<img src="assets/${d.image}" alt="${d.alt}" fetchpriority="high">` : art}<div class="cover-shade"></div><div class="cover-copy"><a href="#/" class="back-divisions">← All divisions</a><span>TECHOUSE / DIVISION ${d.number}</span><h1>${d.id === 'solar' ? 'Turn sunlight into<br>everyday savings.' : d.short + '.'}</h1><p>${d.id === 'solar' ? 'Looking at your electricity bill differently? Explore what solar could mean for your property.' : d.tagline}</p><a class="button" href="${d.id === 'solar' ? '#solar-start' : '#/inquiry?division=' + d.id}" ${d.id === 'solar' ? 'data-scroll="solar-start"' : ''}>${d.id === 'solar' ? 'Let’s find your solar savings' : 'Let’s talk'} ${d.id === 'solar' ? '<span class="solar-peso-icon" aria-hidden="true">₱</span>' : arrow}</a></div><span class="cover-foot">${d.id === 'solar' ? 'YOUR PROPERTY. YOUR ENERGY. YOUR NEXT CHAPTER.' : 'YOUR VISION. OUR NEXT CONVERSATION.'}</span></section>${d.id === 'solar' ? `<nav class="division-subnav" aria-label="Solar sections"><a href="#products" data-scroll="products">Products</a><a href="#projects" data-scroll="projects">Past projects</a><a href="#estimator" data-scroll="estimator">Cost estimator ↗</a></nav><div class="division-wrap">${solar}</div>` : `<div class="division-wrap"><section class="division-section basic-division"><div><span>01 / ${d.short.toUpperCase()}</span><h2>${d.tagline}</h2><p>${d.description}</p><a class="text-link" href="#/inquiry?division=${d.id}">Start a conversation ${arrow}</a></div><div><span>LET’S START WITH THE ESSENTIALS</span><ul>${d.prompts.map((p, i) => `<li><small>0${i + 1}</small>${p}</li>`).join('')}</ul></div></section></div>`}<section class="division-next"><span>ONE TECHOUSE. MORE POSSIBILITIES.</span><h2>What else are you building?</h2><div>${divisions
       .filter((x) => x.id !== d.id)
@@ -164,6 +164,7 @@ window.TechouseDivisions = (() => {
       const hadEstimate = !!out.querySelector('.animated-price');
       calculateButton.hidden = false;
       cancelAnimationFrame(countFrame);
+      form.querySelector('.solar-scenarios')?.remove();
       document.getElementById('offset-value').textContent = form.elements.offset.value + '%';
       out.innerHTML =
         '<div class="estimate-ready"><span>YOUR SOLAR STARTING POINT</span><h3>Let’s put a number<br>to your plans.</h3><p>Enter your monthly electricity bill, choose your target, then select <strong>Calculate cost</strong>.</p><small>Sample assumptions · indicative budget only</small></div>';
@@ -185,8 +186,64 @@ window.TechouseDivisions = (() => {
         );
       }
     }
-    // SAMPLE MODEL: bill/rate -> target monthly energy -> rounded kWp -> indicative budget ±15%.
+    // WORKBOOK MODEL: solar-calculator.js sizes each setup from the bill and prices it from the price list.
     // Input changes invalidate results; never treat this browser calculation as a production quote.
+    const calculator = window.TechouseSolarCalculator;
+    let result = null;
+    const range = (s) =>
+      `${peso(Math.floor(s.priceLow / 1000) * 1000)} – ${peso(Math.ceil(s.priceHigh / 1000) * 1000)}`;
+    const payback = (s) =>
+      Number.isFinite(s.paybackLow)
+        ? `${calculator.formatPayback(s.paybackLow)} – ${calculator.formatPayback(s.paybackHigh)}`
+        : 'Not reached';
+    const size = (s) =>
+      `${s.kwp.toFixed(2)} kWp${s.batteryKwh ? ` + ${+s.batteryKwh.toFixed(2)} kWh storage` : ''}`;
+    const scenarioCard = (s, recommended) =>
+      `<label class="solar-scenario"><input type="radio" name="scenario" value="${s.id}"${s.id === recommended ? ' checked' : ''}><span class="solar-scenario-head"><strong>${s.title}</strong>${s.id === recommended ? '<em>Matches your goal</em>' : ''}</span><span class="solar-scenario-price">${range(s)}</span><span class="solar-scenario-summary">${s.summary}</span><span class="solar-scenario-figures"><span><small>Monthly savings</small>${peso(s.savings)}</span><span><small>Payback</small>${payback(s)}</span></span><ul>${s.lines.map((l) => `<li><span>${l.qty} ×</span>${l.label}</li>`).join('')}</ul></label>`;
+    // Selecting a setup refreshes the headline without recalculating or clearing the comparison.
+    function select(id, animate = false) {
+      const s = result?.scenarios.find((item) => item.id === id) || result?.scenarios[0];
+      const highlight = out.querySelector('.estimate-budget-highlight');
+      if (!s || !highlight) return;
+      cancelAnimationFrame(countFrame);
+      const low = Math.floor(s.priceLow / 1000) * 1000,
+        high = Math.ceil(s.priceHigh / 1000) * 1000;
+      highlight.querySelector('[data-scenario-title]').textContent = s.title;
+      const heading = highlight.querySelector('h3');
+      heading.setAttribute('aria-label', `${peso(low)} to ${peso(high)}`);
+      heading.innerHTML = `<span aria-hidden="true" data-price-low>${peso(low)}</span> <span aria-hidden="true" data-price-high>– ${peso(high)}</span>`;
+      const values = highlight.querySelectorAll('.estimate-economics dd');
+      values[0].textContent = peso(s.savings);
+      values[1].textContent = payback(s);
+      values[2].textContent = size(s);
+      const metrics = out.querySelectorAll('.estimate-metrics strong');
+      metrics[0].textContent = `${s.kwp.toFixed(2)} kWp`;
+      metrics[1].textContent = `~${Math.ceil(s.panels * 2.7)} m²`;
+      metrics[2].textContent = `~${Math.round(s.generation)} kWh`;
+      // Fit the final range, not the changing count-up digits, to avoid size jitter.
+      const context = document.createElement('canvas').getContext('2d');
+      const typography = getComputedStyle(heading);
+      context.font = `${typography.fontWeight} 100px ${typography.fontFamily}`;
+      const measured = context.measureText(`${peso(low)} – ${peso(high)}`).width;
+      if (measured) heading.style.fontSize = `clamp(16px, ${9600 / measured}cqw, 64px)`;
+      out.querySelector('.energy-equivalents')?.remove();
+      window.TechouseSolarExtras?.updateEnergy(form, s.generation);
+      const energy = out.querySelector('.energy-equivalents');
+      if (energy) out.querySelector('.estimate-budget-references').append(energy);
+      if (!animate || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const start = performance.now(),
+        lower = heading.querySelector('[data-price-low]'),
+        upper = heading.querySelector('[data-price-high]');
+      function count(now) {
+        if (!lower.isConnected) return;
+        const t = Math.min(1, (now - start) / 650),
+          ease = 1 - Math.pow(1 - t, 3);
+        lower.textContent = peso(low * ease);
+        upper.textContent = '– ' + peso(high * ease);
+        if (t < 1) countFrame = requestAnimationFrame(count);
+      }
+      countFrame = requestAnimationFrame(count);
+    }
     function calculate() {
       cancelAnimationFrame(countFrame);
       if (!form.checkValidity()) {
@@ -197,58 +254,22 @@ window.TechouseDivisions = (() => {
         form.reportValidity();
         return;
       }
-      const { kw, generation, low, high, savings, maintenance, netMonthly } =
-        window.TechouseSolar.calculateEstimate(Object.fromEntries(new FormData(form)));
-      // Simple undiscounted payback: sample capex / monthly benefit after allowance.
-      const payback =
-        netMonthly > 0
-          ? `${(low / netMonthly / 12).toFixed(1)}–${(high / netMonthly / 12).toFixed(1)} years`
-          : 'Not reached';
+      result = calculator.calculate(Object.fromEntries(new FormData(form)));
+      if (!result.scenarios.length) return;
+      const recommended = window.TechouseSolar?.recommendedScenario(result.segment) || 'day';
       calculateButton.hidden = true;
-      out.innerHTML = `<span>YOUR INDICATIVE PROJECT BUDGET</span><h3 class="animated-price" aria-label="${peso(low)} to ${peso(high)}"><span aria-hidden="true" data-price-low>${peso(low)}</span> <span aria-hidden="true" data-price-high>– ${peso(high)}</span></h3><div class="estimate-metrics"><p><strong>${kw.toFixed(1)} kWp</strong>Illustrative solar capacity</p><p><strong>~${Math.ceil(kw * 6)} m²</strong>Indicative panel area</p><p><strong>~${Math.round(generation)} kWh</strong>Generation / month</p></div><a class="button" href="#/inquiry?division=solar&estimate=1" id="solar-estimate-inquiry">Like this starting point? Let’s talk ↗</a><small>Sample pricing · final design and quote require review.</small>`;
-      window.TechouseSolarExtras?.updateEnergy(form, generation);
-      // Keep the decision and next action prominent; system sizing is optional reference.
-      if (document.querySelector('.solar-streamlined')) {
-        const metrics = out.querySelector('.estimate-metrics');
-        const details = document.createElement('details');
-        details.className = 'estimate-system-details';
-        details.innerHTML = '<summary>View estimated system size</summary>';
-        metrics.before(details);
-        details.append(metrics);
-        out
-          .querySelector('h3')
-          .after(out.querySelector('#solar-estimate-inquiry'), out.querySelector(':scope > small'));
-        const highlight = document.createElement('div');
-        highlight.className = 'estimate-budget-highlight';
-        out.prepend(highlight);
-        highlight.append(
-          out.querySelector(':scope > span'),
-          out.querySelector('h3'),
-          out.querySelector('#solar-estimate-inquiry'),
-          out.querySelector(':scope > small'),
-        );
-        const economics = document.createElement('dl');
-        economics.className = 'estimate-economics';
-        economics.innerHTML = `<div><dt>Potential monthly bill savings</dt><dd>${peso(savings)}</dd></div><div><dt>Simple payback estimate</dt><dd>${payback}</dd></div><div><dt>Annual maintenance allowance</dt><dd>${peso(maintenance)} / year</dd></div>`;
-        highlight.querySelector('h3').after(economics);
-        // Fit the final range, not the changing count-up digits, to avoid size jitter.
-        const priceHeading = highlight.querySelector('h3');
-        const context = document.createElement('canvas').getContext('2d');
-        const typography = getComputedStyle(priceHeading);
-        context.font = `${typography.fontWeight} 100px ${typography.fontFamily}`;
-        const measured = context.measureText(`${peso(low)} – ${peso(high)}`).width;
-        priceHeading.style.fontSize = `clamp(16px, ${9600 / measured}cqw, 64px)`;
-
-        const assumptions = document.createElement('p');
-        assumptions.className = 'estimate-economics-note';
-        assumptions.textContent =
-          'Illustration assumes target energy is used on site. Payback deducts the sample maintenance allowance; excludes financing, degradation, tariff changes and equipment replacement. Adjust the allowance under estimate details.';
-        highlight.append(assumptions);
-        const references = document.createElement('div');
-        references.className = 'estimate-budget-references';
-        [...out.querySelectorAll(':scope > details')].forEach((item) => references.append(item));
-        out.append(references);
-      }
+      const tierNote =
+        result.segment === 'commercial'
+          ? 'Larger systems use commercial and industrial pricing with 380 V grid-tied inverters.'
+          : 'Range runs from our best package pricing to standard list price.';
+      out.innerHTML = `<div class="estimate-budget-highlight"><span>YOUR INDICATIVE PROJECT BUDGET · <b data-scenario-title></b></span><h3 class="animated-price"></h3><dl class="estimate-economics"><div><dt>Potential monthly bill savings</dt><dd></dd></div><div><dt>Simple payback estimate</dt><dd></dd></div><div><dt>Estimated system size</dt><dd></dd></div></dl><a class="button" href="#/inquiry?division=solar&estimate=1" id="solar-estimate-inquiry">Like this starting point? Let’s talk ↗</a><small>Techouse equipment pricing · final design and quote require a site review.</small><p class="estimate-economics-note">${tierNote} Includes panels, inverter, batteries where shown, mounting accessories and installation. Payback excludes financing, degradation, tariff changes and equipment replacement. Compare other setups below.</p></div><div class="estimate-budget-references"><details class="estimate-system-details"><summary>View estimated system size</summary><div class="estimate-metrics"><p><strong></strong>Solar capacity</p><p><strong></strong>Indicative panel area</p><p><strong></strong>Generation / month</p></div></details></div>`;
+      // Full-width comparison row below inputs and headline; outside the live region to keep announcements short.
+      const scenarios = document.createElement('fieldset');
+      scenarios.className = 'solar-scenarios';
+      scenarios.dataset.count = result.scenarios.length;
+      scenarios.innerHTML = `<legend><span>COMPARE SETUPS</span>Select a setup to update your budget and discuss it with our team.</legend><div>${result.scenarios.map((s) => scenarioCard(s, recommended)).join('')}</div>`;
+      out.after(scenarios);
+      select(recommended, true);
       if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
         out.animate(
           [
@@ -257,8 +278,8 @@ window.TechouseDivisions = (() => {
           ],
           { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' },
         );
-        out.querySelectorAll('.estimate-metrics p').forEach((metric, i) =>
-          metric.animate(
+        scenarios.querySelectorAll('.solar-scenario').forEach((card, i) =>
+          card.animate(
             [
               { opacity: 0, transform: 'translateY(8px)' },
               { opacity: 1, transform: 'translateY(0)' },
@@ -267,27 +288,19 @@ window.TechouseDivisions = (() => {
           ),
         );
       }
-      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        const start = performance.now(),
-          lower = out.querySelector('[data-price-low]'),
-          upper = out.querySelector('[data-price-high]');
-        function count(now) {
-          if (!lower.isConnected) return;
-          const t = Math.min(1, (now - start) / 650),
-            ease = 1 - Math.pow(1 - t, 3);
-          lower.textContent = peso(low * ease);
-          upper.textContent = '– ' + peso(high * ease);
-          if (t < 1) countFrame = requestAnimationFrame(count);
-        }
-        countFrame = requestAnimationFrame(count);
-      }
     }
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       calculate();
     });
-    form.addEventListener('input', reset);
-    form.addEventListener('change', reset);
+    // Choosing a compared setup is not an input change; everything else invalidates the result.
+    form.addEventListener('input', (e) => {
+      if (e.target.name !== 'scenario') reset();
+    });
+    form.addEventListener('change', (e) => {
+      if (e.target.name === 'scenario') select(e.target.value);
+      else reset();
+    });
     reset();
     window.TechouseSolar?.connectEstimate(form);
   }

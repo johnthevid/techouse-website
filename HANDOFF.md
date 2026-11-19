@@ -1,6 +1,24 @@
 # Current handoff
 
-Updated: 4 November 2026.
+Updated: 19 November 2026.
+
+## Latest: Solar Calculator (branch `claude/loving-goodall-89njs2`)
+
+**Task:** Replace the sample solar estimator with a Solar Calculator based on the Techouse sales workbook (Calculator, Packages and Pricelist sheets) supplied by the user.
+
+**Completed:**
+- Added `site/solar-calculator.js`, a DOM-free model ported from the workbook. Sizing: bill ÷ rate ÷ 30 ÷ 4.5 PSH, ÷ (1 − 20% loss) × target offset. Panels are rounded up to 620 W TOPCon or 660 W BC. Inverters are picked automatically (DC/AC ≤ 1.25) and batteries in 16.07/10.49/5.12 kWh sizes. Accessories and installation are priced per panel.
+- Residential/SME (≤ 24 kWp) compares Daytime solar, Day + 50% of night and Day + night. The price range runs from tier A0 (low) to A2 (high, list price). Larger systems use C&I 380 V grid-tied inverters, tiers T4–T6, and compare Daytime solar with Daytime + 3-hour storage. Only the A2/A0/T6/T4 tiers are in source; A1/T5/T3 and the workbook's contact/agent sheets were deliberately not copied.
+- The model reproduces the workbook outputs, e.g. ₱196,979–₱234,292 for Day + 50% night at ₱6,000/₱16, and ₱4,449,115–₱4,965,868 for C&I day-only at ₱250,000/₱12.
+- Estimator UI (`divisions.js`, `solar-journey.js`, new `solar-calculator.css`): the inputs are bill, coverage target, and optional rate (default ₱16, as in the workbook), panel technology and share used after sunset. Results show the highlighted setup (from the visitor's goal) plus a full-width selectable comparison with equipment lists, savings and payback. The inquiry handoff carries the chosen setup, equipment list and budget. The sample ₱/kWp, battery allowance and maintenance inputs were removed.
+- Assumptions copy updated in `divisions.js` and `solar-extras.js`.
+
+**Checks:** All 22 tests passed (`npm test`), including the new `platform/tests/solar-calculator.test.mjs`. Browser tests ran against the container's Chromium via a temporary uncommitted Playwright shim, because Google Chrome (`channel: "chrome"`) was unavailable. Updated the expected estimator values in `round3-browser.test.mjs` and `update-101-browser.test.mjs`. The latter now waits for the estimate entrance animation before recording the scroll position, because clicking a moving target made Playwright re-scroll. Desktop (1440) and mobile (390) screenshots were reviewed. Prettier could not be run in that session.
+
+**Remaining:** Confirm the default electricity rate (₱16) and that publishing A2/A0 and T6/T4 prices on the public site is approved. Run Prettier and the browser tests with local Chrome. `portfolio.js` project savings still use the older 4 h / 80% model. Script/style cache versions for the new files are added by `refresh-assets.mjs` at deployment.
+
+**Deployment:** Not deployed. A Git push does not authorize a release.
+
 
 ## Latest: approved 1.0.1 GitHub source release
 

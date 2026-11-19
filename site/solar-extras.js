@@ -216,7 +216,7 @@ window.TechouseSolarExtras = (() => {
       const panel = document.createElement('details');
       panel.className = 'estimate-disclaimer estimate-notes';
       panel.innerHTML =
-        '<summary>Indicative estimate only · final pricing needs a site review. <span>See assumptions</span></summary><div><p><b>How we estimate</b>4 peak sun hours per day · 80% system efficiency · 30 days per month · budget range ±15%.</p><p><b>How energy is counted</b>Assumes generation can be used on site. No export credits are included.</p><p><b>What we still need to check</b>Roof suitability, shade, permits, electrical upgrades, actual tariffs, and battery sizing.</p></div>';
+        '<summary>Indicative estimate only · final pricing needs a site review. <span>See assumptions</span></summary><div><p><b>How we estimate</b>Sized from your bill with 4.5 peak sun hours per day, 20% system losses and 30 days per month. Panels, inverters and batteries are matched to each setup and priced from the Techouse price list, from best package pricing to standard list price, including mounting accessories and installation.</p><p><b>How energy is counted</b>Assumes generation can be used on site. No export credits are included.</p><p><b>What we still need to check</b>Roof suitability, shade, permits, electrical upgrades, actual tariffs, and battery sizing.</p></div>';
       disclaimer.replaceWith(panel);
     }
     if (new URLSearchParams(location.hash.split('?')[1]).get('section') === 'projects')
