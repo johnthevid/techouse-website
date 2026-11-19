@@ -31,6 +31,7 @@ window.TechouseContent = (() => {
   }
   data.text ||= {};
   data.images ||= {};
+  data.settings ||= {};
   // Upgrade only the untouched starter concepts; keep client-created/edited project records.
   const oldTitles = [
     'Residential rooftop concept',
@@ -150,6 +151,13 @@ window.TechouseContent = (() => {
       select.parentElement.after(label);
     }
   }
+  // Default rate comes from the calculator model; saved settings override it on the public site.
+  const defaultRate = () => window.TechouseSolarCalculator?.DEFAULTS.rate ?? 16;
+  function rateFields() {
+    const rate = data.settings.electricityRate ?? defaultRate();
+    const note = data.settings.electricityRateNote || '';
+    return `<div class="content-field"><div class="customizer-field-heading"><label for="custom-electricity-rate">Electricity rate (₱ per kWh)</label><button type="button" data-reset-field="electricityRate" aria-label="Restore default electricity rate">Restore default</button></div><input id="custom-electricity-rate" name="electricityRate" type="number" min="1" max="100" step="0.0001" required value="${escape(rate)}" data-default="${escape(defaultRate())}"><small>Use the all-in residential rate from Meralco’s monthly advisory, for example 15.5510.</small></div><div class="content-field"><div class="customizer-field-heading"><label for="custom-electricity-rate-note">Rate source shown to visitors (optional)</label><button type="button" data-reset-field="electricityRateNote" aria-label="Clear rate source">Clear</button></div><input id="custom-electricity-rate-note" name="electricityRateNote" maxlength="120" value="${escape(note)}" data-default="" placeholder="Meralco, November 2026"></div>`;
+  }
   function page(home, about, top, tabs) {
     const roots = {};
     for (const [name, html] of Object.entries({ home, about })) {
@@ -184,6 +192,12 @@ window.TechouseContent = (() => {
         filter: ([page]) => page === 'about',
       },
       {
+        id: 'solar-rate',
+        title: 'Solar calculator',
+        note: 'The electricity rate the solar calculator starts with. Update it each month from Meralco’s rate advisory. Visitors can still change it.',
+        filter: () => false,
+      },
+      {
         id: 'images',
         title: 'Banner images',
         note: 'Upload JPEG, PNG or WebP. Images are resized for the prototype.',
@@ -201,7 +215,9 @@ window.TechouseContent = (() => {
       .map(
         (group, i) =>
           `<section class="form-card customizer-panel" id="customizer-${group.id}" data-customizer-group="${group.id}" ${i ? 'hidden' : ''}><div class="customizer-section-heading"><div><h2>${group.title}</h2><p>${group.note}</p></div><button type="button" class="text-link" data-reset-section="${group.id}">Reset section</button></div>${
-            group.id === 'images'
+            group.id === 'solar-rate'
+              ? rateFields()
+              : group.id === 'images'
               ? `<div class="image-editor-grid">${divisions.map((id) => `<div class="content-field"><label for="banner-upload-${id}">${id.charAt(0).toUpperCase() + id.slice(1)}</label><img class="upload-preview" src="${imageURL(data.images[id] || 'assets/' + defaultImages[id])}" data-default-image="${escape('assets/' + defaultImages[id])}" alt="${id} banner preview"><input id="banner-upload-${id}" type="file" accept="image/jpeg,image/png,image/webp" data-banner-upload="${id}"><label class="restore-image"><input type="checkbox" name="remove-${id}"> Use original image</label></div>`).join('')}</div>`
               : fields
                   .filter(group.filter)
@@ -236,7 +252,9 @@ window.TechouseContent = (() => {
     window.TechouseOfficeUI?.refresh();
   }
   function restoreCustomizerPanel(panel) {
-    panel.querySelectorAll('textarea').forEach((input) => (input.value = input.dataset.default));
+    panel
+      .querySelectorAll('textarea, input[data-default]')
+      .forEach((input) => (input.value = input.dataset.default));
     panel.querySelectorAll('[data-banner-upload]').forEach((input) => {
       delete input.dataset.image;
       input.value = '';
@@ -378,6 +396,13 @@ window.TechouseContent = (() => {
           next.text[selector] = value;
         else delete next.text[selector];
       }
+      const rate = Number(form.elements.namedItem('electricityRate').value);
+      const note = form.elements.namedItem('electricityRateNote').value.trim();
+      next.settings = {};
+      if (Number.isFinite(rate) && rate > 0 && rate !== defaultRate())
+        next.settings.electricityRate = rate;
+      if (note) next.settings.electricityRateNote = note;
+      if (!Object.keys(next.settings).length) delete next.settings;
       for (const id of divisions) {
         const input = form.querySelector(`[data-banner-upload="${id}"]`);
         if (form.elements.namedItem('remove-' + id).checked) delete next.images[id];

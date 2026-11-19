@@ -345,6 +345,16 @@ test("1.0.1 inquiry actions, annual estimate and visit lifecycle", async (t) => 
         await page.locator("#solar-estimator .calculate-cost").click();
         const inquiry = page.locator("#solar-estimate-inquiry");
         await inquiry.scrollIntoViewIfNeeded();
+        // Let the estimate entrance and price count-up settle so Playwright does not re-scroll a moving target.
+        await page.waitForFunction(() => {
+          const result = document.querySelector("#estimate-result");
+          const price = result.querySelector("h3");
+          return (
+            !result.getAnimations({ subtree: true }).some((a) => a.playState === "running") &&
+            price.querySelector("[data-price-low]").textContent ===
+              price.getAttribute("aria-label").split(" to ")[0]
+          );
+        });
         const before = await page.evaluate(() => ({
           hash: location.hash,
           scroll: scrollY,
@@ -387,7 +397,7 @@ test("1.0.1 inquiry actions, annual estimate and visit lifecycle", async (t) => 
           await page
             .locator("#inquiry-form")
             .getAttribute("data-solar-savings"),
-          "4800",
+          "2143",
         );
         assert.equal(
           await page.locator("#inquiry-division").inputValue(),

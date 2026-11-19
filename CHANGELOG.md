@@ -2,6 +2,16 @@
 
 Recorded milestones for the Techouse website. Dates use the project's Asia/Manila calendar. These entries describe completed work; they are not retroactively created Git tags or GitHub Releases.
 
+## Unreleased — Solar Calculator
+
+- Replace the sample solar budget estimator with a Solar Calculator ported from the Techouse sales workbook: panel-count sizing, automatic inverter/battery selection and Techouse price-list ranges (A0–A2 residential/SME, T4–T6 C&I).
+- Compare residential setups (daytime, day + 50% night, day + night) or C&I setups (daytime, daytime + 3-hour storage) side by side; the selected setup and equipment carry into the inquiry.
+- Make the calculator's electricity rate editable in the back office (Website customizer → Solar calculator), with an optional source note shown to visitors.
+- Show the electricity rate beside the monthly bill to compact the estimator; trim result-panel notes.
+- Add a day/night electricity-use slider that sizes batteries and updates setup prices.
+- Redesign the phone estimator: stacked bill and rate, tighter spacing, swipeable setup comparison.
+- Add model unit tests; not deployed.
+
 ## 1.0.1 — 4 November 2026
 
 - Approved GitHub source release from `update/1.0.1`, then separately deployed to Cloudflare on 4 November 2026 as Worker `8676aa74-6c27-4155-a000-7de006d6d1ea`. Ten hosted browser check groups passed; no database/content changes.

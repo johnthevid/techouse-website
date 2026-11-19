@@ -1,6 +1,34 @@
 # Current handoff
 
-Updated: 4 November 2026.
+Updated: 19 November 2026.
+
+## Latest: Solar Calculator (branch `feature/solar-calcu`)
+
+**Task:** Replace the sample solar estimator with a Solar Calculator based on the Techouse sales workbook (Calculator, Packages and Pricelist sheets) supplied by the user.
+
+**Completed:**
+- Added `site/solar-calculator.js`, a DOM-free model ported from the workbook. Sizing: bill ÷ rate ÷ 30 ÷ 4.5 PSH, ÷ (1 − 20% loss) × target offset. Panels are rounded up to 620 W TOPCon or 660 W BC. Inverters are picked automatically (DC/AC ≤ 1.25) and batteries in 16.07/10.49/5.12 kWh sizes. Accessories and installation are priced per panel.
+- Residential/SME (≤ 24 kWp) compares Daytime solar, Day + 50% of night and Day + night. The price range runs from tier A0 (low) to A2 (high, list price). Larger systems use C&I 380 V grid-tied inverters, tiers T4–T6, and compare Daytime solar with Daytime + 3-hour storage. Only the A2/A0/T6/T4 tiers are in source; A1/T5/T3 and the workbook's contact/agent sheets were deliberately not copied.
+- The model reproduces the workbook outputs, e.g. ₱196,979–₱234,292 for Day + 50% night at ₱6,000/₱16, and ₱4,449,115–₱4,965,868 for C&I day-only at ₱250,000/₱12.
+- Estimator UI (`divisions.js`, `solar-journey.js`, new `solar-calculator.css`): the inputs are bill, coverage target, and optional rate (default ₱16, as in the workbook), panel technology and share used after sunset. Results show the highlighted setup (from the visitor's goal) plus a full-width selectable comparison with equipment lists, savings and payback. The inquiry handoff carries the chosen setup, equipment list and budget. The sample ₱/kWp, battery allowance and maintenance inputs were removed.
+- Assumptions copy updated in `divisions.js` and `solar-extras.js`.
+
+**Follow-up (same day), back-office rate and compact layout:**
+- Website customizer → **Solar calculator** section: staff set the electricity rate (₱/kWh, 1–100) and an optional source note, e.g. "Meralco, November 2026". Stored as `settings.electricityRate` / `settings.electricityRateNote` in the shared content document. `worker.mjs` validates it and the public calculator uses it as the default rate. Visitors can still edit the rate. No schema migration is needed (content is one JSON row). No official Meralco API exists, so the rate is updated manually each month.
+- Estimator layout: the electricity rate now sits beside the monthly bill in one card, with a subgrid keeping both inputs aligned when labels wrap on phones. "Adjust estimate details" keeps panel technology and share used after sunset. The system type, installed base price, battery allowance and maintenance allowance stay removed. Shortened the results-panel notes, and moved the payback exclusions into "See assumptions".
+- Tests: added settings validation and a back-office browser check (save the rate, confirm it in the database and on the public page). 23/23 tests pass.
+
+**Follow-up 2, day/night slider and phone layout:**
+- New visible slider "03 / When do you use most of your electricity?" (0–90% after sunset, default 60%) replaces the hidden number field. It shows the daytime/after-sunset split and drives battery size and setup prices; for example, Day + night at ₱6,000 goes from ₱263k–₱313k (60%) to ₱217k–₱259k (20%). C&I setups still use the 3-hour storage rule.
+- Phone (≤600 px): the bill and rate stack, with the rate as a compact row; padding is tighter; the result labels sit above their values; setup cards become a swipe row with the next card peeking. Desktop: the results panel no longer stretches with a large gap, and card figures are label/value rows on every screen size.
+- `solar-catalogue-navigation.test.mjs` now targets the coverage slider by name, since two sliders share its style class. 23/23 tests pass.
+
+**Checks:** All 22 tests passed (`npm test`), including the new `platform/tests/solar-calculator.test.mjs`. Browser tests ran against the container's Chromium via a temporary uncommitted Playwright shim, because Google Chrome (`channel: "chrome"`) was unavailable. Updated the expected estimator values in `round3-browser.test.mjs` and `update-101-browser.test.mjs`. The latter now waits for the estimate entrance animation before recording the scroll position, because clicking a moving target made Playwright re-scroll. Desktop (1440) and mobile (390) screenshots were reviewed. Prettier could not be run in that session.
+
+**Remaining:** Enter the current Meralco rate in the back office after deployment (the code default stays ₱16). Confirm and that publishing A2/A0 and T6/T4 prices on the public site is approved. Run Prettier and the browser tests with local Chrome. `portfolio.js` project savings still use the older 4 h / 80% model. Script/style cache versions for the new files are added by `refresh-assets.mjs` at deployment.
+
+**Deployment:** Not deployed. A Git push does not authorize a release.
+
 
 ## Latest: 1.0.1 deployed to Cloudflare
 
