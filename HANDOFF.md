@@ -2,7 +2,7 @@
 
 Updated: 19 November 2026.
 
-## Latest: Solar Calculator (branch `claude/loving-goodall-89njs2`)
+## Latest: Solar Calculator (branch `feature/solar-calcu`)
 
 **Task:** Replace the sample solar estimator with a Solar Calculator based on the Techouse sales workbook (Calculator, Packages and Pricelist sheets) supplied by the user.
 
