@@ -223,7 +223,7 @@ window.TechouseDivisions = (() => {
     const size = (s) =>
       `${s.kwp.toFixed(2)} kWp${s.batteryKwh ? ` + ${+s.batteryKwh.toFixed(2)} kWh storage` : ''}`;
     const scenarioCard = (s, recommended) =>
-      `<label class="solar-scenario"><input type="radio" name="scenario" value="${s.id}"${s.id === recommended ? ' checked' : ''}><span class="solar-scenario-head"><strong>${s.title}</strong>${s.id === recommended ? '<em>Matches your goal</em>' : ''}</span><span class="solar-scenario-price">${range(s)}</span><span class="solar-scenario-summary">${s.summary}</span><span class="solar-scenario-figures"><span><small>Monthly savings</small>${peso(s.savings)}</span><span><small>Payback</small>${payback(s)}</span></span><ul>${s.lines.map((l) => `<li><span>${l.qty} ×</span>${l.label}</li>`).join('')}</ul></label>`;
+      `<label class="solar-scenario"><input type="radio" name="scenario" value="${s.id}"${s.id === recommended ? ' checked' : ''}><span class="solar-scenario-head"><strong>${s.title}</strong>${s.id === recommended ? '<em>Recommended</em>' : ''}</span><span class="solar-scenario-price">${range(s)}</span><span class="solar-scenario-summary">${s.summary}</span><span class="solar-scenario-figures"><span><small>Monthly savings</small>${peso(s.savings)}</span><span><small>Payback</small>${payback(s)}</span></span><ul>${s.lines.map((l) => `<li><span>${l.qty} ×</span>${l.label}</li>`).join('')}</ul></label>`;
     // Selecting a setup refreshes the headline without recalculating or clearing the comparison.
     function select(id, animate = false) {
       const s = result?.scenarios.find((item) => item.id === id) || result?.scenarios[0];
@@ -280,7 +280,7 @@ window.TechouseDivisions = (() => {
       }
       result = calculator.calculate(Object.fromEntries(new FormData(form)));
       if (!result.scenarios.length) return;
-      const recommended = window.TechouseSolar?.recommendedScenario(result.segment) || 'day';
+      const recommended = window.TechouseSolar?.recommendedScenario(result.segment, result.nightShare) || 'day';
       calculateButton.hidden = true;
       const tierNote =
         result.segment === 'commercial'

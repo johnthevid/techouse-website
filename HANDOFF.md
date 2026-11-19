@@ -2,6 +2,15 @@
 
 Updated: 19 November 2026.
 
+## Latest: Solar Calculator night-usage fix (branch `integrate/homepage-refinement`)
+
+- Task: user testing found that choosing mostly evening usage still recommended a setup with no battery.
+- Cause: the recommended setup followed only the planner goal ("Lower my electricity bill" → daytime-only) and ignored the day/night slider. C&I also ignored the slider.
+- Fix: `recommendedScenario(segment, nightShare)` in `site/solar-journey.js` recommends Day + night (residential) or storage (C&I) when night use is 50% or more; badge reads "Recommended". In `site/solar-calculator.js`, C&I daytime PV = full PV × (1 − night) per workbook E33, and C&I storage hours = max(3, night × 4.5 PSH).
+- Known workbook difference kept on purpose: the workbook's "Day + 50% Night" battery (K21) multiplies the already-reduced PV size, so it undersizes; the site uses full PV × night × PSH × 50%.
+- Checks: `node --test tests/*.test.mjs` 30/30 (browser tests via the local Playwright shim).
+- Deployment: not deployed; main not updated.
+
 ## Latest: homepage refinement merged into main with the Solar Calculator
 
 **Task:** Combine `main` (secure back office, Solar Calculator) with `feature/homepage-refinement`. Take the refinement's visual and layout work (simplified homepage and banners, brand opening, mobile revamp, three-step solar planner, Construction page) while keeping main's authenticated back end, and align the back office with the simplified pages.

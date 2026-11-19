@@ -23,18 +23,22 @@ window.TechouseSolar = (() => {
   });
   const money = (n) => currency.format(n);
 
-  // GOAL -> SETUP: the visitor's priority decides which compared setup is highlighted first.
-  function recommendedScenario(segment) {
-    if (choices.goal === 'Lower electricity costs') return 'day';
-    if (segment === 'commercial') return 'storage';
-    return choices.goal === 'Energy after sunset' ? 'partial' : 'full';
+  // RECOMMENDED SETUP: usage comes first. When most electricity is used after sunset (night share
+  // of 50% or more), a daytime-only system would miss most of the bill, so a setup with a battery
+  // sized to that night use is recommended whatever the goal. Otherwise the visitor's goal decides.
+  function recommendedScenario(segment, nightShare = 0) {
+    const mostlyNight = nightShare >= 50;
+    if (segment === 'commercial')
+      return mostlyNight || choices.goal !== 'Lower electricity costs' ? 'storage' : 'day';
+    if (mostlyNight || choices.goal === 'Backup for essentials') return 'full';
+    return choices.goal === 'Energy after sunset' ? 'partial' : 'day';
   }
   // Use one planning model (solar-calculator.js) for the displayed budget and the inquiry handoff.
   function calculateEstimate(values) {
     const result = window.TechouseSolarCalculator.calculate(values);
     const chosen =
       result.scenarios.find((s) => s.id === values.scenario) ||
-      result.scenarios.find((s) => s.id === recommendedScenario(result.segment)) ||
+      result.scenarios.find((s) => s.id === recommendedScenario(result.segment, result.nightShare)) ||
       result.scenarios[0];
     return { ...result, chosen };
   }

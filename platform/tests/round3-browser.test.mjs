@@ -292,9 +292,13 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
   await page.locator('#solar-estimator input[name="rate"]').fill('16');
   await page.locator('#solar-estimator .calculate-cost').click();
   await page.waitForSelector('.estimate-economics');
-  assert.equal(await page.locator('.estimate-economics dd').nth(0).textContent(),'₱2,143');
-  assert.equal(await page.locator('.estimate-economics dd').nth(1).textContent(),'2 yrs 10 mos – 3 yrs 5 mos');
-  assert.equal(await page.locator('.estimate-economics dd').nth(2).textContent(),'1.24 kWp');
+  // Default usage is 60% after sunset, so the recommended setup carries a battery for night use.
+  assert.equal(await page.locator('[data-scenario-title]').textContent(),'Day + night');
+  assert.equal(await page.locator('.solar-scenario:has(input:checked) em').textContent(),'Recommended');
+  assert.match(await page.locator('.solar-scenario:has(input:checked)').textContent(),/10\.49 kWh battery/);
+  assert.equal(await page.locator('.estimate-economics dd').nth(0).textContent(),'₱5,357');
+  assert.equal(await page.locator('.estimate-economics dd').nth(1).textContent(),'4 yrs 2 mos – 4 yrs 11 mos');
+  assert.equal(await page.locator('.estimate-economics dd').nth(2).textContent(),'3.10 kWp + 10.49 kWh storage');
   assert(!(await page.locator('#estimate-result').textContent()).includes('NaN'));
   assert(await page.locator('.calculate-cost').isHidden());
   await page.locator('#solar-estimator input[name="bill"]').fill('7000');
@@ -309,14 +313,14 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
     input.dispatchEvent(new Event('input', { bubbles: true }));
   });
   await page.locator('#solar-estimator .calculate-cost').click();
-  assert.equal(await page.locator('.estimate-economics dd').first().textContent(), '₱1,071');
+  assert.equal(await page.locator('.estimate-economics dd').first().textContent(), '₱2,143');
   await page.locator('#solar-estimate-inquiry').click();
   await page.locator('#repeat-inquiry-dialog [data-existing-action="view"]').click();
   await page.waitForSelector('#saved-inquiry-history');
   await page.locator('#saved-inquiry-history > a').click();
   await page.locator('#repeat-inquiry-dialog [data-existing-action="continue"]').click();
   await page.waitForSelector('#inquiry-form');
-  assert.equal(await page.locator('#inquiry-form').getAttribute('data-solar-savings'), '1071');
+  assert.equal(await page.locator('#inquiry-form').getAttribute('data-solar-savings'), '2143');
   await page.goto(f.env.APP_ORIGIN + '/#/divisions/solar/projects/%');
   await page.waitForSelector('#project-detail-dialog[open]');
   assert.match(await page.locator('#project-detail-dialog').textContent(), /Project unavailable/);

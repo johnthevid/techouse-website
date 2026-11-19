@@ -4,6 +4,8 @@ Recorded milestones for the Techouse website. Dates use the project's Asia/Manil
 
 ## Unreleased — Solar Calculator
 
+- Fix the recommended setup ignoring evening usage: when 50% or more of use is after sunset, the calculator now recommends the setup with a battery sized to that night use (residential "Day + night", C&I storage). C&I daytime-only systems now shrink with the night share (workbook cell E33), and C&I storage hours rise above 3 when night use needs more.
+
 - Merge the homepage refinement (simplified homepage and banners, brand opening, mobile revamp, three-step solar planner, Construction page) with the secure back office and Solar Calculator; retire the About page's unused second-panel CMS fields.
 
 - Replace the sample solar budget estimator with a Solar Calculator ported from the Techouse sales workbook: panel-count sizing, automatic inverter/battery selection and Techouse price-list ranges (A0–A2 residential/SME, T4–T6 C&I).

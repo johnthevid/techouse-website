@@ -185,7 +185,8 @@
     const partial = Math.min(100, Math.max(0, number(values.partialBattery, d.partialBattery))) / 100;
     const hours = Math.max(0, number(values.storageHours, d.storageHours));
     const panel = PANELS[values.panel] || PANELS.topcon;
-    if (!(bill > 0) || !(rate > 0)) return { segment: 'residential', scenarios: [] };
+    if (!(bill > 0) || !(rate > 0))
+      return { segment: 'residential', nightShare: night * 100, scenarios: [] };
 
     // Workbook "Daily Demand": kW of array needed to meet the whole bill at the peak-sun-hour rate.
     const demand = bill / rate / d.days / d.psh;
@@ -193,23 +194,30 @@
     const segment = fullPv > d.residentialLimit ? 'commercial' : 'residential';
     const [high, low] = segment === 'commercial' ? ['T6', 'T4'] : ['A2', 'A0'];
 
+    // Hours of full-array output the night share needs: PV x Night % x PSH = PV x (Night % x PSH) hours.
+    const nightHours = night * d.psh;
+    const storageHours = Math.max(hours, Math.ceil(nightHours * 10) / 10);
+
     const plans =
       segment === 'commercial'
         ? [
             {
+              // Workbook C&I "Day Only" PV = PV size x (1 - Night %) (cell E33).
               id: 'day',
               title: 'Daytime solar',
-              summary: 'Grid-tied panels supply daytime use.',
-              share: 1,
+              summary: 'Grid-tied panels cover the share of use that happens in daylight.',
+              share: 1 - night,
               battery: 0,
               inverters: INVERTERS.gridCommercial,
             },
             {
+              // Workbook C&I battery = PV size x Battery H (cell E50). The hours rise when night use
+              // needs more than that, so the battery is never smaller than the after-sunset share.
               id: 'storage',
-              title: `Daytime solar + ${hours}-hour storage`,
-              summary: `Adds about ${hours} hours of battery storage at full array output.`,
+              title: `Daytime solar + ${storageHours}-hour storage`,
+              summary: `Full array with about ${storageHours} hours of battery storage for after-sunset use.`,
               share: 1,
-              battery: fullPv * hours,
+              battery: fullPv * storageHours,
               inverters: INVERTERS.gridCommercial,
             },
           ]
@@ -276,7 +284,7 @@
         paybackHigh: savings > 0 ? priceHigh / savings : Infinity,
       };
     });
-    return { segment, tiers: { low, high }, demand, fullPv, scenarios };
+    return { segment, tiers: { low, high }, demand, fullPv, nightShare: night * 100, scenarios };
   }
 
   // Workbook ROI format: whole years plus remaining months, rounded up.

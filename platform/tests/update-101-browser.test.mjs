@@ -414,7 +414,7 @@ test("1.0.1 inquiry actions, annual estimate and visit lifecycle", async (t) => 
           await page
             .locator("#inquiry-form")
             .getAttribute("data-solar-savings"),
-          "2143",
+          "5357",
         );
         assert.equal(
           await page.locator("#inquiry-division").inputValue(),

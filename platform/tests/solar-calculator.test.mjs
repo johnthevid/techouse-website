@@ -23,7 +23,12 @@ test('solar calculator reproduces the sales workbook residential scenarios', () 
 });
 
 test('solar calculator switches large systems to C&I equipment and tiers', () => {
-  const { segment, tiers, scenarios } = calculator.calculate({ bill: 250000, rate: 12, offset: 80 });
+  const { segment, tiers, scenarios } = calculator.calculate({
+    bill: 250000,
+    rate: 12,
+    offset: 80,
+    nightShare: 0, // workbook C&I inputs: Night % 0, Battery H 3
+  });
   assert.equal(segment, 'commercial');
   assert.deepEqual(tiers, { low: 'T4', high: 'T6' });
   // Workbook C&I "Day Only": 249 x 620 W with a 125 kW 380 V inverter (F40/G40).
@@ -32,6 +37,24 @@ test('solar calculator switches large systems to C&I equipment and tiers', () =>
   assert.equal(day.lines[1].item, '125kw Grid Tied 380V');
   assert.equal(day.priceHigh, 4965868);
   assert.equal(day.priceLow, 4449115);
+  assert.equal(scenarios[1].batteryKwh >= 154 * 3, true);
+});
+
+test('solar calculator sizes batteries to after-sunset use', () => {
+  // Residential: the day + night battery holds the night share of the targeted daily energy.
+  const low = calculator.calculate({ bill: 6000, rate: 16, nightShare: 20 }).scenarios;
+  const high = calculator.calculate({ bill: 6000, rate: 16, nightShare: 80 }).scenarios;
+  assert.equal(high[0].batteryKwh, 0);
+  assert.ok(high[0].kwp < low[0].kwp, 'daytime-only system shrinks as night use grows');
+  assert.ok(high[2].batteryKwh > low[2].batteryKwh);
+  // fullPv x night x PSH: 2.778 kWp x 0.8 x 4.5 = 10 kWh, met by one 10.49 kWh module.
+  assert.equal(high[2].batteryKwh, 10.49);
+  // C&I: the storage hours rise above 3 when night use needs more.
+  const ci = calculator.calculate({ bill: 250000, rate: 12, nightShare: 90 });
+  assert.equal(ci.nightShare, 90);
+  assert.match(ci.scenarios[1].title, /4\.1-hour storage/);
+  assert.ok(ci.scenarios[1].batteryKwh >= ci.fullPv * 4.05);
+  assert.ok(ci.scenarios[0].kwp < ci.fullPv * 0.11);
 });
 
 test('solar calculator equipment selection and formatting', () => {
