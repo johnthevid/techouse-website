@@ -154,3 +154,44 @@
     transition: none;
   }
 }
+
+/* Bill and rate side by side in one card; the bill keeps visual priority. */
+#solar-estimator .solar-bill-row {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 16px;
+  align-items: start;
+  grid-column: 1 / -1;
+}
+#solar-estimator .solar-bill-row {
+  grid-template-rows: auto auto auto;
+  row-gap: 0;
+}
+/* Subgrid keeps both input boxes on one line when a label wraps on narrow screens. */
+#solar-estimator .solar-bill-row > label {
+  display: grid;
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+  align-content: start;
+  margin: 0;
+  min-width: 0;
+}
+#solar-estimator .solar-bill-row > label > input {
+  align-self: end;
+}
+#solar-estimator .solar-rate-control {
+  font-weight: 500;
+}
+#solar-estimator .solar-bill-row small {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #64705e;
+}
+@media (max-width: 340px) {
+  #solar-estimator .solar-bill-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

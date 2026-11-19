@@ -62,9 +62,20 @@ window.TechouseSolar = (() => {
     estimator.querySelector('.section-heading span').textContent = '02 / YOUR STARTING BUDGET';
     estimator.querySelector('.section-heading p').textContent =
       'Enter your monthly bill to explore an indicative budget. You can adjust the estimate details if needed.';
-    const billLabel = host.elements.bill.closest('label');
-    billLabel.classList.add('solar-bill-control');
-    billLabel.firstChild.textContent = '01 / Your monthly electricity bill (₱)';
+    // Bill and rate share one card: the rate is the second half of the same question.
+    const billRow = host.querySelector('.solar-bill-row');
+    billRow.classList.add('solar-bill-control');
+    host.elements.bill.closest('label').firstChild.textContent = '01 / Your monthly bill (₱)';
+    host.elements.rate.closest('label').firstChild.textContent = 'Electricity rate (₱ / kWh)';
+    // Staff set the monthly Meralco rate in the back office (Website customizer → Solar calculator).
+    const settings = window.TechouseContent?.snapshot().settings || {};
+    if (Number.isFinite(settings.electricityRate) && settings.electricityRate > 0) {
+      host.elements.rate.value = String(settings.electricityRate);
+      host.elements.rate.defaultValue = String(settings.electricityRate);
+    }
+    if (settings.electricityRateNote)
+      host.querySelector('[data-rate-note]').textContent =
+        `${settings.electricityRateNote}. Match it to your bill.`;
     const offsetLabel = host.elements.offset.closest('label');
     offsetLabel.firstChild.textContent = '02 / How much would you like solar to cover? ';
     const targetNote = document.createElement('small');

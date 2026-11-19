@@ -46,3 +46,25 @@ test('solar calculator equipment selection and formatting', () => {
   for (const item of Object.values(calculator.PRICES))
     assert.deepEqual(Object.keys(item).sort(), ['A0', 'A2', 'T4', 'T6', 'model']);
 });
+
+test('back-office electricity rate setting is validated', async () => {
+  const { validateContent } = await import('../worker.mjs');
+  const base = { text: {}, images: {}, projects: [], posts: [] };
+  assert.deepEqual(
+    validateContent({
+      ...base,
+      settings: { electricityRate: 15.551, electricityRateNote: 'Meralco, November 2026' },
+    }).settings,
+    { electricityRate: 15.551, electricityRateNote: 'Meralco, November 2026' },
+  );
+  assert.equal(validateContent(base).settings, undefined);
+  for (const settings of [
+    { electricityRate: 0 },
+    { electricityRate: '15' },
+    { electricityRate: 150 },
+    { electricityRateNote: 'x'.repeat(121) },
+    { other: 1 },
+    [],
+  ])
+    assert.throws(() => validateContent({ ...base, settings }));
+});

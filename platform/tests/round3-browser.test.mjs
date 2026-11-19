@@ -211,6 +211,18 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
       .querySelector("#content-status")
       .textContent.includes("saved online"),
   );
+  // Solar calculator rate: staff update Meralco's monthly rate in the customizer.
+  await page.locator('[data-customizer-section="solar-rate"]').click();
+  await page.locator('input[name="electricityRate"]').fill('15.551');
+  await page.locator('input[name="electricityRateNote"]').fill('Meralco, November 2026');
+  if (process.env.TECHOUSE_SHOT) await page.locator('#customizer-solar-rate').screenshot({ path: process.env.TECHOUSE_SHOT });
+  await page.locator('button[type="submit"]:not([value])').click();
+  await page.waitForFunction(() => document.querySelector('#customizer-save-state').textContent === 'All changes saved');
+  assert.deepEqual(JSON.parse(f.db.prepare('SELECT body FROM content WHERE id=1').get().body).settings, {
+    electricityRate: 15.551,
+    electricityRateNote: 'Meralco, November 2026',
+  });
+  await page.locator('[data-customizer-section="opening"]').click();
   // Review actions wait for the server; a rejected save keeps the draft and dialog open.
   await page.locator('textarea[name=".landing-kicker"]').fill('Saved through the changes review');
   await page.locator('.admin-tabs a[href="#/office/projects"]').click();
@@ -266,6 +278,10 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
   }
   await page.goto(f.env.APP_ORIGIN + '/#/divisions/solar');
   await page.waitForSelector('#solar-estimator');
+  assert.equal(await page.inputValue('#solar-estimator input[name="rate"]'), '15.551');
+  assert.match(await page.locator('[data-rate-note]').textContent(), /Meralco, November 2026/);
+  // The remaining expectations use the workbook's default rate.
+  await page.locator('#solar-estimator input[name="rate"]').fill('16');
   await page.locator('#solar-estimator .calculate-cost').click();
   await page.waitForSelector('.estimate-economics');
   assert.equal(await page.locator('.estimate-economics dd').nth(0).textContent(),'₱2,143');
