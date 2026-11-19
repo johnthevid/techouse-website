@@ -214,31 +214,6 @@
 #solar-estimator .solar-usage-control input[type='range']::-moz-range-progress {
   background: transparent;
 }
-.solar-usage-split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin-top: 16px;
-  border-top: 1px solid #d3d8cb;
-}
-.solar-usage-split p {
-  margin: 0;
-  padding-top: 12px;
-  font-size: 12px;
-  font-weight: 400;
-  color: #596752;
-}
-.solar-usage-split p + p {
-  padding-left: 16px;
-  border-left: 1px solid #d3d8cb;
-}
-.solar-usage-split strong {
-  display: block;
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 1.2;
-  color: #244b38;
-  font-variant-numeric: tabular-nums;
-}
 #solar-estimator .solar-usage-control {
   grid-column: 1 / -1;
   font-weight: 400;
@@ -352,4 +327,196 @@
 /* Results sit at the top of the panel rather than stretching to match a taller input column. */
 .solar-streamlined #estimate-result .estimate-budget-highlight {
   flex: 0 0 auto;
+}
+
+/* ===== COMPACT LAYOUT =====
+   Sliders read as one card: question left, value right, thin track, endpoint labels.
+   Results size to their content instead of matching the input column. */
+#solar-estimator .estimate-inputs {
+  gap: 12px;
+  padding: 20px;
+}
+#solar-estimator .solar-bill-control {
+  padding: 16px;
+}
+#solar-estimator .solar-bill-control input {
+  min-height: 46px;
+  margin-top: 8px;
+  font-size: 20px;
+}
+#solar-estimator .solar-offset-control {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: 12px;
+  padding: 14px 16px 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+#solar-estimator .solar-offset-control > input[type='range'] {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  height: 32px;
+  min-height: 32px;
+  margin: 4px 0 0;
+}
+#solar-estimator .solar-offset-control > output {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #244b38;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+#solar-estimator .solar-offset-control .solar-offset-endpoints {
+  grid-column: 1 / -1;
+  font-size: 11px;
+}
+#solar-estimator .solar-offset-control .solar-target-note {
+  display: none;
+}
+/* Coverage message on one line with a small sun. */
+#solar-estimator .solar-coverage-tier {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #d3d8cb;
+}
+#solar-estimator .solar-coverage-tier .coverage-sun {
+  flex: 0 0 26px;
+  width: 26px;
+  height: 26px;
+}
+#solar-estimator .solar-coverage-tier .coverage-tier-copy {
+  display: block;
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 400;
+  color: #596752;
+}
+#solar-estimator .solar-coverage-tier .coverage-tier-copy strong {
+  display: inline;
+  margin-right: 6px;
+  font-size: 13px;
+  color: #244b38;
+}
+/* Join the two slider cards into one. */
+#solar-estimator .solar-offset-control:not(.solar-usage-control) {
+  border-bottom: 0;
+}
+#solar-estimator .solar-usage-control {
+  margin-top: -12px;
+  border-top: 1px dashed #c6cfbe;
+}
+#solar-estimator .estimate-inputs > details {
+  margin-top: 0;
+}
+#solar-estimator .calculate-cost {
+  min-height: 44px;
+}
+
+/* Results panel: smaller price, tighter rows, content height only. */
+#solar-estimator {
+  align-items: start;
+}
+.solar-streamlined #estimate-result:has(.estimate-budget-highlight) {
+  padding: 24px 28px;
+}
+#estimate-result .estimate-budget-highlight h3.animated-price {
+  margin: 10px 0 14px;
+}
+#estimate-result .estimate-economics {
+  margin-bottom: 16px;
+}
+#estimate-result .estimate-economics > div {
+  padding: 10px 0;
+}
+#estimate-result .estimate-economics dt {
+  font-size: 13px;
+}
+#estimate-result .estimate-economics dd {
+  font-size: 18px;
+}
+#estimate-result .estimate-budget-highlight .button {
+  margin-bottom: 10px;
+}
+#estimate-result .estimate-economics-note {
+  margin-top: 8px;
+}
+.estimate-budget-references {
+  padding-top: 6px;
+}
+.estimate-budget-references > details {
+  padding: 8px 0 !important;
+}
+
+/* Setup cards: tighter spacing. */
+.solar-scenarios {
+  padding: 20px 24px 24px;
+}
+.solar-scenarios > legend {
+  margin-bottom: 12px;
+}
+.solar-scenario {
+  gap: 8px;
+  padding: 16px;
+}
+.solar-scenario-head strong {
+  font-size: 16px;
+}
+.solar-scenario-figures {
+  padding: 8px 0;
+  gap: 4px;
+  font-size: 13px;
+}
+.solar-scenario ul {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+@media (max-width: 600px) {
+  #solar-estimator .estimate-inputs {
+    padding: 14px;
+  }
+  #solar-estimator .solar-offset-control {
+    font-size: 13px;
+  }
+  .solar-streamlined #estimate-result:has(.estimate-budget-highlight) {
+    padding: 18px 16px;
+  }
+  .solar-scenarios {
+    padding: 18px 0 20px;
+  }
+}
+#solar-estimator .solar-coverage-tier {
+  min-height: 0;
+}
+#solar-estimator .solar-coverage-tier .coverage-tier-copy span {
+  font-size: 12px;
+  line-height: 1.4;
+}
+#solar-estimator .solar-usage-control > output {
+  font-size: 14px;
+}
+@media (max-width: 600px) {
+  /* Value moves under its question so the question keeps the full width. */
+  #solar-estimator .solar-usage-control > output {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin-top: 2px;
+  }
+  #solar-estimator .solar-usage-control > input[type='range'] {
+    grid-row: 3;
+  }
+  #solar-estimator .solar-rate-control {
+    grid-template-columns: minmax(0, 1fr) 8em;
+  }
+  #solar-estimator .solar-rate-control > input {
+    font-size: 17px;
+  }
 }

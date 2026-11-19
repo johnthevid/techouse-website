@@ -75,9 +75,9 @@ window.TechouseSolar = (() => {
     }
     if (settings.electricityRateNote)
       host.querySelector('[data-rate-note]').textContent =
-        `${settings.electricityRateNote}. Match it to your bill.`;
+        `${settings.electricityRateNote}. Edit to match your bill.`;
     const offsetLabel = host.elements.offset.closest('label');
-    offsetLabel.firstChild.textContent = '02 / How much would you like solar to cover? ';
+    offsetLabel.firstChild.textContent = '02 / How much should solar cover?';
     const targetNote = document.createElement('small');
     targetNote.className = 'solar-target-note';
     targetNote.textContent = 'A target, not guaranteed bill savings.';
@@ -128,16 +128,15 @@ window.TechouseSolar = (() => {
     // DAY/NIGHT USE: decides how much of the system must be stored in batteries for after sunset.
     const usage = host.elements.nightShare.closest('label');
     usage.classList.add('solar-offset-control');
-    usage.firstChild.textContent = '03 / When do you use most of your electricity?';
+    usage.firstChild.textContent = '03 / When do you use most electricity?';
     usage.insertAdjacentHTML(
       'beforeend',
-      '<div class="solar-offset-endpoints" aria-hidden="true"><span>Mostly daytime</span><span>Mostly at night</span></div><div class="solar-usage-split" aria-hidden="true"><p><strong data-day-share></strong>Daytime</p><p><strong data-night-share></strong>After sunset</p></div><small class="solar-target-note">Sets the battery size in the setups with storage.</small>',
+      '<output data-usage-value aria-hidden="true"></output><div class="solar-offset-endpoints" aria-hidden="true"><span>Mostly daytime</span><span>Mostly at night</span></div><small class="solar-target-note">Sets the battery size in the setups with storage.</small>',
     );
     const updateUsage = () => {
       const night = Number(host.elements.nightShare.value);
       usage.style.setProperty('--night', (night / 90) * 100 + '%');
-      usage.querySelector('[data-day-share]').textContent = 100 - night + '%';
-      usage.querySelector('[data-night-share]').textContent = night + '%';
+      usage.querySelector('[data-usage-value]').textContent = `${100 - night}% day / ${night}% night`;
       host.elements.nightShare.setAttribute(
         'aria-valuetext',
         `${100 - night}% daytime, ${night}% after sunset`,
