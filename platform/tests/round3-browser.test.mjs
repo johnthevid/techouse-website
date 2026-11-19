@@ -180,6 +180,12 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
   assert.equal(await page.locator('.preview-help').evaluate(el=>getComputedStyle(el).color), 'rgb(186, 201, 189)');
   assert.equal(await page.locator('.banner-image-selector button').last().evaluate(el=>getComputedStyle(el).color), 'rgb(231, 238, 232)');
   await page.locator('[data-theme-choice="light"]').click();
+  assert.equal(await page.locator('textarea[name*="intro-step"],textarea[name*="banner-hook"],textarea[name*="banner-description"]').count(), 0);
+  assert.equal(await page.locator('textarea').evaluateAll(nodes => nodes.filter(node => node.name.includes('.banner-division-label')).length), 5);
+  await page.locator('[data-customizer-section="banners"]').click();
+  await page.locator('textarea[name$=".banner-division-label"]').first().fill('Solar energy preview label');
+  await page.waitForFunction(() => document.querySelector('.banner-preview-viewport iframe')?.contentDocument?.querySelector('[data-banner="solar"] .banner-division-label')?.textContent === 'Solar energy preview label');
+  await page.locator('[data-customizer-section="opening"]').click();
   await page
     .locator('textarea[name="#landing-title"]')
     .fill("A shared title from the secure CMS");
@@ -239,6 +245,7 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
   await page.waitForURL('**/office.html#/office/projects');
   await page.waitForSelector('#project-editor');
   assert.equal(JSON.parse(f.db.prepare('SELECT body FROM content WHERE id=1').get().body).text['.landing-kicker'], 'Saved through the changes review');
+  assert.equal(JSON.parse(f.db.prepare('SELECT body FROM content WHERE id=1').get().body).text['[data-banner="solar"] .banner-division-label'], 'Solar energy preview label');
   await page.goto(f.env.APP_ORIGIN + "/");
   await page.waitForSelector("#landing-title");
   assert.equal(
@@ -277,6 +284,7 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
     await page.waitForSelector("#main h1");
   }
   await page.goto(f.env.APP_ORIGIN + '/#/divisions/solar');
+  await page.locator('.discovery-progress [data-step="2"]').click();
   await page.waitForSelector('#solar-estimator');
   assert.equal(await page.inputValue('#solar-estimator input[name="rate"]'), '15.551');
   assert.match(await page.locator('[data-rate-note]').textContent(), /Meralco, November 2026/);
@@ -293,6 +301,7 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
   assert(await page.locator('.calculate-cost').isVisible());
   assert.equal(await page.locator('.estimate-economics').count(),0);
   await page.goto(f.env.APP_ORIGIN + '/#/divisions/solar');
+  await page.locator('.discovery-progress [data-step="2"]').click();
   await page.waitForSelector('#solar-estimator');
   await page.locator('#solar-estimator input[name="bill"]').fill('6000');
   await page.locator('#solar-estimator input[name="offset"]').evaluate(input => {

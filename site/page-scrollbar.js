@@ -15,7 +15,9 @@
       root.classList.contains('project-dialog-open') ||
       getComputedStyle(root).overflowY === 'hidden';
     thumb.hidden = max < 2 || locked;
-    const height = Math.max(42, (innerHeight * innerHeight) / root.scrollHeight);
+    // Complementary golden-ratio thumb: 38.2% of the viewport.
+    const phi = (1 + Math.sqrt(5)) / 2;
+    const height = innerHeight * (1 - 1 / phi);
     thumb.style.height = height + 'px';
     thumb.style.transform = `translateY(${max > 0 ? (scrollY / max) * (innerHeight - height) : 0}px)`;
   }

@@ -63,28 +63,22 @@ window.TechouseContent = (() => {
     }
   }
   const fields = [
-    ['home', '.landing-kicker', 'Opening statement'],
+    ['home', '.landing-kicker', 'Company promise (intro only)'],
     ['home', '#landing-title', 'Main question'],
-    ['home', '.landing-invitation .intro-step:first-child', 'Invitation, first line'],
-    ['home', '.landing-invitation .intro-step:last-child', 'Invitation, second line'],
     ['home', '#company-title', 'Landing About heading'],
-    ['home', '.company-intro p:nth-of-type(1)', 'Landing About paragraph 1'],
-    ['home', '.company-intro p:nth-of-type(2)', 'Landing About paragraph 2'],
+    ['home', '.company-story p:nth-of-type(1)', 'About story'],
+    ['home', '.company-story-close', 'About closing line'],
     ['about', '.page-hero h1', 'Detailed About title'],
     ['about', '.page-hero p', 'Detailed About introduction'],
     ['about', '.content-columns h2', 'Company heading'],
     ['about', '.content-columns > div:first-child p:nth-of-type(1)', 'Company paragraph 1'],
     ['about', '.content-columns > div:first-child p:nth-of-type(2)', 'Company paragraph 2'],
-    ['about', '.scope-panel .scope-label', 'Second panel heading'],
-    ['about', '.scope-panel p:nth-of-type(1)', 'Second panel paragraph 1'],
-    ['about', '.scope-panel p:nth-of-type(2)', 'Second panel paragraph 2'],
   ];
   const divisions = ['solar', 'construction', 'prefabrication', 'development', 'elevators'];
   for (const id of divisions)
     for (const [sel, label] of [
       ['h2', 'heading'],
-      ['.banner-hook', 'subtitle'],
-      ['.banner-description', 'description'],
+      ['.banner-division-label', 'division label'],
     ])
       fields.push(['home', `[data-banner="${id}"] ${sel}`, `${id}: ${label}`]);
   async function persist(next) {
@@ -169,14 +163,14 @@ window.TechouseContent = (() => {
       {
         id: 'opening',
         title: 'Opening message',
-        note: 'The first impression: your promise, main question, and invitation.',
+        note: 'Your company promise appears in the logo opening. The main question appears on the homepage.',
         filter: ([page, selector]) =>
           page === 'home' && !selector.startsWith('[data-banner') && !selector.includes('company'),
       },
       {
         id: 'banners',
         title: 'Division banners',
-        note: 'Keep headings concise and supporting text clear.',
+        note: 'Edit each headline and its division label.',
         filter: ([, selector]) => selector.startsWith('[data-banner'),
       },
       {

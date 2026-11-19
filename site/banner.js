@@ -7,65 +7,37 @@ window.TechouseBanner = (() => {
   let teardown = () => {};
   // EDITABLE COPY: display labels may change; object keys must match app.js division ids.
   const copy = {
-    solar: {
-      hook: 'Let your roof do more.',
-      label: 'SOLAR ENERGY',
-      title: 'Power your<br>tomorrow.',
-      text: 'Put your roof to work. Explore how solar could reduce electricity costs for your home, business, or facility.',
-      points: ['Site & energy requirements', 'Roof area & target capacity'],
-      note: 'System design, equipment availability, and pricing are confirmed during inquiry.',
-      cta: 'Request a solar quote',
-    },
-    construction: {
-      hook: 'Turn the idea into something real.',
-      label: 'CONSTRUCTION',
-      title: 'Build your<br>next chapter.',
-      text: 'Bring your building concept into focus. Share your project brief and explore the construction technology and building systems relevant to your plans.',
-      points: ['Building type & floor area', 'Drawings, budget & timeline'],
-      note: 'Project services and delivery scope are subject to confirmation.',
-      cta: 'Discuss a building project',
-    },
-    prefabrication: {
-      hook: 'Explore a different way to build.',
-      label: 'PREFABRICATED BUILDINGS',
-      title: 'Rethink<br>your space.',
-      text: 'Explore prefabricated modular buildings and assemblies. Tell us how you want to use your space and what your site requires.',
-      points: ['Intended use & unit layout', 'Site access & installation needs'],
-      note: 'Available models, specifications, and installation timelines require confirmation.',
-      cta: 'Request a prefab quote',
-    },
+    solar: { title: 'Power your<br> tomorrow.', cta: 'Let’s start saving!' },
+    construction: { title: 'Build your<br> next chapter.', cta: 'Let’s start building!' },
+    prefabrication: { title: 'Rethink<br> your space.', cta: 'Let’s start creating!' },
     development: {
-      hook: 'Explore what your property could become.',
-      label: 'REAL ESTATE DEVELOPMENT',
-      title: 'Shape your<br>next address.',
-      text: 'Start a conversation about your property. Share the location, your development concept, and the goals you have for the site.',
-      points: ['Property location & land area', 'Concept plans & intended use'],
-      note: 'Real estate development is listed by Techouse. Specific land development services are awaiting confirmation.',
-      cta: 'Discuss a property project',
+      title: 'Shape your<br> next address.',
+      cta: 'Let’s start shaping possibilities!',
     },
-    elevators: {
-      hook: 'Connect every level of your building.',
-      label: 'ELEVATOR ENGINEERING',
-      title: 'Rise to new<br>possibilities.',
-      text: 'Connect with the elevator engineering division. Describe your building, the number of floors, and the requirements for your inquiry.',
-      points: ['Building use & number of floors', 'New or existing property'],
-      note: 'Products, technical specifications, installation, and maintenance scope require confirmation.',
-      cta: 'Request an elevator quote',
-    },
+    elevators: { title: 'Rise to new<br> possibilities.', cta: 'Let’s start elevating!' },
   };
   function header(brand, arrow) {
     return `<div class="banner-nav"><a href="#company" class="banner-company-link" aria-label="About Techouse">${brand}</a><div class="banner-nav-right"><a class="header-call" href="tel:+639855626888" aria-label="Call Techouse at +63 985 562 6888">${window.TechouseIcons.icon('call')}<span>Call us</span></a><a class="banner-global-quote" href="#/inquiry">Request a quote ${arrow}</a></div></div>`;
   }
   // LANDING MARKUP: intro, banners, About section, and right-edge About cue.
   function html(divisions, art, arrow) {
-    return `<section class="division-landing" aria-labelledby="landing-title"><div class="landing-intro"><span class="landing-kicker">Techouse brings the newest technology to the Philippines.</span><h1 id="landing-title">What are you <br>building next?</h1><p class="landing-invitation"><span class="intro-step">Explore a division.</span> <span class="intro-step">Discover your next step.</span></p></div><div class="division-banners" aria-label="Explore Techouse business divisions">${divisions
+    return `<section class="division-landing" aria-labelledby="landing-title"><div class="landing-intro"><h1 id="landing-title">What are you <br> building next?</h1><span class="landing-kicker" hidden>We bring the newest technology to the Philippines.</span></div><div class="division-banners" aria-label="Explore Techouse business divisions">${divisions
       .map((d) => {
         const c = copy[d.id];
-        return `<section class="division-banner banner-${d.id}" data-banner="${d.id}" aria-labelledby="banner-title-${d.id}"><div class="banner-background" aria-hidden="true">${d.image ? `<img src="assets/${d.image}" alt="" ${d.id === 'solar' ? 'fetchpriority="high"' : ''}>` : `<div class="elevator-backdrop">${art}</div>`}</div><div class="banner-shade"></div><button class="banner-trigger" aria-label="Explore ${d.short}" aria-expanded="false" aria-controls="banner-details-${d.id}"></button><div class="banner-content"><div class="banner-number">${d.number}<span></span>${c.label}</div><div class="banner-title-row"><h2 id="banner-title-${d.id}">${c.title}</h2><span class="banner-plus" aria-hidden="true">+</span></div><p class="banner-hook">${c.hook}</p><span class="banner-rest-hint">Explore this division <span aria-hidden="true">↗</span></span><div class="banner-details" id="banner-details-${d.id}" aria-hidden="true" inert><div class="banner-details-inner"><p class="banner-description">${c.text}</p><ul class="banner-points">${c.points.map((p) => `<li>${p}</li>`).join('')}</ul><p class="banner-scope">${c.note}</p><a class="banner-quote" href="#/divisions/${d.id}">Explore ${d.short} ${arrow}</a></div></div></div></section>`;
+        const divisionIcon = window.TechouseIcons.icon(
+          {
+            solar: 'solar_power',
+            construction: 'construction',
+            prefabrication: 'shapes',
+            development: 'real_estate_agent',
+            elevators: 'elevator',
+          }[d.id],
+        );
+        return `<section class="division-banner banner-${d.id}" data-banner="${d.id}" aria-labelledby="banner-title-${d.id}"><div class="banner-background" aria-hidden="true">${d.image ? `<img src="assets/${d.image}" alt="" ${d.id === 'solar' ? 'fetchpriority="high"' : ''}>` : `<div class="elevator-backdrop">${art}</div>`}</div><div class="banner-shade"></div><button class="banner-trigger" aria-label="Explore ${d.short}"></button><div class="banner-content"><div class="banner-copy-block"><div class="banner-title-row"><h2 id="banner-title-${d.id}">${c.title}</h2><span class="banner-plus" aria-hidden="true">+</span></div><p class="banner-division-label">${divisionIcon}<span>${d.short}</span></p><a class="banner-cta" href="#/divisions/${d.id}">${c.cta} ${arrow}</a></div>${d.id === 'solar' ? `<a class="banner-scroll-cue" href="#company" aria-label="Scroll down to learn about Techouse"><span class="banner-scroll-icon" aria-hidden="true">${window.TechouseIcons.icon('arrow_downward')}</span><span class="banner-scroll-label" aria-hidden="true">About Techouse</span></a>` : ''}</div><span class="banner-load-status" aria-hidden="true">Techouse · Loading image</span></section>`;
       })
       .join(
         '',
-      )}</div><div class="landing-bottom"><span class="desktop-explore-hint"><span aria-hidden="true">↔</span> Hover to explore · Click to enter</span><span class="mobile-explore-hint">Tap a banner to explore its division</span></div></section><section class="landing-company" id="company" aria-labelledby="company-title"><div class="company-intro"><span class="eyebrow">GET TO KNOW TECHOUSE</span><h2 id="company-title">New ways to build.<br>More ways forward.</h2><p>Techouse brings construction technologies and solar energy solutions to the Philippines. From prefabricated spaces to rooftop solar, we help you explore options for the way you build and the energy you use.</p><p>Planning a home, a business space or your next development? Our five divisions give you a clear place to start. Choose what you need, explore the possibilities, and talk to our team about your project.</p><a class="button" href="#/about">More about Techouse ↗</a></div><div class="company-divisions"><h3>What are you planning?</h3><a href="#/divisions/solar"><strong>Lower your electricity costs</strong><span>Explore solar energy ↗</span></a><a href="#/divisions/construction"><strong>Bring a building project to life</strong><span>Explore construction ↗</span></a><a href="#/divisions/prefabrication"><strong>Explore another way to create space</strong><span>Explore prefabricated buildings ↗</span></a><a href="#/divisions/development"><strong>Consider your property’s next chapter</strong><span>Explore real estate development ↗</span></a><a href="#/divisions/elevators"><strong>Connect the floors of your building</strong><span>Explore elevator engineering ↗</span></a></div></section><a class="company-scroll-cue" href="#company" aria-label="Scroll down to learn about Techouse" title="About Techouse"><span class="scroll-cue-label">About us</span>${window.TechouseIcons.icon('arrow_downward')}</a>`;
+      )}</div></section><section class="landing-company" id="company" aria-labelledby="company-title"><div class="company-intro"><h2 id="company-title">New ways to build.<br> More ways forward.</h2><div class="company-story"><p>Every project starts with a possibility. A roof that could generate energy. A space ready for a new purpose. A building ready for its next chapter.</p><p class="company-story-close">Techouse brings the newest technology to the Philippines.</p><a class="button" href="#/about">More about Techouse ↗</a></div></div></section>`;
   }
   function mount(returningHome = false) {
     teardown();
@@ -73,7 +45,7 @@ window.TechouseBanner = (() => {
     if (!host) return;
     const panels = [...host.querySelectorAll('.division-banner')];
     // Identical geometry: grayscale base below, color photo fading above.
-    panels.forEach(panel => {
+    panels.forEach((panel) => {
       const background = panel.querySelector('.banner-background');
       const color = background?.querySelector('img');
       if (!color || background.querySelector('.banner-grayscale-base')) return;
@@ -84,35 +56,55 @@ window.TechouseBanner = (() => {
       color.classList.add('banner-color-layer');
       background.prepend(base);
     });
-    const media = matchMedia('(max-width: 900px), (hover: none)');
+    const media = matchMedia('(max-width: 1100px), (hover: none)');
     const controller = new AbortController();
     const options = { signal: controller.signal };
-    const cue = document.querySelector('.company-scroll-cue');
-    document.querySelectorAll('.company-scroll-cue,.banner-company-link').forEach((link) =>
+    let scrollFrame = 0;
+    const stopScroll = () => cancelAnimationFrame(scrollFrame);
+    for (const type of ['wheel', 'touchstart', 'pointerdown', 'keydown'])
+      window.addEventListener(type, stopScroll, { ...options, passive: true });
+    function scrollToCompany() {
+      stopScroll();
+      const target = document.querySelector('#company');
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        target.scrollIntoView({ behavior: 'instant' });
+        return;
+      }
+      const start = scrollY;
+      const end = Math.min(
+        start + target.getBoundingClientRect().top,
+        document.documentElement.scrollHeight - innerHeight,
+      );
+      const began = performance.now();
+      const tick = (now) => {
+        const progress = Math.min(1, (now - began) / 850);
+        const eased = 1 - Math.pow(1 - progress, 4);
+        scrollTo({ top: start + (end - start) * eased, behavior: 'instant' });
+        if (progress < 1) scrollFrame = requestAnimationFrame(tick);
+      };
+      scrollFrame = requestAnimationFrame(tick);
+    }
+    document.querySelectorAll('.banner-company-link,.banner-scroll-cue').forEach((link) =>
       link.addEventListener(
         'click',
         (event) => {
           event.preventDefault();
-          document.querySelector('#company').scrollIntoView({
-            behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
-          });
+          scrollToCompany();
           document.querySelector('#company-title').setAttribute('tabindex', '-1');
           document.querySelector('#company-title').focus({ preventScroll: true });
         },
         options,
       ),
     );
-    function updateCue() {
-      cue?.classList.toggle('is-dismissed', scrollY > 100);
-    }
-    window.addEventListener('scroll', updateCue, { ...options, passive: true });
-    updateCue();
-    let observer;
     let keyboardMode = false;
     let awaitingFreshMovement = false;
     let lastPointer = null;
     let activationPointer = null;
-    const resetPointer = () => { lastPointer = null; activationPointer = null; awaitingFreshMovement = true; };
+    const resetPointer = () => {
+      lastPointer = null;
+      activationPointer = null;
+      awaitingFreshMovement = true;
+    };
     window.addEventListener('blur', resetPointer, options);
     document.addEventListener('visibilitychange', resetPointer, options);
     host.addEventListener('pointerenter', resetPointer, options);
@@ -126,39 +118,93 @@ window.TechouseBanner = (() => {
     function state(panel, open) {
       if (panel.classList.contains('is-open') === open) return;
       panel.classList.toggle('is-open', open);
-      const trigger = panel.querySelector('.banner-trigger'),
-        details = panel.querySelector('.banner-details');
-      trigger.setAttribute('aria-expanded', String(open));
-      details.setAttribute('aria-hidden', String(!open));
-      details.inert = !open;
     }
     // Intro playback blocks expansion; intro-ready requires fresh pointer movement afterward.
     function desktopOpen(panel) {
-      if (host.classList.contains('banner-departing') || host.classList.contains('intro-playing') || host.classList.contains('banners-arriving'))
+      if (
+        host.classList.contains('banner-departing') ||
+        host.classList.contains('intro-playing') ||
+        host.classList.contains('banners-arriving')
+      )
         return;
       panels.forEach((p) => state(p, p === panel));
       host.classList.toggle('has-expanded', !!panel);
     }
+
+    const compactScene = document.createElement('div');
+    compactScene.className = 'compact-banner-scene';
+    compactScene.setAttribute('aria-hidden', 'true');
+    const sceneImages = panels.map((panel) => {
+      const source = panel.querySelector('.banner-color-layer');
+      if (!source) return null;
+      const image = source.cloneNode();
+      image.className = 'compact-scene-image';
+      image.alt = '';
+      compactScene.append(image);
+      return image;
+    });
+    host.prepend(compactScene);
+    let compactFrame = 0;
+    let compactIndex = 0;
+    let compactScroll = scrollY;
+    let compactSettlesAt = 0;
+    function compactOpen(index) {
+      compactIndex = index;
+      sceneImages.forEach((image, i) => image?.classList.toggle('is-active', i === index));
+      panels.forEach((panel, i) => {
+        state(panel, i === index);
+        panel.querySelector('.banner-trigger').setAttribute('aria-expanded', String(i === index));
+      });
+      compactSettlesAt = performance.now() + 620;
+    }
+    function followCompactScroll() {
+      if (!media.matches || compactFrame) return;
+      compactFrame = requestAnimationFrame(() => {
+        compactFrame = 0;
+        if (scrollY <= 12) {
+          compactScroll = scrollY;
+          if (compactIndex !== 0) compactOpen(0);
+          return;
+        }
+        const delta = scrollY - compactScroll;
+        compactScroll = scrollY;
+        if (Math.abs(delta) < 2 || performance.now() < compactSettlesAt) return;
+        const focusLine = innerHeight * 0.5;
+        const bounds = host.getBoundingClientRect();
+        if (bounds.bottom < focusLine || bounds.top > focusLine) return;
+        let nearest = compactIndex;
+        let distance = Infinity;
+        panels.forEach((panel, index) => {
+          const r = panel.getBoundingClientRect();
+          const gap = Math.abs((r.top + r.bottom) / 2 - focusLine);
+          if (gap < distance) {
+            distance = gap;
+            nearest = index;
+          }
+        });
+        // Advance only in the user's scroll direction and one story at a time.
+        // Reflow from expanding a row must not pull selection back the other way.
+        if (delta > 0 && nearest > compactIndex) compactOpen(compactIndex + 1);
+        if (delta < 0 && nearest < compactIndex) compactOpen(compactIndex - 1);
+      });
+    }
+    window.addEventListener('scroll', followCompactScroll, { ...options, passive: true });
     function setup() {
-      observer?.disconnect();
       panels.forEach((p) => {
         state(p, false);
         delete p.dataset.manual;
       });
       host.classList.remove('has-expanded');
-      if (media.matches) {
-        observer = new IntersectionObserver(
-          (entries) => {
-            for (const entry of entries) {
-              if (entry.isIntersecting && !entry.target.dataset.manual) {
-                state(entry.target, true);
-                observer.unobserve(entry.target);
-              }
-            }
-          },
-          { threshold: 0.32, rootMargin: '-12% 0px -12% 0px' },
+      compactScroll = scrollY;
+      if (media.matches) compactOpen(0);
+      else
+        panels.forEach((panel) =>
+          panel.querySelector('.banner-trigger').removeAttribute('aria-expanded'),
         );
-        panels.forEach((p) => observer.observe(p));
+      const cue = host.querySelector('.banner-scroll-cue');
+      if (cue) {
+        if (media.matches) host.append(cue);
+        else panels[0].querySelector('.banner-content').append(cue);
       }
     }
     panels.forEach((panel) => {
@@ -167,29 +213,33 @@ window.TechouseBanner = (() => {
       panel.addEventListener(
         'focusin',
         () => {
-          if (!media.matches) desktopOpen(panel);
+          if (media.matches) {
+            if (panel.querySelector('.banner-cta:focus') && !panel.classList.contains('is-open'))
+              compactOpen(panels.indexOf(panel));
+          } else desktopOpen(panel.querySelector('.banner-scroll-cue:focus') ? null : panel);
         },
         options,
       );
-      panel.querySelector('.banner-trigger').addEventListener(
-        'click',
-        () => {
-          window.TechouseDivisions.enter(panel);
-        },
-        options,
+      panel.querySelectorAll('.banner-trigger, .banner-cta').forEach((action) =>
+        action.addEventListener(
+          'click',
+          (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            if (
+              media.matches &&
+              action.classList.contains('banner-trigger') &&
+              !panel.classList.contains('is-open')
+            ) {
+              compactOpen(panels.indexOf(panel));
+              return;
+            }
+            window.TechouseDivisions.enter(panel);
+          },
+          options,
+        ),
       );
     });
-    host.addEventListener(
-      'click',
-      (event) => {
-        const link = event.target.closest('.banner-quote');
-        if (link) {
-          event.preventDefault();
-          window.TechouseDivisions.enter(link.closest('.division-banner'));
-        }
-      },
-      options,
-    );
     document.addEventListener(
       'keydown',
       (event) => {
@@ -210,18 +260,30 @@ window.TechouseBanner = (() => {
         // Compare viewport coordinates: movementX can jump on window re-entry.
         // Moving flex-panel boundaries must not select a different image by themselves.
         const point = { x: event.clientX, y: event.clientY };
-        if (!lastPointer) { lastPointer = point; return; }
-        const distance = Math.hypot(point.x-lastPointer.x, point.y-lastPointer.y);
+        if (!lastPointer) {
+          lastPointer = point;
+          return;
+        }
+        const distance = Math.hypot(point.x - lastPointer.x, point.y - lastPointer.y);
         if (distance < 3) return;
         if (awaitingFreshMovement && distance < 8) return;
         lastPointer = point;
         awaitingFreshMovement = false;
         keyboardMode = false;
+        const bottom = host.getBoundingClientRect().bottom;
+        if (point.y >= bottom - 112 || event.target.closest('.banner-scroll-cue')) {
+          desktopOpen(null);
+          return;
+        }
         const panel = event.target.closest('.division-banner');
         if (!panel || panel.classList.contains('is-open')) return;
-        if (activationPointer && Math.hypot(point.x-activationPointer.x,point.y-activationPointer.y) < 16) return;
+        if (
+          activationPointer &&
+          Math.hypot(point.x - activationPointer.x, point.y - activationPointer.y) < 16
+        )
+          return;
         const bounds = panel.getBoundingClientRect();
-        if (point.x < bounds.left+8 || point.x > bounds.right-8) return;
+        if (point.x < bounds.left + 8 || point.x > bounds.right - 8) return;
         activationPointer = point;
         desktopOpen(panel);
       },
@@ -254,6 +316,11 @@ window.TechouseBanner = (() => {
       (event) => {
         if (event.key === 'Escape') {
           if (media.matches) {
+            const bottom = host.getBoundingClientRect().bottom;
+            if (point.y >= bottom - 112 || event.target.closest('.banner-scroll-cue')) {
+              desktopOpen(null);
+              return;
+            }
             const panel = event.target.closest('.division-banner');
             if (panel) {
               panel.dataset.manual = 'true';
@@ -267,6 +334,57 @@ window.TechouseBanner = (() => {
     );
     media.addEventListener('change', setup);
     setup();
+    // Quiet desktop showcase; never run offscreen, over a dialog or for reduced motion.
+    let idleTimer,
+      showcaseTimer,
+      showcaseIndex = 0,
+      previousPanel = null;
+    const motion = matchMedia('(prefers-reduced-motion: reduce)');
+    const eligible = () =>
+      !media.matches &&
+      !motion.matches &&
+      !document.hidden &&
+      document.hasFocus() &&
+      scrollY < host.offsetHeight * 0.25 &&
+      !document.querySelector('dialog[open]') &&
+      !host.classList.contains('intro-playing') &&
+      !host.classList.contains('banners-arriving');
+    function stopShowcase() {
+      clearTimeout(idleTimer);
+      clearTimeout(showcaseTimer);
+      if (host.hasAttribute('data-idle-show')) {
+        host.removeAttribute('data-idle-show');
+        desktopOpen(previousPanel);
+        resetPointer();
+      }
+    }
+    function armShowcase() {
+      stopShowcase();
+      if (eligible())
+        idleTimer = setTimeout(() => {
+          if (!eligible()) return;
+          previousPanel = panels.find((panel) => panel.classList.contains('is-open')) || null;
+          host.setAttribute('data-idle-show', '');
+          showcaseIndex = 0;
+          const advance = () => {
+            if (!eligible()) {
+              stopShowcase();
+              return;
+            }
+            desktopOpen(panels[showcaseIndex++ % panels.length]);
+            showcaseTimer = setTimeout(advance, 3800);
+          };
+          advance();
+        }, 30000);
+    }
+    for (const type of ['pointermove', 'pointerdown', 'keydown', 'wheel', 'touchstart', 'scroll'])
+      window.addEventListener(type, armShowcase, { ...options, passive: true, capture: true });
+    window.addEventListener('blur', stopShowcase, options);
+    window.addEventListener('focus', armShowcase, options);
+    document.addEventListener('visibilitychange', armShowcase, options);
+    host.addEventListener('intro-ready', armShowcase, options);
+    motion.addEventListener('change', armShowcase, options);
+    armShowcase();
     // RETURN TRANSITION: the logo and banners re-enter when navigating home from another route.
     const arrivalAnimations = [];
     if (returningHome && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -304,12 +422,17 @@ window.TechouseBanner = (() => {
           host.classList.remove('banners-arriving');
           window.TechouseDivisions.clearPreviousPage();
         })
-        .catch(() => { if (host.isConnected) window.TechouseDivisions.clearPreviousPage(); });
+        .catch(() => {
+          if (host.isConnected) window.TechouseDivisions.clearPreviousPage();
+        });
     }
     teardown = () => {
+      stopShowcase();
+      cancelAnimationFrame(compactFrame);
+      compactScene.remove();
+      stopScroll();
       arrivalAnimations.forEach((a) => a.cancel());
       controller.abort();
-      observer?.disconnect();
       media.removeEventListener('change', setup);
     };
   }

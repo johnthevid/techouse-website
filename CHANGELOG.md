@@ -4,6 +4,8 @@ Recorded milestones for the Techouse website. Dates use the project's Asia/Manil
 
 ## Unreleased — Solar Calculator
 
+- Merge the homepage refinement (simplified homepage and banners, brand opening, mobile revamp, three-step solar planner, Construction page) with the secure back office and Solar Calculator; retire the About page's unused second-panel CMS fields.
+
 - Replace the sample solar budget estimator with a Solar Calculator ported from the Techouse sales workbook: panel-count sizing, automatic inverter/battery selection and Techouse price-list ranges (A0–A2 residential/SME, T4–T6 C&I).
 - Compare residential setups (daytime, day + 50% night, day + night) or C&I setups (daytime, daytime + 3-hour storage) side by side; the selected setup and equipment carry into the inquiry.
 - Make the calculator's electricity rate editable in the back office (Website customizer → Solar calculator), with an optional source note shown to visitors.

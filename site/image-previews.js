@@ -228,19 +228,72 @@
     img.style.backgroundSize = 'cover';
     img.style.backgroundPosition = 'center';
     const pending = !img.complete;
-    const reveal = () => {
-      if (sources.get(img) !== source || !img.naturalWidth) return;
+    const panel = img.classList.contains('banner-grayscale-base')
+      ? null
+      : img.closest('.division-banner');
+    const status = panel?.querySelector('.banner-load-status');
+    panel?.classList.remove('is-image-slow', 'is-image-error');
+    const slow =
+      pending && panel
+        ? setTimeout(() => {
+            if (img.isConnected && sources.get(img) === source)
+              panel.classList.add('is-image-slow');
+          }, 1500)
+        : null;
+    const current = () => img.isConnected && sources.get(img) === source;
+    const clear = () => {
+      clearTimeout(slow);
+      panel?.classList.remove('is-image-slow');
+    };
+    const failure = () => {
+      if (!current()) return;
+      clear();
+      img.dataset.previewState = 'error';
+      panel?.classList.add('is-image-error');
+      if (status) status.textContent = 'Techouse · Image unavailable';
+    };
+    const reveal = async () => {
+      if (!current() || !img.naturalWidth) return;
+      // Decode before revealing so slow connections do not flash a partial image.
+      try {
+        await img.decode();
+      } catch {
+        /* Loaded images can still be displayed. */
+      }
+      if (!current()) return;
+      clear();
+      panel?.classList.remove('is-image-error');
+      if (status) status.textContent = 'Techouse · Loading image';
       img.style.backgroundImage = '';
       img.dataset.previewState = 'ready';
-      if (!matchMedia('(prefers-reduced-motion: reduce)').matches && pending)
-        img.animate([{ filter: 'blur(3px)' }, { filter: 'blur(0)' }], {
-          duration: 220,
-          easing: 'ease-out',
+      if (
+        pending &&
+        !img.classList.contains('banner-grayscale-base') &&
+        !matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
+        const animation = img.animate([{ filter: 'blur(6px)' }, { filter: 'blur(0)' }], {
+          duration: 550,
+          easing: 'cubic-bezier(.22,.7,.2,1)',
         });
+        await animation.finished.catch(() => {});
+      }
     };
     img.dataset.previewState = 'loading';
-    if (img.complete) reveal();
-    else img.addEventListener('load', reveal, { once: true });
+    if (img.complete) {
+      if (img.naturalWidth) reveal();
+      else failure();
+    } else {
+      const loaded = () => {
+        img.removeEventListener('error', failed);
+        reveal();
+      };
+      const failed = () => {
+        img.removeEventListener('load', loaded);
+        failure();
+      };
+      img.addEventListener('load', loaded, { once: true });
+      img.addEventListener('error', failed, { once: true });
+    }
   }
   function scan(node) {
     if (node.nodeType !== 1) return;

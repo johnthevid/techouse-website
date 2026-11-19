@@ -8,7 +8,7 @@ Clone the private GitHub repository, open that folder in Codex, and follow READM
 
 Ask Codex to read AGENTS.md and HANDOFF.md and check `git status` and the current branch. With no uncommitted work, fetch the latest GitHub changes and update the intended branch with a fast-forward pull. If there are local changes or diverged commits, preserve and reconcile them before editing. Do not reset or force-push to make the copies match.
 
-Use a descriptive update branch for new work. Keep `main` for approved code. Work on one computer at a time on a shared task unless separate branches are deliberately used.
+Use `develop` for integration of the official client website, starting from the reviewed 1.0.1 source. Preserve `demo/1.0.1` as the demo snapshot; do not develop or deploy new changes from that branch. Create focused branches such as `feature/homepage-intro` or `fix/contact-layout` from `develop`, then review and merge them back into `develop`. Keep `main` for approved code. Work on one computer at a time on a shared task unless separate branches are deliberately used.
 
 ## Before changing computers
 
