@@ -1,12 +1,12 @@
 /**
- * Phone homepage (max-width 767px): one full-screen photo, the chosen division as a
+ * Phone homepage (max-width 599px): one full-screen photo, the chosen division as a
  * chapter, the other four as a balanced 2 x 2 pill grid, and a menu in the header.
  * Built from the rendered division banners, so CMS banner text and images carry over.
  * The approved intro is untouched: the chapter and pills follow its reveal phases in CSS.
  */
 'use strict';
 window.TechouseMobileHome = (() => {
-  const PHONE = '(max-width: 767px)';
+  const PHONE = '(max-width: 599px)';
   const SHORT = {
     solar: 'Solar',
     construction: 'Construction',
@@ -271,5 +271,6 @@ window.TechouseMobileHome = (() => {
     };
   }
 
-  return { mount, destroy: () => teardown() };
+  // read() is shared with tablet-home.js, which builds the tablet panels from the same banners.
+  return { mount, read, destroy: () => teardown() };
 })();

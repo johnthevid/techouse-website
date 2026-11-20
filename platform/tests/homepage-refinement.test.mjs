@@ -33,8 +33,8 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
     });
     await page.goto(f.env.APP_ORIGIN + '/');
     // Phones show the mobile hero; the banners stay in the page as its source
-    await page.waitForSelector(width < 768 ? '[data-mobile-home]' : '.division-banner');
-    if (width < 768) {
+    await page.waitForSelector(width < 600 ? '[data-mobile-home]' : '.division-banner');
+    if (width < 600) {
       assert.equal(await page.locator('.division-banners').isVisible(), false);
       assert.equal(await page.locator('.mh-pill:not(.is-gone)').count(), 4);
       assert.equal(

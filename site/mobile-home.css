@@ -1,4 +1,4 @@
-/* Phone homepage (max-width 767px). Tablet and desktop layouts are unchanged.
+/* Phone homepage (max-width 599px). Tablet and desktop layouts are unchanged.
    Tuned values from the approved mock-up: blur 10%, vignette 80%, shade 115%,
    photo brightness 135%. Built by mobile-home.js inside .division-landing. */
 .mh,
@@ -7,7 +7,7 @@
   display: none;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 599px) {
   .landing {
     --mh-ease: cubic-bezier(0.22, 0.7, 0.2, 1);
     --mh-ink: #12221e;
@@ -504,7 +504,7 @@
   }
 }
 
-@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+@media (max-width: 599px) and (prefers-reduced-motion: reduce) {
   .mh *,
   .mh-menu,
   .mh-menu * {

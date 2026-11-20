@@ -38,7 +38,7 @@ test('Compact touch homepage keeps one focused story and landscape calculator re
     });
     await page.goto(f.env.APP_ORIGIN + '/');
     // Phones (under 768px): one chapter, a 2 x 2 pill grid and a menu
-    const phone = width < 768;
+    const phone = width < 600;
     if (phone) {
       await page.waitForSelector('[data-mobile-home]');
       const pills = page.locator('.mh-pill:not(.is-gone)');
@@ -70,6 +70,25 @@ test('Compact touch homepage keeps one focused story and landscape calculator re
         document.querySelectorAll('.mh-chapter')[0].classList.contains('is-on'),
       );
       await page.locator('.mh-chapter.is-on .mh-cta').click();
+      await page.waitForURL('**/#/divisions/solar');
+    } else if (width >= 600 && height >= 600) {
+      // Touch tablets: five panels, tap to open, X to close, the open panel's button navigates
+      await page.waitForSelector('[data-tablet-home]');
+      assert.equal(await page.locator('.division-banners').isVisible(), false);
+      assert.equal(await page.locator('.tp-panel').count(), 5);
+      assert.equal(await page.locator('.tp-panel.is-open').count(), 0);
+      await page.locator('.tp-panel[data-index="1"] .tp-hit').click();
+      assert.equal(
+        await page.locator('.tp-panel[data-index="1"]').getAttribute('class'),
+        'tp-panel is-open',
+      );
+      assert.match(page.url(), /\/$|#\/?$/);
+      await page.locator('.tp-panel[data-index="3"] .tp-hit').click();
+      assert.equal(await page.locator('.tp-panel.is-open').getAttribute('data-index'), '3');
+      await page.locator('.tp-panel.is-open .tp-close').click();
+      assert.equal(await page.locator('.tp-panel.is-open').count(), 0);
+      await page.locator('.tp-panel[data-index="0"] .tp-hit').click();
+      await page.locator('.tp-panel.is-open .tp-cta').click();
       await page.waitForURL('**/#/divisions/solar');
     } else {
       await page.waitForSelector('.division-banner');

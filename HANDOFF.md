@@ -2,11 +2,22 @@
 
 Updated: 18 November 2026.
 
-## Latest: phone homepage (feature/mobile-view)
+## Latest: touch-tablet homepage (feature/mobile-view)
+
+Added on `feature/mobile-view`; not merged to `main`, not deployed.
+
+- New `site/tablet-home.js` and `site/tablet-home.css`, mounted from `banner.js` like the phone module (they share `TechouseMobileHome.read`).
+- Applies at 600px wide and 600px tall or more on devices without hover (touch tablets: iPad mini, iPad, iPad Pro, Galaxy Tab, open Galaxy Z Fold). Desktop, laptops and tablets with a mouse or trackpad keep the hover banners; landscape phones keep the old accordion.
+- Five panels from the desktop, opened by tapping: a tap opens a panel without navigating, its button goes to the division, the round X (or Escape) closes it, tapping another panel switches. Landscape uses the desktop columns (others greyscale; titles sized to fit); portrait uses stacked bands below the question, with the first band's own photo running up behind the header, blurred and vignetted. The page scrolls normally to About and the footer.
+- Phone breakpoint moved from 767px to 599px so the iPad mini and open Fold get the tablet panels.
+- Fixed an existing `banner.js` crash: Escape on touch layouts referenced an undefined `point`.
+- Tests: mobile-refinement now covers the tablet tap flow at 768 x 1024 and 1024 x 768. 22 of 25 pass; the same 3 older solar-page failures remain (removed `[data-scroll="estimator"]` link).
+
+## Earlier: phone homepage (feature/mobile-view)
 
 Branch `feature/mobile-view` (from `feature/homepage-refinement`) carries the approved phone homepage, from the client proposal's Option 3 "Pill grid". Not merged to `main`; not deployed.
 
-- New `site/mobile-home.js` and `site/mobile-home.css`, loaded from `index.html`; `banner.js` mounts/destroys the module with the landing. Applies under 768px only; tablet and desktop banners are unchanged.
+- New `site/mobile-home.js` and `site/mobile-home.css`, loaded from `index.html`; `banner.js` mounts/destroys the module with the landing. Applies under 600px (was 768px until the tablet layout landed); desktop banners are unchanged.
 - Layout: one full-screen division photo, the chosen division as a chapter (counter, headline, label, gold call-to-action), the other four as a balanced 2 × 2 pill grid. Pills are placed absolutely by script, so taps never reflow into extra rows; a returning division takes the tapped pill's slot.
 - Tuned values from the mock-up dials: blur 10%, vignette 80%, shade 115%, photo brightness 135%.
 - Header gains a menu button after the call icon: Our divisions, About Techouse, News, Join us & be a partner (coming soon), Start a project, email, phone. Page scroll is locked while it is open; Escape closes it.
