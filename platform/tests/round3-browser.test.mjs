@@ -180,6 +180,12 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
   assert.equal(await page.locator('.preview-help').evaluate(el=>getComputedStyle(el).color), 'rgb(186, 201, 189)');
   assert.equal(await page.locator('.banner-image-selector button').last().evaluate(el=>getComputedStyle(el).color), 'rgb(231, 238, 232)');
   await page.locator('[data-theme-choice="light"]').click();
+  assert.equal(await page.locator('textarea[name*="intro-step"],textarea[name*="banner-hook"],textarea[name*="banner-description"]').count(), 0);
+  assert.equal(await page.locator('textarea').evaluateAll(nodes => nodes.filter(node => node.name.includes('.banner-division-label')).length), 5);
+  await page.locator('[data-customizer-section="banners"]').click();
+  await page.locator('textarea[name$=".banner-division-label"]').first().fill('Solar energy preview label');
+  await page.waitForFunction(() => document.querySelector('.banner-preview-viewport iframe')?.contentDocument?.querySelector('[data-banner="solar"] .banner-division-label')?.textContent === 'Solar energy preview label');
+  await page.locator('[data-customizer-section="opening"]').click();
   await page
     .locator('textarea[name="#landing-title"]')
     .fill("A shared title from the secure CMS");
@@ -211,6 +217,18 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
       .querySelector("#content-status")
       .textContent.includes("saved online"),
   );
+  // Solar calculator rate: staff update Meralco's monthly rate in the customizer.
+  await page.locator('[data-customizer-section="solar-rate"]').click();
+  await page.locator('input[name="electricityRate"]').fill('15.551');
+  await page.locator('input[name="electricityRateNote"]').fill('Meralco, November 2026');
+  if (process.env.TECHOUSE_SHOT) await page.locator('#customizer-solar-rate').screenshot({ path: process.env.TECHOUSE_SHOT });
+  await page.locator('button[type="submit"]:not([value])').click();
+  await page.waitForFunction(() => document.querySelector('#customizer-save-state').textContent === 'All changes saved');
+  assert.deepEqual(JSON.parse(f.db.prepare('SELECT body FROM content WHERE id=1').get().body).settings, {
+    electricityRate: 15.551,
+    electricityRateNote: 'Meralco, November 2026',
+  });
+  await page.locator('[data-customizer-section="opening"]').click();
   // Review actions wait for the server; a rejected save keeps the draft and dialog open.
   await page.locator('textarea[name=".landing-kicker"]').fill('Saved through the changes review');
   await page.locator('.admin-tabs a[href="#/office/projects"]').click();
@@ -227,6 +245,7 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
   await page.waitForURL('**/office.html#/office/projects');
   await page.waitForSelector('#project-editor');
   assert.equal(JSON.parse(f.db.prepare('SELECT body FROM content WHERE id=1').get().body).text['.landing-kicker'], 'Saved through the changes review');
+  assert.equal(JSON.parse(f.db.prepare('SELECT body FROM content WHERE id=1').get().body).text['[data-banner="solar"] .banner-division-label'], 'Solar energy preview label');
   await page.goto(f.env.APP_ORIGIN + "/");
   await page.waitForSelector("#landing-title");
   assert.equal(
@@ -265,33 +284,46 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
     await page.waitForSelector("#main h1");
   }
   await page.goto(f.env.APP_ORIGIN + '/#/divisions/solar');
+  await page.locator('.discovery-progress [data-step="1"]').click();
   await page.waitForSelector('#solar-estimator');
+  assert.equal(await page.inputValue('#solar-estimator input[name="rate"]'), '15.551');
+  assert.match(await page.locator('[data-rate-note]').textContent(), /Meralco, November 2026/);
+  // The remaining expectations use the workbook's default rate.
+  assert.equal(await page.locator('[data-rate-summary]').textContent(), '₱15.55/kWh');
+  await page.locator('.solar-fine-tune summary').click();
+  await page.locator('#solar-estimator input[name="rate"]').fill('16');
   await page.locator('#solar-estimator .calculate-cost').click();
   await page.waitForSelector('.estimate-economics');
-  assert.equal(await page.locator('.estimate-economics dd').nth(0).textContent(),'₱4,800');
-  assert.equal(await page.locator('.estimate-economics dd').nth(1).textContent(),'3.1–4.2 years');
-  assert.equal(await page.locator('.estimate-economics dd').nth(2).textContent(),'₱2,025 / year');
+  // Default answers: a home used day and night, "Essentials and more". The recommended setup stores
+  // half of the evening use.
+  assert.equal(await page.locator('[data-scenario-title]').textContent(),'Day + 50% of night');
+  assert.equal(await page.locator('.solar-scenario:has(input:checked) em').textContent(),'Recommended');
+  assert.match(await page.locator('.solar-scenario:has(input:checked)').textContent(),/5\.12 kWh battery/);
+  assert.equal(await page.locator('.estimate-economics dd').nth(0).textContent(),'₱4,285');
+  assert.equal(await page.locator('.estimate-economics dd').nth(1).textContent(),'3 yrs 10 mos – 4 yrs 7 mos');
+  assert.equal(await page.locator('.estimate-economics dd').nth(2).textContent(),'2.48 kWp + 5.12 kWh storage');
+  // A coverage choice recalculates straight away once a result is showing.
+  await page.locator('.solar-coverage-choices label:has(input[value="50"])').click();
+  await page.waitForFunction(() => document.querySelector('.estimate-economics dd')?.textContent === '₱3,214');
   assert(!(await page.locator('#estimate-result').textContent()).includes('NaN'));
   assert(await page.locator('.calculate-cost').isHidden());
   await page.locator('#solar-estimator input[name="bill"]').fill('7000');
   assert(await page.locator('.calculate-cost').isVisible());
   assert.equal(await page.locator('.estimate-economics').count(),0);
   await page.goto(f.env.APP_ORIGIN + '/#/divisions/solar');
+  await page.locator('.discovery-progress [data-step="1"]').click();
   await page.waitForSelector('#solar-estimator');
   await page.locator('#solar-estimator input[name="bill"]').fill('6000');
-  await page.locator('#solar-estimator input[name="offset"]').evaluate(input => {
-    input.value = '20';
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-  });
+  await page.locator('.solar-coverage-choices label:has(input[value="50"])').click();
   await page.locator('#solar-estimator .calculate-cost').click();
-  assert.equal(await page.locator('.estimate-economics dd').first().textContent(), '₱1,200');
+  assert.equal(await page.locator('.estimate-economics dd').first().textContent(), '₱3,214');
   await page.locator('#solar-estimate-inquiry').click();
   await page.locator('#repeat-inquiry-dialog [data-existing-action="view"]').click();
   await page.waitForSelector('#saved-inquiry-history');
   await page.locator('#saved-inquiry-history > a').click();
   await page.locator('#repeat-inquiry-dialog [data-existing-action="continue"]').click();
   await page.waitForSelector('#inquiry-form');
-  assert.equal(await page.locator('#inquiry-form').getAttribute('data-solar-savings'), '1200');
+  assert.equal(await page.locator('#inquiry-form').getAttribute('data-solar-savings'), '3214');
   await page.goto(f.env.APP_ORIGIN + '/#/divisions/solar/projects/%');
   await page.waitForSelector('#project-detail-dialog[open]');
   assert.match(await page.locator('#project-detail-dialog').textContent(), /Project unavailable/);

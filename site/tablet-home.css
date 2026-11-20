@@ -1,0 +1,367 @@
+/* Touch-tablet homepage: five panels opened by tapping (tablet-home.js). Applies at 600px
+   wide or more, 600px tall or more, on devices without hover. Desktop, laptops and tablets
+   with a mouse or trackpad keep the hover banners. Columns in landscape; stacked bands in
+   portrait, where the first band's photo runs up behind the header, blurred and vignetted. */
+.tp {
+  display: none;
+}
+
+@media (min-width: 600px) and (min-height: 600px) and (hover: none) {
+  .landing .division-landing.tp-active {
+    --tp-ease: cubic-bezier(0.22, 0.7, 0.2, 1);
+    --tp-top: clamp(214px, 25vh, 300px);
+    position: relative;
+    height: 100svh;
+    min-height: 600px;
+    padding: 0;
+    overflow: hidden;
+    background: #0d1d18;
+  }
+  .landing #header {
+    background: transparent;
+  }
+  .landing .division-landing.tp-active .division-banners,
+  .landing .division-landing.tp-active .compact-banner-scene,
+  .landing .division-landing.tp-active .banner-scroll-cue {
+    display: none;
+  }
+  .landing .division-landing.tp-active > .landing-intro {
+    position: absolute;
+    z-index: 5;
+    top: 104px;
+    left: 40px;
+    right: 40px;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    pointer-events: none;
+    transition: opacity 360ms ease;
+  }
+  .landing .division-landing.tp-active > .landing-intro h1 {
+    font-size: clamp(48px, 7.8vw, 64px);
+    line-height: 1.04;
+    letter-spacing: -0.045em;
+    max-width: 640px;
+    text-shadow: 0 2px 22px rgba(0, 0, 0, 0.28);
+  }
+  .landing .division-landing.tp-active > .landing-intro h1 br {
+    display: inline;
+  }
+
+  .landing .tp {
+    display: block;
+    position: absolute;
+    inset: 0;
+    color: #fff;
+  }
+  .tp-panels {
+    position: absolute;
+    z-index: 0;
+    inset: var(--tp-top) 0 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .tp-panel {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    transition: flex-grow 620ms var(--tp-ease);
+  }
+  .tp-has-open .tp-panel.is-open {
+    flex-grow: 4.9;
+  }
+  .tp-panel > img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    transition: filter 520ms ease;
+  }
+  .tp-has-open .tp-panel:not(.is-open) > img {
+    filter: grayscale(1) brightness(0.62);
+  }
+  .tp-shade {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      rgba(9, 23, 18, 0.88) 0%,
+      rgba(9, 23, 18, 0.55) 55%,
+      rgba(9, 23, 18, 0.25) 100%
+    );
+  }
+  /* Portrait: the first band's own photo continues up behind the header */
+  .tp-panel:first-child {
+    overflow: visible;
+    border-top: 0;
+  }
+  .tp-panel:first-child > img,
+  .tp-panel:first-child > .tp-shade {
+    top: calc(-1 * var(--tp-top));
+    height: calc(100% + var(--tp-top));
+  }
+  .tp-top {
+    position: absolute;
+    z-index: 1;
+    inset: 0 0 auto;
+    height: calc(var(--tp-top) + 24px);
+    pointer-events: none;
+  }
+  .tp-blur {
+    position: absolute;
+    inset: 0;
+  }
+  .tp-blur-near {
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    -webkit-mask-image: linear-gradient(0deg, transparent 0, #000 110px);
+    mask-image: linear-gradient(0deg, transparent 0, #000 110px);
+  }
+  .tp-blur-far {
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    -webkit-mask-image: linear-gradient(0deg, transparent 70px, #000 100%);
+    mask-image: linear-gradient(0deg, transparent 70px, #000 100%);
+  }
+  .tp-vignette {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        180deg,
+        rgba(4, 14, 12, 0.74) 0%,
+        rgba(4, 14, 12, 0.46) 45%,
+        rgba(4, 14, 12, 0.22) 85%,
+        rgba(4, 14, 12, 0) 100%
+      ),
+      radial-gradient(140% 90% at 50% 100%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.26) 100%);
+  }
+
+  .tp-hit {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .tp-panel.is-open .tp-hit {
+    cursor: default;
+  }
+  .tp-copy {
+    position: absolute;
+    z-index: 3;
+    left: 40px;
+    right: 96px;
+    bottom: 22px;
+    display: grid;
+    justify-items: start;
+    pointer-events: none;
+  }
+  .tp-title {
+    width: max-content;
+    margin: 0;
+    font-family: Manrope, Arial, sans-serif;
+    font-size: 56px;
+    font-weight: 750;
+    line-height: 58px;
+    letter-spacing: -0.045em;
+    color: #fff;
+    white-space: nowrap;
+    transform-origin: 0 100%;
+    transform: scale(0.52);
+    transition: transform 620ms var(--tp-ease);
+  }
+  .tp-title br {
+    display: none;
+  }
+  .tp-has-open .tp-panel:not(.is-open) .tp-title {
+    transform: scale(0.4);
+  }
+  .tp-panel.is-open .tp-title {
+    transform: none;
+  }
+  .tp-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0 0;
+    font-size: 15px;
+    line-height: 22px;
+    color: #f4f0e8;
+    transition: font-size 520ms var(--tp-ease);
+  }
+  .tp-label svg {
+    width: 20px;
+    height: 20px;
+    flex: none;
+  }
+  .tp-panel.is-open .tp-label {
+    font-size: 22px;
+  }
+  .tp-has-open .tp-panel:not(.is-open) .tp-label {
+    display: none;
+  }
+  .tp-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 22px;
+    height: 56px;
+    max-height: 0;
+    margin-top: 0;
+    padding: 0 22px;
+    overflow: hidden;
+    opacity: 0;
+    background: #fff;
+    color: #173b30;
+    font-size: 15px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-decoration: none;
+    pointer-events: none;
+    transition:
+      opacity 260ms ease,
+      max-height 520ms var(--tp-ease),
+      margin 520ms var(--tp-ease);
+  }
+  .tp-cta svg {
+    width: 18px;
+    height: 18px;
+  }
+  .tp-panel.is-open .tp-cta {
+    max-height: 56px;
+    margin-top: 22px;
+    opacity: 1;
+    pointer-events: auto;
+    transition:
+      opacity 360ms ease 260ms,
+      max-height 520ms var(--tp-ease),
+      margin 520ms var(--tp-ease);
+  }
+  .tp-close {
+    position: absolute;
+    z-index: 4;
+    top: 16px;
+    right: 16px;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    background: rgba(9, 23, 18, 0.35);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.8);
+    pointer-events: none;
+    transition:
+      opacity 200ms ease,
+      transform 260ms var(--tp-ease);
+  }
+  .tp-panel.is-open .tp-close {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    transition:
+      opacity 300ms ease 320ms,
+      transform 420ms var(--tp-ease) 320ms;
+  }
+  .tp-hit:focus-visible,
+  .tp-cta:focus-visible,
+  .tp-close:focus-visible {
+    outline: 2px solid #e6cf8e;
+    outline-offset: -4px;
+  }
+
+  /* Follow the approved intro: panel copy hidden while it plays, revealed with the divisions */
+  .division-landing.intro-playing .tp-copy,
+  .division-landing[data-reveal-phase='headline'] .tp-copy {
+    opacity: 0;
+  }
+}
+
+/* Landscape: the desktop columns */
+@media (min-width: 600px) and (min-height: 600px) and (hover: none) and (orientation: landscape) {
+  .landing .division-landing.tp-active > .landing-intro h1 {
+    font-size: 56px;
+    line-height: 58px;
+  }
+  .landing .division-landing.tp-active.tp-has-open > .landing-intro {
+    opacity: 0 !important;
+  }
+  .tp-panels {
+    inset: 0;
+    flex-direction: row;
+  }
+  .tp-panel {
+    border-top: 0;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .tp-panel:first-child {
+    overflow: hidden;
+    border-left: 0;
+  }
+  .tp-panel:first-child > img,
+  .tp-panel:first-child > .tp-shade {
+    top: 0;
+    height: 100%;
+  }
+  .tp-top {
+    display: none;
+  }
+  .tp-shade {
+    background: linear-gradient(
+      0deg,
+      rgba(9, 23, 18, 0.93) 0%,
+      rgba(9, 23, 18, 0.74) 30%,
+      rgba(9, 23, 18, 0.22) 65%,
+      rgba(9, 23, 18, 0.25) 100%
+    );
+  }
+  .tp-copy {
+    left: 24px;
+    right: 24px;
+    bottom: 28px;
+  }
+  .tp-has-open .tp-panel:not(.is-open) .tp-copy {
+    left: 18px;
+    right: 18px;
+  }
+  .tp-title {
+    transform: scale(var(--tp-rest, 0.46));
+  }
+  .tp-title br {
+    display: inline;
+  }
+  .tp-has-open .tp-panel:not(.is-open) .tp-title {
+    transform: scale(var(--tp-closed, 0.34));
+  }
+  .tp-has-open .tp-panel:not(.is-open) .tp-label {
+    display: flex;
+  }
+  .tp-has-open .tp-panel:not(.is-open) .tp-label span {
+    display: none;
+  }
+  .tp-close {
+    top: 104px;
+  }
+}
+
+@media (min-width: 600px) and (min-height: 600px) and (hover: none) and (prefers-reduced-motion: reduce) {
+  .tp *,
+  .division-landing.tp-active > .landing-intro {
+    transition: none !important;
+  }
+}

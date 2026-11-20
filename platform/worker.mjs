@@ -211,19 +211,14 @@ function csrf(request, record) {
 const selectors = [
   ".landing-kicker",
   "#landing-title",
-  ".landing-invitation .intro-step:first-child",
-  ".landing-invitation .intro-step:last-child",
   "#company-title",
-  ".company-intro p:nth-of-type(1)",
-  ".company-intro p:nth-of-type(2)",
+  ".company-story p:nth-of-type(1)",
+  ".company-story-close",
   ".page-hero h1",
   ".page-hero p",
   ".content-columns h2",
   ".content-columns > div:first-child p:nth-of-type(1)",
   ".content-columns > div:first-child p:nth-of-type(2)",
-  ".scope-panel .scope-label",
-  ".scope-panel p:nth-of-type(1)",
-  ".scope-panel p:nth-of-type(2)",
 ];
 const divisions = [
   "solar",
@@ -233,8 +228,22 @@ const divisions = [
   "elevators",
 ];
 for (const id of divisions)
-  for (const sel of ["h2", ".banner-hook", ".banner-description"])
+  for (const sel of ["h2", ".banner-division-label"])
     selectors.push(`[data-banner="${id}"] ${sel}`);
+// Retired homepage fields are accepted only to clean older saved drafts on their next save.
+const retiredSelectors = new Set([
+  ".company-intro p:nth-of-type(1)",
+  ".company-intro p:nth-of-type(2)",
+  ".landing-invitation .intro-step:first-child",
+  ".landing-invitation .intro-step:last-child",
+  // The About page's second panel was replaced by the People / Office tabs.
+  ".scope-panel .scope-label",
+  ".scope-panel p:nth-of-type(1)",
+  ".scope-panel p:nth-of-type(2)",
+  ...divisions.flatMap((id) =>
+    [".banner-hook", ".banner-description"].map((sel) => `[data-banner="${id}"] ${sel}`),
+  ),
+]);
 function text(value, limit = 5000) {
   if (typeof value !== "string" || value.length > limit)
     fail(400, "Invalid or oversized text.");
@@ -270,12 +279,34 @@ export function validateContent(input) {
     )
       fail(400, "Invalid content fields.");
   for (const [key, value] of Object.entries(input.text || {})) {
+    if (retiredSelectors.has(key)) {
+      text(value);
+      continue;
+    }
     if (!selectors.includes(key)) fail(400, "Unknown text field.");
     content.text[key] = text(value);
   }
   for (const [key, value] of Object.entries(input.images || {})) {
     if (!divisions.includes(key)) fail(400, "Unknown banner.");
     content.images[key] = image(value);
+  }
+  // Solar Calculator settings: the default electricity rate staff update from Meralco's advisory.
+  if (input.settings !== undefined) {
+    const settings = input.settings;
+    if (!settings || typeof settings !== "object" || Array.isArray(settings))
+      fail(400, "Invalid settings.");
+    for (const key of Object.keys(settings))
+      if (!["electricityRate", "electricityRateNote"].includes(key))
+        fail(400, "Unknown setting.");
+    content.settings = {};
+    if (settings.electricityRate !== undefined) {
+      const rate = settings.electricityRate;
+      if (typeof rate !== "number" || !Number.isFinite(rate) || rate < 1 || rate > 100)
+        fail(400, "Electricity rate must be between 1 and 100 PHP per kWh.");
+      content.settings.electricityRate = Math.round(rate * 10000) / 10000;
+    }
+    if (settings.electricityRateNote !== undefined)
+      content.settings.electricityRateNote = text(settings.electricityRateNote, 120);
   }
   for (const type of ["projects", "posts"]) {
     if (!Array.isArray(input[type]) || input[type].length > 100)

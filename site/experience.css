@@ -559,79 +559,8 @@
 #solar-options details p {
   margin-top: 12px;
 }
-/* Step three packs choices into a row, keeping location and next action close. */
-.solar-start #solar-discovery.priority-step {
-  padding: 24px 30px;
-}
-.priority-step .discovery-progress {
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-}
-.solar-start .priority-step fieldset {
-  margin-bottom: 16px;
-}
-.solar-start .priority-step legend {
-  margin-bottom: 16px;
-  font-size: 26px;
-}
-.priority-step .solar-choices {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 9px;
-}
-.priority-step .solar-choices span {
-  font-size: 15px;
-  min-height: 76px;
-  padding: 12px;
-  gap: 5px;
-  line-height: 1.4;
-}
-.priority-step .solar-location {
-  margin-top: 12px;
-  gap: 5px;
-  max-width: none;
-}
-.priority-step .solar-location > small {
-  display: none;
-}
-.priority-step .solar-location input {
-  padding: 11px 13px;
-}
-.priority-step #solar-guidance {
-  margin: 14px 0;
-  font-size: 15px;
-  line-height: 1.6;
-}
-.priority-step .discovery-controls {
-  margin-top: 16px;
-}
-.priority-stage .discovery-visual {
-  min-height: 360px;
-  padding: 24px;
-}
-.priority-stage .discovery-visual .motion-scene {
-  max-width: 250px;
-}
-.priority-stage .discovery-visual h3 {
-  font-size: 25px;
-  margin: 10px 0;
-}
+
 @media (max-width: 700px) {
-  .priority-step .solar-choices {
-    grid-template-columns: 1fr;
-  }
-  .priority-step .solar-choices span {
-    min-height: 48px;
-    padding: 11px 13px;
-  }
-  .solar-start #solar-discovery.priority-step {
-    padding: 22px;
-  }
-  .priority-stage .discovery-visual {
-    min-height: 240px;
-  }
-  .priority-stage .discovery-visual .motion-scene {
-    max-width: 170px;
-  }
   #solar-options .solar-story-grid {
     grid-template-columns: 1fr;
     gap: 16px;
@@ -645,17 +574,6 @@
   #solar-options .solar-story-grid article {
     padding: 0 4px;
   }
-}
-.larger-text .priority-step .solar-choices span {
-  font-size: 19px;
-}
-.larger-text .priority-step #solar-guidance {
-  font-size: 18px;
-}
-.priority-step .solar-location > small {
-  display: block;
-  font-size: 12px;
-  line-height: 1.35;
 }
 /* About narrative plays once on entry, reserving every line's final footprint. */
 .company-waiting {
@@ -1177,7 +1095,7 @@ body.intro-scroll-locked {
   overscroll-behavior: none;
 }
 .intro-playing .banner-content,
-.intro-scroll-locked .banner-nav-right,
+.intro-scroll-locked .banner-nav-right:not(.intro-actions-revealing),
 .intro-scroll-locked .company-scroll-cue,
 .intro-playing .landing-bottom {
   opacity: 0 !important;

@@ -8,7 +8,7 @@ Clone the private GitHub repository, open that folder in Codex, and follow READM
 
 Ask Codex to read AGENTS.md and HANDOFF.md and check `git status` and the current branch. With no uncommitted work, fetch the latest GitHub changes and update the intended branch with a fast-forward pull. If there are local changes or diverged commits, preserve and reconcile them before editing. Do not reset or force-push to make the copies match.
 
-Use a descriptive update branch for new work. Keep `main` for approved code. Work on one computer at a time on a shared task unless separate branches are deliberately used.
+Use `develop` for integration of the official client website, starting from the reviewed 1.0.1 source. Preserve `demo/1.0.1` as the demo snapshot; do not develop or deploy new changes from that branch. Create focused branches such as `feature/homepage-intro` or `fix/contact-layout` from `develop`, then review and merge them back into `develop`. Keep `main` for approved code. Work on one computer at a time on a shared task unless separate branches are deliberately used.
 
 ## Before changing computers
 
@@ -23,5 +23,9 @@ On the other computer, fetch, switch to the same branch and pull the saved chang
 3. Publish only after the user instructs a production release. GitHub automatic deployment is not configured.
 4. Deploy from `deployments/techouse-1.0/` using an authenticated, pinned Wrangler installation. Its custom build refreshes asset cache versions. Keep credentials outside the repository.
 5. Verify the live website, record the deployed Worker version and update HANDOFF.md and deployment records. Commit any generated asset-version changes and release records so GitHub reflects what was deployed.
+
+## Presentation demo
+
+The public presentation demo is the `techouse-cleaned` Worker (https://techouse-cleaned.johndavidceasar.workers.dev). Deploy it only from the `demo/cleaned-solar` branch, which holds the current site plus the demo Worker files (`cleaned-demo.mjs`, `wrangler.cleaned.jsonc`, `CLEANED-DEMO.md`). Merge `main` into that branch first, then from `deployments/techouse-1.0/` run `npx wrangler@4.157.0 deploy --config wrangler.cleaned.jsonc`. Do not deploy the demo from a feature branch or a mix of branches, and do not merge the demo Worker files into `main`. Its build refreshes asset versions; `platform/tests/asset-versions.test.mjs` fails if committed versions are stale.
 
 The original Stable Build 1 archive remains immutable. A future Git tag for that baseline must point to the exact recovered archive source, not the current post-baseline code. Database backups and schema migrations require separate handling; reverting website code does not revert database changes.

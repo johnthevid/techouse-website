@@ -80,102 +80,37 @@ window.TechouseExperience = (() => {
             : '<path d="m62 110 93-61 93 61M79 100v111h153V100"/><rect x="46" y="140" width="48" height="78" rx="7" fill="#edf1e6"/><path d="M62 134h16v6M58 158h23m-23 13h23"/><path class="energy-path" d="M94 180h35v-49h26m0 0v49h46" stroke="#bd9452"/><g class="essential-light"><path d="M142 113a14 14 0 1 1 25 0l-5 8h-14Z" fill="#e4c174"/><path d="M149 127h13m-12 5h11"/></g><rect x="181" y="158" width="29" height="47" rx="3"/><path d="M181 179h29m-6-13v6m0 16v6M113 207h35m-17 0v-8m-12-7a12 12 0 0 1 24 0m-19-1a7 7 0 0 1 14 0"/><circle cx="131" cy="194" r="1"/>';
     return `<svg viewBox="0 0 320 270" role="img" aria-label="${value}" class="motion-scene"><path d="M30 240h260" stroke="#b9c8ba" fill="none"/><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${art}</g></svg>`;
   }
-  // ABOUT SEQUENCE: short paragraph fades, pending dots, and staggered division-card entrances.
-  async function companyEntrance() {
-    await document.fonts.ready;
+  // ABOUT: a brief, centered reveal with no sequential reading delays or alignment morphs.
+  function companyEntrance() {
     const company = document.querySelector('#company');
     if (!company || companySeen || reduced()) return;
-    const intro = company.querySelector('.company-intro');
-    const heading = intro.querySelector('h2');
-    const planning = company.querySelector('.company-divisions');
-    const originalLines = heading.innerHTML.split(/<br\s*\/?>/i);
-    const lines = originalLines.length === 2 ? originalLines.map(html => {
-      const span = document.createElement('span');
-      span.innerHTML = html;
-      span.style.display = 'block';
-      return span;
-    }) : [heading];
-    if (lines[0] !== heading) heading.replaceChildren(...lines);
-    const body = [...intro.querySelectorAll('p, a.button')];
-    const eyebrow = intro.querySelector('.eyebrow');
-    const cards = [...planning.querySelectorAll('h3, a')];
-    [...lines, ...body, eyebrow, planning].forEach(el => el.style.opacity = '0');
-    planning.inert = true;
-    const wide = matchMedia('(min-width: 901px)').matches;
-    const companyBounds = company.getBoundingClientRect();
-    const introBounds = intro.getBoundingClientRect();
-    const offset = wide ? companyBounds.left + (companyBounds.width - introBounds.width) / 2 - introBounds.left : 0;
-    intro.style.transform = `translateX(${offset}px)`;
-    // Animate actual line positions: text-align itself cannot interpolate.
-    const alignmentRuns = [];
-    const originals = [];
-    function centeredRun(container, text) {
-      const row = document.createElement('span'); row.style.display = 'block';
-      const ink = document.createElement('span'); ink.textContent = text;
-      ink.style.display = 'inline-block'; row.append(ink); container.append(row);
-      // Paragraphs have a narrower max-width than the heading column.
-      // Center every line on the same intro axis, not each paragraph's box.
-      const inset = container.getBoundingClientRect().left - intro.getBoundingClientRect().left;
-      const shift = (intro.clientWidth-ink.getBoundingClientRect().width)/2 - inset;
-      ink.style.transform = `translateX(${shift}px)`;
-      alignmentRuns.push({ink,shift});
-    }
-    if (wide) {
-      for (const element of [...lines, ...intro.querySelectorAll('p')]) {
-        originals.push({element,html:element.innerHTML});
-        const text = element.textContent;
-        const style = getComputedStyle(element);
-        const context = document.createElement('canvas').getContext('2d');
-        context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-        const max = element.clientWidth;
-        const rows = []; let row = '';
-        for (const word of text.split(/\s+/)) {
-          const candidate = row ? row+' '+word : word;
-          if(row && context.measureText(candidate).width > max-8) {rows.push(row);row=word;} else row=candidate;
-        }
-        if(row)rows.push(row);
-        element.replaceChildren(); rows.forEach(value=>centeredRun(element,value));
-      }
-      // The label/button keep their own layout so their entrance motion stays independent.
-      intro.style.textAlign = 'center';
-      heading.style.textAlign='left';
-      intro.querySelectorAll('p').forEach(el=>el.style.textAlign='left');
-    }
-
-    async function reveal(element, duration = 550) {
-      if (!company.isConnected) return;
-      element.style.opacity = '1';
-      await element.animate([{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'translateY(0)'}],{duration,easing:'cubic-bezier(.2,.7,.2,1)'}).finished.catch(()=>{});
-    }
-    async function play() {
-      await reveal(lines[0]);
-      if (lines[1]) await reveal(lines[1]);
-      await new Promise(resolve => { const timer=setTimeout(()=>{timers.delete(timer);resolve();},500);timers.add(timer); });
-      if (!company.isConnected) return;
-      reveal(eyebrow,350);
-      for (const paragraph of body) await reveal(paragraph,450);
-      if (!company.isConnected) return;
-      const alignmentAnimations = alignmentRuns.map(({ink,shift}) => ink.animate([{transform:`translateX(${shift}px)`},{transform:'translateX(0)'}],{duration:900,easing:'cubic-bezier(.22,.7,.2,1)',fill:'forwards'}));
-      if(wide) {
-        const button = intro.querySelector('a.button');
-        const before = button.getBoundingClientRect().left;
-        intro.style.textAlign = 'left';
-        const shift = before-button.getBoundingClientRect().left;
-        alignmentAnimations.push(button.animate([{transform:`translateX(${shift}px)`},{transform:'translateX(0)'}],{duration:900,easing:'cubic-bezier(.22,.7,.2,1)'}));
-      }
-      await intro.animate([{transform:`translateX(${offset}px)`},{transform:'translateX(0)'}],{duration:900,easing:'cubic-bezier(.22,.7,.2,1)',fill:'forwards'}).finished.catch(()=>{});
-      intro.style.transform = '';
-      originals.forEach(({element,html})=>{element.innerHTML=html;element.style.textAlign='';});
-      alignmentAnimations.forEach(animation=>animation.cancel());
-      if (!company.isConnected) return;
-      planning.style.opacity = '1';
-      cards.forEach((card,index) => card.animate([{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'translateY(0)'}],{duration:500,delay:index*100,easing:'ease-out',fill:'backwards'}));
-      planning.inert = false;
-    }
-    companyObserver = new IntersectionObserver(entries => {
-      if (!entries.some(entry => entry.isIntersecting)) return;
-      companyObserver.disconnect(); companySeen = true; play();
-    }, {threshold:.15});
+    const items = [...company.querySelectorAll('h2,p,a.button')];
+    items.forEach((element) => {
+      element.style.opacity = '0';
+    });
+    companyObserver = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        companyObserver.disconnect();
+        companySeen = true;
+        items.forEach((element, index) => {
+          element.style.opacity = '';
+          element.animate(
+            [
+              { opacity: 0, transform: 'translateY(12px)' },
+              { opacity: 1, transform: 'translateY(0)' },
+            ],
+            {
+              duration: 420,
+              delay: index * 60,
+              easing: 'cubic-bezier(.22,.7,.2,1)',
+              fill: 'backwards',
+            },
+          );
+        });
+      },
+      { threshold: 0.15 },
+    );
     companyObserver.observe(company);
   }
   // INTRO: once per page load; cleanupIntro must always release scroll locks and inert controls.
@@ -198,237 +133,194 @@ window.TechouseExperience = (() => {
         title.focus({ preventScroll: true });
       };
     }
+    const landing = document.querySelector('.division-landing');
+    const intro = document.querySelector('.landing-intro');
+    intro.dataset.emphasis = 'question';
     if (window.techouseIntroStarted || reduced()) return;
     window.techouseIntroStarted = true;
-    const title = document.querySelector('#landing-title'),
-      invitation = document.querySelector('.landing-invitation'),
-      intro = kicker.closest('.landing-intro'),
-      landing = document.querySelector('.division-landing'),
-      steps = [...invitation.querySelectorAll('.intro-step')];
-    const sentence = kicker.textContent,
-      animations = new Set(),
-      localTimers = new Set();
-    let done = false;
-    const captions = [
-      ...document.querySelectorAll('.division-banner .banner-content'),
-      document.querySelector('.banner-nav-right'),
-    ].filter(Boolean);
-    const blocked = [
-      document.querySelector('.division-banners'),
-      document.querySelector('.banner-nav-right'),
-      document.querySelector('.banner-company-link'),
-      document.querySelector('#company'),
-      document.querySelector('#footer'),
-    ].filter(Boolean);
-    const pause = (ms) =>
-      new Promise((resolve) => {
-        const t = setTimeout(() => {
-          localTimers.delete(t);
-          resolve();
-        }, ms);
-        localTimers.add(t);
-      });
-    const animate = (el, frames, options) => {
-      const animation = el.animate(frames, options);
-      animations.add(animation);
-      return animation.finished.finally(() => animations.delete(animation));
-    };
-    intro.dataset.emphasis = 'promise';
-    kicker.classList.add('intro-waiting');
-    title.classList.add('intro-waiting');
-    steps.forEach((el) => el.classList.add('intro-waiting'));
+    const overlay = document.createElement('div');
+    overlay.className = 'brand-intro';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Welcome to Techouse');
+    overlay.dataset.phase = 'mark';
+    overlay.innerHTML = `<div class="brand-intro-center"><div class="brand-intro-lockup" aria-hidden="true"><img class="brand-intro-symbol" src="assets/techouse-logo-horizontal.png" alt=""><img class="brand-intro-wordmark" src="assets/techouse-logo-horizontal.png" alt=""></div><p class="brand-intro-message"></p></div><button class="skip-intro" type="button">Skip intro ↗</button>`;
+    overlay.querySelector('.brand-intro-message').textContent = kicker.textContent;
+    document.body.append(overlay);
+    const symbol = overlay.querySelector('.brand-intro-symbol');
+    const wordmark = overlay.querySelector('.brand-intro-wordmark');
+    const message = overlay.querySelector('.brand-intro-message');
+    const skip = overlay.querySelector('button');
+    const blocked = ['#header', '#main', '#footer']
+      .map((sel) => document.querySelector(sel))
+      .filter(Boolean);
+    const pageCopy = [intro, ...landing.querySelectorAll('.banner-content')];
+    const actionGroup = document.querySelector('#header .banner-nav-right');
+    const originalActionOpacity = actionGroup?.style.opacity;
+    if (actionGroup) actionGroup.style.opacity = '0';
+    const originalOpacity = pageCopy.map((el) => el.style.opacity);
+    pageCopy.forEach((el) => {
+      el.style.opacity = '0';
+    });
+    const originalInert = blocked.map((el) => el.inert);
+    blocked.forEach((el) => {
+      el.inert = true;
+    });
     landing.classList.add('intro-playing');
     document.documentElement.classList.add('intro-scroll-locked');
     document.body.classList.add('intro-scroll-locked');
-    blocked.forEach((el) => (el.inert = true));
-    const skip = document.createElement('button');
-    skip.type = 'button';
-    skip.className = 'skip-intro';
-    skip.innerHTML = 'Skip intro <span aria-hidden="true">▸│</span><span class="skip-intro-progress" aria-hidden="true"></span>';
-    const skipHint = document.createElement('span');
-    skipHint.className = 'intro-skip-hint';
-    skipHint.textContent = matchMedia('(pointer: coarse)').matches ? 'Double tap to skip' : 'Double click to skip';
-    landing.append(skip, skipHint);
-    let lastTap = null;
-    let skipping = false;
-    let skipFade = null;
-    function doubleClickSkip(event) { if (!event.target.closest('button,a')) requestSkip(); }
-    function tapSkip(event) {
-      if (event.pointerType !== 'touch' || !event.isPrimary || event.target.closest('button,a')) return;
-      const now = performance.now();
-      if (lastTap && now-lastTap.time < 350 && Math.hypot(event.clientX-lastTap.x,event.clientY-lastTap.y)<40) { lastTap=null; requestSkip(); }
-      else lastTap={time:now,x:event.clientX,y:event.clientY};
-    }
-    landing.addEventListener('dblclick', doubleClickSkip);
-    landing.addEventListener('pointerup', tapSkip);
-    function unlock() {
+    const animations = new Set();
+    let done = false;
+    let exiting = false;
+    let safety;
+    const animate = async (element, frames, duration, delay = 0) => {
+      const animation = element.animate(frames, {
+        duration,
+        delay,
+        easing: 'cubic-bezier(.22,.7,.2,1)',
+        fill: 'forwards',
+      });
+      animations.add(animation);
+      await animation.finished.catch(() => {});
+    };
+    const finish = () => {
+      if (done) return;
+      done = true;
+      clearTimeout(safety);
+      animations.forEach((animation) => animation.cancel());
+      animations.clear();
+      overlay.remove();
+      if (actionGroup) {
+        actionGroup.classList.remove('intro-actions-revealing');
+        actionGroup.style.opacity = originalActionOpacity;
+      }
       landing.classList.remove('intro-playing');
-      landing.dispatchEvent(new Event('intro-ready'));
+      landing.dataset.revealPhase = 'complete';
+      pageCopy.forEach((el, index) => {
+        el.style.opacity = originalOpacity[index];
+      });
       document.documentElement.classList.remove('intro-scroll-locked');
       document.body.classList.remove('intro-scroll-locked');
-      blocked.forEach((el) => (el.inert = false));
-      skip.remove();
-      skipHint.remove();
-      landing.removeEventListener('dblclick', doubleClickSkip);
-      landing.removeEventListener('pointerup', tapSkip);
-    }
-    // Both normal completion and Skip use this single exit path to restore the page.
-    function finish(skipped = false) {
-      if (done) return;
-      done = true;
-      localTimers.forEach(clearTimeout);
-      animations.forEach((a) => a.cancel());
-      animations.clear();
-      kicker.textContent = sentence;
-      kicker.removeAttribute('aria-label');
-      kicker.classList.remove('intro-typing', 'intro-waiting');
-      title.classList.remove('intro-waiting');
-      steps.forEach((el) => el.classList.remove('intro-waiting'));
-      intro.dataset.emphasis = 'question';
-      unlock();
-      captions.forEach((el, i) => {
-        el.style.opacity = '1';
-        if (el.isConnected)
-          el.animate(
-            skipped
-              ? [{ opacity: 0 }, { opacity: 1 }]
-              : [
-                  { opacity: 0, transform: 'translateY(32px)' },
-                  { opacity: 1, transform: 'translateY(0)' },
-                ],
-            {
-              duration: skipped ? 550 : 750,
-              delay: skipped ? 0 : i * 85,
-              easing: 'cubic-bezier(.22,.7,.2,1)',
-              fill: 'backwards',
-            },
-          );
+      blocked.forEach((el, index) => {
+        el.inert = originalInert[index];
       });
-      if (skipped) document.querySelector('#main').focus({ preventScroll: true });
-    }
-    async function requestSkip() {
-      if (done || skipping) return;
-      skipping = true;
-      skip.disabled = true;
-      localTimers.forEach(clearTimeout);
-      animations.forEach(animation => animation.pause());
-      try {
-        // Transition the headline only; banner photography stays visible.
-        skipFade = intro.animate([{ opacity: 1 }, { opacity: 0 }], {
-          duration: 220, easing: 'ease-in-out', fill: 'forwards',
-        });
-        await skipFade.finished;
-        if (!landing.isConnected || done) return;
-        finish(true);
-        const fadeOut = skipFade;
-        skipFade = intro.animate([{ opacity: 0 }, { opacity: 1 }], {
-          duration: 550, easing: 'cubic-bezier(.22,.7,.2,1)', fill: 'both',
-        });
-        fadeOut.cancel();
-        await skipFade.finished;
-        skipFade.cancel();
-        skipFade = null;
-      } catch {
-        // Navigation cancels the fade and the normal cleanup restores the page.
-      }
-    }
-    skip.onclick = requestSkip;
-    cleanupIntro = () => {
-      skipFade?.cancel();
-      done = true;
-      localTimers.forEach(clearTimeout);
-      animations.forEach((a) => a.cancel());
-      unlock();
+      landing.dispatchEvent(new Event('intro-ready'));
     };
-    const safety = setTimeout(() => finish(true), 18000);
-    localTimers.add(safety);
-    async function play() {
-      await Promise.race([document.fonts.ready, pause(1200)]);
-      if (done || !intro.isConnected) return;
-      const typingDelays = Array.from(sentence).map(char => 22 + Math.random() * 44 + (char === ',' ? 100 : 0));
-      const totalDuration = typingDelays.reduce((a, b) => a + b, 0) + 400 + 650 + 1600 + 1800 + steps.length * 770;
-      const progress = skip.querySelector('.skip-intro-progress').animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration: totalDuration, easing: 'linear', fill: 'forwards' });
-      animations.add(progress);
-      kicker.setAttribute('aria-label', sentence);
-      kicker.classList.add('intro-typing');
-      const reserve = document.createElement('span');
-      reserve.className = 'intro-type-reserve';
-      reserve.setAttribute('aria-hidden', 'true');
-      reserve.textContent = sentence;
-      const ink = document.createElement('span');
-      ink.className = 'intro-type-ink';
-      ink.setAttribute('aria-hidden', 'true');
-      kicker.replaceChildren(reserve, ink);
-      kicker.classList.remove('intro-waiting');
-      for (const [index, char] of Array.from(sentence).entries()) {
-        if (done) return;
-        ink.textContent += char;
-        await pause(typingDelays[index]);
-      }
-      if (done) return;
-      kicker.textContent = sentence;
-      kicker.classList.remove('intro-typing');
-      await pause(400);
-      if (done) return;
-      title.classList.remove('intro-waiting');
-      await animate(
-        title,
-        [
-          { opacity: 0, transform: 'translateY(6px)' },
-          { opacity: 1, transform: 'translateY(0)' },
-        ],
-        { duration: 650, easing: 'ease-out' },
-      );
-      await pause(1600);
-      if (done || !intro.isConnected) return;
-      const properties = [
-          'fontSize',
-          'fontWeight',
-          'lineHeight',
-          'letterSpacing',
-          'color',
-          'marginTop',
-          'marginBottom',
-        ],
-        elements = [kicker, title];
-      const before = elements.map((el) => {
-          const style = getComputedStyle(el);
-          return Object.fromEntries(properties.map((key) => [key, style[key]]));
-        }),
-        top = getComputedStyle(intro).top;
-      intro.dataset.emphasis = 'question';
-      const after = elements.map((el) => {
-        const style = getComputedStyle(el);
-        return Object.fromEntries(properties.map((key) => [key, style[key]]));
-      });
-      await Promise.all([
-        animate(intro, [{ top }, { top: getComputedStyle(intro).top }], {
-          duration: 1800,
-          easing: 'cubic-bezier(.4,0,.2,1)',
-        }),
-        ...elements.map((el, i) =>
-          animate(el, [before[i], after[i]], { duration: 1800, easing: 'cubic-bezier(.4,0,.2,1)' }),
-        ),
-      ]);
-      for (const el of steps) {
-        await pause(220);
-        if (done) return;
-        el.classList.remove('intro-waiting');
+    const exit = async (skipRequested = false) => {
+      if (done || exiting) return;
+      exiting = true;
+      overlay.dataset.phase = 'reveal';
+      skip.disabled = true;
+      if (skipRequested) {
+        await animate(overlay, [{ opacity: 1 }, { opacity: 0 }], 180);
+        if (!done) finish();
+      } else {
         await animate(
-          el,
+          overlay.querySelector('.brand-intro-center'),
+          [{ opacity: 1 }, { opacity: 0 }],
+          180,
+        );
+        if (done) return;
+        await animate(
+          overlay,
+          [{ transform: 'translateY(0)' }, { transform: 'translateY(100%)' }],
+          950,
+        );
+        if (done) return;
+        landing.classList.remove('intro-playing');
+        landing.dataset.revealPhase = 'headline';
+        if (actionGroup) {
+          actionGroup.classList.add('intro-actions-revealing');
+          animate(actionGroup, [{ opacity: 0 }, { opacity: 1 }], 650);
+        }
+        await animate(
+          intro,
           [
-            { opacity: 0, transform: 'translateY(-9px)' },
+            { opacity: 0, transform: 'translateY(18px)' },
             { opacity: 1, transform: 'translateY(0)' },
           ],
-          { duration: 550, easing: 'ease-out' },
+          600,
         );
+        if (done) return;
+        landing.dataset.revealPhase = 'divisions';
+        await Promise.all(
+          pageCopy.slice(1).map((element, index) =>
+            animate(
+              element,
+              [
+                { opacity: 0, transform: 'translateY(20px)' },
+                { opacity: 1, transform: 'translateY(0)' },
+              ],
+              550,
+              index * 85,
+            ),
+          ),
+        );
+        if (!done) finish();
       }
-      finish();
-    }
-    play().catch(() => {
-      if (!done) finish(true);
+      document.querySelector('#main')?.focus({ preventScroll: true });
+    };
+    skip.addEventListener('click', () => exit(true));
+    overlay.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') exit(true);
+      if (event.key === 'Tab') {
+        event.preventDefault();
+        skip.focus();
+      }
     });
+    skip.focus({ preventScroll: true });
+    safety = setTimeout(finish, 10000);
+    cleanupIntro = finish;
+    async function play() {
+      // Decoding is bounded: a failed or slow logo must never trap the visitor.
+      await Promise.race([
+        Promise.all([symbol.decode(), wordmark.decode()]).catch(() => {}),
+        new Promise((resolve) => setTimeout(resolve, 700)),
+      ]);
+      if (done || exiting) return;
+      await animate(
+        symbol,
+        [
+          { transform: 'translateX(33%) scale(1.8)', opacity: 0 },
+          { transform: 'translateX(33%) scale(1)', opacity: 1 },
+        ],
+        700,
+      );
+      if (done || exiting) return;
+      overlay.dataset.phase = 'wordmark';
+      await Promise.all([
+        animate(
+          symbol,
+          [{ transform: 'translateX(33%) scale(1)' }, { transform: 'translateX(0) scale(1)' }],
+          650,
+        ),
+        animate(
+          wordmark,
+          [
+            { opacity: 0, transform: 'translateX(18px)' },
+            { opacity: 1, transform: 'translateX(0)' },
+          ],
+          550,
+          150,
+        ),
+      ]);
+      if (done || exiting) return;
+      overlay.dataset.phase = 'message';
+      await animate(
+        message,
+        [
+          { opacity: 0, transform: 'translateY(12px)' },
+          { opacity: 1, transform: 'translateY(0)' },
+        ],
+        450,
+      );
+      if (done || exiting) return;
+      await animate(message, [{ opacity: 1 }, { opacity: 1 }], 1750);
+      if (!done && !exiting) await exit();
+    }
+    play().catch(finish);
   }
+
   // Called after route markup exists. Add new page enhancements after cleaning up the previous route.
   function mount() {
     cleanupIntro();
@@ -552,65 +444,115 @@ window.TechouseExperience = (() => {
     controls.innerHTML =
       '<button type="button" class="text-link" data-back>← Back</button><span class="discovery-count" aria-live="polite"></span><button type="button" class="button" data-next>Continue →</button>';
     form.append(controls);
-    const extras = [
-      form.querySelector('.solar-location'),
-      form.querySelector('#solar-guidance'),
-      form.querySelector('[data-solar-next]'),
-    ];
+    const extras = [form.querySelector('.solar-location'), form.querySelector('[data-solar-next]')];
     function draw() {
-      const names = ['sector', 'goal'];
-      const value = new FormData(form).get(names[step]);
       const sector = new FormData(form).get('sector') || 'Residential';
       const photos = {
-        Residential: ['assets/solar-story/home-selected.jpg', 'A bright home interior with a sofa, houseplant and resting dog', 'Make room for a brighter everyday.', 'Explore solar for the place you call home.'],
-        Commercial: ['assets/solar-story/store-selected.jpg', 'A bright supermarket aisle with stocked shelves', 'Put your roof to work for your business.', 'Explore solar for the spaces that keep your business moving.'],
-        Industrial: ['assets/solar-story/factory-selected.jpg', 'Engineers working together inside a bright manufacturing facility', 'Think bigger. Start with your roof.', 'Explore solar for your facility’s energy needs.'],
+        Residential: [
+          'assets/solar-story/home-selected.jpg',
+          'A bright home interior with a sofa, houseplant and resting dog',
+          'Make room for a brighter everyday.',
+          'Explore solar for the place you call home.',
+        ],
+        Commercial: [
+          'assets/solar-story/store-selected.jpg',
+          'A bright supermarket aisle with stocked shelves',
+          'Put your roof to work for your business.',
+          'Explore solar for the spaces that keep your business moving.',
+        ],
+        Industrial: [
+          'assets/solar-story/factory-selected.jpg',
+          'Engineers working together inside a bright manufacturing facility',
+          'Think bigger. Start with your roof.',
+          'Explore solar for your facility’s energy needs.',
+        ],
       };
-      const priorities = {
-        'Lower electricity costs': ['assets/solar-story/peso-meralco-bill.jpg', 'A person reviewing an illustrative Meralco electricity bill in Philippine pesos', 'Lower my electricity bill', 'Explore how daytime solar could offset electricity you buy from the grid.'],
-        'Energy after sunset': ['assets/solar-story/night-home.jpg', 'A house with warmly illuminated windows at night', 'Keep the day going.', 'Discuss battery storage for using stored solar energy after sunset.'],
-        'Backup for essentials': ['assets/solar-story/essential-light.jpg', 'A single light illuminating otherwise dark surroundings', 'Keep the essentials connected.', 'Plan backup for essential lights, Wi-Fi and selected appliances, with battery capacity matched to your needs.'],
-      };
-      const [image,alt,title,description] = (step === 1 ? priorities[value] : photos[sector]) || photos.Residential;
+      const [image, alt, title, description] =
+        photos[sector] || photos.Residential;
       visual.classList.add('discovery-photo-visual');
-      visual.dataset.story = step === 0 ? sector : value;
-      visual.innerHTML = `<img class="discovery-story-photo" src="${image}" alt="${alt}"><div class="discovery-photo-shade"></div><div class="discovery-photo-copy"><span>YOUR SOLAR STORY / ${step === 0 ? sector.toUpperCase() : 'YOUR PRIORITY'}</span><h3>${title}</h3><p>${description}</p><small>${step === 1 && value === 'Lower electricity costs' ? 'Illustrative bill image' : 'Photo · Unsplash · illustrative'}</small></div>`;
+      visual.dataset.story = sector;
+      visual.innerHTML = `<img class="discovery-story-photo" src="${image}" alt="${alt}"><div class="discovery-photo-shade"></div><div class="discovery-photo-copy"><h3>${title}</h3><p>${description}</p><small>Photo · Unsplash · illustrative</small></div>`;
     }
+    const estimator = document.querySelector('#estimator');
+    const planning = document.createElement('div');
+    planning.className = 'solar-planning-pages';
+    layout.before(planning);
+    planning.append(progress, layout, estimator);
+    progress.setAttribute('aria-label', 'Solar planning steps');
+    const heading = document.querySelector('#solar-start > .section-heading');
+    const originalTitle = heading.querySelector('h2').innerHTML;
+    const originalDescription = heading.querySelector('p').textContent;
+    const costHeading = estimator.querySelector('.section-heading');
+    const costTitle = costHeading.querySelector('h2').textContent;
+    const costDescription = costHeading.querySelector('p').textContent;
+    costHeading.remove();
     function show(focus = false) {
-      form.classList.toggle('priority-step', step === steps.length - 1);
-      layout.classList.toggle('priority-stage', step === steps.length - 1);
-      steps.forEach((s, i) => (s.hidden = i !== step));
-      extras.forEach((e) => (e.hidden = step !== steps.length - 1));
-      progress.innerHTML = ['Your property', 'Your priority']
+      heading.querySelector('h2').innerHTML = step === 1 ? costTitle : originalTitle;
+      heading.querySelector('p').textContent = step === 1 ? costDescription : originalDescription;
+      planning.dataset.step = String(step + 1);
+      layout.hidden = step === 1;
+      estimator.hidden = step !== 1;
+      // Step 1 holds the property type and its location; step 2 is the estimate itself.
+      steps.forEach((section) => (section.hidden = step !== 0));
+      extras.forEach((element) => (element.hidden = step !== 0));
+      form.querySelector('[data-solar-next]').hidden = true;
+      progress.innerHTML = ['Your property', 'Your estimate']
         .map(
-          (v, i) =>
-            `<button type="button" data-step="${i}" aria-current="${i === step ? 'step' : 'false'}">0${i + 1} <span>${v}</span></button>`,
+          (label, index) =>
+            `<button type="button" data-step="${index}" class="${index < step ? 'is-complete' : ''}" aria-current="${index === step ? 'step' : 'false'}" aria-label="Step ${index + 1} of 2: ${label}${index < step ? ', completed' : index === step ? ', current' : ''}"><span class="step-marker" aria-hidden="true">${index < step ? window.TechouseIcons.icon('check') : index + 1}</span><span class="step-label">${label}</span></button>`,
         )
         .join('');
-      controls.querySelector('[data-back]').disabled = step === 0;
-      controls.querySelector('[data-next]').hidden = step === steps.length - 1;
-      controls.querySelector('.discovery-count').textContent = `${step + 1} / ${steps.length}`;
+      controls.querySelector('[data-back]').hidden = step === 0;
+      controls.querySelector('[data-next]').textContent =
+        'See my estimate →';
+      controls.querySelector('.discovery-count').textContent = `${step + 1} / 2`;
       draw();
+      // Cancel an interrupted reveal before starting the next; no delayed state changes.
+      for (const target of [layout, estimator])
+        target.getAnimations().forEach((animation) => animation.cancel());
+      if (focus && !reduced()) {
+        (step === 1 ? estimator : layout).animate(
+          [
+            { opacity: 0.3, filter: 'blur(5px)' },
+            { opacity: 1, filter: 'blur(0px)' },
+          ],
+          { duration: 320, easing: 'cubic-bezier(.2,.7,.2,1)' },
+        );
+      }
       if (focus) {
-        steps[step].querySelector('legend').tabIndex = -1;
-        steps[step].querySelector('legend').focus({ preventScroll: true });
+        const target =
+          step === 1 ? heading.querySelector('h2') : steps[0].querySelector('legend');
+        target.tabIndex = -1;
+        target.focus({ preventScroll: true });
       }
     }
-    controls.querySelector('[data-back]').onclick = () => {
-      step = Math.max(0, step - 1);
-      show(true);
-    };
     controls.querySelector('[data-next]').onclick = () => {
-      step = Math.min(steps.length - 1, step + 1);
+      step = Math.min(1, step + 1);
       show(true);
     };
-    progress.onclick = (e) => {
-      const b = e.target.closest('[data-step]');
-      if (b) {
-        step = +b.dataset.step;
+    controls.querySelector('[data-back]').onclick = () => {
+      step = 0;
+      show(true);
+    };
+    progress.onclick = (event) => {
+      const button = event.target.closest('[data-step]');
+      if (button) {
+        step = Number(button.dataset.step);
         show(true);
       }
     };
+    document
+      .querySelectorAll('[data-scroll="estimator"], [data-scroll="solar-start"]')
+      .forEach((link) => {
+        link.addEventListener(
+          'click',
+          () => {
+            step = link.dataset.scroll === 'estimator' ? 1 : 0;
+            show();
+          },
+          { capture: true },
+        );
+      });
     form.addEventListener('change', draw);
     show();
     const learning = document.querySelector('.solar-learning');
@@ -639,7 +581,10 @@ window.TechouseExperience = (() => {
       cards.forEach((c, i) => (c.hidden = i !== slide));
       const lessons = [
         ['assets/solar-story/lesson-daytime.jpg', 'A home fitted with rooftop solar panels'],
-        ['assets/solar-story/lesson-equipment.jpg', 'Electrical enclosures and wiring mounted on a building'],
+        [
+          'assets/solar-story/lesson-equipment.jpg',
+          'Electrical enclosures and wiring mounted on a building',
+        ],
         ['assets/solar-story/lesson-roof.jpg', 'A worker preparing a residential roof'],
       ];
       illustration.dataset.lesson = String(slide);

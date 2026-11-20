@@ -7,7 +7,6 @@ window.TechouseSolar = (() => {
   // In-memory selections survive client-side routes, but reset on a full refresh. No personal details are persisted here.
   let choices = {
     sector: 'Residential',
-    goal: 'Lower electricity costs',
     location: '',
   };
   let estimate = null;
@@ -23,30 +22,31 @@ window.TechouseSolar = (() => {
   });
   const money = (n) => currency.format(n);
 
-  // Use one planning model for the displayed budget and the inquiry handoff.
+  // USAGE -> NIGHT SHARE: three plain-language choices stand in for a day/night percentage.
+  const USAGE = { 'Mostly daytime': 25, 'Day and night': 50, 'Mostly at night': 75 };
+  // Sensible first choice per property: homes use most power in the evening, businesses in the day.
+  const usageDefault = (sector) => (sector === 'Residential' ? 'Day and night' : 'Mostly daytime');
+  let usageChosen = null; // the visitor's own night share, kept across client-side routes
+  // COVERAGE -> OFFSET: the estimator's three coverage choices, as words for the inquiry.
+  const COVERAGE = { 50: 'Just the essentials', 80: 'Essentials and more', 95: 'Most of my bill' };
+  // RECOMMENDED SETUP follows when electricity is used: mostly daytime needs no battery, a day and
+  // night split stores part of the evening use, and mostly-at-night stores all of it.
+  function recommendedScenario(segment, nightShare = 0) {
+    if (segment === 'commercial') return nightShare >= 40 ? 'storage' : 'day';
+    if (nightShare >= 70) return 'full';
+    return nightShare >= 40 ? 'partial' : 'day';
+  }
+  // Use one planning model (solar-calculator.js) for the displayed budget and the inquiry handoff.
   function calculateEstimate(values) {
-    const bill = Number(values.bill);
-    const rate = Number(values.rate);
-    const offset = Number(values.offset);
-    const kw = Math.ceil((((bill / rate) * offset) / 100 / (4 * 0.8 * 30)) * 2) / 2;
-    const generation = kw * 4 * 0.8 * 30;
-    const base =
-      kw * Number(values.price) + (values.system === 'hybrid' ? Number(values.battery) : 0);
-    const savings = Math.min((bill * offset) / 100, generation * rate);
-    const maintenance = (base * Number(values.maintenance ?? 1)) / 100;
-    return {
-      kw,
-      generation,
-      base,
-      low: base * 0.85,
-      high: base * 1.15,
-      savings,
-      maintenance,
-      netMonthly: savings - maintenance / 12,
-    };
+    const result = window.TechouseSolarCalculator.calculate(values);
+    const chosen =
+      result.scenarios.find((s) => s.id === values.scenario) ||
+      result.scenarios.find((s) => s.id === recommendedScenario(result.segment, result.nightShare)) ||
+      result.scenarios[0];
+    return { ...result, chosen };
   }
   const options = (name, values) =>
-    `<div class="solar-choices">${values.map((v) => `<label><input type="radio" name="${name}" value="${v}" ${choices[name] === v ? 'checked' : ''}><span>${{ 'Lower electricity costs': 'Lower my electricity bill', 'Energy after sunset': 'Use solar energy after sunset', 'Backup for essentials': 'Back up essential appliances' }[v] || v}</span></label>`).join('')}</div>`;
+    `<div class="solar-choices">${values.map((v) => `<label><input type="radio" name="${name}" value="${v}" ${choices[name] === v ? 'checked' : ''}><span>${v}</span></label>`).join('')}</div>`;
   // CONTENT EDITING: section titles, questions, and educational explanations live in this template builder.
   function mount() {
     const host = document.querySelector('.division-page #solar-estimator');
@@ -55,7 +55,7 @@ window.TechouseSolar = (() => {
     const intro = document.createElement('section');
     intro.id = 'solar-start';
     intro.className = 'division-section solar-start';
-    intro.innerHTML = `<div class="section-heading"><span>01 / YOUR PROPERTY</span><h2>Your first step to<br>lower electricity bills.</h2><p>Tell us about your property and what matters most to you. Then explore your estimated solar cost.</p></div><form id="solar-discovery"><fieldset><legend>What type of property is this for?</legend>${options('sector', ['Residential', 'Commercial', 'Industrial'])}</fieldset><fieldset><legend>What would you like solar to help with?</legend>${options('goal', ['Lower electricity costs', 'Energy after sunset', 'Backup for essentials'])}</fieldset><label class="solar-location">Where is your property? <small>Optional · city or province</small><input name="location" maxlength="120" placeholder="e.g. Quezon City" value="${escape(choices.location)}"></label><p id="solar-guidance" aria-live="polite"></p><a class="button" href="#estimator" data-solar-next>Next: estimate my solar cost →</a></form>`;
+    intro.innerHTML = `<div class="section-heading"><h2>Your first step to<br>lower electricity bills.</h2><p>Tell us where it’s going and your monthly bill. We’ll handle the sizing and pricing.</p></div><form id="solar-discovery"><fieldset><legend>What type of property is this for?</legend>${options('sector', ['Residential', 'Commercial', 'Industrial'])}</fieldset><label class="solar-location">Where is your property? <small>Optional · city or province</small><input name="location" maxlength="120" placeholder="e.g. Quezon City" value="${escape(choices.location)}"></label><a class="button" href="#estimator" data-solar-next>Next: estimate my solar cost →</a></form>`;
     wrap.prepend(intro);
     const learn = document.createElement('section');
     learn.id = 'solar-options';
@@ -66,73 +66,26 @@ window.TechouseSolar = (() => {
     wrap.closest('.division-experience').classList.add('solar-streamlined');
     estimator.querySelector('.section-heading h2').textContent =
       'Next, let’s see what your solar project could cost.';
-    estimator.querySelector('.section-heading span').textContent = '02 / YOUR STARTING BUDGET';
+    estimator.querySelector('.section-heading span').remove();
     estimator.querySelector('.section-heading p').textContent =
-      'Enter your monthly bill to explore an indicative budget. You can adjust the estimate details if needed.';
-    host.elements.system.options[0].textContent = 'Daytime solar · grid-tied';
-    host.elements.system.options[1].textContent = 'Solar + storage · sample 5 kWh battery';
-    const billLabel = host.elements.bill.closest('label');
-    billLabel.classList.add('solar-bill-control');
-    billLabel.firstChild.textContent = '01 / Your monthly electricity bill (₱)';
-    const offsetLabel = host.elements.offset.closest('label');
-    offsetLabel.firstChild.textContent = '02 / How much would you like solar to cover? ';
-    const targetNote = document.createElement('small');
-    targetNote.className = 'solar-target-note';
-    targetNote.textContent = 'A target, not guaranteed bill savings.';
-    offsetLabel.classList.add('solar-offset-control');
-    const endpoints = document.createElement('div');
-    endpoints.className = 'solar-offset-endpoints';
-    endpoints.setAttribute('aria-hidden', 'true');
-    endpoints.innerHTML = '<span>20% coverage</span><span>100% coverage</span>';
-    offsetLabel.insertBefore(endpoints, targetNote.parentElement ? targetNote : null);
-    offsetLabel.append(targetNote);
-    const tier = document.createElement('div');
-    tier.className = 'solar-coverage-tier';
-    tier.innerHTML = `<svg class="coverage-sun" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="13" fill="#e8bd65" stroke="#8d6329" stroke-width="2"/>${Array.from({ length: 8 }, (_, i) => `<path class="coverage-ray" d="M32 5v8" transform="rotate(${i * 45} 32 32)" fill="none" stroke="#b98029" stroke-width="3" stroke-linecap="round"/>`).join('')}</svg><div class="coverage-tier-copy"><strong></strong><span></span></div>`;
-    offsetLabel.insertBefore(tier, targetNote);
-    const tiers = [
-      [35, 'A sunny start', 'A little sunshine. A step toward lower bills.'],
-      [55, 'Sharing the load', 'Let solar take on more of your everyday energy use.'],
-      [75, 'Sun-powered ambitions', 'You’re aiming to put most of your energy use on sunshine.'],
-      [95, 'Going big on solar', 'You’re making sunshine a major part of the plan.'],
-      [100, 'All-in on sunshine', 'An ambitious target. Let’s see what your property can support.'],
-    ];
-    let previousTier = '';
-    const updateTrack = () => {
-      const value = Number(host.elements.offset.value);
-      offsetLabel.style.setProperty('--coverage', ((value - 20) / 80) * 100 + '%');
-      const [, title, message] = tiers.find(([maximum]) => value <= maximum) || tiers[4];
-      const level = tiers.findIndex((item) => item[1] === title);
-      tier
-        .querySelectorAll('.coverage-ray')
-        .forEach((ray, index) => ray.classList.toggle('is-lit', index < (level + 1) * 2));
-      if (title !== previousTier) {
-        tier.querySelector('strong').textContent = title;
-        tier.querySelector('span').textContent = message;
-        if (previousTier && !matchMedia('(prefers-reduced-motion: reduce)').matches)
-          tier.animate(
-            [
-              { opacity: 0.4, transform: 'translateY(4px)' },
-              { opacity: 1, transform: 'translateY(0)' },
-            ],
-            { duration: 180, easing: 'ease-out' },
-          );
-        previousTier = title;
-      }
-      host.elements.offset.setAttribute('aria-valuetext', value + '% target · ' + title);
+      'Enter your monthly bill. We’ll size the system around how you use electricity.';
+    // Staff set the monthly Meralco rate in the back office (Website customizer → Solar calculator).
+    // Visitors see it as a quiet summary and only open "Fine-tune" if their rate differs.
+    const settings = window.TechouseContent?.snapshot().settings || {};
+    if (Number.isFinite(settings.electricityRate) && settings.electricityRate > 0) {
+      host.elements.rate.value = String(settings.electricityRate);
+      host.elements.rate.defaultValue = String(settings.electricityRate);
+    }
+    if (settings.electricityRateNote)
+      host.querySelector('[data-rate-note]').textContent =
+        `${settings.electricityRateNote}. Edit to match your bill.`;
+    const rateSummary = host.querySelector('[data-rate-summary]');
+    const showRate = () => {
+      const rate = Number(host.elements.rate.value);
+      rateSummary.textContent = rate > 0 ? `₱${+rate.toFixed(2)}/kWh` : 'your rate';
     };
-    host.elements.offset.addEventListener('input', updateTrack);
-    updateTrack();
-    const advanced = host.querySelector('.estimate-inputs details');
-    const maintenance = document.createElement('label');
-    maintenance.innerHTML =
-      'Annual maintenance allowance (% of sample base cost)<input name="maintenance" type="number" min="0" max="20" step="0.1" value="1" required><small>Sample planning allowance only; not a Techouse service price. Excludes equipment replacement.</small>';
-    advanced.append(maintenance);
-    advanced.querySelector('summary').textContent = 'Adjust estimate details (optional)';
-    for (const name of ['rate', 'system'])
-      advanced.insertBefore(host.elements[name].closest('label'), advanced.querySelector('label'));
-    host.elements.system.options[0].textContent = 'Daytime solar';
-    host.elements.system.options[1].textContent = 'Solar with a battery · sample allowance';
+    host.elements.rate.addEventListener('input', showRate);
+    showRate();
     const products = wrap.querySelector('#products');
     products.querySelector('.section-heading h2').innerHTML =
       'Meet the technology<br>behind your next step.';
@@ -141,7 +94,7 @@ window.TechouseSolar = (() => {
     products.querySelectorAll(':scope > .catalogue-note').forEach((note, index) => {
       if (index > 0) note.remove();
     });
-    wrap.querySelector('#projects .section-heading span').textContent = '03 / PROJECT EXAMPLES';
+    wrap.querySelector('#projects .section-heading span').remove();
     const partner = wrap.querySelector('.partner-band');
     if (partner) {
       partner.querySelector('span').textContent = 'TECHOUSE × SKYWORTH';
@@ -150,12 +103,12 @@ window.TechouseSolar = (() => {
     }
     const nav = document.querySelector('.division-subnav');
     nav.innerHTML =
-      '<a href="#solar-start" data-scroll="solar-start">1 · Your property</a><a href="#estimator" data-scroll="estimator">2 · Your estimate</a><a href="#projects" data-scroll="projects">Project examples</a><a href="#solar-technical" data-scroll="solar-technical">Technical reference</a>';
+      '<a href="#solar-start" data-scroll="solar-start">Savings calculator</a><a href="#projects" data-scroll="projects">Project examples</a><a href="#solar-technical" data-scroll="solar-technical">Technical reference</a>';
     const learningDetails = document.createElement('details');
     learningDetails.className = 'solar-optional-guide';
     learningDetails.innerHTML =
       '<summary><span>Want to understand your solar options?</span><small>Optional · daytime use, batteries and roof shade</small></summary>';
-    learn.querySelector('.section-heading span').textContent = 'A LITTLE MORE CONTEXT';
+    learn.querySelector('.section-heading span').remove();
     learn.querySelector('.section-heading h2').textContent = 'How solar fits everyday life';
     learn.querySelector('.section-heading p').textContent =
       'Explore these points whenever you want more detail.';
@@ -172,22 +125,31 @@ window.TechouseSolar = (() => {
       partner.innerHTML = `<div class="partner-identity"><span>TECHOUSE × SKYWORTH</span><strong>SKYWORTH</strong><small>Direct solar partner</small></div><div class="partner-message"><h3>Your direct connection<br>to Skyworth solar.</h3><p>Explore panels, inverters and battery storage with your direct Skyworth partner.</p><a class="text-link" href="#/inquiry?division=solar">Talk to our solar team ${window.TechouseIcons.icon('arrow_outward')}</a></div>`;
       technical.append(partner);
     }
-    products.querySelector('.section-heading span').textContent = 'TECHNICAL REFERENCE';
+    products.querySelector('.section-heading span').remove();
     products.querySelector('.section-heading h2').textContent = 'Equipment and specifications';
     products.querySelector('.section-heading p').textContent =
       'Explore product ranges and manufacturer datasheets.';
     const discovery = intro.querySelector('form');
+    // Step answers feed the estimator's hidden inputs, so the calculation always matches them.
+    // The property type picks the estimate's first usage answer (homes: day and night, businesses:
+    // mostly daytime) until the visitor chooses one, and decides the pricing model.
+    let lastSector = choices.sector;
+    const setUsage = (value) => {
+      const radio = host.querySelector(`[name="nightShare"][value="${value}"]`);
+      if (radio) radio.checked = true;
+    };
+    setUsage(usageChosen ?? USAGE[usageDefault(choices.sector)]);
     function update() {
       choices = Object.fromEntries(new FormData(discovery));
-      const system = host.elements.system;
-      system.value = choices.goal === 'Lower electricity costs' ? 'grid' : 'hybrid';
-      intro.querySelector('#solar-guidance').textContent =
-        choices.goal === 'Lower electricity costs'
-          ? 'We’ll start with a daytime solar illustration.'
-          : 'We’ll include a sample battery allowance. Backup capacity needs a site assessment.';
+      if (!usageChosen && choices.sector !== lastSector) setUsage(USAGE[usageDefault(choices.sector)]);
+      lastSector = choices.sector;
+      host.elements.sector.value = choices.sector;
       host.dispatchEvent(new Event('change'));
     }
     discovery.addEventListener('change', update);
+    host.addEventListener('change', (e) => {
+      if (e.target.name === 'nightShare') usageChosen = e.target.value;
+    });
     discovery.addEventListener('input', () => {
       choices = Object.fromEntries(new FormData(discovery));
     });
@@ -210,13 +172,16 @@ window.TechouseSolar = (() => {
         return;
       }
       const f = Object.fromEntries(new FormData(form));
-      const result = calculateEstimate(f);
+      const { chosen } = calculateEstimate(f);
+      if (!chosen) return;
       estimate = {
         ...choices,
         ...f,
-        kw: result.kw,
-        savings: result.savings,
-        budget: `${money(result.low)}–${money(result.high)}`,
+        kw: chosen.kwp,
+        setup: chosen.title,
+        equipment: chosen.lines.map((l) => `${l.qty} × ${l.label}`).join('\n- '),
+        savings: Math.round(chosen.savings),
+        budget: `${money(Math.floor(chosen.priceLow / 1000) * 1000)}–${money(Math.ceil(chosen.priceHigh / 1000) * 1000)}`,
       };
     });
   }
@@ -231,8 +196,9 @@ window.TechouseSolar = (() => {
     if (Number.isFinite(savings) && savings > 0) form.dataset.solarSavings = String(savings);
     form.elements.division.value = 'solar';
     form.elements.location.value = e.location;
-    form.elements.capacity.value = `${e.kw.toFixed(1)} kWp · illustrative`;
-    form.elements.requirements.value = `I would like to discuss this solar planning illustration.\n\nProperty: ${e.sector}\nPriority: ${e.goal}\nMonthly bill: ${money(+e.bill)}\nElectricity rate: ₱${e.rate}/kWh\nDesired energy offset: ${e.offset}% (goal, not guaranteed savings)\nSystem: ${e.system === 'hybrid' ? 'Hybrid + sample 5 kWh battery' : 'Grid-tied'}\nIllustrative budget: ${e.budget}\n\nSample assumptions: 4 peak sun hours/day, 80% efficiency, 30 days/month, ₱${e.price}/kWp, battery allowance ₱${e.battery} if hybrid, budget ±15%. No export credits assumed. Actual usage, shading, roof suitability, permits, upgrades, and battery sizing require assessment.\n\nPlease help me review what is suitable for my property.`;
+    form.elements.capacity.value = `${e.kw.toFixed(2)} kWp · illustrative`;
+    const d = window.TechouseSolarCalculator.DEFAULTS;
+    form.elements.requirements.value = `I would like to discuss this solar planning illustration.\n\nProperty: ${e.sector}\nElectricity use: ${Object.keys(USAGE).find((k) => USAGE[k] === +e.nightShare) || e.nightShare + '% at night'}\nMonthly bill: ${money(+e.bill)}\nElectricity rate: ₱${e.rate}/kWh\nSolar should cover: ${COVERAGE[e.offset] || e.offset + '%'} (${e.offset}% target, not guaranteed savings)\nSetup: ${e.setup}\nEquipment:\n- ${e.equipment}\nIllustrative budget: ${e.budget}\n\nCalculator assumptions: ${d.psh} peak sun hours/day, ${d.heatLoss * 100}% system losses, 30 days/month, Techouse equipment pricing. No export credits assumed. Actual usage, shading, roof suitability, permits, upgrades, and battery sizing require assessment.\n\nPlease help me review what is suitable for my property.`;
     const note = document.createElement('div');
     note.className = 'solar-prefill-note';
     note.textContent =
@@ -241,5 +207,5 @@ window.TechouseSolar = (() => {
     document.querySelector('.page-hero h1').innerHTML =
       'Like the possibilities?<br>Let’s take a closer look.';
   }
-  return { mount, connectEstimate, prefill, calculateEstimate };
+  return { mount, connectEstimate, prefill, calculateEstimate, recommendedScenario };
 })();

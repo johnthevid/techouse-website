@@ -274,7 +274,7 @@ window.TechouseOfficeUI = (() => {
     const imageGrid = form.querySelector('#customizer-images .image-editor-grid');
     const bannerPanel = form.querySelector('#customizer-banners');
     bannerPanel.querySelector('.customizer-section-heading p').textContent =
-      'Choose a division to edit its image, headline and supporting copy together.';
+      'Choose a division to edit its image, headline and division label together.';
     const nav = document.createElement('div');
     nav.className = 'banner-image-selector division-edit-tabs';
     nav.setAttribute('aria-label', 'Division to customize');
@@ -305,7 +305,6 @@ window.TechouseOfficeUI = (() => {
     for (const [name, label] of [
       ['.page-hero h1', 'Page introduction'],
       ['.content-columns h2', 'Company story'],
-      ['.scope-panel .scope-label', 'Supporting information'],
     ]) {
       const input = form.elements.namedItem(name);
       if (input)
