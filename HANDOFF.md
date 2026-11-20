@@ -2,6 +2,16 @@
 
 Updated: 19 November 2026.
 
+## Latest: repository cleanup (20 Nov 2026)
+
+- `main`: asset-version fix and test (3d236cf), then this cleanup. `develop` fast-forwarded to `main` so feature → develop → main works again.
+- Deleted branches whose commits are all in `main`: `claude/loving-goodall-89njs2`, `integrate/homepage-refinement`, `feature/solar-calcu`, `feature/homepage-refinement` (its demo Worker files live on `demo/cleaned-solar`).
+- Untouched, awaiting the user's decision: `feature/mobile-view` (1 commit not in main, created 20 Nov), `feature/partnership` (1), `feature/page-builder` (3), `feature/staff-chatbot` (5), `feature/tip-assistant` (1). `demo/1.0.1` kept as the preserved snapshot.
+- Demo: `demo/cleaned-solar` is the only branch to deploy `techouse-cleaned` from (WORKFLOW.md, Presentation demo). Live demo, checked 20 Nov: serves the two-step planner and works in a fresh browser, but its asset tags are the stale ones, so returning visitors get the old three-step files. Needs a redeploy from `demo/cleaned-solar`; no Cloudflare token is available in the cloud session.
+- Code tidy: removed 288 lines of CSS for the removed planner step and sliders (`experience.css`, `hover-performance.css`, `mobile-refinement.css`, `solar-extras.css`, `content-tools.css`); screenshots before and after are pixel-identical at 1440 and 390 px. Asset versions refreshed.
+- Prettier not run: the repository has no Prettier configuration, and Prettier's defaults would rewrite quoting across the codebase.
+- Checks: 32/32.
+
 ## Latest: stale asset versions fixed (branch `integrate/homepage-refinement`)
 
 - Report: the `techouse-cleaned` demo (redeployed 20 Nov 2026, 01:11 UTC) showed a three-step planner with a broken layout.
