@@ -2,6 +2,14 @@
 
 Updated: 19 November 2026.
 
+## Latest: stale asset versions fixed (branch `integrate/homepage-refinement`)
+
+- Report: the `techouse-cleaned` demo (redeployed 20 Nov 2026, 01:11 UTC) showed a three-step planner with a broken layout.
+- Cause found in source: `site/index.html` carried out-of-date `?v=` tags for eight files (experience.js, solar-journey.js, divisions.js, solar-extras.js/.css, customizer.js, office-ui.js) and none for solar-calculator.js/.css. Versioned files are cached for a year (`asset-cache.mjs`), so a browser that had loaded the earlier demo kept the old three-step `experience.js` while picking up the new unversioned `solar-calculator.css`.
+- Fix: ran `deployments/techouse-1.0/refresh-assets.mjs` and committed the tags. New `platform/tests/asset-versions.test.mjs` fails whenever a tag does not match its file.
+- Not verified on the live demo: this container cannot reach workers.dev, and the Cloudflare connector lists Workers but not their static files. Which source the 20 Nov deploy used is unknown. The `techouse-cleaned` config (`wrangler.cleaned.jsonc`, `cleaned-demo.mjs`) exists only on `feature/homepage-refinement`.
+- Checks: 32/32. Not deployed; not yet on main.
+
 ## Latest: two-step solar planner and result card redesign (branch `integrate/homepage-refinement`)
 
 - Planner (`site/experience.js`): two steps, "Your property" (type + optional location) and "Your estimate". The daily-use question is a tile group (`name="nightShare"`, 25/50/75) in the estimate form (`site/divisions.js`), above coverage. Homes default to Day and night, businesses to Mostly daytime, until chosen (`site/solar-journey.js`). Usage and coverage tiles recalculate a showing result immediately.
