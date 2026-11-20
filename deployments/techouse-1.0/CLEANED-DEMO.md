@@ -19,3 +19,5 @@ CTA update deployed from source commit 801fd24 on 11 November 2026. Live checks 
 Solar Calculator update prepared 20 November 2026 on branch demo/cleaned-solar: two-step planner, three-option tiles, refreshed asset versions. Checked against a local stand-in for this Worker (static site, `/api/` and staff paths return 404): no page errors or failed requests at 1440 px and 390 px. Not deployed yet.
 
 Live check, 20 November 2026 (deploy of 01:11 UTC): a fresh browser gets the two-step planner with no page errors or failed requests at 1440 px and 390 px. The deployed index.html carries stale asset versions (for example `experience.js?v=0243938cf1a4`, the old three-step file), so browsers that cached the earlier demo show a broken three-step mix. Redeploy from this branch to fix; its versions match file contents (`platform/tests/asset-versions.test.mjs`).
+
+Redeployed 20 November 2026, 01:33 UTC, from this branch. The live index.html asset versions match the branch exactly; two-step planner verified with no page errors or failed requests at 1440 px and 390 px.
