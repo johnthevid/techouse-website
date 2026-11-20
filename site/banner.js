@@ -426,6 +426,8 @@ window.TechouseBanner = (() => {
           if (host.isConnected) window.TechouseDivisions.clearPreviousPage();
         });
     }
+    // Phones get their own hero (mobile-home.js), built from these banners.
+    window.TechouseMobileHome?.mount(host);
     teardown = () => {
       stopShowcase();
       cancelAnimationFrame(compactFrame);
@@ -434,6 +436,7 @@ window.TechouseBanner = (() => {
       arrivalAnimations.forEach((a) => a.cancel());
       controller.abort();
       media.removeEventListener('change', setup);
+      window.TechouseMobileHome?.destroy();
     };
   }
   return { html, header, mount, destroy: () => teardown() };

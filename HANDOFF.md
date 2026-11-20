@@ -2,7 +2,20 @@
 
 Updated: 18 November 2026.
 
-## Latest: project agent skills (feature/homepage-refinement)
+## Latest: phone homepage (feature/mobile-view)
+
+Branch `feature/mobile-view` (from `feature/homepage-refinement`) carries the approved phone homepage, from the client proposal's Option 3 "Pill grid". Not merged to `main`; not deployed.
+
+- New `site/mobile-home.js` and `site/mobile-home.css`, loaded from `index.html`; `banner.js` mounts/destroys the module with the landing. Applies under 768px only; tablet and desktop banners are unchanged.
+- Layout: one full-screen division photo, the chosen division as a chapter (counter, headline, label, gold call-to-action), the other four as a balanced 2 × 2 pill grid. Pills are placed absolutely by script, so taps never reflow into extra rows; a returning division takes the tapped pill's slot.
+- Tuned values from the mock-up dials: blur 10%, vignette 80%, shade 115%, photo brightness 135%.
+- Header gains a menu button after the call icon: Our divisions, About Techouse, News, Join us & be a partner (coming soon), Start a project, email, phone. Page scroll is locked while it is open; Escape closes it.
+- Content is read from the rendered banners, so CMS banner text and images carry over. The approved intro is untouched; the chapter and pills follow its reveal phases.
+- Tests: homepage-refinement and mobile-refinement updated for the phone hero and passing. 22 of 25 pass; the 3 failures (round3-browser F3, solar-catalogue-navigation, update-101-browser) also fail without this change: they click the solar page's removed `[data-scroll="estimator"]` link.
+- Mock-ups (proposal and concept pages, stageshow scenes) are not in the repository yet.
+- Next: tablet and unusual-screen mock-ups (iPad mini, iPad, Android and tall tablets, Galaxy Fold, Surface Duo).
+
+## Earlier: project agent skills (feature/homepage-refinement)
 
 Added third-party design skills under `.claude/skills/` so every Claude Code session on this repository loads them: `unslop` (heydamir/unslop, CC BY 4.0, keep the author credit) and `stageshow` (benjitaylor/skills, MIT). Scripts were reviewed before install; no install hooks. `.gitignore` now admits only `.claude/skills/`; other `.claude/` files (local settings, state) stay untracked. No website behavior changed; no deployment. Next: homepage refinement on this branch, starting with an unslop audit. Homepage intro animation remains off-limits without explicit instruction.
 
