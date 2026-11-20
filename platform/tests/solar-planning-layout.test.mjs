@@ -44,13 +44,20 @@ test('Three-step solar planner preserves selections, calculation and responsive 
     assert.equal(await page.locator('#estimator').isVisible(), false);
     await page.locator('#solar-discovery input[value="Commercial"]').check();
     await page.locator('[data-next]').click();
-    assert.equal(await page.locator('#estimator').isVisible(), false);
-    await page.locator('#solar-discovery input[value="Energy after sunset"]').check();
-    await page.locator('[data-next]').click();
     assert.equal(await page.locator('#estimator').isVisible(), true);
+    // A business defaults to daytime use; the visitor's own choice then wins.
+    assert.equal(
+      await page.locator('#solar-estimator input[name="nightShare"]:checked').inputValue(),
+      '25',
+    );
+    await page.locator('.solar-usage-choices label:has(input[value="75"])').click();
     await page.locator('#solar-estimator input[name="bill"]').fill('6000');
     await page.locator('.calculate-cost').click();
     assert.equal(await page.locator('#solar-estimate-inquiry').isVisible(), true);
+    assert.equal(
+      await page.locator('#estimate-result').evaluate((el) => el.innerText.includes('null')),
+      false,
+    );
     await page.screenshot({ path: `/private/tmp/techouse-planner-${width}.png`, fullPage: true });
     const dimensions = await page.locator('#solar-estimator').evaluate((el) => ({
       width: el.getBoundingClientRect().width,
@@ -58,18 +65,18 @@ test('Three-step solar planner preserves selections, calculation and responsive 
     }));
     assert.ok(Math.abs(dimensions.width - dimensions.parent) < 3);
     assert.equal(await page.locator('.solar-estimate-back').count(), 0);
-    await page.locator('.discovery-progress [data-step="1"]').click();
-    assert.equal(
-      await page.locator('#solar-discovery input[value="Energy after sunset"]').isChecked(),
-      true,
-    );
-    await page.locator('[data-back]').click();
+    await page.locator('.discovery-progress [data-step="0"]').click();
     assert.equal(
       await page.locator('#solar-discovery input[value="Commercial"]').isChecked(),
       true,
     );
-    await page.locator('[data-scroll="estimator"]').click();
+    await page.locator('.division-subnav [data-scroll="solar-start"]').click();
+    await page.locator('.discovery-progress [data-step="1"]').click();
     assert.equal(await page.locator('#estimator').isVisible(), true);
+    assert.equal(
+      await page.locator('#solar-estimator input[name="nightShare"]:checked').inputValue(),
+      '75',
+    );
     assert.equal(
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
       true,
@@ -90,8 +97,8 @@ test('Three-step solar planner preserves selections, calculation and responsive 
       ],
     );
     await page.emulateMedia({ reducedMotion: 'no-preference' });
-    await page.locator('.discovery-progress [data-step="0"]').click();
     await page.locator('.discovery-progress [data-step="1"]').click();
+    await page.locator('.discovery-progress [data-step="0"]').click();
     await page
       .locator('.discovery-stage')
       .evaluate((el) =>

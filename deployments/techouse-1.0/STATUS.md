@@ -1,13 +1,15 @@
-# Techouse 1.0 — Cloudflare hosting
+# Techouse 1.0.1 — Cloudflare hosting
 
-Date: 3 November 2026 (Asia/Manila).
+Updated: 4 November 2026 (Asia/Manila).
 
 - Personal account: johndavidceasar@gmail.com.
 - Worker: `techouse`.
 - Address: https://techouse.johndavidceasar.workers.dev
 - D1 database: `techouse`, UUID `186b525d-4f1c-4f8b-87f0-d83df59355f7`, binding `DB`.
-- Current deployed version: `d305807d-c5a2-456f-9a07-1e382fbebf96`.
-- Source: final code-reviewed Stable Build 1; archived baseline remains unchanged.
+- Current deployed version: `8676aa74-6c27-4155-a000-7de006d6d1ea`.
+- Rollback reference: `9be19ffd-8de2-4e61-b43c-ca5e9f7ac46f`.
+- Source release: `v1.0.1`, commit `1d2e16eec87e40ac883e9aafcdd00a7577cb15b1`.
+- Source: reviewed 1.0.1 update; original Stable Build 1 archive remains unchanged.
 - Deployment config: `wrangler.jsonc` in this folder; Wrangler 4.157.0 used.
 - `APP_ORIGIN` is the address above; `COOKIE_SECURE=true`; `AUTH_KEY` was entered by the user as a Cloudflare secret. No secret value is recorded here.
 
@@ -23,7 +25,7 @@ The site's `.assetsignore` excludes maintenance Markdown and editor settings fro
 - Live HTTP: homepage/admin/bootstrap return 200; signed-out office redirects to admin; private content returns 401.
 - Isolated live browser: homepage renders, panels show three records, switching to inverters shows five records, admin sign-in renders, no uncaught page errors.
 
-## Remaining steps — user-controlled sequence
+## Initial setup sequence — historical
 
 1. User confirms the live homepage.
 2. Transfer approved website content to the new D1 database. At the initial deployment, it contains zero projects and zero posts. No local account credentials or inquiries have been copied.
@@ -59,3 +61,15 @@ For future manual updates, run Wrangler from this deployment folder with Node on
 ## Desktop hover rendering — 4 November 2026
 
 Version `9be19ffd-8de2-4e61-b43c-ca5e9f7ac46f` adds scoped layout containment with no animation source changes. All 12 regression groups and 13 layout comparisons passed. Details: `../../deliverables/hover-performance-20261104/REPORT.md`. Prior version remains available for rollback.
+
+## Techouse 1.0.1 — 4 November 2026
+
+User authorized deployment of reviewed source commit `1d2e16eec87e40ac883e9aafcdd00a7577cb15b1` (source tag `v1.0.1`). Wrangler 4.157.0 deployed Worker version `8676aa74-6c27-4155-a000-7de006d6d1ea` to the existing temporary address. Prior version `9be19ffd-8de2-4e61-b43c-ca5e9f7ac46f` is the code rollback reference.
+
+- Ten hosted browser check groups passed: homepage/hover; three product categories; estimate/annual confirmation/local visit save; saved ticket reload/inline expansion/slideshow; repeat prompt; mobile layout; sign-in screen; approved asset bytes and versioned cache policy.
+- No uncaught browser errors. Verification blocked remote non-GET/HEAD requests and recorded zero remote writes. Test inquiries/visits existed only in an isolated temporary browser, then were discarded.
+- Live homepage/admin/bootstrap HTTP checks passed. Signed-out office redirects to admin; private content returns 401. Private responses remain no-store, homepage no-cache, versioned assets immutable.
+- Public bootstrap remains byte-identical to pre-deployment: 13 projects, 0 published posts. No database migration/import, account provisioning, secret rotation, custom-domain or paid-plan change was performed.
+- Homepage intro and hover were verified after allowing the existing banner entrance to finish. Earlier smoke-check timeouts were test synchronization errors, not deployment code changes.
+
+Local source validation before release: 19 checks passed; 31 visual comparisons reviewed. Inquiry delivery and site visits remain explicitly labeled demos. Full authenticated production acceptance and live service integrations remain separate.

@@ -1,6 +1,113 @@
 # Current handoff
 
-Updated: 4 November 2026.
+Updated: 19 November 2026.
+
+## Latest: repository cleanup (20 Nov 2026)
+
+- `main`: asset-version fix and test (3d236cf), then this cleanup. `develop` fast-forwarded to `main` so feature → develop → main works again.
+- Deleted branches whose commits are all in `main`: `claude/loving-goodall-89njs2`, `integrate/homepage-refinement`, `feature/solar-calcu`, `feature/homepage-refinement` (its demo Worker files live on `demo/cleaned-solar`).
+- Untouched, awaiting the user's decision: `feature/mobile-view` (1 commit not in main, created 20 Nov), `feature/partnership` (1), `feature/page-builder` (3), `feature/staff-chatbot` (5), `feature/tip-assistant` (1). `demo/1.0.1` kept as the preserved snapshot.
+- Demo: `demo/cleaned-solar` is the only branch to deploy `techouse-cleaned` from (WORKFLOW.md, Presentation demo). Live demo, checked 20 Nov: serves the two-step planner and works in a fresh browser, but its asset tags are the stale ones, so returning visitors get the old three-step files. Needs a redeploy from `demo/cleaned-solar`; no Cloudflare token is available in the cloud session.
+- Code tidy: removed 288 lines of CSS for the removed planner step and sliders (`experience.css`, `hover-performance.css`, `mobile-refinement.css`, `solar-extras.css`, `content-tools.css`); screenshots before and after are pixel-identical at 1440 and 390 px. Asset versions refreshed.
+- Prettier not run: the repository has no Prettier configuration, and Prettier's defaults would rewrite quoting across the codebase.
+- Checks: 32/32.
+
+## Latest: stale asset versions fixed (branch `integrate/homepage-refinement`)
+
+- Report: the `techouse-cleaned` demo (redeployed 20 Nov 2026, 01:11 UTC) showed a three-step planner with a broken layout.
+- Cause found in source: `site/index.html` carried out-of-date `?v=` tags for eight files (experience.js, solar-journey.js, divisions.js, solar-extras.js/.css, customizer.js, office-ui.js) and none for solar-calculator.js/.css. Versioned files are cached for a year (`asset-cache.mjs`), so a browser that had loaded the earlier demo kept the old three-step `experience.js` while picking up the new unversioned `solar-calculator.css`.
+- Fix: ran `deployments/techouse-1.0/refresh-assets.mjs` and committed the tags. New `platform/tests/asset-versions.test.mjs` fails whenever a tag does not match its file.
+- Not verified on the live demo: this container cannot reach workers.dev, and the Cloudflare connector lists Workers but not their static files. Which source the 20 Nov deploy used is unknown. The `techouse-cleaned` config (`wrangler.cleaned.jsonc`, `cleaned-demo.mjs`) exists only on `feature/homepage-refinement`.
+- Checks: 32/32. Not deployed; not yet on main.
+
+## Latest: two-step solar planner and result card redesign (branch `integrate/homepage-refinement`)
+
+- Planner (`site/experience.js`): two steps, "Your property" (type + optional location) and "Your estimate". The daily-use question is a tile group (`name="nightShare"`, 25/50/75) in the estimate form (`site/divisions.js`), above coverage. Homes default to Day and night, businesses to Mostly daytime, until chosen (`site/solar-journey.js`). Usage and coverage tiles recalculate a showing result immediately.
+- Result card: "Indicative budget", setup name, a one-line reason ("Matches how you use electricity." + setup summary for the recommended setup), price, then a three-figure row (monthly savings, payback, system size; two columns on phones). Comparison legend and badge in sentence case; `.solar-start fieldset` had removed the comparison's padding, now restored. Phone swipe row opens on the recommended card.
+- Design pass used the project's `unslop` skill in polish mode (existing brand kept). No "impeccable" skill exists in this project.
+- Dead CSS for the removed step 2 (`.priority-step`, `.priority-stage` in `experience.css`) remains.
+- Checks: `node --test tests/*.test.mjs` 31/31. Prettier not run.
+- Deployment: not deployed; main not updated.
+
+## Latest: simplified Solar Calculator inputs (branch `integrate/homepage-refinement`)
+
+- Task: user found the calculator asked for too many values; wanted words instead of sliders so visitors only type their bill.
+- Step 2 (`site/solar-journey.js`, `site/experience.js`): "When do you use the most electricity?" replaces the goal question. Mapping: Mostly during the day 25% night, Day and night 50%, Mostly at night 75%. Homes default to Day and night, businesses to Mostly during the day, until the visitor picks one. Photos: lower-bills, backup, stored-energy.
+- Step 3 (`site/divisions.js`): bill, then three coverage tiles (Just the essentials 50%, Essentials and more 80% default, Most of my bill 95%), then a "Fine-tune (optional)" disclosure with the back-office rate and panel type. Hidden inputs carry `nightShare` and `sector`.
+- Recommendation: night ≥70% → Day + night; ≥40% → Day + 50% of night; else Daytime. C&I: ≥40% → storage.
+- Pricing model (`site/solar-calculator.js`): Residential always uses A0–A2 residential packages; Commercial/Industrial use the workbook's Residential/SME model up to 24 kWp, then C&I.
+- Old slider CSS removed from `solar-calculator.css` and `solar-extras.css`; a few dead `.solar-offset-control` rules remain in `hover-performance.css` and `mobile-refinement.css`.
+- Checks: `node --test tests/*.test.mjs` 31/31. Prettier not run.
+- Deployment: not deployed; main not updated.
+
+## Latest: Solar Calculator night-usage fix (branch `integrate/homepage-refinement`)
+
+- Task: user testing found that choosing mostly evening usage still recommended a setup with no battery.
+- Cause: the recommended setup followed only the planner goal ("Lower my electricity bill" → daytime-only) and ignored the day/night slider. C&I also ignored the slider.
+- Fix: `recommendedScenario(segment, nightShare)` in `site/solar-journey.js` recommends Day + night (residential) or storage (C&I) when night use is 50% or more; badge reads "Recommended". In `site/solar-calculator.js`, C&I daytime PV = full PV × (1 − night) per workbook E33, and C&I storage hours = max(3, night × 4.5 PSH).
+- Known workbook difference kept on purpose: the workbook's "Day + 50% Night" battery (K21) multiplies the already-reduced PV size, so it undersizes; the site uses full PV × night × PSH × 50%.
+- Checks: `node --test tests/*.test.mjs` 30/30 (browser tests via the local Playwright shim).
+- Deployment: not deployed; main not updated.
+
+## Latest: homepage refinement merged into main with the Solar Calculator
+
+**Task:** Combine `main` (secure back office, Solar Calculator) with `feature/homepage-refinement`. Take the refinement's visual and layout work (simplified homepage and banners, brand opening, mobile revamp, three-step solar planner, Construction page) while keeping main's authenticated back end, and align the back office with the simplified pages.
+
+**Merge decisions:**
+- Kept main's authenticated back end. The refinement branch made no authentication changes. Its `worker.mjs` field changes are included, merged with the calculator's `settings` validation.
+- Left out the refinement's isolated "cleaned demo" deployment files (`CLEANED-DEMO.md`, `cleaned-demo.mjs`, `wrangler.cleaned.jsonc`). That demo is a separate static Worker with no back end, and its own note said not to merge it into main. They remain on `feature/homepage-refinement`.
+- Kept the refinement's project agent skills (`.claude/skills/unslop`, `.claude/skills/stageshow`) and the `.gitignore` rule that shares only `.claude/skills/`.
+- Conflicts: `index.html` uses the refinement's asset list plus `solar-calculator.js`. `divisions.js` uses the calculator template and rendering plus the refinement's Construction page and eyebrow removal. `solar-journey.js` drops both the old system-type switch and the goal-guidance line. HANDOFF keeps both histories. The tests keep both sides' waits.
+- Calculator field labels no longer carry "01 / 02 / 03" prefixes, which duplicated the planner's own three steps.
+
+**Back office aligned with the simplified pages:** The refinement already retired the banner subtitle/description and homepage invitation fields and added "About story" and "About closing line". Every remaining customizer field was checked against the merged homepage and About page. The three "Second panel" About fields (`.scope-panel`) edited nothing, because that panel was replaced by the People/Office tabs. They were removed from the customizer and office headings and added to the server's retired list, so older drafts containing them save cleanly.
+
+**Checks:** 29/29 tests pass. Three refinement-era tests clicked a `data-scroll="estimator"` control that the refinement's own Solar nav no longer creates; they also failed on the untouched refinement branch. They now use the planner's step button (`.discovery-progress [data-step="2"]`). Desktop and phone screenshots of the homepage and the calculator inside the planner were reviewed, with no page errors or horizontal overflow.
+
+**Deployment:** Not deployed. The live `techouse` Worker remains on 1.0.1.
+
+
+## Latest: Solar Calculator (branch `feature/solar-calcu`)
+
+**Task:** Replace the sample solar estimator with a Solar Calculator based on the Techouse sales workbook (Calculator, Packages and Pricelist sheets) supplied by the user.
+
+**Completed:**
+- Added `site/solar-calculator.js`, a DOM-free model ported from the workbook. Sizing: bill ÷ rate ÷ 30 ÷ 4.5 PSH, ÷ (1 − 20% loss) × target offset. Panels are rounded up to 620 W TOPCon or 660 W BC. Inverters are picked automatically (DC/AC ≤ 1.25) and batteries in 16.07/10.49/5.12 kWh sizes. Accessories and installation are priced per panel.
+- Residential/SME (≤ 24 kWp) compares Daytime solar, Day + 50% of night and Day + night. The price range runs from tier A0 (low) to A2 (high, list price). Larger systems use C&I 380 V grid-tied inverters, tiers T4–T6, and compare Daytime solar with Daytime + 3-hour storage. Only the A2/A0/T6/T4 tiers are in source; A1/T5/T3 and the workbook's contact/agent sheets were deliberately not copied.
+- The model reproduces the workbook outputs, e.g. ₱196,979–₱234,292 for Day + 50% night at ₱6,000/₱16, and ₱4,449,115–₱4,965,868 for C&I day-only at ₱250,000/₱12.
+- Estimator UI (`divisions.js`, `solar-journey.js`, new `solar-calculator.css`): the inputs are bill, coverage target, and optional rate (default ₱16, as in the workbook), panel technology and share used after sunset. Results show the highlighted setup (from the visitor's goal) plus a full-width selectable comparison with equipment lists, savings and payback. The inquiry handoff carries the chosen setup, equipment list and budget. The sample ₱/kWp, battery allowance and maintenance inputs were removed.
+- Assumptions copy updated in `divisions.js` and `solar-extras.js`.
+
+**Follow-up (same day), back-office rate and compact layout:**
+- Website customizer → **Solar calculator** section: staff set the electricity rate (₱/kWh, 1–100) and an optional source note, e.g. "Meralco, November 2026". Stored as `settings.electricityRate` / `settings.electricityRateNote` in the shared content document. `worker.mjs` validates it and the public calculator uses it as the default rate. Visitors can still edit the rate. No schema migration is needed (content is one JSON row). No official Meralco API exists, so the rate is updated manually each month.
+- Estimator layout: the electricity rate now sits beside the monthly bill in one card, with a subgrid keeping both inputs aligned when labels wrap on phones. "Adjust estimate details" keeps panel technology and share used after sunset. The system type, installed base price, battery allowance and maintenance allowance stay removed. Shortened the results-panel notes, and moved the payback exclusions into "See assumptions".
+- Tests: added settings validation and a back-office browser check (save the rate, confirm it in the database and on the public page). 23/23 tests pass.
+
+**Follow-up 2, day/night slider and phone layout:**
+- New visible slider "03 / When do you use most of your electricity?" (0–90% after sunset, default 60%) replaces the hidden number field. It shows the daytime/after-sunset split and drives battery size and setup prices; for example, Day + night at ₱6,000 goes from ₱263k–₱313k (60%) to ₱217k–₱259k (20%). C&I setups still use the 3-hour storage rule.
+- Phone (≤600 px): the bill and rate stack, with the rate as a compact row; padding is tighter; the result labels sit above their values; setup cards become a swipe row with the next card peeking. Desktop: the results panel no longer stretches with a large gap, and card figures are label/value rows on every screen size.
+- `solar-catalogue-navigation.test.mjs` now targets the coverage slider by name, since two sliders share its style class. 23/23 tests pass.
+
+**Follow-up 3, compact estimator:** The two sliders share one card. Each is one line with the question and value, followed by a thin track and end labels. The coverage message is a single line with a small sun. The day/night readout is a compact "40% day / 60% night" value. The results panel sizes to its content, with the price capped at 46 px and tighter rows; setup cards are tighter. Section height went from 1,674 to 1,258 px on desktop (1440 wide) and from 2,648 to 2,143 px on phone (390 wide). The coverage note "A target, not guaranteed bill savings" moved from the card into "See assumptions". 23/23 tests pass.
+
+**Checks:** All 22 tests passed (`npm test`), including the new `platform/tests/solar-calculator.test.mjs`. Browser tests ran against the container's Chromium via a temporary uncommitted Playwright shim, because Google Chrome (`channel: "chrome"`) was unavailable. Updated the expected estimator values in `round3-browser.test.mjs` and `update-101-browser.test.mjs`. The latter now waits for the estimate entrance animation before recording the scroll position, because clicking a moving target made Playwright re-scroll. Desktop (1440) and mobile (390) screenshots were reviewed. Prettier could not be run in that session.
+
+**Remaining:** Enter the current Meralco rate in the back office after deployment (the code default stays ₱16). Confirm and that publishing A2/A0 and T6/T4 prices on the public site is approved. Run Prettier and the browser tests with local Chrome. `portfolio.js` project savings still use the older 4 h / 80% model. Script/style cache versions for the new files are added by `refresh-assets.mjs` at deployment.
+
+**Deployment:** Not deployed. A Git push does not authorize a release.
+
+
+## Latest: 1.0.1 deployed to Cloudflare
+
+The user authorized and completed the manual release to the existing `techouse` Worker. Live version: `8676aa74-6c27-4155-a000-7de006d6d1ea`; deployed source: `1d2e16eec87e40ac883e9aafcdd00a7577cb15b1` (`v1.0.1`). Rollback reference: `9be19ffd-8de2-4e61-b43c-ca5e9f7ac46f`.
+
+Ten live browser check groups passed with no uncaught errors or remote writes; HTTP access/cache checks passed. Public bootstrap is byte-identical before/after (13 projects, 0 published posts). Database, existing accounts/secrets and domain setup were unchanged. Deployment records in `deployments/techouse-1.0/` are updated. Source release is already on GitHub; the follow-up deployment-record commit must be pushed through the signed-in GitHub Desktop because terminal authentication is still unavailable. No redeployment is needed for documentation-only commits.
+
+Local review remains 19 passing checks, with approved intro/hover/slider sources unchanged. Inquiry delivery/calendar scheduling remain browser-local demos.
+
+## Latest: project agent skills (feature/homepage-refinement)
+
+Added third-party design skills under `.claude/skills/` so every Claude Code session on this repository loads them: `unslop` (heydamir/unslop, CC BY 4.0, keep the author credit) and `stageshow` (benjitaylor/skills, MIT). Scripts were reviewed before install; no install hooks. `.gitignore` now admits only `.claude/skills/`; other `.claude/` files (local settings, state) stay untracked. No website behavior changed; no deployment. Next: homepage refinement on this branch, starting with an unslop audit. Homepage intro animation remains off-limits without explicit instruction.
 
 ## Latest: approved 1.0.1 GitHub source release
 
@@ -274,6 +381,80 @@ User authorized updating techouse-cleaned with committed CTA changes (source 801
 ## Division icons assigned to refinement — 11 November 2026
 Owner clarified banner/division icon changes belong on feature/homepage-refinement. Preserved supplied SVG library, homepage category icons, division directory/header icons and narrow-header fit fix here. Oversized icon experiment remains reverted. Partnership page/banner/inquiry work is saved separately on feature/partnership. No deployment.
 
+
+### Large icon/headline layout reverted — 11 November 2026
+Owner rejected the implemented Shared left edge icon/header arrangement after preview. Removed large heading icon, category repositioning and related typography overrides; restored prior small category icon, below-heading label and approved CTA slide animation. Preview files remain separate from website code. No deployment.
+
+## About layering and division action polish — 11 November 2026
+Owner requested white CTA defaults across all divisions. Homepage banner actions, photographic division header quote actions and hero actions now use white fill/dark text, fading to transparent with white outline/text on hover/focus; approved CTA slide reveal retained. Solar hero icon moved from above its headline into the savings action, replacing the peso glyph. Removed solar-guidance markup and handlers from planner. About cue's expanded capsule can cross above the Construction panel: scoped hover/focus removes Solar clip-path/paint containment and raises its stacking level. Desktop 1024px hit test verified the capsule's far edge remains interactive; checked white header/hero CTAs on all five division pages, removed Solar icon/guidance and planner desktop/mobile checks. Local only; not committed/deployed.
+
+### Homepage layering correction — 11 November 2026
+Review found Solar's elevated About-cue state could escape above the main headline because the division group had no independent stacking context. Set division-banners to a local isolated z-index-0 context; headline remains at layer 3 above the entire group. Panel-local About elevation still works over Construction without competing with headline/header. 1024px hit tests verified both headline-over-Solar and About-over-Construction. Both responsive homepage and intro lifecycle tests passed. Local only; no commit/deployment.
+
+## Division margins, header and idle showcase — 11 November 2026
+Doubled only division-content-page gutters (all /divisions/* routes), leaving homepage banner margins/style intact. Solar subnav uses matching gutter/right call position. Public nav labels News and Join Us! (partnership inquiry destination until separate partnership page is merged). More legible white nav text and consistent header across division pages. On narrow division headers the menu replaces links to avoid overflow.
+Hero CTA surrounding-image samples compute a softened complementary RGB colour with contrast-selected black/white text, updated on image load/resize only. Latest request overrides Solar with a static metallic gold gradient and gentle hover shine; other division hero actions retain sampled colour. Solar sampling bypassed. Division header uses a dark neutral gradient scrim extending below the bar to fade smoothly into photography.
+Desktop homepage idle showcase starts after 30s inactivity, cycles divisions every 3.8s while keeping the main question visible, and restores normal state on activity. Disabled for reduced motion, touch/narrow layouts, hidden tab, offscreen banner and open dialogs; listeners/timers cleaned on route teardown. Simulated-clock check verified start, advancement and stop. All five division pages checked at 1440/1024/390px with no overflow and correct doubled gutters. Gold default/hover and header gradient browser checks recorded separately. Local only; no commit/push/deployment.
+
+### Idle brand lockup and calculator copy cleanup — 11 November 2026
+Idle slideshow replaces the homepage question visually with the white Techouse horizontal logo/wordmark, in the question's original position, sized to 70% of measured heading height. Question remains laid out; activity removes idle state and restores normal copy. Removed the two selected result-panel paragraphs (sample pricing and economics note); existing assumptions disclosure below the calculator retained. Solar planner desktop/mobile browser test passed; idle logo geometry/activity restoration checked separately. Local only; no commit/deployment.
+
+## Construction research/draft and normal idle presentation — 11 November 2026
+Owner revised idle slideshow to match manual hover exactly. Removed idle brand markup/styles/sizing and persistent-headline override; existing normal has-expanded headline fade now applies. 30s timer/cycle/activity restoration unchanged.
+Moved Solar savings-action icon before its text. Researched official MDC/DMCI/Megawide pages; added docs/CONSTRUCTION_CONTENT_PLAN.md with sources, recommended sections, required Techouse facts and directory recommendation. Construction now has concise hero without decorative eyebrow/standalone icon/footer slogan, project-type starting cards, discussion process, brief checklist, optional FAQs and construction inquiry context. Service packages and project portfolio are not invented; require client confirmation. Our divisions remains intact pending navigation decision. Local only; no commit/push/deployment.
+
+### Refinement-only Join Us placeholder and shared CTA styling — 11 November 2026
+Removed partnership-specific inquiry prefill/heading handling from refinement branch. Join Us is a non-navigating aria-disabled placeholder; actual partnership draft remains on feature/partnership. Removed adaptive hero-colour sampling now that owner chose consistent metallic gold across all five division hero CTAs. Shared division header Call us is white with outlined hover/focus treatment. Light-page Start a project restores original base filled style/interaction instead of the new outlined override. Removed directory illustration note and footer tagline, retaining company name/copyright. Verified live local light-page CTA and removed copy, plus gold hero CTA and white header Call on all five division pages. No commit/push/deployment.
+
+## Gold hover, Solar call hierarchy and return-layer styling — 12 November 2026
+Gold hero CTAs now explicitly retain their metallic gradient on hover/focus, moving only the light band. Solar's header Call us is transparent/secondary when the quote action is present; it may still become the prominent replacement when that quote is suppressed by an in-page action.
+Investigated apparent older design during back-to-home animation: outgoing DOM was cloned live, not an old saved website version, but removal of IDs and destination body-class changes caused styles to be lost or overridden. Transition CSS is now derived automatically from current stylesheet rules and scoped to the inert outgoing layer. Original IDs are recorded as data-snapshot-id aliases, preserving selector priority without duplicate live IDs; route-body selectors resolve against the layer's captured classes instead of the new homepage. Selector lists are split at top level to avoid changing rule priority. Existing staggered banner return, blur/dim timings and layer cleanup remain. No manual parallel page design or persistent copy introduced.
+Checks: desktop/mobile return regression verifies exact hero margin/font/gradient equality, gold retention on hover, no duplicate IDs, cleanup and no page errors. Both homepage responsive and intro lifecycle tests also passed (3 tests total). Full suite not rerun; no cross-browser performance guarantee. Local only; uncommitted, not pushed/deployed.
+
+## Mobile refinement and annotation cleanup — 14 November 2026
+Removed the selected About panel eyebrows, news eyebrow, saved-inquiry hero eyebrow and card-selection explanation. Removed contact QR hint/help markup and its obsolete switching handler; QR/app switching remains functional. Removed remaining prefab/development/elevator hero division labels, standalone icons and bottom slogans. Added soft rounded public-nav hover/focus highlights as explicitly requested; Join Us remains disabled placeholder.
+Phone division gutters now 24px instead of doubled desktop gutters; desktop margins unchanged. Made photo-header menu visible with white icon/border, maintained 44px menu/link targets and bounded scrolling for open menus. Solar phone form precedes supporting photo; footer spacing/wrapping improved. Contact desktop grid reclaims removed text rows. Existing mobile direct-call behavior retained; no intro/hover choreography changes.
+Validation: local Chrome routes About/news/inquiry/all five divisions at 360/390/768/1440px have no horizontal overflow or page errors. Phone menu opens and navigates; desktop Phone/Viber switching and contact close verified. Desktop contact visually reviewed. Existing solar planner regression passed desktop/mobile including selections, calculations and aligned margins. Edited files formatted; asset versions refreshed; diff whitespace check clean. Safari and physical-device testing not performed. Local only; no commit, push or deployment.
+
+## Header fit, compact dropdown and intro hold — 14 November 2026
+Shortened Solar header/mobile inquiry CTA to Request a quote, retaining its solar inquiry destination. Reduced nav gaps/padding and kept labels non-wrapping so desktop links remain a single line with rounded hover/focus highlights. Smaller-screen menus now use compact spacing, green/gold treatment, clear current-page highlight and 220ms downward fade entry; reduced motion disables it. Join Us stays disabled. Intro tagline reading hold reduced exactly 150ms from 2100 to 1950; other choreography unchanged.
+Verified header child bounds do not overlap at 1440 and 1280px, responsive dropdown open/Escape at 1024/768/390, no horizontal overflow, phone menu screenshot visually reviewed. Asset versions refreshed and whitespace checks clean. Local only; no commit/push/deployment.
+
+### Compact left dropdown — 14 November 2026
+Owner requested smaller navigation panel positioned on the left. Division dropdown capped at 280px (clamped to viewport gutters), left-aligned labels, reduced padding with 44px touch targets; existing reveal retained. Intro tagline hold shortened another 200ms, now 1750ms. Local only; no commit or deployment.
+
+### Dropdown alignment correction — 14 November 2026
+Owner clarified the compact dropdown should be on the right. Anchored to right page gutter beneath the menu control; retained width, left-aligned labels and animation. Local only, no deployment.
+
+### Glass dropdown surface — 14 November 2026
+Added translucent green glass background with 24px backdrop blur/saturation, soft inner highlight and shadow; light pages use light glass. Includes WebKit prefix and near-opaque unsupported-browser fallback. Right anchoring, compact width, label contrast and existing reveal retained. Responsive menu checks passed. Local only; no commit/deployment.
+
+### White dropdown surface — 14 November 2026
+Owner replaced glass treatment with white to match About Techouse cue hover. Dropdown now opaque white/dark green labels, subtle green active/hover highlight, no backdrop blur; right placement, compact dimensions and reveal preserved. Local only, not deployed.
+
+### Dropdown option motion — 14 November 2026
+White dropdown opens with 260ms soft downward fade; options reveal over 220ms with 35ms stagger. Menu control has subtle press feedback/open highlight. Reduced-motion disables reveal and press transforms. Responsive menu checks passed; local only, no push/deploy.
+
+## Solar navigation label — 14 November 2026
+Combined Your property & needs and Cost calculation subnav links into Savings calculator pointing to the existing solar-start planner. Three-step flow unchanged. Local only, not committed/deployed.
+
+## Delivery sequencing and compact tablet calculator — 14 November 2026
+Read supplied Tier 2 PHP55k contract/quotation and existing Project Tracker; created DEVELOPMENT_CHECKLIST.md ordering client inputs, responsive approval, live inquiry foundation, OTP/maps, Calendar, partnership/CMS/content/Tip, integration tests and hosted acceptance/handover. Preserves actual contract layout-approval payment gate and week3 review/week5 content/+2-week completion schedule. Tip requires written coverage; builder excluded. Existing tracker not modified.
+Added compact calculator styling only for 901–1200px wide viewports up to 820px tall: tighter progress/input/coverage spacing and smaller illustration/result copy, retaining controls, disclosures and calculation logic. Local only, not committed/deployed.
+
+## Compact mobile/tablet redesign — 14 November 2026
+Added site/mobile-refinement.css after existing refinement layer. Homepage at up to 1100px/touch uses compact horizontal division rows with question above and visible CTA/category; removed automatic intersection expansion on compact layouts. Added whitespace after heading breaks so hidden mobile br does not join words. About cue moves outside Solar to landing root and is fixed bottom-right on compact layouts; returns to Solar content on desktop resize. Desktop 1440 banner choreography and intro unchanged.
+Reviewed public routes at 375x667, 768x1024, 812x375 and 1024x768: homepage, directory, About, news, inquiry, all five divisions and panel catalogue; no page errors/horizontal overflow. Reduced excessive mobile content spacing, improved phone form widths/footer, retained mobile-first form ordering. Landscape calculator at 640–1100px has two balanced columns; portrait remains stacked for readability. Fixed two null-node DOM insertions in calculation results that rendered literal null after earlier copy removal. Calculations unchanged.
+Added mobile regression test for collapsed rows, heading spacing, floating cue, CTA navigation, landscape columns and null-free working results. Existing desktop hover test uses >1100px breakpoint to match requested compact tablet layout. Browser testing is Chrome emulation, not physical-device or Safari verification. Local only; no commit/push/deployment.
+
+## Scroll-focused mobile banner experiment — 14 November 2026
+Owner clarified one expanded story plus thin white strips. Compact homepage now starts Solar expanded (280–380px based on viewport); other rows are 72/76px with only headline and division icon. Only active row shows photo/category/CTA. Passive scroll listener chooses the story nearest viewport center, with motion-settle interval and scroll delta threshold to limit layout feedback; no wheel/touch interception. Tapping a closed strip expands without navigation; CTA enters division. Keyboard CTA focus expands its story. Floating About cue changed to white/dark icon. Desktop unchanged. Verified tap/scroll focus through elevators at phone/tablet sizes and retained calculator regression flow. Local experiment, not committed/deployed.
+
+## Shared compact backdrop and top reset — 14 November 2026
+Replaced white collapsed strips with transparent rows/dashed separators over one sticky viewport-height image scene. Scene crossfades to the active division image with light static blur/dark contrast overlay and stops at the homepage banner section; About company content remains a separate light block. Top scroll <=12px explicitly restores Solar before motion-settle guards. Floating About cue stays white. Desktop/fine-pointer native/custom page indicators hidden via CSS; wheel/touch/keyboard scrolling unchanged. Added regression assertions for active scene and top reset; tap/scroll progression verified locally. Local only, no commit/push/deploy.
+
+## Crisp compact images, thinner strips and mobile footer — 14 November 2026
+Removed scene blur; photos stay sharp with radial/vertical vignette for text contrast. Collapsed strips reduced to 56px, preserving adequate touch area. Height transition now 580ms and image crossfade 600ms; scroll selection records the latest offset during settling and advances at most one story in the scroll direction to avoid reflow-driven reversals. Reduced motion remains instantaneous. Explicit opaque isolated About/footer surfaces cover the scene beneath, keeping full-colour footer logo readable. Phone footer uses full-width brand/contact followed by Explore/Social columns with 44px link targets. Visually checked phone full-page screenshot, tap/scroll at phone/tablet and mobile regression (passed). Local only, no commit/push/deploy; physical Safari testing remains.
 
 ## Partnership draft isolated — 11 November 2026
 Branch feature/partnership now builds on the refinement icon commit and contains only partnership additions beyond it: homepage Be a Partner banner, /partnership page, footer entry, and editable browser-local partnership inquiry handoff. Generic content remains for Techouse feedback; no approved commercial terms or live submissions. Desktop/mobile partnership test previously passed and screenshot reviewed. Draft saved locally so development can return to refinement without mixing feature work. No push/deployment.

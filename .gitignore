@@ -16,6 +16,11 @@
 !/releases/
 !/deliverables/
 
+# Share project agent skills only; keep local Claude settings and state private.
+!/.claude/
+/.claude/*
+!/.claude/skills/
+
 # Keep release identities, not the large source/private recovery archives.
 /releases/*
 !/releases/README.md

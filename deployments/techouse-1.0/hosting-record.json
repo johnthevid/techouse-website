@@ -1,10 +1,10 @@
 {
-  "release": "Techouse 1.0",
+  "release": "Techouse 1.0.1",
   "baseline": "Stable Build 1 \u2014 Final, Code Reviewed",
   "url": "https://techouse.johndavidceasar.workers.dev",
   "worker": "techouse",
   "database_id": "186b525d-4f1c-4f8b-87f0-d83df59355f7",
-  "deployed_version": "9be19ffd-8de2-4e61-b43c-ca5e9f7ac46f",
+  "deployed_version": "8676aa74-6c27-4155-a000-7de006d6d1ea",
   "verified_date": "2026-11-04",
   "hosted_admin_email": "johndavidceasar@gmail.com",
   "verified_by_user": [
@@ -39,5 +39,31 @@
     "animation_source_unchanged": true,
     "layout_comparisons_passed": 13,
     "previous_version": "6121f911-614f-4073-9049-23c0c2cf428e"
+  },
+  "previous_deployed_version": "9be19ffd-8de2-4e61-b43c-ca5e9f7ac46f",
+  "source_commit": "1d2e16eec87e40ac883e9aafcdd00a7577cb15b1",
+  "source_tag": "v1.0.1",
+  "release_1_0_1": {
+    "date": "2026-11-04",
+    "source_commit": "1d2e16eec87e40ac883e9aafcdd00a7577cb15b1",
+    "local_checks_passed": 19,
+    "database_migrations_applied": false,
+    "public_content_unchanged": true,
+    "public_bootstrap_sha256": "0ac071da4917f78a9f287a67ea8bf4814d77dd6aa75f9dcd8496825c658ef4b6",
+    "hosted_browser_verification": "passed",
+    "hosted_browser_checks": [
+      "Homepage and division hover",
+      "Hosted panels catalogue",
+      "Hosted inverters catalogue",
+      "Hosted batteries catalogue",
+      "Estimate handoff, annual confirmation and browser-only visit save",
+      "Saved ticket reload, inline expand/collapse and project slideshow",
+      "Repeat prompt: cancel, view, continue and scroll lock",
+      "Mobile ticket layout without horizontal overflow",
+      "Hosted sign-in screen (no account changes)",
+      "Hosted asset bytes match approved source; immutable versioned cache"
+    ],
+    "uncaught_browser_errors": 0,
+    "verification_remote_writes": 0
   }
 }

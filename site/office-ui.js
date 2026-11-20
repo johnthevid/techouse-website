@@ -305,7 +305,6 @@ window.TechouseOfficeUI = (() => {
     for (const [name, label] of [
       ['.page-hero h1', 'Page introduction'],
       ['.content-columns h2', 'Company story'],
-      ['.scope-panel .scope-label', 'Supporting information'],
     ]) {
       const input = form.elements.namedItem(name);
       if (input)

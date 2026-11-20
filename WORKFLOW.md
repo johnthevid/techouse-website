@@ -24,4 +24,8 @@ On the other computer, fetch, switch to the same branch and pull the saved chang
 4. Deploy from `deployments/techouse-1.0/` using an authenticated, pinned Wrangler installation. Its custom build refreshes asset cache versions. Keep credentials outside the repository.
 5. Verify the live website, record the deployed Worker version and update HANDOFF.md and deployment records. Commit any generated asset-version changes and release records so GitHub reflects what was deployed.
 
+## Presentation demo
+
+The public presentation demo is the `techouse-cleaned` Worker (https://techouse-cleaned.johndavidceasar.workers.dev). Deploy it only from the `demo/cleaned-solar` branch, which holds the current site plus the demo Worker files (`cleaned-demo.mjs`, `wrangler.cleaned.jsonc`, `CLEANED-DEMO.md`). Merge `main` into that branch first, then from `deployments/techouse-1.0/` run `npx wrangler@4.157.0 deploy --config wrangler.cleaned.jsonc`. Do not deploy the demo from a feature branch or a mix of branches, and do not merge the demo Worker files into `main`. Its build refreshes asset versions; `platform/tests/asset-versions.test.mjs` fails if committed versions are stale.
+
 The original Stable Build 1 archive remains immutable. A future Git tag for that baseline must point to the exact recovered archive source, not the current post-baseline code. Database backups and schema migrations require separate handling; reverting website code does not revert database changes.

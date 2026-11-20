@@ -2,9 +2,27 @@
 
 Recorded milestones for the Techouse website. Dates use the project's Asia/Manila calendar. These entries describe completed work; they are not retroactively created Git tags or GitHub Releases.
 
+## Unreleased — Solar Calculator
+
+- Make the solar planner two steps: property type and optional location, then the estimate (bill, daily use, coverage). Redesign the result card: setup name with why it fits, the price, then savings, payback and system size in one row. Sentence-case labels in the result and setup comparison; restore the comparison's side padding.
+
+- Simplify the calculator to one typed value. Step 2 asks "When do you use the most electricity?" (Mostly during the day / Day and night / Mostly at night) in place of the goal question; step 3 asks for the monthly bill and "How much of your bill should solar take on?" (Just the essentials / Essentials and more / Most of my bill). The two sliders are gone; the electricity rate and panel type move into an optional "Fine-tune" disclosure. Homes always use residential pricing; businesses switch to C&I above 24 kWp. Coverage choices recalculate a showing result immediately.
+
+- Fix the recommended setup ignoring evening usage: when 50% or more of use is after sunset, the calculator now recommends the setup with a battery sized to that night use (residential "Day + night", C&I storage). C&I daytime-only systems now shrink with the night share (workbook cell E33), and C&I storage hours rise above 3 when night use needs more.
+
+- Merge the homepage refinement (simplified homepage and banners, brand opening, mobile revamp, three-step solar planner, Construction page) with the secure back office and Solar Calculator; retire the About page's unused second-panel CMS fields.
+
+- Replace the sample solar budget estimator with a Solar Calculator ported from the Techouse sales workbook: panel-count sizing, automatic inverter/battery selection and Techouse price-list ranges (A0–A2 residential/SME, T4–T6 C&I).
+- Compare residential setups (daytime, day + 50% night, day + night) or C&I setups (daytime, daytime + 3-hour storage) side by side; the selected setup and equipment carry into the inquiry.
+- Make the calculator's electricity rate editable in the back office (Website customizer → Solar calculator), with an optional source note shown to visitors.
+- Show the electricity rate beside the monthly bill to compact the estimator; trim result-panel notes.
+- Add a day/night electricity-use slider that sizes batteries and updates setup prices.
+- Redesign the phone estimator: stacked bill and rate, tighter spacing, swipeable setup comparison.
+- Add model unit tests; not deployed.
+
 ## 1.0.1 — 4 November 2026
 
-- Approved for the GitHub source release from `update/1.0.1`. Cloudflare deployment remains separate and has not changed.
+- Approved GitHub source release from `update/1.0.1`, then separately deployed to Cloudflare on 4 November 2026 as Worker `8676aa74-6c27-4155-a000-7de006d6d1ea`. Ten hosted browser check groups passed; no database/content changes.
 - System/component review passed 19 checks; fixed restored-visit lookup, calendar keyboard focus and cross-tab form-loss edge cases. Inquiry styling extracted into `inquiry.css` without changing cascade order.
 - Hide header/mobile/footer project-entry links on every inquiry division variant.
 - Show annual potential savings (monthly estimate × 12), with assumptions retained.

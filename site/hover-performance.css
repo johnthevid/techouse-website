@@ -1008,11 +1008,6 @@ body:not(.office-page) #footer:not(.office-footer) > .container {
 .solar-planning-pages #solar-estimator .estimate-inputs {
   background: #f9f8f2;
 }
-.solar-planning-pages #solar-estimator .solar-bill-control,
-.solar-planning-pages #solar-estimator .solar-offset-control {
-  background: #fff;
-  border-color: #cdd5c8;
-}
 .solar-planning-pages #solar-estimator input:not([type='range']),
 .solar-planning-pages #solar-estimator select {
   background: #fff;
@@ -1341,5 +1336,834 @@ body:not(.office-page) #footer:not(.office-footer) > .container {
   body:not(.office-page):not(.landing) #header .nav-actions {
     min-width: 0;
     flex-shrink: 0;
+  }
+}
+
+/* Let the expanding About action cross the Solar panel edge above its neighbour. */
+@media (min-width: 901px) and (hover: hover) {
+  .division-banner.banner-solar:has(.banner-scroll-cue:hover),
+  .division-banner.banner-solar:has(.banner-scroll-cue:focus-visible) {
+    z-index: 8;
+    contain: layout style;
+    overflow: visible;
+  }
+  .banner-scroll-cue {
+    z-index: 10;
+  }
+}
+/* Public header quote actions match the banner's outlined, fading treatment. */
+
+body.division-page #header .nav-actions > a.button {
+  border-color: #ffffff80;
+  color: #fff;
+  background: transparent;
+}
+body.division-page #header .nav-actions > a.button:hover,
+body.division-page #header .nav-actions > a.button:focus-visible {
+  background: #fff;
+  border-color: #fff;
+  color: #182522;
+}
+@media (prefers-reduced-motion: reduce) {
+  body:not(.office-page) #header .nav-actions > a.button {
+    transition: none;
+  }
+}
+@media (min-width: 901px) and (hover: hover) {
+  .division-landing .division-banner.banner-solar:has(.banner-scroll-cue:hover),
+  .division-landing .division-banner.banner-solar:has(.banner-scroll-cue:focus-visible) {
+    clip-path: none;
+  }
+}
+/* Consistent white default CTA across all five photographic divisions. */
+.division-banner .banner-cta,
+body.division-page #header .nav-actions > a.button,
+body.division-page .cover-copy > a.button {
+  background: #fff;
+  border: 1px solid #fff;
+  color: #173b30;
+  transition:
+    background-color 350ms ease,
+    color 350ms ease,
+    border-color 350ms ease;
+}
+.division-banner .banner-cta:hover,
+.division-banner .banner-cta:focus-visible,
+body.division-page #header .nav-actions > a.button:hover,
+body.division-page #header .nav-actions > a.button:focus-visible,
+body.division-page .cover-copy > a.button:hover,
+body.division-page .cover-copy > a.button:focus-visible {
+  background: transparent;
+  color: #fff;
+  border-color: #fff;
+  transform: none;
+}
+/* Preserve the already approved horizontal entry/exit motion. */
+@media (min-width: 901px) and (hover: hover) {
+  .division-banner .banner-cta {
+    transition:
+      opacity 300ms ease,
+      transform 450ms cubic-bezier(0.2, 0.7, 0.2, 1),
+      visibility 0s linear 450ms,
+      background-color 350ms ease,
+      color 350ms ease;
+  }
+  .division-banner.is-open .banner-cta {
+    transition-delay: 0s;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .division-banner .banner-cta,
+  body.division-page #header .nav-actions > a.button,
+  body.division-page .cover-copy > a.button {
+    transition: none;
+  }
+}
+
+/* Panel-local elevation must never escape above the homepage headline. */
+.division-landing > .division-banners {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+}
+.division-landing > .landing-intro {
+  z-index: 3;
+}
+/* Division detail pages alone use twice the homepage's horizontal gutter. */
+body.division-content-page {
+  --site-gutter: calc(clamp(28px, 5vw, 96px) * 2);
+}
+body.division-page #header {
+  background: linear-gradient(#081b15d9, #081b1599);
+  border-bottom: 1px solid #ffffff2b;
+}
+body.division-page #header .nav-links > a {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-shadow: 0 1px 4px #0009;
+}
+body.division-page #header .nav-links > a.active {
+  color: #e6cf99;
+}
+
+body.division-page .cover-copy > a.button:hover,
+body.division-page .cover-copy > a.button:focus-visible {
+  background: transparent;
+  color: #fff;
+  border-color: #fff;
+}
+body.division-page .division-subnav {
+  padding-inline: var(--site-gutter);
+}
+body.division-page .division-subnav .solar-subnav-call {
+  right: var(--site-gutter);
+}
+@media (max-width: 1200px) {
+  body.division-content-page #header .nav-links:not(.open) {
+    display: none;
+  }
+  body.division-content-page #header .menu-button {
+    display: block;
+  }
+  body.division-content-page #header .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 80px;
+    left: var(--site-gutter);
+    right: var(--site-gutter);
+    padding: 24px;
+    background: #173b30;
+    gap: 16px;
+  }
+}
+@media (max-width: 600px) {
+  body.division-content-page #header .nav-actions > a.button {
+    display: none;
+  }
+  body.division-content-page #header .brand-logo {
+    width: 120px;
+  }
+  body.division-content-page .division-subnav {
+    padding-inline: var(--site-gutter);
+  }
+}
+
+/* Dark header scrim fades into the photo rather than ending as a solid strip. */
+body.division-page #header {
+  background: transparent;
+  border-bottom: 0;
+  isolation: isolate;
+}
+body.division-page #header::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 -64px;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(180deg, #050c0bea 0%, #050c0bb3 38%, #050c0b66 66%, transparent 100%);
+}
+/* Solar's fixed metallic-gold finish replaces its sampled complementary colour. */
+body.division-page .cover-copy > a.button {
+  background: linear-gradient(
+    115deg,
+    #b98626 0%,
+    #e6bf5c 21%,
+    #fff0ad 41%,
+    #dbad45 60%,
+    #f5d77e 79%,
+    #bd8a2c 100%
+  );
+  background-size: 180% 100%;
+  background-position: 0 50%;
+  color: #211b0d;
+  border-color: #e6c46c;
+  box-shadow:
+    inset 0 1px 0 #fff6cdb3,
+    inset 0 -1px 0 #8c601c66;
+  transition:
+    background-position 650ms ease,
+    box-shadow 350ms ease;
+}
+body.division-page .cover-copy > a.button:hover,
+body.division-page .cover-copy > a.button:focus-visible {
+  background-position: 100% 50%;
+  color: #211b0d;
+  border-color: #f5d77e;
+  box-shadow:
+    inset 0 1px 0 #fff6cd,
+    0 3px 18px #d4a94830;
+}
+@media (prefers-reduced-motion: reduce) {
+  body.division-page .cover-copy > a.button {
+    transition: none;
+  }
+}
+
+/* Construction follows Solar's restrained hierarchy and guided next step. */
+.construction-content .division-section {
+  scroll-margin-top: 120px;
+}
+.construction-project-types {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.construction-type {
+  display: flex;
+  flex-direction: column;
+  padding: 28px;
+  border: 1px solid #d1d8cb;
+  background: #fffdf5;
+  color: #182522;
+  text-decoration: none;
+  transition:
+    border-color 250ms ease,
+    background-color 250ms ease;
+}
+.construction-type:hover {
+  border-color: #254d3c;
+  background: #f0f3e9;
+}
+.construction-type-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #315747;
+}
+.construction-type-top .material-icon {
+  width: 32px;
+  height: 32px;
+}
+.construction-type h3 {
+  font-size: clamp(23px, 2vw, 30px);
+  line-height: 1.2;
+  margin: 28px 0 16px;
+}
+.construction-type p {
+  color: #5a6662;
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+.construction-type-action {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid #d1d8cb;
+  padding-top: 18px;
+  margin-top: auto;
+  font-weight: 600;
+}
+.construction-scope-note {
+  margin-top: 24px;
+  font-size: 13px;
+  color: #5a6662;
+}
+.construction-process ol {
+  list-style: none;
+  counter-reset: buildstep;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+}
+.construction-process li {
+  counter-increment: buildstep;
+  padding-top: 24px;
+  border-top: 1px solid #b99258;
+}
+.construction-process li::before {
+  content: '0' counter(buildstep);
+  display: block;
+  color: #896c3b;
+  margin-bottom: 20px;
+}
+.construction-process strong {
+  font-size: 23px;
+}
+.construction-process p {
+  color: #5a6662;
+  line-height: 1.7;
+}
+.construction-brief {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px 48px;
+  padding: 44px;
+  background: #173b30;
+  color: #fffdf5;
+  border-bottom: 3px solid #b99258;
+}
+.construction-brief h2 {
+  font-size: clamp(30px, 3vw, 44px);
+  line-height: 1.15;
+}
+.construction-brief p {
+  color: #d8e1d5;
+}
+.construction-brief ul {
+  padding-left: 20px;
+  line-height: 2;
+  margin: 0;
+}
+.construction-brief .button {
+  width: fit-content;
+  background: #fffdf5;
+  color: #173b30;
+}
+.construction-questions details {
+  padding: 22px 0;
+  border-bottom: 1px solid #d1d8cb;
+}
+.construction-questions summary {
+  font-size: 19px;
+  font-weight: 600;
+}
+.construction-questions details p {
+  max-width: 720px;
+  color: #5a6662;
+  line-height: 1.7;
+  margin-top: 20px;
+}
+.construction-subnav {
+  justify-content: flex-start;
+  gap: 32px;
+}
+@media (max-width: 900px) {
+  .construction-project-types,
+  .construction-process ol {
+    grid-template-columns: 1fr;
+  }
+  .construction-brief {
+    grid-template-columns: 1fr;
+    padding: 28px;
+  }
+  .construction-subnav {
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .construction-type {
+    transition: none;
+  }
+}
+
+/* Join Us is a visual placeholder until the partnership feature is merged. */
+#header .nav-links .nav-placeholder {
+  color: inherit;
+  font-size: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+}
+body.division-page #header .nav-links .nav-placeholder {
+  color: #fff;
+  font-size: 14px;
+  text-shadow: 0 1px 4px #0009;
+}
+body.division-page #header .nav-actions > .header-call {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: #fff;
+  color: #173b30;
+  border: 1px solid #fff;
+  font-weight: 600;
+}
+body.division-page #header .nav-actions > .header-call:hover,
+body.division-page #header .nav-actions > .header-call:focus-visible {
+  background: transparent;
+  color: #fff;
+  border-color: #fff;
+}
+@media (max-width: 600px) {
+  body.division-page #header .nav-actions > .header-call {
+    padding: 8px;
+  }
+  #header .nav-links.open .nav-placeholder {
+    padding-block: 13px;
+  }
+}
+
+/* Solar header keeps Call us secondary while the quote action remains prominent. */
+body.division-page:has(.solar-streamlined)
+  #header
+  .nav-actions:not(.inquiry-cta-replaced)
+  > .header-call {
+  background: transparent;
+  color: #fff;
+  border-color: transparent;
+}
+body.division-page:has(.solar-streamlined)
+  #header
+  .nav-actions:not(.inquiry-cta-replaced)
+  > .header-call:hover,
+body.division-page:has(.solar-streamlined)
+  #header
+  .nav-actions:not(.inquiry-cta-replaced)
+  > .header-call:focus-visible {
+  background: #ffffff14;
+  color: #fff;
+}
+/* Keep the complete metallic finish in both states; only its light band moves. */
+body.division-page .cover-copy > a.button:hover,
+body.division-page .cover-copy > a.button:focus-visible {
+  background-image: linear-gradient(
+    115deg,
+    #b98626 0%,
+    #e6bf5c 21%,
+    #fff0ad 41%,
+    #dbad45 60%,
+    #f5d77e 79%,
+    #bd8a2c 100%
+  );
+  background-color: #dbad45;
+  background-size: 180% 100%;
+  background-position: 100% 50%;
+  color: #211b0d;
+  border-color: #f5d77e;
+}
+
+/* Public navigation: a quiet rounded highlight, including keyboard focus. */
+#header #site-nav > a:not(.button),
+#header #site-nav > .nav-placeholder {
+  padding: 10px 12px;
+  border-radius: 8px;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+#header #site-nav > a:not(.button):hover,
+#header #site-nav > a:not(.button):focus-visible,
+#header #site-nav > .nav-placeholder:hover {
+  background-color: #173b3010;
+}
+body.division-page #header #site-nav > a:not(.button):hover,
+body.division-page #header #site-nav > a:not(.button):focus-visible,
+body.division-page #header #site-nav > .nav-placeholder:hover {
+  background-color: #ffffff26;
+}
+body.division-page #header .menu-button {
+  color: #fff;
+  border-color: #ffffff80;
+}
+#header .menu-button {
+  min-width: 44px;
+  min-height: 44px;
+}
+#header .nav-links.open {
+  max-height: calc(100dvh - 100px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+/* Reclaim the rows left by removed explanatory copy in the contact card. */
+@media (min-width: 750px) {
+  #contact-options-dialog {
+    grid-template-rows: auto auto auto 1fr auto;
+  }
+  #contact-options-dialog h2 {
+    grid-row: 1;
+  }
+  #contact-options-dialog > p:not([class]) {
+    grid-row: 2;
+  }
+  #contact-options-dialog .contact-options-number {
+    grid-row: 3;
+  }
+  #contact-options-dialog [data-contact-app] {
+    grid-row: 5;
+  }
+  #contact-options-dialog .contact-options-tabs {
+    grid-row: 1;
+  }
+  #contact-options-dialog .contact-options-qr {
+    grid-row: 2 / 6;
+  }
+}
+@media (max-width: 600px) {
+  /* The expanded desktop gutter must not squeeze phone-sized content. */
+  body.division-content-page {
+    --site-gutter: 24px;
+  }
+  #header #site-nav > a,
+  #header #site-nav > .nav-placeholder {
+    min-height: 44px;
+  }
+  body.division-content-page #header .nav-links.open {
+    top: 100%;
+    padding: 16px;
+    gap: 4px;
+  }
+  .solar-planning-pages .discovery-stage {
+    display: flex;
+    flex-direction: column;
+  }
+  .solar-planning-pages #solar-discovery {
+    order: 0;
+  }
+  .solar-planning-pages .discovery-photo-visual {
+    order: 1;
+    min-height: 220px;
+    max-height: 300px;
+  }
+  body.division-content-page .division-subnav a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  #footer .footer-top {
+    gap: 28px 20px;
+  }
+  #footer .footer-top > div {
+    min-width: 0;
+  }
+  #footer a {
+    overflow-wrap: anywhere;
+  }
+  #contact-options-dialog {
+    width: calc(100% - 32px);
+    max-height: calc(100dvh - 32px);
+    padding: 28px 20px;
+    overflow-y: auto;
+  }
+  #contact-options-dialog .contact-options-tabs button {
+    min-height: 44px;
+  }
+  #contact-options-dialog .contact-options-qr {
+    max-width: 240px;
+    margin: 0 auto 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #header #site-nav > a,
+  #header #site-nav > .nav-placeholder {
+    transition: none;
+  }
+}
+
+/* Keep the navigation labels intact without changing the desktop gutters. */
+#header .container.nav {
+  gap: 20px;
+}
+#header #site-nav {
+  gap: 6px;
+  flex-shrink: 0;
+}
+#header #site-nav > a:not(.button),
+#header #site-nav > .nav-placeholder {
+  white-space: nowrap;
+  padding-inline: 9px;
+}
+#header .nav-actions {
+  flex-shrink: 0;
+  gap: 16px;
+}
+@keyframes public-menu-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 1200px) {
+  body.division-content-page #header .nav-links.open {
+    top: 100%;
+    padding: 12px;
+    gap: 4px;
+    border: 1px solid #ffffff2b;
+    border-top: 2px solid #b99258;
+    box-shadow: 0 18px 36px #0004;
+    background: #122e25;
+    animation: public-menu-reveal 220ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  body.division-content-page #header #site-nav.open > a,
+  body.division-content-page #header #site-nav.open > .nav-placeholder {
+    padding: 14px 16px;
+    border-bottom: 0;
+    font-size: 15px;
+    text-shadow: none;
+  }
+  body.division-content-page #header #site-nav.open > a.active {
+    background: #ffffff12;
+    color: #e6cf99;
+  }
+  body.division-content-page #header #site-nav.open > .nav-placeholder {
+    opacity: 0.55;
+    cursor: default;
+  }
+}
+@media (max-width: 750px) {
+  #header .nav-links.open {
+    padding: 12px;
+    gap: 4px;
+    border-top: 2px solid #b99258;
+    box-shadow: 0 18px 36px #0002;
+    animation: public-menu-reveal 220ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  #header #site-nav.open > a,
+  #header #site-nav.open > .nav-placeholder {
+    padding: 14px 16px;
+    border-bottom: 0;
+  }
+  #header .container.nav {
+    gap: 12px;
+  }
+  #header .nav-actions {
+    gap: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #header .nav-links.open {
+    animation: none !important;
+  }
+}
+
+/* Compact right-anchored dropdown instead of a full-width navigation panel. */
+@media (max-width: 1200px) {
+  body.division-content-page #header .nav-links.open {
+    left: auto;
+    right: var(--site-gutter);
+    width: min(280px, calc(100vw - 2 * var(--site-gutter)));
+    align-items: stretch;
+    text-align: left;
+    padding: 8px;
+  }
+  body.division-content-page #header #site-nav.open > a,
+  body.division-content-page #header #site-nav.open > .nav-placeholder {
+    padding: 10px 14px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+}
+@media (max-width: 750px) {
+  #header .nav-links.open {
+    left: auto;
+    right: var(--site-gutter);
+    width: min(280px, calc(100vw - 2 * var(--site-gutter)));
+    align-items: stretch;
+    text-align: left;
+  }
+}
+
+/* Glass navigation surface; opaque fallback when backdrop blur is unavailable. */
+@media (max-width: 1200px) {
+  body.division-content-page #header .nav-links.open {
+    background: #142e27f5;
+    border: 1px solid #ffffff40;
+    box-shadow:
+      inset 0 1px 0 #ffffff33,
+      0 18px 40px #0005;
+  }
+}
+@media (max-width: 750px) {
+  #header .nav-links.open {
+    background: #f7f8f2f5;
+    border: 1px solid #ffffff80;
+    box-shadow:
+      inset 0 1px 0 #fff9,
+      0 18px 40px #0003;
+  }
+  body.division-content-page #header .nav-links.open {
+    background: #142e27f5;
+    border-color: #ffffff40;
+  }
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  @media (max-width: 1200px) {
+    body.division-content-page #header .nav-links.open {
+      background: linear-gradient(135deg, #ffffff24, #ffffff05 55%), #102b22c9;
+      -webkit-backdrop-filter: blur(24px) saturate(145%);
+      backdrop-filter: blur(24px) saturate(145%);
+    }
+  }
+  @media (max-width: 750px) {
+    #header .nav-links.open {
+      background: linear-gradient(135deg, #ffffff80, #ffffff20), #f7f8f2cf;
+      -webkit-backdrop-filter: blur(24px) saturate(145%);
+      backdrop-filter: blur(24px) saturate(145%);
+    }
+    body.division-content-page #header .nav-links.open {
+      background: linear-gradient(135deg, #ffffff24, #ffffff05 55%), #102b22c9;
+    }
+  }
+}
+
+/* Match the About Techouse cue's white hover surface. */
+@media (max-width: 1200px) {
+  body.division-content-page #header .nav-links.open {
+    background: #fff;
+    color: #173b30;
+    border: 1px solid #fff;
+    box-shadow: 0 16px 36px #0003;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  body.division-content-page #header #site-nav.open > a,
+  body.division-content-page #header #site-nav.open > .nav-placeholder {
+    color: #173b30;
+    text-shadow: none;
+  }
+  body.division-content-page #header #site-nav.open > a.active,
+  body.division-content-page #header #site-nav.open > a:hover,
+  body.division-content-page #header #site-nav.open > a:focus-visible {
+    color: #173b30;
+    background: #173b3010;
+  }
+}
+@media (max-width: 750px) {
+  #header .nav-links.open {
+    background: #fff;
+    border: 1px solid #fff;
+    box-shadow: 0 16px 36px #0003;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@keyframes public-menu-option-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 1200px) {
+  body.division-content-page #header .nav-links.open {
+    transform-origin: top right;
+    animation: public-menu-reveal 260ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  body.division-content-page #header #site-nav.open > * {
+    animation: public-menu-option-reveal 220ms ease-out both;
+  }
+}
+@media (max-width: 750px) {
+  #header .nav-links.open {
+    transform-origin: top right;
+    animation: public-menu-reveal 260ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  #header #site-nav.open > * {
+    animation: public-menu-option-reveal 220ms ease-out both;
+  }
+}
+#header #site-nav.open > :nth-child(2) {
+  animation-delay: 35ms;
+}
+#header #site-nav.open > :nth-child(3) {
+  animation-delay: 70ms;
+}
+#header #site-nav.open > :nth-child(4) {
+  animation-delay: 105ms;
+}
+#header #site-nav.open > :nth-child(5) {
+  animation-delay: 140ms;
+}
+#header .menu-button {
+  transition:
+    background-color 180ms ease,
+    transform 120ms ease;
+}
+#header .menu-button:active {
+  transform: scale(0.94);
+}
+#header .menu-button[aria-expanded='true'] {
+  background-color: #173b3014;
+}
+body.division-page #header .menu-button[aria-expanded='true'] {
+  background-color: #ffffff26;
+}
+@media (prefers-reduced-motion: reduce) {
+  #header #site-nav.open > * {
+    animation: none !important;
+  }
+  #header .menu-button {
+    transition: none;
+  }
+  #header .menu-button:active {
+    transform: none;
+  }
+}
+
+/* Short tablet/laptop viewports: fit the essential calculator controls together. */
+@media (min-width: 901px) and (max-width: 1200px) and (max-height: 820px) {
+  .solar-planning-pages > .discovery-progress {
+    padding: 14px 18px;
+  }
+  .solar-planning-pages > .discovery-progress button {
+    gap: 6px;
+  }
+  .solar-planning-pages #solar-estimator .estimate-inputs {
+    padding: 16px;
+    gap: 12px;
+  }
+  #solar-estimator .estimate-inputs details {
+    margin: 0;
+  }
+  #solar-estimator .calculate-cost {
+    min-height: 44px;
+    padding-block: 10px;
+  }
+  #solar-estimator .estimate-result {
+    padding: 22px;
+  }
+  #solar-estimator .estimate-ready {
+    min-height: 0;
+  }
+  #solar-estimator .estimate-ready h3 {
+    font-size: 30px;
+  }
+  #solar-estimator .estimate-ready p {
+    font-size: 15px;
+    line-height: 1.6;
   }
 }
