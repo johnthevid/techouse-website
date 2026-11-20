@@ -446,7 +446,7 @@ window.TechouseExperience = (() => {
     form.append(controls);
     const extras = [form.querySelector('.solar-location'), form.querySelector('[data-solar-next]')];
     function draw() {
-      const names = ['sector', 'goal'];
+      const names = ['sector', 'usage'];
       const value = new FormData(form).get(names[step]);
       const sector = new FormData(form).get('sector') || 'Residential';
       const photos = {
@@ -470,30 +470,30 @@ window.TechouseExperience = (() => {
         ],
       };
       const priorities = {
-        'Lower electricity costs': [
-          'assets/solar-story/peso-meralco-bill.jpg',
-          'A person reviewing an illustrative Meralco electricity bill in Philippine pesos',
-          'Lower my electricity bill',
-          'Explore how daytime solar could offset electricity you buy from the grid.',
+        'Mostly during the day': [
+          'assets/solar-story/lower-bills.jpg',
+          'A sunlit room with sheer curtains in daylight',
+          'Use the sun while it’s up.',
+          'Daytime-heavy use pairs well with panels alone. No battery needed to start.',
         ],
-        'Energy after sunset': [
-          'assets/solar-story/night-home.jpg',
-          'A house with warmly illuminated windows at night',
-          'Keep the day going.',
-          'Discuss battery storage for using stored solar energy after sunset.',
+        'Day and night': [
+          'assets/solar-story/backup.jpg',
+          'Afternoon sunlight across a wall beside a lit lamp',
+          'Morning to night.',
+          'Panels power your day, and a battery keeps part of the sunshine for the evening.',
         ],
-        'Backup for essentials': [
-          'assets/solar-story/essential-light.jpg',
-          'A single light illuminating otherwise dark surroundings',
-          'Keep the essentials connected.',
-          'Plan backup for essential lights, Wi-Fi and selected appliances, with battery capacity matched to your needs.',
+        'Mostly at night': [
+          'assets/solar-story/stored-energy.jpg',
+          'A living room lit by a warm floor lamp in the evening',
+          'Save the sun for later.',
+          'We size a battery to carry your evening use, from aircon to lights.',
         ],
       };
       const [image, alt, title, description] =
         (step === 1 ? priorities[value] : photos[sector]) || photos.Residential;
       visual.classList.add('discovery-photo-visual');
       visual.dataset.story = step === 0 ? sector : value;
-      visual.innerHTML = `<img class="discovery-story-photo" src="${image}" alt="${alt}"><div class="discovery-photo-shade"></div><div class="discovery-photo-copy"><h3>${title}</h3><p>${description}</p><small>${step === 1 && value === 'Lower electricity costs' ? 'Illustrative bill image' : 'Photo · Unsplash · illustrative'}</small></div>`;
+      visual.innerHTML = `<img class="discovery-story-photo" src="${image}" alt="${alt}"><div class="discovery-photo-shade"></div><div class="discovery-photo-copy"><h3>${title}</h3><p>${description}</p><small>Photo · Unsplash · illustrative</small></div>`;
     }
     const estimator = document.querySelector('#estimator');
     const planning = document.createElement('div');
@@ -519,7 +519,7 @@ window.TechouseExperience = (() => {
       steps.forEach((section, index) => (section.hidden = index !== step));
       extras.forEach((element) => (element.hidden = step !== 1));
       form.querySelector('[data-solar-next]').hidden = true;
-      progress.innerHTML = ['Your area type', 'Your needs', 'Cost calculation']
+      progress.innerHTML = ['Your property', 'Your daily use', 'Your estimate']
         .map(
           (label, index) =>
             `<button type="button" data-step="${index}" class="${index < step ? 'is-complete' : ''}" aria-current="${index === step ? 'step' : 'false'}" aria-label="Step ${index + 1} of 3: ${label}${index < step ? ', completed' : index === step ? ', current' : ''}"><span class="step-marker" aria-hidden="true">${index < step ? window.TechouseIcons.icon('check') : index + 1}</span><span class="step-label">${label}</span></button>`,
@@ -527,7 +527,7 @@ window.TechouseExperience = (() => {
         .join('');
       controls.querySelector('[data-back]').hidden = step === 0;
       controls.querySelector('[data-next]').textContent =
-        step === 0 ? 'Continue →' : 'Calculate your cost →';
+        step === 0 ? 'Continue →' : 'Enter my bill →';
       controls.querySelector('.discovery-count').textContent = `${step + 1} / 3`;
       draw();
       // Cancel an interrupted reveal before starting the next; no delayed state changes.

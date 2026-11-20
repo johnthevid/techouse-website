@@ -45,7 +45,12 @@ test('Three-step solar planner preserves selections, calculation and responsive 
     await page.locator('#solar-discovery input[value="Commercial"]').check();
     await page.locator('[data-next]').click();
     assert.equal(await page.locator('#estimator').isVisible(), false);
-    await page.locator('#solar-discovery input[value="Energy after sunset"]').check();
+    // A business defaults to daytime use; the visitor's own choice then wins.
+    assert.equal(
+      await page.locator('#solar-discovery input[value="Mostly during the day"]').isChecked(),
+      true,
+    );
+    await page.locator('#solar-discovery input[value="Mostly at night"]').check();
     await page.locator('[data-next]').click();
     assert.equal(await page.locator('#estimator').isVisible(), true);
     await page.locator('#solar-estimator input[name="bill"]').fill('6000');
@@ -64,7 +69,7 @@ test('Three-step solar planner preserves selections, calculation and responsive 
     assert.equal(await page.locator('.solar-estimate-back').count(), 0);
     await page.locator('.discovery-progress [data-step="1"]').click();
     assert.equal(
-      await page.locator('#solar-discovery input[value="Energy after sunset"]').isChecked(),
+      await page.locator('#solar-discovery input[value="Mostly at night"]').isChecked(),
       true,
     );
     await page.locator('[data-back]').click();

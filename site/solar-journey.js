@@ -7,7 +7,7 @@ window.TechouseSolar = (() => {
   // In-memory selections survive client-side routes, but reset on a full refresh. No personal details are persisted here.
   let choices = {
     sector: 'Residential',
-    goal: 'Lower electricity costs',
+    usage: 'Day and night',
     location: '',
   };
   let estimate = null;
@@ -23,15 +23,19 @@ window.TechouseSolar = (() => {
   });
   const money = (n) => currency.format(n);
 
-  // RECOMMENDED SETUP: usage comes first. When most electricity is used after sunset (night share
-  // of 50% or more), a daytime-only system would miss most of the bill, so a setup with a battery
-  // sized to that night use is recommended whatever the goal. Otherwise the visitor's goal decides.
+  // USAGE -> NIGHT SHARE: three plain-language choices stand in for a day/night percentage.
+  const USAGE = { 'Mostly during the day': 25, 'Day and night': 50, 'Mostly at night': 75 };
+  // Sensible first choice per property: homes use most power in the evening, businesses in the day.
+  const usageDefault = (sector) => (sector === 'Residential' ? 'Day and night' : 'Mostly during the day');
+  let usageChosen = false;
+  // COVERAGE -> OFFSET: the estimator's three coverage choices, as words for the inquiry.
+  const COVERAGE = { 50: 'Just the essentials', 80: 'Essentials and more', 95: 'Most of my bill' };
+  // RECOMMENDED SETUP follows when electricity is used: mostly daytime needs no battery, a day and
+  // night split stores part of the evening use, and mostly-at-night stores all of it.
   function recommendedScenario(segment, nightShare = 0) {
-    const mostlyNight = nightShare >= 50;
-    if (segment === 'commercial')
-      return mostlyNight || choices.goal !== 'Lower electricity costs' ? 'storage' : 'day';
-    if (mostlyNight || choices.goal === 'Backup for essentials') return 'full';
-    return choices.goal === 'Energy after sunset' ? 'partial' : 'day';
+    if (segment === 'commercial') return nightShare >= 40 ? 'storage' : 'day';
+    if (nightShare >= 70) return 'full';
+    return nightShare >= 40 ? 'partial' : 'day';
   }
   // Use one planning model (solar-calculator.js) for the displayed budget and the inquiry handoff.
   function calculateEstimate(values) {
@@ -43,7 +47,7 @@ window.TechouseSolar = (() => {
     return { ...result, chosen };
   }
   const options = (name, values) =>
-    `<div class="solar-choices">${values.map((v) => `<label><input type="radio" name="${name}" value="${v}" ${choices[name] === v ? 'checked' : ''}><span>${{ 'Lower electricity costs': 'Lower my electricity bill', 'Energy after sunset': 'Use solar energy after sunset', 'Backup for essentials': 'Back up essential appliances' }[v] || v}</span></label>`).join('')}</div>`;
+    `<div class="solar-choices">${values.map((v) => `<label><input type="radio" name="${name}" value="${v}" ${choices[name] === v ? 'checked' : ''}><span>${v}</span></label>`).join('')}</div>`;
   // CONTENT EDITING: section titles, questions, and educational explanations live in this template builder.
   function mount() {
     const host = document.querySelector('.division-page #solar-estimator');
@@ -52,7 +56,7 @@ window.TechouseSolar = (() => {
     const intro = document.createElement('section');
     intro.id = 'solar-start';
     intro.className = 'division-section solar-start';
-    intro.innerHTML = `<div class="section-heading"><h2>Your first step to<br>lower electricity bills.</h2><p>Tell us about your property and what matters most to you. Then explore your estimated solar cost.</p></div><form id="solar-discovery"><fieldset><legend>What type of property is this for?</legend>${options('sector', ['Residential', 'Commercial', 'Industrial'])}</fieldset><fieldset><legend>What would you like solar to help with?</legend>${options('goal', ['Lower electricity costs', 'Energy after sunset', 'Backup for essentials'])}</fieldset><label class="solar-location">Where is your property? <small>Optional · city or province</small><input name="location" maxlength="120" placeholder="e.g. Quezon City" value="${escape(choices.location)}"></label><a class="button" href="#estimator" data-solar-next>Next: estimate my solar cost →</a></form>`;
+    intro.innerHTML = `<div class="section-heading"><h2>Your first step to<br>lower electricity bills.</h2><p>Two quick taps and your monthly bill. We’ll handle the sizing and pricing.</p></div><form id="solar-discovery"><fieldset><legend>What type of property is this for?</legend>${options('sector', ['Residential', 'Commercial', 'Industrial'])}</fieldset><fieldset><legend>When do you use the most electricity?</legend>${options('usage', Object.keys(USAGE))}</fieldset><label class="solar-location">Where is your property? <small>Optional · city or province</small><input name="location" maxlength="120" placeholder="e.g. Quezon City" value="${escape(choices.location)}"></label><a class="button" href="#estimator" data-solar-next>Next: estimate my solar cost →</a></form>`;
     wrap.prepend(intro);
     const learn = document.createElement('section');
     learn.id = 'solar-options';
@@ -65,13 +69,9 @@ window.TechouseSolar = (() => {
       'Next, let’s see what your solar project could cost.';
     estimator.querySelector('.section-heading span').remove();
     estimator.querySelector('.section-heading p').textContent =
-      'Enter your monthly bill to explore an indicative budget. You can adjust the estimate details if needed.';
-    // Bill and rate share one card: the rate is the second half of the same question.
-    const billRow = host.querySelector('.solar-bill-row');
-    billRow.classList.add('solar-bill-control');
-    host.elements.bill.closest('label').firstChild.textContent = 'Your monthly bill (₱)';
-    host.elements.rate.closest('label').firstChild.textContent = 'Electricity rate (₱ / kWh)';
+      'Enter your monthly bill. We’ll size the system around how you use electricity.';
     // Staff set the monthly Meralco rate in the back office (Website customizer → Solar calculator).
+    // Visitors see it as a quiet summary and only open "Fine-tune" if their rate differs.
     const settings = window.TechouseContent?.snapshot().settings || {};
     if (Number.isFinite(settings.electricityRate) && settings.electricityRate > 0) {
       host.elements.rate.value = String(settings.electricityRate);
@@ -80,76 +80,13 @@ window.TechouseSolar = (() => {
     if (settings.electricityRateNote)
       host.querySelector('[data-rate-note]').textContent =
         `${settings.electricityRateNote}. Edit to match your bill.`;
-    const offsetLabel = host.elements.offset.closest('label');
-    offsetLabel.firstChild.textContent = 'How much should solar cover?';
-    const targetNote = document.createElement('small');
-    targetNote.className = 'solar-target-note';
-    targetNote.textContent = 'A target, not guaranteed bill savings.';
-    offsetLabel.classList.add('solar-offset-control');
-    const endpoints = document.createElement('div');
-    endpoints.className = 'solar-offset-endpoints';
-    endpoints.setAttribute('aria-hidden', 'true');
-    endpoints.innerHTML = '<span>20% coverage</span><span>100% coverage</span>';
-    offsetLabel.insertBefore(endpoints, targetNote.parentElement ? targetNote : null);
-    offsetLabel.append(targetNote);
-    const tier = document.createElement('div');
-    tier.className = 'solar-coverage-tier';
-    tier.innerHTML = `<svg class="coverage-sun" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="13" fill="#e8bd65" stroke="#8d6329" stroke-width="2"/>${Array.from({ length: 8 }, (_, i) => `<path class="coverage-ray" d="M32 5v8" transform="rotate(${i * 45} 32 32)" fill="none" stroke="#b98029" stroke-width="3" stroke-linecap="round"/>`).join('')}</svg><div class="coverage-tier-copy"><strong></strong><span></span></div>`;
-    offsetLabel.insertBefore(tier, targetNote);
-    const tiers = [
-      [35, 'A sunny start', 'A little sunshine. A step toward lower bills.'],
-      [55, 'Sharing the load', 'Let solar take on more of your everyday energy use.'],
-      [75, 'Sun-powered ambitions', 'You’re aiming to put most of your energy use on sunshine.'],
-      [95, 'Going big on solar', 'You’re making sunshine a major part of the plan.'],
-      [100, 'All-in on sunshine', 'An ambitious target. Let’s see what your property can support.'],
-    ];
-    let previousTier = '';
-    const updateTrack = () => {
-      const value = Number(host.elements.offset.value);
-      offsetLabel.style.setProperty('--coverage', ((value - 20) / 80) * 100 + '%');
-      const [, title, message] = tiers.find(([maximum]) => value <= maximum) || tiers[4];
-      const level = tiers.findIndex((item) => item[1] === title);
-      tier
-        .querySelectorAll('.coverage-ray')
-        .forEach((ray, index) => ray.classList.toggle('is-lit', index < (level + 1) * 2));
-      if (title !== previousTier) {
-        tier.querySelector('strong').textContent = title;
-        tier.querySelector('span').textContent = message;
-        if (previousTier && !matchMedia('(prefers-reduced-motion: reduce)').matches)
-          tier.animate(
-            [
-              { opacity: 0.4, transform: 'translateY(4px)' },
-              { opacity: 1, transform: 'translateY(0)' },
-            ],
-            { duration: 180, easing: 'ease-out' },
-          );
-        previousTier = title;
-      }
-      host.elements.offset.setAttribute('aria-valuetext', value + '% target · ' + title);
+    const rateSummary = host.querySelector('[data-rate-summary]');
+    const showRate = () => {
+      const rate = Number(host.elements.rate.value);
+      rateSummary.textContent = rate > 0 ? `₱${+rate.toFixed(2)}/kWh` : 'your rate';
     };
-    host.elements.offset.addEventListener('input', updateTrack);
-    updateTrack();
-    // DAY/NIGHT USE: decides how much of the system must be stored in batteries for after sunset.
-    const usage = host.elements.nightShare.closest('label');
-    usage.classList.add('solar-offset-control');
-    usage.firstChild.textContent = 'When do you use most electricity?';
-    usage.insertAdjacentHTML(
-      'beforeend',
-      '<output data-usage-value aria-hidden="true"></output><div class="solar-offset-endpoints" aria-hidden="true"><span>Mostly daytime</span><span>Mostly at night</span></div><small class="solar-target-note">Sets the battery size in the setups with storage.</small>',
-    );
-    const updateUsage = () => {
-      const night = Number(host.elements.nightShare.value);
-      usage.style.setProperty('--night', (night / 90) * 100 + '%');
-      usage.querySelector('[data-usage-value]').textContent = `${100 - night}% day / ${night}% night`;
-      host.elements.nightShare.setAttribute(
-        'aria-valuetext',
-        `${100 - night}% daytime, ${night}% after sunset`,
-      );
-    };
-    host.elements.nightShare.addEventListener('input', updateUsage);
-    updateUsage();
-    const advanced = host.querySelector('.estimate-inputs details');
-    advanced.querySelector('summary').textContent = 'Adjust estimate details (optional)';
+    host.elements.rate.addEventListener('input', showRate);
+    showRate();
     const products = wrap.querySelector('#products');
     products.querySelector('.section-heading h2').innerHTML =
       'Meet the technology<br>behind your next step.';
@@ -194,11 +131,24 @@ window.TechouseSolar = (() => {
     products.querySelector('.section-heading p').textContent =
       'Explore product ranges and manufacturer datasheets.';
     const discovery = intro.querySelector('form');
+    // Step answers feed the estimator's hidden inputs, so the calculation always matches them.
+    let lastSector = choices.sector;
     function update() {
       choices = Object.fromEntries(new FormData(discovery));
+      if (!usageChosen && choices.sector !== lastSector) {
+        const fallback = usageDefault(choices.sector);
+        discovery.querySelector(`[name="usage"][value="${fallback}"]`).checked = true;
+        choices.usage = fallback;
+      }
+      lastSector = choices.sector;
+      host.elements.sector.value = choices.sector;
+      host.elements.nightShare.value = String(USAGE[choices.usage] ?? 50);
       host.dispatchEvent(new Event('change'));
     }
-    discovery.addEventListener('change', update);
+    discovery.addEventListener('change', (e) => {
+      if (e.target.name === 'usage') usageChosen = true;
+      update();
+    });
     discovery.addEventListener('input', () => {
       choices = Object.fromEntries(new FormData(discovery));
     });
@@ -247,7 +197,7 @@ window.TechouseSolar = (() => {
     form.elements.location.value = e.location;
     form.elements.capacity.value = `${e.kw.toFixed(2)} kWp · illustrative`;
     const d = window.TechouseSolarCalculator.DEFAULTS;
-    form.elements.requirements.value = `I would like to discuss this solar planning illustration.\n\nProperty: ${e.sector}\nPriority: ${e.goal}\nMonthly bill: ${money(+e.bill)}\nElectricity rate: ₱${e.rate}/kWh\nDesired energy offset: ${e.offset}% (goal, not guaranteed savings)\nUse after sunset: ${e.nightShare}%\nSetup: ${e.setup}\nEquipment:\n- ${e.equipment}\nIllustrative budget: ${e.budget}\n\nCalculator assumptions: ${d.psh} peak sun hours/day, ${d.heatLoss * 100}% system losses, 30 days/month, Techouse equipment pricing. No export credits assumed. Actual usage, shading, roof suitability, permits, upgrades, and battery sizing require assessment.\n\nPlease help me review what is suitable for my property.`;
+    form.elements.requirements.value = `I would like to discuss this solar planning illustration.\n\nProperty: ${e.sector}\nElectricity use: ${e.usage}\nMonthly bill: ${money(+e.bill)}\nElectricity rate: ₱${e.rate}/kWh\nSolar should cover: ${COVERAGE[e.offset] || e.offset + '%'} (${e.offset}% target, not guaranteed savings)\nSetup: ${e.setup}\nEquipment:\n- ${e.equipment}\nIllustrative budget: ${e.budget}\n\nCalculator assumptions: ${d.psh} peak sun hours/day, ${d.heatLoss * 100}% system losses, 30 days/month, Techouse equipment pricing. No export credits assumed. Actual usage, shading, roof suitability, permits, upgrades, and battery sizing require assessment.\n\nPlease help me review what is suitable for my property.`;
     const note = document.createElement('div');
     note.className = 'solar-prefill-note';
     note.textContent =

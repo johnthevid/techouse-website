@@ -172,7 +172,7 @@
   }
 
   /**
-   * values: { bill, rate, offset (%), panel ('topcon'|'bc'), nightShare (%), partialBattery (%), storageHours }
+   * values: { bill, rate, offset (%), panel ('topcon'|'bc'), nightShare (%), sector, partialBattery (%), storageHours }
    * Returns the segment and an ordered list of scenarios, each with equipment lines, price range,
    * monthly generation, savings and simple payback (months).
    */
@@ -191,7 +191,11 @@
     // Workbook "Daily Demand": kW of array needed to meet the whole bill at the peak-sun-hour rate.
     const demand = bill / rate / d.days / d.psh;
     const fullPv = (demand / (1 - d.heatLoss)) * offset;
-    const segment = fullPv > d.residentialLimit ? 'commercial' : 'residential';
+    // Homes always use residential pricing and hybrid packages. Businesses use the workbook's
+    // Residential / SME model up to residentialLimit, then C&I equipment and tiers. Without a
+    // property type, size alone decides.
+    const large = fullPv > d.residentialLimit;
+    const segment = values.sector === 'Residential' || !large ? 'residential' : 'commercial';
     const [high, low] = segment === 'commercial' ? ['T6', 'T4'] : ['A2', 'A0'];
 
     // Hours of full-array output the night share needs: PV x Night % x PSH = PV x (Night % x PSH) hours.

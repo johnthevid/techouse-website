@@ -4,6 +4,8 @@ Recorded milestones for the Techouse website. Dates use the project's Asia/Manil
 
 ## Unreleased — Solar Calculator
 
+- Simplify the calculator to one typed value. Step 2 asks "When do you use the most electricity?" (Mostly during the day / Day and night / Mostly at night) in place of the goal question; step 3 asks for the monthly bill and "How much of your bill should solar take on?" (Just the essentials / Essentials and more / Most of my bill). The two sliders are gone; the electricity rate and panel type move into an optional "Fine-tune" disclosure. Homes always use residential pricing; businesses switch to C&I above 24 kWp. Coverage choices recalculate a showing result immediately.
+
 - Fix the recommended setup ignoring evening usage: when 50% or more of use is after sunset, the calculator now recommends the setup with a battery sized to that night use (residential "Day + night", C&I storage). C&I daytime-only systems now shrink with the night share (workbook cell E33), and C&I storage hours rise above 3 when night use needs more.
 
 - Merge the homepage refinement (simplified homepage and banners, brand opening, mobile revamp, three-step solar planner, Construction page) with the secure back office and Solar Calculator; retire the About page's unused second-panel CMS fields.

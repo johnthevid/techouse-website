@@ -2,6 +2,17 @@
 
 Updated: 19 November 2026.
 
+## Latest: simplified Solar Calculator inputs (branch `integrate/homepage-refinement`)
+
+- Task: user found the calculator asked for too many values; wanted words instead of sliders so visitors only type their bill.
+- Step 2 (`site/solar-journey.js`, `site/experience.js`): "When do you use the most electricity?" replaces the goal question. Mapping: Mostly during the day 25% night, Day and night 50%, Mostly at night 75%. Homes default to Day and night, businesses to Mostly during the day, until the visitor picks one. Photos: lower-bills, backup, stored-energy.
+- Step 3 (`site/divisions.js`): bill, then three coverage tiles (Just the essentials 50%, Essentials and more 80% default, Most of my bill 95%), then a "Fine-tune (optional)" disclosure with the back-office rate and panel type. Hidden inputs carry `nightShare` and `sector`.
+- Recommendation: night ≥70% → Day + night; ≥40% → Day + 50% of night; else Daytime. C&I: ≥40% → storage.
+- Pricing model (`site/solar-calculator.js`): Residential always uses A0–A2 residential packages; Commercial/Industrial use the workbook's Residential/SME model up to 24 kWp, then C&I.
+- Old slider CSS removed from `solar-calculator.css` and `solar-extras.css`; a few dead `.solar-offset-control` rules remain in `hover-performance.css` and `mobile-refinement.css`.
+- Checks: `node --test tests/*.test.mjs` 31/31. Prettier not run.
+- Deployment: not deployed; main not updated.
+
 ## Latest: Solar Calculator night-usage fix (branch `integrate/homepage-refinement`)
 
 - Task: user testing found that choosing mostly evening usage still recommended a setup with no battery.

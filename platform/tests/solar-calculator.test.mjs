@@ -57,6 +57,16 @@ test('solar calculator sizes batteries to after-sunset use', () => {
   assert.ok(ci.scenarios[0].kwp < ci.fullPv * 0.11);
 });
 
+test('property type decides the pricing model', () => {
+  // A large home stays on residential pricing and hybrid packages.
+  const home = calculator.calculate({ bill: 80000, rate: 16, sector: 'Residential' });
+  assert.equal(home.segment, 'residential');
+  assert.deepEqual(home.tiers, { low: 'A0', high: 'A2' });
+  // A small business uses the workbook's Residential / SME model; a large one uses C&I.
+  assert.equal(calculator.calculate({ bill: 8000, rate: 16, sector: 'Commercial' }).segment, 'residential');
+  assert.equal(calculator.calculate({ bill: 80000, rate: 16, sector: 'Industrial' }).segment, 'commercial');
+});
+
 test('solar calculator equipment selection and formatting', () => {
   assert.deepEqual(calculator.pickBatteries(20).map((b) => [b.item, b.qty]), [
     ['16.07kwh Battery', 1],

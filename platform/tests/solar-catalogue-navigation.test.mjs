@@ -32,17 +32,16 @@ test('Solar equipment navigation, official imagery and responsive catalogue', as
   await page.evaluate(() => scrollTo(0, 0));
   await page.waitForFunction(() => document.querySelector('.solar-subnav-call').inert);
   await page.locator('.discovery-progress [data-step="2"]').click();
-  const slider = page.locator('.solar-offset-control input[name="offset"]');
-  await slider.focus();
-  const previous = +(await slider.inputValue());
-  await slider.press('ArrowLeft');
-  assert.equal(+(await slider.inputValue()), previous - 5);
+  assert.equal(await page.locator('#solar-estimator input[name="offset"]:checked').inputValue(), '80');
+  await page.locator('.solar-coverage-choices label:has(input[value="95"])').click();
+  assert.equal(await page.locator('#solar-estimator input[name="offset"]:checked').inputValue(), '95');
   await page.locator('.discovery-progress [data-step="0"]').click();
   await page.locator('#solar-discovery').scrollIntoViewIfNeeded();
   assert.match(await page.locator('.discovery-story-photo').getAttribute('alt'), /home interior/);
   await page.locator('[data-next]').click();
-  await page.locator('[name=goal][value="Lower electricity costs"]').check();
-  assert.match(await page.locator('.discovery-story-photo').getAttribute('src'), /peso-meralco-bill/);
+  await page.locator('[name=usage][value="Mostly at night"]').check();
+  assert.match(await page.locator('.discovery-story-photo').getAttribute('src'), /stored-energy/);
+  assert.equal(await page.locator('#solar-estimator input[name="nightShare"]').inputValue(), '75');
   await page.locator('.discovery-story-photo').evaluate((img) => img.decode());
   for (const [category, count] of [['panels', 3], ['inverters', 5], ['batteries', 3]]) {
     await page.goto(f.env.APP_ORIGIN + '/#/divisions/solar/products/' + category);
