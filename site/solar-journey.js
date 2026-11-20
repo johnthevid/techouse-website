@@ -7,7 +7,6 @@ window.TechouseSolar = (() => {
   // In-memory selections survive client-side routes, but reset on a full refresh. No personal details are persisted here.
   let choices = {
     sector: 'Residential',
-    usage: 'Day and night',
     location: '',
   };
   let estimate = null;
@@ -24,10 +23,10 @@ window.TechouseSolar = (() => {
   const money = (n) => currency.format(n);
 
   // USAGE -> NIGHT SHARE: three plain-language choices stand in for a day/night percentage.
-  const USAGE = { 'Mostly during the day': 25, 'Day and night': 50, 'Mostly at night': 75 };
+  const USAGE = { 'Mostly daytime': 25, 'Day and night': 50, 'Mostly at night': 75 };
   // Sensible first choice per property: homes use most power in the evening, businesses in the day.
-  const usageDefault = (sector) => (sector === 'Residential' ? 'Day and night' : 'Mostly during the day');
-  let usageChosen = false;
+  const usageDefault = (sector) => (sector === 'Residential' ? 'Day and night' : 'Mostly daytime');
+  let usageChosen = null; // the visitor's own night share, kept across client-side routes
   // COVERAGE -> OFFSET: the estimator's three coverage choices, as words for the inquiry.
   const COVERAGE = { 50: 'Just the essentials', 80: 'Essentials and more', 95: 'Most of my bill' };
   // RECOMMENDED SETUP follows when electricity is used: mostly daytime needs no battery, a day and
@@ -56,7 +55,7 @@ window.TechouseSolar = (() => {
     const intro = document.createElement('section');
     intro.id = 'solar-start';
     intro.className = 'division-section solar-start';
-    intro.innerHTML = `<div class="section-heading"><h2>Your first step to<br>lower electricity bills.</h2><p>Two quick taps and your monthly bill. We’ll handle the sizing and pricing.</p></div><form id="solar-discovery"><fieldset><legend>What type of property is this for?</legend>${options('sector', ['Residential', 'Commercial', 'Industrial'])}</fieldset><fieldset><legend>When do you use the most electricity?</legend>${options('usage', Object.keys(USAGE))}</fieldset><label class="solar-location">Where is your property? <small>Optional · city or province</small><input name="location" maxlength="120" placeholder="e.g. Quezon City" value="${escape(choices.location)}"></label><a class="button" href="#estimator" data-solar-next>Next: estimate my solar cost →</a></form>`;
+    intro.innerHTML = `<div class="section-heading"><h2>Your first step to<br>lower electricity bills.</h2><p>Tell us where it’s going and your monthly bill. We’ll handle the sizing and pricing.</p></div><form id="solar-discovery"><fieldset><legend>What type of property is this for?</legend>${options('sector', ['Residential', 'Commercial', 'Industrial'])}</fieldset><label class="solar-location">Where is your property? <small>Optional · city or province</small><input name="location" maxlength="120" placeholder="e.g. Quezon City" value="${escape(choices.location)}"></label><a class="button" href="#estimator" data-solar-next>Next: estimate my solar cost →</a></form>`;
     wrap.prepend(intro);
     const learn = document.createElement('section');
     learn.id = 'solar-options';
@@ -132,22 +131,24 @@ window.TechouseSolar = (() => {
       'Explore product ranges and manufacturer datasheets.';
     const discovery = intro.querySelector('form');
     // Step answers feed the estimator's hidden inputs, so the calculation always matches them.
+    // The property type picks the estimate's first usage answer (homes: day and night, businesses:
+    // mostly daytime) until the visitor chooses one, and decides the pricing model.
     let lastSector = choices.sector;
+    const setUsage = (value) => {
+      const radio = host.querySelector(`[name="nightShare"][value="${value}"]`);
+      if (radio) radio.checked = true;
+    };
+    setUsage(usageChosen ?? USAGE[usageDefault(choices.sector)]);
     function update() {
       choices = Object.fromEntries(new FormData(discovery));
-      if (!usageChosen && choices.sector !== lastSector) {
-        const fallback = usageDefault(choices.sector);
-        discovery.querySelector(`[name="usage"][value="${fallback}"]`).checked = true;
-        choices.usage = fallback;
-      }
+      if (!usageChosen && choices.sector !== lastSector) setUsage(USAGE[usageDefault(choices.sector)]);
       lastSector = choices.sector;
       host.elements.sector.value = choices.sector;
-      host.elements.nightShare.value = String(USAGE[choices.usage] ?? 50);
       host.dispatchEvent(new Event('change'));
     }
-    discovery.addEventListener('change', (e) => {
-      if (e.target.name === 'usage') usageChosen = true;
-      update();
+    discovery.addEventListener('change', update);
+    host.addEventListener('change', (e) => {
+      if (e.target.name === 'nightShare') usageChosen = e.target.value;
     });
     discovery.addEventListener('input', () => {
       choices = Object.fromEntries(new FormData(discovery));
@@ -197,7 +198,7 @@ window.TechouseSolar = (() => {
     form.elements.location.value = e.location;
     form.elements.capacity.value = `${e.kw.toFixed(2)} kWp · illustrative`;
     const d = window.TechouseSolarCalculator.DEFAULTS;
-    form.elements.requirements.value = `I would like to discuss this solar planning illustration.\n\nProperty: ${e.sector}\nElectricity use: ${e.usage}\nMonthly bill: ${money(+e.bill)}\nElectricity rate: ₱${e.rate}/kWh\nSolar should cover: ${COVERAGE[e.offset] || e.offset + '%'} (${e.offset}% target, not guaranteed savings)\nSetup: ${e.setup}\nEquipment:\n- ${e.equipment}\nIllustrative budget: ${e.budget}\n\nCalculator assumptions: ${d.psh} peak sun hours/day, ${d.heatLoss * 100}% system losses, 30 days/month, Techouse equipment pricing. No export credits assumed. Actual usage, shading, roof suitability, permits, upgrades, and battery sizing require assessment.\n\nPlease help me review what is suitable for my property.`;
+    form.elements.requirements.value = `I would like to discuss this solar planning illustration.\n\nProperty: ${e.sector}\nElectricity use: ${Object.keys(USAGE).find((k) => USAGE[k] === +e.nightShare) || e.nightShare + '% at night'}\nMonthly bill: ${money(+e.bill)}\nElectricity rate: ₱${e.rate}/kWh\nSolar should cover: ${COVERAGE[e.offset] || e.offset + '%'} (${e.offset}% target, not guaranteed savings)\nSetup: ${e.setup}\nEquipment:\n- ${e.equipment}\nIllustrative budget: ${e.budget}\n\nCalculator assumptions: ${d.psh} peak sun hours/day, ${d.heatLoss * 100}% system losses, 30 days/month, Techouse equipment pricing. No export credits assumed. Actual usage, shading, roof suitability, permits, upgrades, and battery sizing require assessment.\n\nPlease help me review what is suitable for my property.`;
     const note = document.createElement('div');
     note.className = 'solar-prefill-note';
     note.textContent =

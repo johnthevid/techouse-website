@@ -193,31 +193,31 @@
   line-height: 1.5;
   color: #64705e;
 }
-#solar-estimator .solar-coverage-choices {
+#solar-estimator .solar-tile-choices {
   margin: 0;
   padding: 0;
   border: 0;
   min-width: 0;
 }
-#solar-estimator .solar-coverage-choices legend {
+#solar-estimator .solar-tile-choices legend {
   margin-bottom: 10px;
   padding: 0;
   font-size: 15px;
   font-weight: 600;
   color: #1c352a;
 }
-#solar-estimator .solar-coverage-choices > div {
+#solar-estimator .solar-tile-choices > div {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
-#solar-estimator .solar-coverage-choices label {
+#solar-estimator .solar-tile-choices label {
   position: relative;
   grid-column: auto;
   margin: 0;
   cursor: pointer;
 }
-#solar-estimator .solar-coverage-choices input {
+#solar-estimator .solar-tile-choices input {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -226,7 +226,7 @@
   padding: 0;
   opacity: 0;
 }
-#solar-estimator .solar-coverage-choices span {
+#solar-estimator .solar-tile-choices span {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -240,28 +240,28 @@
     color 0.18s ease,
     border-color 0.18s ease;
 }
-#solar-estimator .solar-coverage-choices strong {
+#solar-estimator .solar-tile-choices strong {
   font-size: 15px;
   font-weight: 600;
   line-height: 1.3;
 }
-#solar-estimator .solar-coverage-choices small {
+#solar-estimator .solar-tile-choices small {
   font-size: 12px;
   line-height: 1.4;
   color: #596752;
 }
-#solar-estimator .solar-coverage-choices label:hover span {
+#solar-estimator .solar-tile-choices label:hover span {
   border-color: #526f48;
 }
-#solar-estimator .solar-coverage-choices input:checked + span {
+#solar-estimator .solar-tile-choices input:checked + span {
   background: #203d32;
   border-color: #203d32;
   color: #fff;
 }
-#solar-estimator .solar-coverage-choices input:checked + span small {
+#solar-estimator .solar-tile-choices input:checked + span small {
   color: #d6dfd2;
 }
-#solar-estimator .solar-coverage-choices input:focus-visible + span {
+#solar-estimator .solar-tile-choices input:focus-visible + span {
   outline: 3px solid #a85d2c;
   outline-offset: 3px;
 }
@@ -294,16 +294,16 @@
     padding: 16px;
   }
   /* Phone: choices become full-width rows, title left and hint under it. */
-  #solar-estimator .solar-coverage-choices > div {
+  #solar-estimator .solar-tile-choices > div {
     grid-template-columns: minmax(0, 1fr);
     gap: 6px;
   }
-  #solar-estimator .solar-coverage-choices span {
+  #solar-estimator .solar-tile-choices span {
     padding: 12px 14px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  #solar-estimator .solar-coverage-choices span {
+  #solar-estimator .solar-tile-choices span {
     transition: none;
   }
 }
@@ -437,5 +437,118 @@
 /* Planner controls: keep the step count and the short next label on one line on phones. */
 .discovery-controls .discovery-count,
 .discovery-controls [data-next] {
+  white-space: nowrap;
+}
+
+/* ===== TWO-STEP PLANNER ===== */
+.solar-streamlined .solar-planning-pages > .discovery-progress {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+/* Step 1: the location field lines up with the property tiles above it. */
+.solar-streamlined #solar-discovery .solar-location {
+  max-width: none;
+}
+/* The input column fills the card so no band shows under it. */
+#solar-estimator .estimate-inputs {
+  align-self: stretch;
+}
+
+/* ===== RESULT CARD =====
+   Setup name and why it fits, then the price as the one bright element, then three figures in a
+   row read left to right. Sentence case throughout. */
+#estimate-result .estimate-setup {
+  display: grid;
+  gap: 4px;
+}
+#estimate-result .estimate-setup > span {
+  font-size: 13px;
+  color: #c6d5c9;
+}
+#estimate-result .estimate-setup b {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #f4ead5;
+}
+#estimate-result .estimate-setup p {
+  max-width: 46ch;
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #bdcdbf;
+}
+#estimate-result .estimate-budget-highlight h3.animated-price {
+  margin: 16px 0 20px;
+}
+#estimate-result .estimate-stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  padding-block: 16px;
+  border-block: 1px solid #ffffff25;
+}
+#estimate-result .estimate-stats > div {
+  display: block;
+  padding: 0;
+  border: 0;
+}
+#estimate-result .estimate-stats dt {
+  max-width: none;
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: #c6d5c9;
+}
+#estimate-result .estimate-stats dd {
+  max-width: none;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.35;
+  text-align: left;
+  white-space: normal;
+  font-variant-numeric: tabular-nums;
+}
+#estimate-result .estimate-stats dd small {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: #c6d5c9;
+}
+@media (max-width: 600px) {
+  #estimate-result .estimate-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  #estimate-result .estimate-stats > div:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ===== SETUP COMPARISON ===== */
+.solar-scenarios > legend span {
+  margin-bottom: 4px;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: #1c352a;
+}
+.solar-scenarios > legend {
+  font-size: 13px;
+  color: #596752;
+}
+.solar-scenario-head em {
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+/* The planner's step fieldset rule (.solar-start fieldset) also reaches this one; restore its inset. */
+@media (min-width: 601px) {
+  #solar-estimator .solar-scenarios {
+    padding: 24px;
+  }
+}
+#solar-estimator .solar-scenarios > legend {
+  margin-bottom: 16px;
+}
+#estimate-result .estimate-stats .nowrap {
   white-space: nowrap;
 }

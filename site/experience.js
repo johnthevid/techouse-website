@@ -446,8 +446,6 @@ window.TechouseExperience = (() => {
     form.append(controls);
     const extras = [form.querySelector('.solar-location'), form.querySelector('[data-solar-next]')];
     function draw() {
-      const names = ['sector', 'usage'];
-      const value = new FormData(form).get(names[step]);
       const sector = new FormData(form).get('sector') || 'Residential';
       const photos = {
         Residential: [
@@ -469,30 +467,10 @@ window.TechouseExperience = (() => {
           'Explore solar for your facility’s energy needs.',
         ],
       };
-      const priorities = {
-        'Mostly during the day': [
-          'assets/solar-story/lower-bills.jpg',
-          'A sunlit room with sheer curtains in daylight',
-          'Use the sun while it’s up.',
-          'Daytime-heavy use pairs well with panels alone. No battery needed to start.',
-        ],
-        'Day and night': [
-          'assets/solar-story/backup.jpg',
-          'Afternoon sunlight across a wall beside a lit lamp',
-          'Morning to night.',
-          'Panels power your day, and a battery keeps part of the sunshine for the evening.',
-        ],
-        'Mostly at night': [
-          'assets/solar-story/stored-energy.jpg',
-          'A living room lit by a warm floor lamp in the evening',
-          'Save the sun for later.',
-          'We size a battery to carry your evening use, from aircon to lights.',
-        ],
-      };
       const [image, alt, title, description] =
-        (step === 1 ? priorities[value] : photos[sector]) || photos.Residential;
+        photos[sector] || photos.Residential;
       visual.classList.add('discovery-photo-visual');
-      visual.dataset.story = step === 0 ? sector : value;
+      visual.dataset.story = sector;
       visual.innerHTML = `<img class="discovery-story-photo" src="${image}" alt="${alt}"><div class="discovery-photo-shade"></div><div class="discovery-photo-copy"><h3>${title}</h3><p>${description}</p><small>Photo · Unsplash · illustrative</small></div>`;
     }
     const estimator = document.querySelector('#estimator');
@@ -509,32 +487,31 @@ window.TechouseExperience = (() => {
     const costDescription = costHeading.querySelector('p').textContent;
     costHeading.remove();
     function show(focus = false) {
-      heading.querySelector('h2').innerHTML = step === 2 ? costTitle : originalTitle;
-      heading.querySelector('p').textContent = step === 2 ? costDescription : originalDescription;
+      heading.querySelector('h2').innerHTML = step === 1 ? costTitle : originalTitle;
+      heading.querySelector('p').textContent = step === 1 ? costDescription : originalDescription;
       planning.dataset.step = String(step + 1);
-      layout.hidden = step === 2;
-      estimator.hidden = step !== 2;
-      layout.classList.toggle('priority-stage', step === 1);
-      form.classList.toggle('priority-step', step === 1);
-      steps.forEach((section, index) => (section.hidden = index !== step));
-      extras.forEach((element) => (element.hidden = step !== 1));
+      layout.hidden = step === 1;
+      estimator.hidden = step !== 1;
+      // Step 1 holds the property type and its location; step 2 is the estimate itself.
+      steps.forEach((section) => (section.hidden = step !== 0));
+      extras.forEach((element) => (element.hidden = step !== 0));
       form.querySelector('[data-solar-next]').hidden = true;
-      progress.innerHTML = ['Your property', 'Your daily use', 'Your estimate']
+      progress.innerHTML = ['Your property', 'Your estimate']
         .map(
           (label, index) =>
-            `<button type="button" data-step="${index}" class="${index < step ? 'is-complete' : ''}" aria-current="${index === step ? 'step' : 'false'}" aria-label="Step ${index + 1} of 3: ${label}${index < step ? ', completed' : index === step ? ', current' : ''}"><span class="step-marker" aria-hidden="true">${index < step ? window.TechouseIcons.icon('check') : index + 1}</span><span class="step-label">${label}</span></button>`,
+            `<button type="button" data-step="${index}" class="${index < step ? 'is-complete' : ''}" aria-current="${index === step ? 'step' : 'false'}" aria-label="Step ${index + 1} of 2: ${label}${index < step ? ', completed' : index === step ? ', current' : ''}"><span class="step-marker" aria-hidden="true">${index < step ? window.TechouseIcons.icon('check') : index + 1}</span><span class="step-label">${label}</span></button>`,
         )
         .join('');
       controls.querySelector('[data-back]').hidden = step === 0;
       controls.querySelector('[data-next]').textContent =
-        step === 0 ? 'Continue →' : 'Enter my bill →';
-      controls.querySelector('.discovery-count').textContent = `${step + 1} / 3`;
+        'See my estimate →';
+      controls.querySelector('.discovery-count').textContent = `${step + 1} / 2`;
       draw();
       // Cancel an interrupted reveal before starting the next; no delayed state changes.
       for (const target of [layout, estimator])
         target.getAnimations().forEach((animation) => animation.cancel());
       if (focus && !reduced()) {
-        (step === 2 ? estimator : layout).animate(
+        (step === 1 ? estimator : layout).animate(
           [
             { opacity: 0.3, filter: 'blur(5px)' },
             { opacity: 1, filter: 'blur(0px)' },
@@ -544,13 +521,13 @@ window.TechouseExperience = (() => {
       }
       if (focus) {
         const target =
-          step === 2 ? heading.querySelector('h2') : steps[step].querySelector('legend');
+          step === 1 ? heading.querySelector('h2') : steps[0].querySelector('legend');
         target.tabIndex = -1;
         target.focus({ preventScroll: true });
       }
     }
     controls.querySelector('[data-next]').onclick = () => {
-      step = Math.min(2, step + 1);
+      step = Math.min(1, step + 1);
       show(true);
     };
     controls.querySelector('[data-back]').onclick = () => {
@@ -570,7 +547,7 @@ window.TechouseExperience = (() => {
         link.addEventListener(
           'click',
           () => {
-            step = link.dataset.scroll === 'estimator' ? 2 : 0;
+            step = link.dataset.scroll === 'estimator' ? 1 : 0;
             show();
           },
           { capture: true },

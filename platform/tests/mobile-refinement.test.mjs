@@ -62,7 +62,7 @@ test('Compact touch homepage keeps one focused story and landscape calculator re
     );
     await page.locator('.banner-cta').first().click();
     await page.waitForURL('**/#/divisions/solar');
-    await page.locator('.discovery-progress [data-step="2"]').click();
+    await page.locator('.discovery-progress [data-step="1"]').click();
     await page.locator('#solar-estimator [name="bill"]').fill('6000');
     await page.locator('.calculate-cost').click();
     assert.equal(await page.locator('#solar-estimate-inquiry').isVisible(), true);

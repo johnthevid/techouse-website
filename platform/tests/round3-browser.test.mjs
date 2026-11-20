@@ -284,7 +284,7 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
     await page.waitForSelector("#main h1");
   }
   await page.goto(f.env.APP_ORIGIN + '/#/divisions/solar');
-  await page.locator('.discovery-progress [data-step="2"]').click();
+  await page.locator('.discovery-progress [data-step="1"]').click();
   await page.waitForSelector('#solar-estimator');
   assert.equal(await page.inputValue('#solar-estimator input[name="rate"]'), '15.551');
   assert.match(await page.locator('[data-rate-note]').textContent(), /Meralco, November 2026/);
@@ -311,7 +311,7 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
   assert(await page.locator('.calculate-cost').isVisible());
   assert.equal(await page.locator('.estimate-economics').count(),0);
   await page.goto(f.env.APP_ORIGIN + '/#/divisions/solar');
-  await page.locator('.discovery-progress [data-step="2"]').click();
+  await page.locator('.discovery-progress [data-step="1"]').click();
   await page.waitForSelector('#solar-estimator');
   await page.locator('#solar-estimator input[name="bill"]').fill('6000');
   await page.locator('.solar-coverage-choices label:has(input[value="50"])').click();

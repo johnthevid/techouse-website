@@ -343,7 +343,7 @@ test("1.0.1 inquiry actions, annual estimate and visit lifecycle", async (t) => 
       });
       if (sector === "residential") {
         await page.goto(f.env.APP_ORIGIN + "/#/divisions/solar");
-        await page.locator('.discovery-progress [data-step="2"]').click();
+        await page.locator('.discovery-progress [data-step="1"]').click();
         await page.waitForSelector("#solar-estimator");
         await page.locator('#solar-estimator input[name="bill"]').fill("6000");
         await page.locator("#solar-estimator .calculate-cost").click();

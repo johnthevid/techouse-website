@@ -2,6 +2,15 @@
 
 Updated: 19 November 2026.
 
+## Latest: two-step solar planner and result card redesign (branch `integrate/homepage-refinement`)
+
+- Planner (`site/experience.js`): two steps, "Your property" (type + optional location) and "Your estimate". The daily-use question is a tile group (`name="nightShare"`, 25/50/75) in the estimate form (`site/divisions.js`), above coverage. Homes default to Day and night, businesses to Mostly daytime, until chosen (`site/solar-journey.js`). Usage and coverage tiles recalculate a showing result immediately.
+- Result card: "Indicative budget", setup name, a one-line reason ("Matches how you use electricity." + setup summary for the recommended setup), price, then a three-figure row (monthly savings, payback, system size; two columns on phones). Comparison legend and badge in sentence case; `.solar-start fieldset` had removed the comparison's padding, now restored. Phone swipe row opens on the recommended card.
+- Design pass used the project's `unslop` skill in polish mode (existing brand kept). No "impeccable" skill exists in this project.
+- Dead CSS for the removed step 2 (`.priority-step`, `.priority-stage` in `experience.css`) remains.
+- Checks: `node --test tests/*.test.mjs` 31/31. Prettier not run.
+- Deployment: not deployed; main not updated.
+
 ## Latest: simplified Solar Calculator inputs (branch `integrate/homepage-refinement`)
 
 - Task: user found the calculator asked for too many values; wanted words instead of sliders so visitors only type their bill.
