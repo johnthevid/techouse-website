@@ -988,11 +988,6 @@
   display: inline;
   white-space: nowrap;
 }
-@media (prefers-reduced-motion: reduce) {
-  .coverage-ray {
-    transition: none;
-  }
-}
 .solar-streamlined #estimate-result:has(.estimate-budget-highlight) {
   display: flex;
   flex-direction: column;
@@ -1045,23 +1040,6 @@
     min-height: 220px;
   }
 }
-#solar-estimator .solar-bill-control,
-#solar-estimator .solar-offset-control {
-  padding: 20px;
-  border: 1px solid #c6cfbe;
-  background: #f5f5ed;
-}
-#solar-estimator .solar-bill-control {
-  display: block;
-  margin: 0;
-  font-weight: 600;
-}
-#solar-estimator .solar-bill-control input {
-  margin-top: 14px;
-  min-height: 54px;
-  font-size: 24px;
-  font-weight: 500;
-}
 .solar-streamlined #estimate-result .estimate-budget-highlight {
   min-height: 0;
   justify-content: flex-start;
@@ -1112,16 +1090,6 @@
 }
 #solar-estimator .calculate-cost[hidden] {
   display: none !important;
-}
-#solar-estimator .solar-offset-control input::-webkit-slider-thumb {
-  width: 32px;
-  height: 32px;
-  border-width: 4px;
-}
-#solar-estimator .solar-offset-control input::-moz-range-thumb {
-  width: 24px;
-  height: 24px;
-  border-width: 4px;
 }
 .estimate-budget-highlight {
   width: 100%;
@@ -1448,67 +1416,6 @@
   }
 }
 
-/* Native range control with a slim track and a generous, warm-toned handle. */
-#solar-estimator .solar-offset-control input[type='range'] {
-  appearance: none;
-  -webkit-appearance: none;
-  display: block;
-  width: 100%;
-  height: 44px;
-  min-height: 44px;
-  margin: 12px 0 4px;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  touch-action: pan-y;
-}
-#solar-estimator .solar-offset-control input[type='range']::-webkit-slider-runnable-track {
-  height: 6px;
-  border-radius: 3px;
-  background: linear-gradient(to right, #244b38 0 var(--coverage), #d4d8ca var(--coverage) 100%);
-}
-#solar-estimator .solar-offset-control input[type='range']::-webkit-slider-thumb {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 30px;
-  height: 30px;
-  margin-top: -12px;
-  border: 3px solid #faf7ed;
-  border-radius: 50%;
-  background: #d4af68;
-  box-shadow:
-    0 0 0 1px #9b804b,
-    0 2px 5px #183b2826;
-  transition: box-shadow 160ms ease;
-}
-#solar-estimator .solar-offset-control input[type='range']::-moz-range-track {
-  height: 6px;
-  border-radius: 3px;
-  background: #d4d8ca;
-}
-#solar-estimator .solar-offset-control input[type='range']::-moz-range-progress {
-  height: 6px;
-  border-radius: 3px;
-  background: #244b38;
-}
-#solar-estimator .solar-offset-control input[type='range']::-moz-range-thumb {
-  box-sizing: border-box;
-  width: 30px;
-  height: 30px;
-  border: 3px solid #faf7ed;
-  border-radius: 50%;
-  background: #d4af68;
-  box-shadow:
-    0 0 0 1px #9b804b,
-    0 2px 5px #183b2826;
-}
-#solar-estimator .solar-offset-control input[type='range']:focus-visible {
-  outline: 2px solid #9b804b;
-  outline-offset: 4px;
-  border-radius: 4px;
-}
 .solar-peso-icon {
   display: inline-flex;
   align-items: center;
@@ -1518,11 +1425,6 @@
   font-size: 22px;
   font-weight: 600;
   line-height: 1;
-}
-@media (prefers-reduced-motion: reduce) {
-  #solar-estimator .solar-offset-control input[type='range']::-webkit-slider-thumb {
-    transition: none;
-  }
 }
 
 /* Product catalogue: compact introduction, restrained navigation and clear product rows. */
@@ -1789,63 +1691,7 @@
 #solar-technical #products {
   scroll-margin-top: 88px;
 }
-/* Alternative slider: square green grip on a recessed warm-neutral track. */
-#solar-estimator .solar-offset-control input[type='range']::-webkit-slider-runnable-track {
-  height: 8px;
-  border-radius: 0;
-  box-shadow: inset 0 1px 2px #1b342516;
-  background: linear-gradient(to right, #365945 0 var(--coverage), #dedfd3 var(--coverage) 100%);
-}
-#solar-estimator .solar-offset-control input[type='range']::-webkit-slider-thumb {
-  width: 28px;
-  height: 34px;
-  margin-top: -13px;
-  border: 3px solid #f7f5eb;
-  border-radius: 3px;
-  background:
-    linear-gradient(
-      90deg,
-      transparent 0 9px,
-      #d8dccc 9px 10px,
-      transparent 10px 13px,
-      #d8dccc 13px 14px,
-      transparent 14px
-    ),
-    #244b38;
-  box-shadow:
-    0 0 0 1px #365945,
-    0 2px 5px #183b2826;
-}
-#solar-estimator .solar-offset-control input[type='range']::-moz-range-track {
-  height: 8px;
-  border-radius: 0;
-  background: #dedfd3;
-  box-shadow: inset 0 1px 2px #1b342516;
-}
-#solar-estimator .solar-offset-control input[type='range']::-moz-range-progress {
-  height: 8px;
-  border-radius: 0;
-  background: #365945;
-}
-#solar-estimator .solar-offset-control input[type='range']::-moz-range-thumb {
-  width: 28px;
-  height: 34px;
-  border: 3px solid #f7f5eb;
-  border-radius: 3px;
-  background:
-    linear-gradient(
-      90deg,
-      transparent 0 9px,
-      #d8dccc 9px 10px,
-      transparent 10px 13px,
-      #d8dccc 13px 14px,
-      transparent 14px
-    ),
-    #244b38;
-  box-shadow:
-    0 0 0 1px #365945,
-    0 2px 5px #183b2826;
-}
+
 .skyworth-range-visual {
   background: #fff;
 }

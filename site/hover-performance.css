@@ -1008,11 +1008,6 @@ body:not(.office-page) #footer:not(.office-footer) > .container {
 .solar-planning-pages #solar-estimator .estimate-inputs {
   background: #f9f8f2;
 }
-.solar-planning-pages #solar-estimator .solar-bill-control,
-.solar-planning-pages #solar-estimator .solar-offset-control {
-  background: #fff;
-  border-color: #cdd5c8;
-}
 .solar-planning-pages #solar-estimator input:not([type='range']),
 .solar-planning-pages #solar-estimator select {
   background: #fff;
@@ -1978,39 +1973,6 @@ body.division-page #header .menu-button[aria-expanded='true'] {
   .solar-planning-pages #solar-estimator .estimate-inputs {
     padding: 16px;
     gap: 12px;
-  }
-  #solar-estimator .solar-bill-control,
-  #solar-estimator .solar-offset-control {
-    padding: 12px;
-  }
-  #solar-estimator .solar-bill-control input {
-    min-height: 44px;
-    margin-top: 8px;
-    font-size: 22px;
-  }
-  #solar-estimator .solar-offset-control output {
-    margin: 6px 0;
-    font-size: 24px;
-  }
-  #solar-estimator .solar-coverage-tier {
-    margin-top: 10px;
-    padding-top: 10px;
-    min-height: 0;
-    grid-template-columns: 36px minmax(0, 1fr);
-    gap: 10px;
-  }
-  #solar-estimator .coverage-sun {
-    width: 36px;
-    height: 36px;
-  }
-  #solar-estimator .solar-coverage-tier strong {
-    font-size: 17px;
-  }
-  #solar-estimator .solar-coverage-tier span {
-    font-size: 13px;
-  }
-  #solar-estimator .solar-offset-control .solar-target-note {
-    margin-top: 8px;
   }
   #solar-estimator .estimate-inputs details {
     margin: 0;

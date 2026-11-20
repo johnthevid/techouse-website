@@ -254,10 +254,6 @@
   .solar-planning-pages #solar-estimator .estimate-result {
     padding: 20px;
   }
-  #solar-estimator .solar-bill-control,
-  #solar-estimator .solar-offset-control {
-    padding: 12px;
-  }
   #solar-estimator .estimate-ready {
     min-height: 0;
   }
