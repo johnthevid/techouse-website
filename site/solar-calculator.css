@@ -797,3 +797,181 @@
     justify-content: center;
   }
 }
+
+/* ===== PRICE FIRST =====
+   The result shows the setup, the budget and the next step; savings, payback, system size and the
+   pricing note sit in one optional disclosure. */
+#estimate-result .estimate-setup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 8px;
+  margin: 0;
+}
+#estimate-result .estimate-setup b {
+  font-size: 15px;
+}
+#estimate-result .estimate-setup b::before {
+  content: '·';
+  margin-right: 8px;
+  color: #c6d5c9;
+  font-weight: 400;
+}
+#estimate-result .estimate-budget-highlight h3.animated-price {
+  margin: 8px 0 20px;
+}
+#estimate-result .estimate-budget-highlight .button {
+  margin-bottom: 0;
+}
+#estimate-result .estimate-more {
+  width: 100%;
+  margin-top: 20px;
+  border-top: 1px solid #ffffff25;
+}
+#estimate-result .estimate-more > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding-top: 8px;
+  color: #f4ead5;
+  font-size: 14px;
+  cursor: pointer;
+  list-style: none;
+}
+#estimate-result .estimate-more > summary::-webkit-details-marker {
+  display: none;
+}
+#estimate-result .estimate-more > summary::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  margin-left: 2px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+#estimate-result .estimate-more[open] > summary::after {
+  transform: translateY(2px) rotate(-135deg);
+}
+#estimate-result .estimate-more > summary:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+#estimate-result .estimate-more[open] {
+  padding-bottom: 4px;
+}
+#estimate-result .estimate-reason {
+  max-width: 52ch;
+  margin: 8px 0 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #bdcdbf;
+}
+#estimate-result .estimate-more .estimate-stats {
+  margin-bottom: 16px;
+}
+#estimate-result .estimate-more .estimate-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0 0 12px;
+}
+#estimate-result .estimate-more .estimate-metrics p {
+  margin: 0;
+  font-size: 12px;
+  color: #c6d5c9;
+}
+#estimate-result .estimate-more .estimate-metrics strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  color: #f4ead5;
+}
+#estimate-result .estimate-more .energy-equivalents {
+  margin-top: 12px;
+}
+@media (max-width: 600px) {
+  #estimate-result .estimate-more .estimate-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ===== SETUP CARDS =====
+   Name, price and monthly savings lead; the summary, payback and parts list are optional. */
+.solar-scenarios > div {
+  align-items: start;
+}
+.solar-scenario {
+  cursor: default;
+}
+.solar-scenario-pick {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+}
+.solar-scenario-save {
+  font-size: 14px;
+  color: #34433b;
+  font-variant-numeric: tabular-nums;
+}
+.solar-scenario-more {
+  border-top: 1px solid #dce0d8;
+}
+.solar-scenario-more > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: #1c352a;
+  font-size: 13px;
+  cursor: pointer;
+  list-style: none;
+}
+.solar-scenario-more > summary::-webkit-details-marker {
+  display: none;
+}
+.solar-scenario-more > summary::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  margin-left: 2px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.solar-scenario-more[open] > summary::after {
+  transform: translateY(2px) rotate(-135deg);
+}
+.solar-scenario-more > summary:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.solar-scenario-more .solar-scenario-summary {
+  margin: 0 0 10px;
+}
+.solar-scenario-payback {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #dce0d8;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.solar-scenario-payback small {
+  font-size: 12px;
+  font-weight: 400;
+  color: #64705e;
+}
+@media (prefers-reduced-motion: reduce) {
+  #estimate-result .estimate-more > summary::after,
+  .solar-scenario-more > summary::after {
+    transition: none;
+  }
+}

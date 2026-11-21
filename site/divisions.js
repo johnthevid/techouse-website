@@ -278,8 +278,9 @@ window.TechouseDivisions = (() => {
       Number.isFinite(s.paybackLow)
         ? `${calculator.formatPayback(s.paybackLow)} – ${calculator.formatPayback(s.paybackHigh)}`
         : 'Not reached';
+    // Each setup leads with its name, price and monthly savings; what it includes is optional.
     const scenarioCard = (s, recommended) =>
-      `<label class="solar-scenario"><input type="radio" name="scenario" value="${s.id}"${s.id === recommended ? ' checked' : ''}><span class="solar-scenario-head"><strong>${s.title}</strong>${s.id === recommended ? '<em>Recommended</em>' : ''}</span><span class="solar-scenario-price">${range(s)}</span><span class="solar-scenario-summary">${s.summary}</span><span class="solar-scenario-figures"><span><small>Monthly savings</small>${peso(s.savings)}</span><span><small>Payback</small>${payback(s)}</span></span><ul>${s.lines.map((l) => `<li><span>${l.qty} ×</span>${l.label}</li>`).join('')}</ul></label>`;
+      `<div class="solar-scenario"><label class="solar-scenario-pick"><input type="radio" name="scenario" value="${s.id}"${s.id === recommended ? ' checked' : ''}><span class="solar-scenario-head"><strong>${s.title}</strong>${s.id === recommended ? '<em>Recommended</em>' : ''}</span><span class="solar-scenario-price">${range(s)}</span><span class="solar-scenario-save">Saves about ${peso(s.savings)} a month</span></label><details class="solar-scenario-more"><summary>What’s included</summary><p class="solar-scenario-summary">${s.summary}</p><p class="solar-scenario-payback"><small>Payback</small>${payback(s)}</p><ul>${s.lines.map((l) => `<li><span>${l.qty} ×</span>${l.label}</li>`).join('')}</ul></details></div>`;
     // Selecting a setup refreshes the headline without recalculating or clearing the comparison.
     function select(id, animate = false) {
       const s = result?.scenarios.find((item) => item.id === id) || result?.scenarios[0];
@@ -314,8 +315,6 @@ window.TechouseDivisions = (() => {
       if (measured) heading.style.fontSize = `clamp(16px, ${9600 / measured}cqw, 46px)`;
       out.querySelector('.energy-equivalents')?.remove();
       window.TechouseSolarExtras?.updateEnergy(form, s.generation);
-      const energy = out.querySelector('.energy-equivalents');
-      if (energy) out.querySelector('.estimate-budget-references').append(energy);
       if (!animate || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       const start = performance.now(),
         lower = heading.querySelector('[data-price-low]'),
@@ -351,7 +350,8 @@ window.TechouseDivisions = (() => {
         result.segment === 'commercial'
           ? 'Commercial and industrial pricing with 380 V grid-tied inverters.'
           : 'Techouse equipment pricing.';
-      out.innerHTML = `<div class="estimate-budget-highlight"><div class="estimate-setup"><span>Indicative budget</span><b data-scenario-title></b><p data-scenario-reason></p></div><h3 class="animated-price"></h3><dl class="estimate-economics estimate-stats"><div><dt>Monthly savings</dt><dd></dd></div><div><dt>Payback</dt><dd></dd></div><div><dt>System size</dt><dd></dd></div></dl><a class="button" href="#/inquiry?division=solar&estimate=1" id="solar-estimate-inquiry">Like this starting point? Let’s talk ↗</a><p class="estimate-economics-note">${tierNote} Includes panels, inverter, batteries where shown, mounting and installation. Final pricing follows a site review.</p></div><div class="estimate-budget-references"><details class="estimate-system-details"><summary>View estimated system size</summary><div class="estimate-metrics"><p><strong></strong>Solar capacity</p><p><strong></strong>Indicative panel area</p><p><strong></strong>Generation / month</p></div></details></div>`;
+      // PRICE FIRST: the budget and the next step lead; everything that explains them is optional.
+      out.innerHTML = `<div class="estimate-budget-highlight"><p class="estimate-setup"><span>Indicative budget</span><b data-scenario-title></b></p><h3 class="animated-price"></h3><a class="button" href="#/inquiry?division=solar&estimate=1" id="solar-estimate-inquiry">Like this starting point? Let’s talk ↗</a><details class="estimate-more"><summary>See savings, payback and system size</summary><p class="estimate-reason" data-scenario-reason></p><dl class="estimate-economics estimate-stats"><div><dt>Monthly savings</dt><dd></dd></div><div><dt>Payback</dt><dd></dd></div><div><dt>System size</dt><dd></dd></div></dl><div class="estimate-metrics"><p><strong></strong>Solar capacity</p><p><strong></strong>Indicative panel area</p><p><strong></strong>Generation / month</p></div><p class="estimate-economics-note">${tierNote} Includes panels, inverter, batteries where shown, mounting and installation. Final pricing follows a site review.</p></details></div>`;
       // Full-width comparison row below inputs and headline; outside the live region to keep announcements short.
       const scenarios = document.createElement('fieldset');
       scenarios.className = 'solar-scenarios';

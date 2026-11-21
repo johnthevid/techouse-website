@@ -298,7 +298,14 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
   await page.locator('.solar-usage-choices label:has(input[value="50"])').click();
   assert.equal(await page.locator('[data-answer="nightShare"] b').textContent(), 'Day and night');
   await page.locator('.solar-coverage-choices label:has(input[value="80"])').click();
-  await page.waitForSelector('.estimate-economics');
+  // Price and the next step lead; savings, payback and system size open on request.
+  await page.waitForSelector('#estimate-result .animated-price');
+  assert.equal(await page.locator('.estimate-economics').isVisible(), false);
+  assert.equal(await page.locator('#solar-estimate-inquiry').isVisible(), true);
+  await page.locator('.estimate-more > summary').click();
+  assert.equal(await page.locator('.estimate-economics').isVisible(), true);
+  // Setup cards show name, price and savings; their parts list opens on request.
+  assert.equal(await page.locator('.solar-scenario:has(input:checked) .solar-scenario-more ul').isVisible(), false);
   // A home used day and night, "Essentials and more": the recommended setup stores half of the
   // evening use.
   assert.equal(await page.locator('[data-scenario-title]').textContent(),'Day + 50% of night');
