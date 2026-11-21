@@ -74,6 +74,8 @@ test('Three-step solar planner preserves selections, calculation and responsive 
       await page.locator('#solar-discovery input[value="Commercial"]').isChecked(),
       true,
     );
+    if (await page.locator('.solar-subnav-toggle').isVisible())
+      await page.locator('.solar-subnav-toggle').click();
     await page.locator('.division-subnav [data-scroll="solar-start"]').click();
     await page.locator('.discovery-progress [data-step="1"]').click();
     assert.equal(await page.locator('#estimator').isVisible(), true);

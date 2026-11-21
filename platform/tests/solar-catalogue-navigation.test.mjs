@@ -77,12 +77,19 @@ test('Solar equipment navigation, official imagery and responsive catalogue', as
   }
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(f.env.APP_ORIGIN + '/#/divisions/solar');
+  // Phone: the section links sit behind one menu button that names the section in view.
+  await page.waitForSelector('.solar-subnav-toggle');
+  assert.equal(await page.locator('.solar-subnav-links a').first().isVisible(), false);
+  assert.equal(await page.locator('.division-subnav').evaluate((el) => el.getBoundingClientRect().height), 56);
+  await page.locator('.solar-subnav-toggle').click();
+  assert.equal(await page.locator('.solar-subnav-toggle').getAttribute('aria-expanded'), 'true');
   await page.locator('[data-scroll="solar-technical"]').click();
+  assert.equal(await page.locator('.solar-subnav-toggle').getAttribute('aria-expanded'), 'false');
   await page.waitForFunction(() => document.querySelector('#solar-technical').open);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   const button = await page.locator('.solar-subnav-call').boundingBox();
-  const links = await page.locator('.solar-subnav-links').boundingBox();
-  assert.ok(links.x + links.width <= button.x, 'Mobile navigation links must not overlap Call us');
+  const toggle = await page.locator('.solar-subnav-toggle').boundingBox();
+  assert.ok(toggle.x + toggle.width <= button.x, 'Mobile section menu must not overlap Call us');
   await page.screenshot({ path: '/tmp/refined-solar-mobile.png' });
   await page.locator('.solar-learning').evaluate((el) => { el.closest('details').open = true; });
   await page.locator('[data-forward]').click();

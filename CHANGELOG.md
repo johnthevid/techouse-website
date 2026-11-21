@@ -4,6 +4,8 @@ Recorded milestones for the Techouse website. Dates use the project's Asia/Manil
 
 ## Unreleased — Solar Calculator
 
+- Phone solar section bar: the three section links collapse into one menu button that names the section in view and opens them as a dropdown; the bar drops from 119px to 56px. Desktop unchanged (the bar stays pinned to the top once the page scrolls past the solar banner).
+
 - Make the price and "Let's talk" the focus of the estimate: savings, payback, system size, the reason and the pricing note move into "See savings, payback and system size". Setup cards show name, price and monthly savings; the summary, payback and parts list move into "What's included".
 
 - Step 2 asks its two questions one at a time: an answered question folds into a one-line summary with Change, the next slides in, and the estimate appears once both are answered (no Calculate button; nothing pre-selected, a "Suggested" tag instead). Step 1 adds Material icons to the property types, hides the photo on phones, and adds "Use my location", which fills the nearest listed city on the device (coordinates never leave the browser). The Worker's Permissions-Policy now allows geolocation for the site's own origin only.

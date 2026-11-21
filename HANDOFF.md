@@ -11,6 +11,7 @@ Updated: 19 November 2026.
 - Taste skill: installed from github.com/Leonxlnx/taste-skill as the user skill `design-taste-frontend` (not in the repo); its form and motion rules were applied. Its site gate targets whole marketing pages and was not run here.
 - Checks: 32/32 tests; impeccable detector flags only pre-existing homepage items (loading dot, intro clip-path, gold glow, stripes).
 - Result card (`site/divisions.js`, `solar-calculator.css`): setup and price, then the Let's talk button; savings, payback, system size, metrics, energy examples and the pricing note sit in `details.estimate-more`. Setup cards: `div.solar-scenario` holding the radio label (name, price, "Saves about ₱… a month") and `details.solar-scenario-more` (summary, payback, parts). Opening a card's details does not select it.
+- Phone section menu (`site/solar-extras.js`, `solar-calculator.css`, under 700px): `.solar-subnav-toggle` names the section in view (the last one whose top reaches 40% of the screen), opens `#solar-subnav-links` as a dropdown, closes on a link, Escape or an outside tap, and marks the current link with `aria-current`. Comparison spacing on phones restored to 32px above. Construction's section bar is unchanged.
 - Not merged to main; not deployed. The demo branch needs main merged in after approval.
 
 ## Latest: phone and tablet homepage merged into main (20 Nov 2026)
