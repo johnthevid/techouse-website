@@ -32,14 +32,19 @@ test('Solar equipment navigation, official imagery and responsive catalogue', as
   await page.evaluate(() => scrollTo(0, 0));
   await page.waitForFunction(() => document.querySelector('.solar-subnav-call').inert);
   await page.locator('.discovery-progress [data-step="1"]').click();
-  assert.equal(await page.locator('#solar-estimator input[name="offset"]:checked').inputValue(), '80');
+  assert.equal(await page.locator('#solar-estimator input[name="offset"]:checked').count(), 0);
+  await page.locator('.solar-usage-choices label:has(input[value="50"])').click();
   await page.locator('.solar-coverage-choices label:has(input[value="95"])').click();
   assert.equal(await page.locator('#solar-estimator input[name="offset"]:checked').inputValue(), '95');
   await page.locator('.discovery-progress [data-step="0"]').click();
   await page.locator('#solar-discovery').scrollIntoViewIfNeeded();
   assert.match(await page.locator('.discovery-story-photo').getAttribute('alt'), /home interior/);
   await page.locator('.discovery-story-photo').evaluate((img) => img.decode());
+  // Step 1 icons and the location button.
+  assert.equal(await page.locator('#solar-discovery .solar-choice-icon').count(), 3);
+  assert.equal(await page.locator('.solar-locate').isVisible(), true);
   await page.locator('[data-next]').click();
+  await page.locator('[data-change="nightShare"]').click();
   await page.locator('.solar-usage-choices label:has(input[value="75"])').click();
   assert.equal(await page.locator('#solar-estimator input[name="nightShare"]:checked').inputValue(), '75');
   for (const [category, count] of [['panels', 3], ['inverters', 5], ['batteries', 3]]) {

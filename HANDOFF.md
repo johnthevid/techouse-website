@@ -2,6 +2,16 @@
 
 Updated: 19 November 2026.
 
+## Latest: solar planner steps (branch `feature/solar-planner-steps`, 21 Nov 2026)
+
+- Mockup approved for phone; desktop step 1 kept as before with icons added (user's direction).
+- Step 1 (`site/experience.js`, `site/solar-journey.js`): Material icons home / storefront / factory on the property tiles (added to `icons.js` and `assets/icons/material-symbols.svg` with my_location, light_mode, routine, dark_mode, power, electric_bolt; official 24px weight-400 paths). Phone hides the property photo. "Use my location" uses the browser's position and picks the nearest of the 56 listed cities (approximate coordinates in `experience.js`, 50 km limit); nothing is stored or sent. Hidden when geolocation or a secure context is unavailable.
+- `platform/worker.mjs` Permissions-Policy: `geolocation=(self)` (was `geolocation=()`, which blocked the button). Camera and microphone remain off.
+- Step 2 (`site/divisions.js`): bill, then "When do you use the most electricity?", then "How much of your bill should solar take on?" one at a time; answered questions fold into summaries with Change. No pre-selection; homes see "Suggested for homes" on Day and night, businesses "Suggested for businesses" on Mostly daytime, coverage "Suggested" on Essentials and more. The estimate calculates when both are answered (Calculate button removed) and recalculates on answer changes, and 450 ms after bill or rate typing. Invalid bill or rate shows a note in the result panel. Keyboard: arrows browse, Enter or Space confirms.
+- Taste skill: installed from github.com/Leonxlnx/taste-skill as the user skill `design-taste-frontend` (not in the repo); its form and motion rules were applied. Its site gate targets whole marketing pages and was not run here.
+- Checks: 32/32 tests; impeccable detector flags only pre-existing homepage items (loading dot, intro clip-path, gold glow, stripes).
+- Not merged to main; not deployed. The demo branch needs main merged in after approval.
+
 ## Latest: phone and tablet homepage merged into main (20 Nov 2026)
 
 `feature/mobile-view` merged into `main` at the user's instruction. Not deployed; publishing still needs a separate release instruction.

@@ -164,25 +164,46 @@
 }
 
 
-/* ===== SIMPLE INPUTS =====
-   One typed value (the bill), one three-way choice (coverage), and a quiet "Fine-tune" for the
-   rate and panel. Square choice tiles match the planner's step choices. */
+/* ===== ESTIMATE INPUTS =====
+   One typed value (the bill), then two questions asked one at a time. An answered question folds
+   into a one-line summary and the next slides in (240ms, position and opacity only). Square tiles
+   match the planner's step choices; fields 48px, labels 14px, text 16px. */
 #solar-estimator .estimate-inputs {
   grid-template-columns: minmax(0, 1fr);
-  gap: 18px;
-  padding: 22px;
+  align-content: start;
+  gap: 20px;
+  padding: 28px;
 }
 #solar-estimator .solar-bill-field {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   color: #1c352a;
 }
-#solar-estimator .solar-bill-field input {
+#solar-estimator .solar-bill-input {
+  position: relative;
+  display: block;
+  margin-top: 6px;
+}
+#solar-estimator .solar-bill-input > span {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #596752;
+  pointer-events: none;
+}
+#solar-estimator .solar-bill-input input {
+  height: 52px;
   min-height: 52px;
-  margin-top: 8px;
+  margin: 0;
+  padding-left: 36px;
   font-size: 22px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
+}
+#solar-estimator .solar-bill-input input[aria-invalid] {
+  border-color: #a63b2a;
 }
 #solar-estimator .solar-bill-field small,
 #solar-estimator .solar-fine-tune small {
@@ -191,7 +212,34 @@
   font-size: 12px;
   font-weight: 400;
   line-height: 1.5;
-  color: #64705e;
+  color: #596752;
+}
+#solar-estimator .solar-questions {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+#solar-estimator .solar-question-count {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 13px;
+  color: #596752;
+  font-variant-numeric: tabular-nums;
+}
+#solar-estimator .solar-question-count i {
+  display: block;
+  width: 28px;
+  height: 3px;
+  background: #c9d1c4;
+  transition: background-color 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+#solar-estimator .solar-question-count i.is-on {
+  background: #1c352a;
+}
+#solar-estimator .solar-question-count span {
+  margin-left: 2px;
 }
 #solar-estimator .solar-tile-choices {
   margin: 0;
@@ -199,11 +247,22 @@
   border: 0;
   min-width: 0;
 }
+#solar-estimator .solar-tile-choices[hidden] {
+  display: none;
+}
+#solar-estimator .solar-tile-choices.is-entering {
+  animation: solar-question-in 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes solar-question-in {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
 #solar-estimator .solar-tile-choices legend {
   margin-bottom: 10px;
   padding: 0;
-  font-size: 15px;
-  font-weight: 600;
+  font: 600 17px/1.35 var(--display);
   color: #1c352a;
 }
 #solar-estimator .solar-tile-choices > div {
@@ -226,19 +285,25 @@
   padding: 0;
   opacity: 0;
 }
-#solar-estimator .solar-tile-choices span {
-  display: flex;
-  flex-direction: column;
+#solar-estimator .solar-tile-choices label > span {
+  display: grid;
+  align-content: start;
   gap: 4px;
   height: 100%;
-  padding: 14px;
+  min-height: 96px;
+  padding: 12px 14px;
   border: 1px solid #a7b4aa;
   background: #fbfaf5;
   color: #1c352a;
   transition:
-    background 0.18s ease,
-    color 0.18s ease,
-    border-color 0.18s ease;
+    background-color 150ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    color 150ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+#solar-estimator .solar-tile-choices .material-icon {
+  width: 22px;
+  height: 22px;
+  fill: #8d6329;
 }
 #solar-estimator .solar-tile-choices strong {
   font-size: 15px;
@@ -250,8 +315,22 @@
   line-height: 1.4;
   color: #596752;
 }
-#solar-estimator .solar-tile-choices label:hover span {
-  border-color: #526f48;
+#solar-estimator .solar-suggest {
+  justify-self: start;
+  margin-top: 2px;
+  padding: 1px 6px;
+  background: #efe3c6;
+  color: #5a4317;
+  font-size: 11px;
+  font-style: normal;
+}
+#solar-estimator .solar-suggest[hidden] {
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  #solar-estimator .solar-tile-choices label:hover > span {
+    border-color: #526f48;
+  }
 }
 #solar-estimator .solar-tile-choices input:checked + span {
   background: #203d32;
@@ -261,9 +340,60 @@
 #solar-estimator .solar-tile-choices input:checked + span small {
   color: #d6dfd2;
 }
+#solar-estimator .solar-tile-choices input:checked + span .material-icon {
+  fill: #e7cd99;
+}
 #solar-estimator .solar-tile-choices input:focus-visible + span {
   outline: 3px solid #a85d2c;
   outline-offset: 3px;
+}
+/* An answered question: one line, its answer and a way back. */
+#solar-estimator .solar-answer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 0 8px 0 14px;
+  border: 1px solid #d3d9cc;
+  background: #eef1e8;
+  font-size: 14px;
+}
+#solar-estimator .solar-answer[hidden] {
+  display: none;
+}
+#solar-estimator .solar-answer .material-icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: #1c352a;
+}
+#solar-estimator .solar-answer > span {
+  flex: none;
+  color: #596752;
+}
+#solar-estimator .solar-answer b {
+  font-weight: 600;
+  color: #1c352a;
+}
+#solar-estimator .solar-answer button {
+  margin-left: auto;
+  min-height: 44px;
+  padding: 0 6px;
+  border: 0;
+  background: none;
+  color: #1c352a;
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 #solar-estimator .solar-fine-tune {
   margin: 0;
@@ -277,34 +407,84 @@
   font-weight: 600;
   color: #1c352a;
 }
-#solar-estimator .solar-fine-tune[open] {
-  padding-bottom: 4px;
-}
 #solar-estimator .solar-fine-tune label {
   display: block;
   margin-top: 12px;
   font-size: 14px;
 }
-#solar-estimator .calculate-cost {
-  min-height: 48px;
+/* Waiting state: names the two answers still needed. */
+#solar-estimator #estimate-result .estimate-ready h3 {
+  margin: 0 0 8px;
+  font-size: clamp(24px, 2.4vw, 32px);
+  line-height: 1.2;
 }
-@media (max-width: 600px) {
+#estimate-result .estimate-ready ol {
+  display: grid;
+  gap: 8px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: #c6d5c9;
+}
+#estimate-result .estimate-ready li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#estimate-result .estimate-ready li > span {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid #ffffff40;
+  border-radius: 50%;
+  font-size: 12px;
+}
+#estimate-result .estimate-ready li.is-done > span {
+  background: #e7cd99;
+  border-color: #e7cd99;
+}
+#estimate-result .estimate-ready li.is-done .material-icon {
+  width: 14px;
+  height: 14px;
+  fill: #1c352a;
+}
+@media (max-width: 640px) {
   #solar-estimator .estimate-inputs {
     gap: 16px;
-    padding: 16px;
+    padding: 20px 16px;
   }
-  /* Phone: choices become full-width rows, title left and hint under it. */
+  /* Phone: choices become full-width rows, icon left, title and hint beside it. */
   #solar-estimator .solar-tile-choices > div {
     grid-template-columns: minmax(0, 1fr);
     gap: 6px;
   }
-  #solar-estimator .solar-tile-choices span {
-    padding: 12px 14px;
+  #solar-estimator .solar-tile-choices label > span {
+    grid-template-columns: 24px minmax(0, 1fr);
+    column-gap: 12px;
+    align-items: center;
+    min-height: 0;
+  }
+  #solar-estimator .solar-tile-choices .material-icon {
+    grid-row: span 2;
+  }
+  #solar-estimator .solar-tile-choices small,
+  #solar-estimator .solar-suggest {
+    grid-column: 2;
+  }
+  /* Until there is an estimate, the waiting panel would only repeat the questions above it. */
+  #estimate-result:has(.estimate-ready) {
+    display: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  #solar-estimator .solar-tile-choices span {
+  #solar-estimator .solar-tile-choices label > span,
+  #solar-estimator .solar-question-count i {
     transition: none;
+  }
+  #solar-estimator .solar-tile-choices.is-entering {
+    animation: none;
   }
 }
 
@@ -551,4 +731,69 @@
 }
 #estimate-result .estimate-stats .nowrap {
   white-space: nowrap;
+}
+
+/* ===== STEP 1: PROPERTY ===== */
+/* Each property type leads with its icon. */
+.solar-choices .solar-choice-icon {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+  fill: #8d6329;
+}
+.solar-choices input:checked + span .solar-choice-icon {
+  fill: #e7cd99;
+}
+/* Location: the field and "Use my location" share one row. */
+.solar-location-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+.solar-location-row input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.solar-locate {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1px solid #a7b4aa;
+  background: #fbfaf5;
+  color: #1c352a;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.solar-locate .material-icon {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+.solar-locate:disabled {
+  cursor: progress;
+  color: #596752;
+}
+@media (hover: hover) and (pointer: fine) {
+  .solar-locate:hover:not(:disabled) {
+    border-color: #1c352a;
+  }
+}
+@media (max-width: 640px) {
+  /* Phone: icons stand in for the property photo, so the step is one short column. */
+  .solar-planning-pages .discovery-stage .discovery-visual {
+    display: none;
+  }
+  .solar-location-row {
+    flex-direction: column;
+  }
+  .solar-locate {
+    justify-content: center;
+  }
 }
