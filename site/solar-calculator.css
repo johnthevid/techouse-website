@@ -975,3 +975,10 @@
     transition: none;
   }
 }
+/* Phone: the planner's fieldset reset (.solar-start fieldset) also strips this section's spacing, so
+   restore it here; 32px separates the comparison from the dark estimate panel above. */
+@media (max-width: 600px) {
+  #solar-estimator .solar-scenarios {
+    padding: 32px 0 24px;
+  }
+}
