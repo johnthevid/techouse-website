@@ -1013,6 +1013,8 @@
     height: 22px;
     fill: currentColor;
   }
+  /* A white panel under the beige bar, with a hairline, a soft shadow and a light dim over the
+     page, so the open menu reads as its own layer. */
   .solar-streamlined .division-subnav .solar-subnav-links {
     position: absolute;
     top: 100%;
@@ -1021,10 +1023,14 @@
     display: flex;
     flex-direction: column;
     gap: 0;
-    padding: 4px 0 8px;
-    border-bottom: 1px solid #d6d6c8;
-    background: #e9e5d9;
-    box-shadow: 0 8px 20px rgb(24 37 34 / 0.08);
+    padding: 6px 0;
+    border-top: 1px solid #c9d1c4;
+    border-bottom: 1px solid #c9d1c4;
+    background: #fff;
+    box-shadow:
+      0 12px 24px rgb(24 37 34 / 0.16),
+      0 0 0 100vmax rgb(24 37 34 / 0.28);
+    clip-path: inset(0 0 -100vmax 0);
     font-size: 15px;
     opacity: 0;
     visibility: hidden;
@@ -1051,14 +1057,25 @@
     justify-content: flex-start;
     min-height: 48px;
     padding: 0 20px 0 48px;
-    border-top: 1px solid #d6d6c840;
+    border-top: 1px solid #e6e9e1;
   }
   .solar-streamlined .division-subnav .solar-subnav-links a:first-child {
     border-top: 0;
   }
+  .solar-streamlined .division-subnav .solar-subnav-links a {
+    color: #182522;
+  }
   .solar-streamlined .division-subnav .solar-subnav-links a[aria-current] {
+    background: #eef1e8;
     font-weight: 600;
     color: #1c352a;
+  }
+  .solar-streamlined .division-subnav .solar-subnav-links a:active {
+    background: #e2e8dc;
+  }
+  /* The open menu's button reads as pressed. */
+  .solar-streamlined .division-subnav.is-menu-open {
+    background: #fff;
   }
   .division-subnav .solar-subnav-call {
     right: 8px;
