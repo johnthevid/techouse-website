@@ -1081,9 +1081,235 @@
     right: 8px;
   }
 }
-@media (max-width: 700px) and (prefers-reduced-motion: reduce) {
-  .solar-streamlined .division-subnav .solar-subnav-links {
+@media (max-width: 700px) {
+  /* Items enter one after another (8px rise, 220ms, 40ms apart) once the panel has dropped, and
+     leave together faster (120ms) so closing never feels slower than opening. */
+  .solar-streamlined .division-subnav .solar-subnav-links a {
+    opacity: 0;
+    transform: translateY(-8px);
+    transition:
+      opacity 120ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      transform 120ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      background-color 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .solar-streamlined .division-subnav.is-menu-open .solar-subnav-links a {
+    opacity: 1;
     transform: none;
+    transition:
+      opacity 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .solar-streamlined .division-subnav.is-menu-open .solar-subnav-links a:nth-child(1) {
+    transition-delay: 60ms, 60ms, 0s;
+  }
+  .solar-streamlined .division-subnav.is-menu-open .solar-subnav-links a:nth-child(2) {
+    transition-delay: 100ms, 100ms, 0s;
+  }
+  .solar-streamlined .division-subnav.is-menu-open .solar-subnav-links a:nth-child(3) {
+    transition-delay: 140ms, 140ms, 0s;
+  }
+  /* The menu icon turns as it swaps to the close icon. */
+  .solar-subnav-toggle .material-icon {
+    animation: solar-menu-icon 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+}
+@keyframes solar-menu-icon {
+  from {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.8);
+  }
+}
+@media (max-width: 700px) and (prefers-reduced-motion: reduce) {
+  .solar-streamlined .division-subnav .solar-subnav-links,
+  .solar-streamlined .division-subnav .solar-subnav-links a,
+  .solar-streamlined .division-subnav.is-menu-open .solar-subnav-links a {
+    transform: none;
+    transition: none;
+  }
+  .solar-subnav-toggle .material-icon {
+    animation: none;
+  }
+}
+
+/* ===== PROJECT EXAMPLES =====
+   Savings stay the lead figure, on a full tint rather than a one-sided bar. On phones each project
+   is one compact row: photo left, name, place and savings right, the whole row a link. */
+.division-experience #projects .project-tile .project-tile-savings {
+  border-left: 0;
+}
+.division-experience #projects .portfolio-pagination[hidden] {
+  display: none;
+}
+@media (max-width: 650px) {
+  .division-experience #projects .project-tile {
+    position: relative;
+    grid-template-columns: 112px minmax(0, 1fr);
+    align-items: stretch;
+    min-height: 132px;
+  }
+  .division-experience #projects .project-tile .project-gallery,
+  .division-experience #projects .project-tile .project-photo-stage {
+    height: 100%;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+  .division-experience #projects .project-tile .project-photo-stage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .division-experience #projects .project-tile .project-story {
+    justify-content: center;
+    gap: 0;
+    padding: 12px 40px 12px 14px;
+  }
+  .division-experience #projects .project-tile .project-story > .pill {
+    order: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #64705e;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+  }
+  .division-experience #projects .project-tile .project-story h3 {
+    order: 1;
+    margin: 2px 0 2px;
+    font-size: 16px;
+    line-height: 1.3;
+  }
+  .division-experience #projects .project-tile .project-tile-facts {
+    order: 2;
+    margin: 0 0 8px;
+    font-size: 12px;
+  }
+  .division-experience #projects .project-tile .project-tile-savings {
+    order: 3;
+    display: block;
+    margin: 0;
+    padding: 0;
+    background: none;
+  }
+  .division-experience #projects .project-tile .project-tile-savings > span {
+    display: none;
+  }
+  .division-experience #projects .project-tile .project-tile-savings > strong {
+    font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+  .division-experience #projects .project-tile .project-tile-savings small::after {
+    content: ' est. savings';
+  }
+  /* The whole row is the link; its arrow stays as the cue, top right. */
+  .division-experience #projects .project-tile .project-tile-action {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 0;
+  }
+  .division-experience #projects .project-tile .project-tile-action .material-icon {
+    width: 18px;
+    height: 18px;
+  }
+  .division-experience #projects .portfolio-list,
+  .division-experience #projects [role='tabpanel'] > div {
+    gap: 10px;
+  }
+}
+
+/* ===== OPTIONAL GUIDES =====
+   The two optional deep dives read as one list: an icon, the question and what is inside, and a
+   chevron that turns when the row opens. */
+.solar-streamlined .solar-optional-guide {
+  margin: 0;
+  border: 1px solid #c7d0c3;
+  background: #fbfaf5;
+}
+.solar-streamlined #projects + .solar-optional-guide {
+  margin-top: 24px;
+}
+.solar-streamlined .solar-optional-guide + .solar-optional-guide {
+  border-top: 0;
+}
+.solar-streamlined .solar-optional-guide:last-of-type {
+  margin-bottom: 32px;
+}
+.solar-streamlined .solar-optional-guide > summary {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 24px;
+  align-items: center;
+  gap: 16px;
+  min-height: 80px;
+  padding: 16px 20px;
+  list-style: none;
+  transition: background-color 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.solar-streamlined .solar-optional-guide > summary::-webkit-details-marker {
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .solar-streamlined .solar-optional-guide > summary:hover {
+    background: #f1f3ea;
+  }
+}
+.solar-streamlined .solar-optional-guide .guide-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  background: #eef1e8;
+}
+.solar-streamlined .solar-optional-guide .guide-icon .material-icon {
+  width: 24px;
+  height: 24px;
+  fill: #8d6329;
+}
+.solar-streamlined .solar-optional-guide .guide-text > span {
+  display: block;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: #1c352a;
+}
+.solar-streamlined .solar-optional-guide > summary small {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #596752;
+}
+.solar-streamlined .solar-optional-guide .guide-chevron {
+  width: 24px;
+  height: 24px;
+  fill: #1c352a;
+  transition: transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.solar-streamlined .solar-optional-guide[open] > summary .guide-chevron {
+  transform: rotate(180deg);
+}
+.solar-streamlined .solar-optional-guide[open] > summary {
+  border-bottom: 1px solid #dce0d8;
+}
+@media (max-width: 650px) {
+  .solar-streamlined .solar-optional-guide > summary {
+    grid-template-columns: 40px minmax(0, 1fr) 20px;
+    gap: 12px;
+    min-height: 72px;
+    padding: 14px 16px;
+  }
+  .solar-streamlined .solar-optional-guide .guide-icon {
+    width: 40px;
+    height: 40px;
+  }
+  .solar-streamlined .solar-optional-guide .guide-text > span {
+    font-size: 15px;
+  }
+  .solar-streamlined .solar-optional-guide > summary small {
+    font-size: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .solar-streamlined .solar-optional-guide .guide-chevron,
+  .solar-streamlined .solar-optional-guide > summary {
     transition: none;
   }
 }

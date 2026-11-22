@@ -357,7 +357,7 @@ window.TechouseExperience = (() => {
     input.setAttribute('aria-describedby', 'location-suggestions-note');
     const list = document.createElement('datalist');
     list.id = 'ph-location-options';
-    // [suggestion, latitude, longitude]: approximate city centres for "Use my location".
+    // [suggestion, latitude, longitude]: approximate city centres, the "Use my location" fallback.
     const cities = [
       ['Manila · Metro Manila', 14.5995, 120.9842],
       ['Quezon City · Metro Manila', 14.676, 121.0437],
@@ -429,7 +429,8 @@ window.TechouseExperience = (() => {
       'Choose a suggested city or municipality, or enter your location if it is not listed.';
     hint.textContent = defaultHint;
     input.closest('label').append(hint);
-    // USE MY LOCATION: the browser's position picks the nearest listed city on this device.
+    // USE MY LOCATION: the browser's position is matched on this device against about 4,400
+    // Philippine places (assets/data/ph-places.json, GeoNames) to name the municipality and province.
     // The coordinates are never stored or sent anywhere; the visitor can edit the result.
     if (navigator.geolocation && window.isSecureContext) {
       const locate = document.createElement('button');
@@ -440,37 +441,56 @@ window.TechouseExperience = (() => {
       row.className = 'solar-location-row';
       input.before(row);
       row.append(input, locate);
-      const nearest = (lat, lon) => {
+      const distance = (lat, lon, a, b) => {
         const rad = Math.PI / 180;
-        return cities
-          .map(([name, a, b]) => {
-            const dLat = (a - lat) * rad;
-            const dLon = (b - lon) * rad;
-            const h =
-              Math.sin(dLat / 2) ** 2 + Math.cos(lat * rad) * Math.cos(a * rad) * Math.sin(dLon / 2) ** 2;
-            return { name, km: 12742 * Math.asin(Math.sqrt(h)) };
-          })
-          .sort((x, y) => x.km - y.km)[0];
+        const h =
+          Math.sin(((a - lat) * rad) / 2) ** 2 +
+          Math.cos(lat * rad) * Math.cos(a * rad) * Math.sin(((b - lon) * rad) / 2) ** 2;
+        return 12742 * Math.asin(Math.sqrt(h));
       };
+      let places;
+      const loadPlaces = () =>
+        (places ||= fetch('assets/data/ph-places.json')
+          .then((response) => (response.ok ? response.json() : Promise.reject(response.status)))
+          .catch(() => (places = null)));
+      async function nearestPlace(lat, lon) {
+        const data = await loadPlaces();
+        if (data) {
+          const { points, municipalities } = data;
+          let best = { km: Infinity };
+          for (let i = 0; i < points.length; i += 3) {
+            const km = distance(lat, lon, points[i] / 1000, points[i + 1] / 1000);
+            if (km < best.km) best = { km, index: points[i + 2] };
+          }
+          const [town, province] = municipalities[best.index] || [];
+          return { km: best.km, name: province ? `${town} · ${province}` : town, short: town, limit: 25 };
+        }
+        // Fallback when the place list cannot load: the nearest suggested city.
+        const [name, a, b] = cities.reduce((closest, city) =>
+          distance(lat, lon, city[1], city[2]) < distance(lat, lon, closest[1], closest[2]) ? city : closest,
+        );
+        return { km: distance(lat, lon, a, b), name, short: name.split(' · ')[0], limit: 50 };
+      }
       locate.addEventListener('click', () => {
         locate.disabled = true;
         locate.querySelector('span').textContent = 'Finding your location…';
+        loadPlaces();
         const done = (message) => {
           locate.disabled = false;
           locate.querySelector('span').textContent = 'Use my location';
           hint.textContent = message;
         };
         navigator.geolocation.getCurrentPosition(
-          ({ coords }) => {
-            const match = nearest(coords.latitude, coords.longitude);
-            if (match.km > 50) {
-              done('Your location is not near a city on our list. Type your city or municipality.');
+          async ({ coords }) => {
+            const match = await nearestPlace(coords.latitude, coords.longitude);
+            if (!match.name || match.km > match.limit) {
+              done('Your location does not look like it is in the Philippines. Type your city or municipality.');
               return;
             }
             input.value = match.name;
             input.dispatchEvent(new Event('input', { bubbles: true }));
             input.dispatchEvent(new Event('change', { bubbles: true }));
-            done(`Filled with the nearest listed city, ${match.name.split(' · ')[0]}. Edit it if your property is elsewhere.`);
+            done(`Filled from your location: ${match.short}. Edit it if your property is elsewhere. Place names from GeoNames.`);
           },
           (error) =>
             done(
@@ -478,7 +498,7 @@ window.TechouseExperience = (() => {
                 ? 'Location access was not allowed. Type your city or municipality instead.'
                 : 'We could not get your location. Type your city or municipality instead.',
             ),
-          { enableHighAccuracy: false, timeout: 10000, maximumAge: 600000 },
+          { enableHighAccuracy: true, timeout: 15000, maximumAge: 300000 },
         );
       });
       input.addEventListener('input', (e) => {

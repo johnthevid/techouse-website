@@ -92,6 +92,8 @@ window.TechousePortfolio = (() => {
       }</div>`;
       section.querySelector('#portfolio-page-status').textContent =
         `${list.length ? start + 1 : 0}–${Math.min(start + pageSize, list.length)} of ${list.length} · Page ${pages[sector] + 1} of ${total}`;
+      // One page needs no paging controls; the heading already counts the projects.
+      section.querySelector('.portfolio-pagination').hidden = total <= 1;
       section.querySelector('[data-project-page="-1"]').disabled = pages[sector] === 0;
       section.querySelector('[data-project-page="1"]').disabled = pages[sector] >= total - 1;
       if (!matchMedia('(prefers-reduced-motion: reduce)').matches)

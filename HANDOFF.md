@@ -2,6 +2,14 @@
 
 Updated: 19 November 2026.
 
+## Latest: real-town GPS, menu motion, compact phone projects (branch `feature/solar-gps-projects`, 22 Nov 2026)
+
+- GPS: the live demo already worked but could only pick from 56 suggestion cities (Nasugbu became Tagaytay, Iligan became Cagayan de Oro). `site/assets/data/ph-places.json` (113 KB, 41 KB gzipped, fetched only on tap) holds 1,521 municipalities with provinces and 4,372 places; `experience.js` picks the nearest place within 25 km and fills "Town · Province". The 56-city list remains the fallback. Built by `platform/tools/ph-places/` from GeoNames via the all-the-cities package; credit in `site/assets/data/SOURCES.md` and in the fill message ("Place names from GeoNames"). Checked: Nasugbu, Iligan, Quezon City, Makati, Lipa, Baguio, Cebu, Davao, Tagbilaran, Puerto Princesa, Calamba; Singapore is refused.
+- Phone section menu: items enter 8px / 220 ms, 40 ms apart after the panel drops, leave together in 120 ms; the menu icon turns as it swaps. Reduced motion: no movement.
+- Projects (`solar-calculator.css`, `portfolio.js`): phone rows 112 px photo + text (section 1,977 → 875 px); savings tint without the gold left bar on all sizes; pagination hidden for a single page. Optional guides (`solar-journey.js`): icon, title, contents line and a chevron, joined into one list.
+- Checks: 32/32 (one run had a timing flake in update-101's slide counter; passed alone and on rerun).
+- Not merged to main; not deployed.
+
 ## Latest: solar planner steps (branch `feature/solar-planner-steps`, 21 Nov 2026)
 
 - Mockup approved for phone; desktop step 1 kept as before with icons added (user's direction).

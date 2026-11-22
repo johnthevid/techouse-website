@@ -111,7 +111,7 @@ window.TechouseSolar = (() => {
     const learningDetails = document.createElement('details');
     learningDetails.className = 'solar-optional-guide';
     learningDetails.innerHTML =
-      '<summary><span>Want to understand your solar options?</span><small>Optional · daytime use, batteries and roof shade</small></summary>';
+      `<summary><span class="guide-icon">${window.TechouseIcons.icon('routine')}</span><span class="guide-text"><span>Want to understand your solar options?</span><small>Daytime use, batteries and roof shade</small></span>${window.TechouseIcons.icon('expand_more', 'guide-chevron')}</summary>`;
     learn.querySelector('.section-heading span').remove();
     learn.querySelector('.section-heading h2').textContent = 'How solar fits everyday life';
     learn.querySelector('.section-heading p').textContent =
@@ -122,7 +122,7 @@ window.TechouseSolar = (() => {
     technical.className = 'solar-optional-guide solar-technical-guide';
     technical.id = 'solar-technical';
     technical.innerHTML =
-      '<summary><span>For engineers and those who want the specifications</span><small>Optional · panels, inverters, batteries and datasheets</small></summary>';
+      `<summary><span class="guide-icon">${window.TechouseIcons.icon('solar_power')}</span><span class="guide-text"><span>For engineers and those who want the specifications</span><small>Panels, inverters, batteries and datasheets</small></span>${window.TechouseIcons.icon('expand_more', 'guide-chevron')}</summary>`;
     learningDetails.after(technical);
     technical.append(products);
     if (partner) {
