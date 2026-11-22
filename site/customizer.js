@@ -230,7 +230,7 @@ window.TechouseContent = (() => {
       )
       .join(
         '',
-      )}<aside class="customizer-live-preview" aria-label="Text preview"><span>LIVE TEXT PREVIEW</span><h3></h3><p></p></aside></div></div><div class="customizer-savebar"><div><strong id="customizer-save-state">All changes saved</strong><p role="status" id="content-status">Choose a section to start editing.</p></div><div class="customizer-save-actions"><button class="button outline" type="button" data-reset-customizer>Reset all to defaults</button><button class="button outline" type="button" data-discard-customizer>Discard changes</button><button class="button" type="submit">Save changes</button><button class="button outline" type="submit" name="action" value="preview">Save & preview ↗</button></div></div></form></section>`;
+      )}<aside class="customizer-live-preview" aria-label="Text preview"><span>Live text preview</span><h3></h3><p></p></aside></div></div><div class="customizer-savebar"><div><strong id="customizer-save-state">All changes saved</strong><p role="status" id="content-status">Choose a section to start editing.</p></div><div class="customizer-save-actions"><button class="button outline" type="button" data-reset-customizer>Reset all to defaults</button><button class="button outline" type="button" data-discard-customizer>Discard changes</button><button class="button" type="submit">Save changes</button><button class="button outline" type="submit" name="action" value="preview">Save & preview ↗</button></div></div></form></section>`;
   }
   function updateCustomizer(form, message = 'Unsaved changes. Save when you are ready.') {
     const panel = form.querySelector('.customizer-panel:not([hidden])');

@@ -218,14 +218,14 @@ window.TechouseCatalogue = (() => {
         .map(
           (p, index) => `<article class="catalogue-product">
         <figure class="catalogue-product-figure"><div class="catalogue-image"><img src="${p.image}" alt="Skyworth ${p.websiteModel} product-family illustration" loading="lazy"></div></figure>
-        <div class="catalogue-copy"><span class="catalogue-product-kicker">${String(index + 1).padStart(2, '0')} / ${p.subtitle}</span><h2>${p.title}</h2><strong class="catalogue-capacity">${p.capacity}</strong>
+        <div class="catalogue-copy"><h2>${p.title}</h2><span class="catalogue-product-kicker">${p.subtitle}</span><strong class="catalogue-capacity">${p.capacity}</strong>
         <details class="model-specifications"><summary>Technical details</summary><p class="catalogue-image-reference">Website image: ${p.websiteModel} · related product family</p><ul>${p.specs.map((spec) => `<li>${spec}</li>`).join('')}</ul></details>
         <div class="catalogue-actions"><a class="button small" href="${encodeURI(p.pdf)}" target="_blank" rel="noopener">View datasheet ${icon}</a><a class="text-link" href="#/inquiry?division=solar">Enquire ${icon}</a></div></div>
       </article>`,
         )
         .join('')}</div>
       <div class="catalogue-footnote"><p>Specifications follow the linked manufacturer datasheets. Website images illustrate related Skyworth product families; the image model is named in Technical details and may differ from the listed range.</p><p>Our team can confirm exact equipment, compatibility and availability for your project.</p></div>
-      <section class="catalogue-partnership" aria-label="Techouse and Skyworth partnership"><div class="catalogue-partner-identity"><span>TECHOUSE × SKYWORTH</span><strong>SKYWORTH</strong><small>Direct solar partner</small></div><div class="catalogue-partner-message"><h2>Skyworth equipment.<br>Your project, with Techouse.</h2><p>Talk to our solar team about panels, inverters and battery storage suited to your property.</p><a class="text-link" href="#/inquiry?division=solar">Talk to our solar team ${icon}</a></div></section>
+      <section class="catalogue-partnership" aria-label="Techouse and Skyworth partnership"><div class="catalogue-partner-identity"><span>TECHOUSE × SKYWORTH</span><strong>Skyworth</strong><small>Direct solar partner</small></div><div class="catalogue-partner-message"><h2>Skyworth equipment.<br>Your project, with Techouse.</h2><p>Talk to our solar team about panels, inverters and battery storage suited to your property.</p><a class="text-link" href="#/inquiry?division=solar">Talk to our solar team ${icon}</a></div></section>
       <a class="back-divisions" href="#/divisions/solar">← Back to Solar energy</a>
     </div></article>`;
   }

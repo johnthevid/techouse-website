@@ -179,16 +179,8 @@
   .mh-chapter.is-before {
     transform: translateY(-14px);
   }
-  .mh-count {
-    font-size: 13px;
-    font-weight: 700;
-    line-height: 18px;
-    letter-spacing: 0.28em;
-    color: #e6cf8e;
-    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
-  }
   .mh-title {
-    margin: 10px 0 0;
+    margin: 0;
     font-family: Manrope, Arial, sans-serif;
     font-size: 40px;
     font-weight: 750;
@@ -204,7 +196,8 @@
     margin: 14px 0 0;
     font-size: 15px;
     line-height: 22px;
-    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+    color: #fff;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.22);
   }
   .mh-label svg {
     width: 18px;
@@ -221,7 +214,7 @@
     background: var(--mh-gold-sheen);
     color: var(--mh-ink);
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 600;
     text-decoration: none;
   }
   .mh-cta svg {
@@ -448,7 +441,7 @@
     font-family: 'DM Sans', Arial, sans-serif;
     font-size: 12px;
     font-weight: 500;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.01em;
     color: #b8c4be;
   }
   html.mh-menu-open .mh-menu-list > * {
@@ -496,7 +489,7 @@
     background: #fff;
     color: var(--mh-green);
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
   }
   .mh-menu-foot .mh-menu-cta svg {
     width: 18px;

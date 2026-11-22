@@ -372,19 +372,7 @@
     animation: none;
   }
 }
-/* Logo breathes independently; clicking retains the normal smooth scroll. */
-.banner-company-link .brand-logo {
-  animation: logo-breathe 5s ease-in-out infinite;
-}
-@keyframes logo-breathe {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.55;
-  }
-}
+/* The banner logo holds still; clicking retains the normal smooth scroll. */
 .landing-kicker {
   font-size: clamp(19px, 1.35vw, 31px);
   color: #fff2d9;

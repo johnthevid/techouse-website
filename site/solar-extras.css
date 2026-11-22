@@ -117,7 +117,7 @@
 }
 .technical-invite span {
   font-size: 11px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.01em;
   color: #7c6747;
 }
 .technical-invite h3 {
@@ -343,7 +343,7 @@
 }
 .estimate-ready > span {
   font-size: 11px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.01em;
 }
 .estimate-ready p {
   font-size: 16px;
@@ -943,7 +943,7 @@
 }
 .solar-technical-guide .partner-band > span {
   display: block;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.01em;
   font-size: 12px;
   color: #45604b;
   margin-bottom: 18px;
@@ -1004,7 +1004,7 @@
 }
 .estimate-budget-highlight > span {
   font-size: 12px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.01em;
   color: #d0dcca;
 }
 #estimate-result .estimate-budget-highlight h3.animated-price {
@@ -1114,7 +1114,7 @@
 }
 .partner-identity > span {
   font-size: 11px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.01em;
   color: #52634e;
 }
 .solar-technical-guide .partner-band .partner-identity strong {
@@ -1205,7 +1205,7 @@
   top: 14px;
   left: 14px;
   font-size: 11px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.01em;
   background: #fffef2e8;
   color: #29402c;
   padding: 7px 10px;
@@ -1223,7 +1223,7 @@
 .range-model-label {
   color: #6c795f;
   font-size: 10px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.01em;
 }
 .skyworth-range-copy h4 {
   font-size: 18px;
@@ -1461,7 +1461,7 @@
 }
 .catalogue-intro-copy > span {
   font-size: 11px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.01em;
   color: #5f6c61;
 }
 .catalogue-intro-copy > span > span {
@@ -1548,8 +1548,8 @@
 }
 .catalogue-refined .catalogue-product-kicker {
   font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
   color: #697464;
 }
 .catalogue-refined .catalogue-copy h2 {
@@ -1837,7 +1837,7 @@
 .catalogue-refined .catalogue-product-kicker {
   font-size: 9px;
   line-height: 1.4;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.01em;
   min-height: 25px;
 }
 .catalogue-refined .catalogue-copy h2 {
@@ -2056,7 +2056,7 @@
 }
 .catalogue-partner-identity > span {
   font-size: 10px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.01em;
   color: #45604b;
 }
 .catalogue-partner-identity > strong {

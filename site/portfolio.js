@@ -26,7 +26,7 @@ window.TechousePortfolio = (() => {
       sectors: { residential: 'Residential', commercial: 'Commercial', industrial: 'Industrial' },
       fact: 'System capacity',
       factHint: 'For example, 10.5 kWp',
-      kicker: 'PROJECT STORIES',
+      kicker: 'Project stories',
       heading: 'Their rooftops went solar.<br>Look how much they’re saving.',
       intro: 'Explore solar project examples and their potential monthly electricity savings.',
       noun: 'solar',
@@ -36,7 +36,7 @@ window.TechousePortfolio = (() => {
       sectors: { residential: 'Residential', commercial: 'Commercial', industrial: 'Industrial' },
       fact: 'Scope',
       factHint: 'For example, 3-storey house · cast-in-place',
-      kicker: 'IN THE FIELD',
+      kicker: 'In the field',
       heading: 'Built, and<br>standing.',
       intro: 'Homes, workplaces and facilities from our construction teams.',
       noun: 'construction',
@@ -50,7 +50,7 @@ window.TechousePortfolio = (() => {
       },
       fact: 'Modules',
       factHint: 'For example, 6 modules · 3 storeys',
-      kicker: 'IN THE FIELD',
+      kicker: 'In the field',
       heading: 'Modules,<br>put to work.',
       intro: 'Precast homes, classrooms and spaces assembled from our modules.',
       noun: 'prefabrication',
@@ -60,7 +60,7 @@ window.TechousePortfolio = (() => {
       sectors: { residential: 'Residential', commercial: 'Commercial', 'mixed-use': 'Mixed-use' },
       fact: 'Scale',
       factHint: 'For example, 24 units · 1.2 hectares',
-      kicker: 'IN THE FIELD',
+      kicker: 'In the field',
       heading: 'Places we’ve<br>helped shape.',
       intro: 'Developments we have planned and delivered.',
       noun: 'development',
@@ -74,7 +74,7 @@ window.TechousePortfolio = (() => {
       },
       fact: 'Lift',
       factHint: 'For example, Hitachi passenger lift · 8 floors',
-      kicker: 'IN THE FIELD',
+      kicker: 'In the field',
       heading: 'Lifts we’ve installed<br>and keep running.',
       intro: 'Installations, maintenance contracts and modernisations across our three brands.',
       noun: 'elevator',
@@ -154,7 +154,7 @@ window.TechousePortfolio = (() => {
           ? 'Compare system sizes, project details and estimated savings.'
           : 'Projects include illustrative samples and credited references; savings are estimates, not verified customer results. Images do not represent completed Techouse installations.'
         : '';
-    const heading = `<div class="section-heading"><span>${solar ? '05 / ' : ''}${kind.kicker}</span><h2>${kind.heading}</h2><p>${kind.intro}${note ? ' ' + note : ''}</p></div>`;
+    const heading = `<div class="section-heading"><h2>${kind.heading}</h2><p>${kind.intro}${note ? ' ' + note : ''}</p></div>`;
     // A division without published projects yet keeps its place on the page with an honest note.
     if (!projects.length) {
       section.innerHTML = `${heading}<div class="portfolio-coming-soon"><span>${window.TechouseIcons.icon('construction')}</span><div><h3>Project stories are on the way.</h3><p>We’re preparing photos and details of our ${kind.noun} work. In the meantime, tell us about your project and we’ll share relevant examples.</p><a class="text-link" href="#/inquiry?division=${division}">Start a conversation ${window.TechouseIcons.icon('arrow_outward')}</a></div></div>`;
@@ -189,7 +189,7 @@ window.TechousePortfolio = (() => {
           .map((p) => {
             const photos = gallery(p);
             const savings = solar ? monthlySavings(p.capacity) : null;
-            return `<a class="portfolio-card portfolio-horizontal project-tile" data-project="${esc(p.id)}" href="${projectHref(p)}"><div class="project-gallery"><div class="project-photo-stage"><img class="project-slide-image" src="${imageURL(photos[0].src)}" alt="${esc(photos[0].caption || p.title)}" loading="lazy" width="1200" height="800"></div></div><div class="project-story"><span class="pill">${p.reference ? 'ONLINE REFERENCE' : p.sample ? 'ILLUSTRATIVE SAMPLE' : 'TECHOUSE PROJECT'}</span><h3>${esc(p.title)}</h3><p class="project-tile-facts">${esc(p.location)} <span aria-hidden="true">·</span> ${esc(p.capacity)}</p>${savings === null ? '' : `<div class="project-tile-savings"><span>Estimated monthly savings</span><strong>~₱${savings.toLocaleString('en-PH')}<small> / month</small></strong></div>`}<span class="project-tile-action">View project portfolio ${window.TechouseIcons.icon('arrow_outward')}</span></div></a>`;
+            return `<a class="portfolio-card portfolio-horizontal project-tile" data-project="${esc(p.id)}" href="${projectHref(p)}"><div class="project-gallery"><div class="project-photo-stage"><img class="project-slide-image" src="${imageURL(photos[0].src)}" alt="${esc(photos[0].caption || p.title)}" loading="lazy" width="1200" height="800"></div></div><div class="project-story"><span class="pill">${p.reference ? 'Online reference' : p.sample ? 'Illustrative sample' : 'Techouse project'}</span><h3>${esc(p.title)}</h3><p class="project-tile-facts">${esc(p.location)} <span aria-hidden="true">·</span> ${esc(p.capacity)}</p>${savings === null ? '' : `<div class="project-tile-savings"><span>Estimated monthly savings</span><strong>~₱${savings.toLocaleString('en-PH')}<small> / month</small></strong></div>`}<span class="project-tile-action">View project portfolio ${window.TechouseIcons.icon('arrow_outward')}</span></div></a>`;
           })
           .join('') || '<p class="empty-state">No published projects in this sector yet.</p>'
       }</div>`;
@@ -271,7 +271,7 @@ window.TechousePortfolio = (() => {
     const sectorLabel = kind.sectors[sectorOf(p)];
     const imageURL = window.TechouseContent.imageURL;
     const icon = window.TechouseIcons.icon('arrow_outward');
-    return `<article class="container solar-project-page" data-division="${division}"><a class="text-link project-portfolio-back" href="#/divisions/${division}?section=projects&sector=${encodeURIComponent(sectorOf(p))}">${window.TechouseIcons.icon('arrow_back')} Back to project examples</a><header class="project-portfolio-heading"><div><span class="eyebrow">${p.reference ? 'ONLINE REFERENCE · ' + esc(p.provider) : p.sample ? 'ILLUSTRATIVE SAMPLE' : 'TECHOUSE PROJECT'} / ${esc(sectorLabel)}</span><h1>${esc(p.title)}</h1><p>${esc(p.location)} · ${esc(p.capacity)}</p></div><a class="button small" href="#/inquiry?division=${division}">Discuss a similar project ${icon}</a></header><div class="project-portfolio-layout"><div class="project-portfolio-gallery">${gallery(
+    return `<article class="container solar-project-page" data-division="${division}"><a class="text-link project-portfolio-back" href="#/divisions/${division}?section=projects&sector=${encodeURIComponent(sectorOf(p))}">${window.TechouseIcons.icon('arrow_back')} Back to project examples</a><header class="project-portfolio-heading"><div><h1>${esc(p.title)}</h1><p>${esc(p.location)} · ${esc(p.capacity)} · ${esc(sectorLabel)}</p><p class="project-disclosure">${p.reference ? 'Online reference · ' + esc(p.provider) : p.sample ? 'Illustrative sample' : 'Techouse project'}</p></div><a class="button small" href="#/inquiry?division=${division}">Discuss a similar project ${icon}</a></header><div class="project-portfolio-layout"><div class="project-portfolio-gallery">${gallery(
       p,
     )
       .map(

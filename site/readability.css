@@ -53,7 +53,7 @@ textarea {
   background: #ffffff20;
 }
 .reading-size[aria-pressed='true'] {
-  font-weight: 700;
+  font-weight: 600;
 }
 /* Keep image detail, with directional contrast behind text rather than a heavy vignette. */
 .cover-shade,

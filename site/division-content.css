@@ -25,8 +25,8 @@ article.construction-type:hover {
 .division-specs dt {
   margin-bottom: 8px;
   font-size: 13px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
   color: #896c3b;
 }
 .division-specs dd {
@@ -266,4 +266,11 @@ article.construction-type:hover {
   .m3d-label {
     transition: none;
   }
+}
+
+/* Project page: sample / reference disclosure under the title */
+.project-disclosure {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #6b746f;
 }

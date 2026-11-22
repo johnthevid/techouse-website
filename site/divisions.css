@@ -69,8 +69,8 @@
 .partner-band > span,
 .division-next > span,
 .estimate-result > span {
-  font-size: 10px;
-  letter-spacing: 0.15em;
+  font-size: 13px;
+  letter-spacing: 0.01em;
 }
 .cover-copy h1 {
   color: white;
@@ -171,7 +171,7 @@
 }
 .product-grid small {
   font-size: 10px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.01em;
   color: #876c4c;
 }
 .product-grid h3 {
@@ -268,7 +268,7 @@
 }
 .project-placeholder span {
   font-size: 10px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.01em;
 }
 .project-placeholder h3 {
   font-size: 42px;
@@ -842,7 +842,7 @@
 }
 .catalogue-copy > span {
   font-size: 11px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.01em;
   color: #737e6c;
 }
 .catalogue-copy h2 {
@@ -1074,7 +1074,7 @@
 }
 .catalogue-copy > span {
   font-size: 11px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.01em;
   color: #737e6c;
 }
 .catalogue-copy h2 {
