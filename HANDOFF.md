@@ -22,7 +22,7 @@ Updated: 19 November 2026.
 - Phone section menu (`site/solar-extras.js`, `solar-calculator.css`, under 700px): `.solar-subnav-toggle` names the section in view (the last one whose top reaches 40% of the screen), opens `#solar-subnav-links` as a dropdown, closes on a link, Escape or an outside tap, and marks the current link with `aria-current`. Comparison spacing on phones restored to 32px above. Construction's section bar is unchanged.
 - Not merged to main; not deployed. The demo branch needs main merged in after approval.
 
-## Latest: division and About content from the company presentation (branch `feature/division-projects`)
+## Latest: division and About content from the company presentation (`feature/division-projects`, merged into main 22 Nov 2026; not deployed)
 
 Written in the company's voice from the recorded Taglish company introduction (no quotes, no named speaker; the user's choice). Excluded: pricing, the royalty project, bank minimums, sales Q&A and the Solar Group joint venture (awaiting confirmation).
 
