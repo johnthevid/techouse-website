@@ -5,7 +5,7 @@
  */
 window.TechousePartner = (() => {
   const icon = (name, extra) => window.TechouseIcons.icon(name, extra);
-  const applyLink = '#/inquiry?topic=partnership';
+  const applyLink = '#/partnership/apply';
   const peso = (n) => '₱' + Math.round(n).toLocaleString('en-PH');
   const rate = 0.05;
 
@@ -222,45 +222,144 @@ window.TechousePartner = (() => {
 
   function mount(path) {
     mountPromos(path);
+    if (path === '/partnership/apply') mountApply();
     if (path !== '/partnership') return;
     mountCalc();
     mountSlides();
   }
 
-  // Prefill the inquiry form for a partner application.
-  function prepareInquiry() {
-    const form = document.querySelector('#inquiry-form');
-    if (!form) return;
-    document.body.classList.add('partner-inquiry');
-    const hero = document.querySelector('.page-hero');
-    hero.querySelector('.eyebrow')?.remove();
-    hero.querySelector('h1').innerHTML = 'Become a<br>Techouse partner.';
-    hero.querySelector('p').textContent =
-      'Tell us about yourself and the people you could introduce. Nothing is binding until both sides sign the agreement.';
-    document.querySelector('.breadcrumb span:last-child').textContent = 'Become a partner';
-    document.querySelector('#inquiry-form-area h2').textContent = 'Tell us about yourself.';
-    form.elements.division.value = 'solar';
-    document.querySelector('label[for="inquiry-company"]').innerHTML = 'Work or company <small>(optional)</small>';
-    form.elements.company.placeholder = 'e.g. Real-estate agent, electrician';
-    document.querySelector('label[for="inquiry-location"]').textContent = 'Your location *';
-    form.elements.capacity.closest('.field').style.display = 'none';
-    document.querySelector('label[for="inquiry-requirements"]').textContent = 'Who could you introduce? *';
-    form.elements.requirements.placeholder = 'Homes, businesses or factories you know, and where they are.';
-    form.elements.requirements.value = 'Partner application\nWho I could introduce:\nWhere they are:\n';
-    form.elements.requirements.rows = 6;
-    form.elements.requirements.style.minHeight = '190px';
-    const aside = document.querySelector('.contact-aside');
-    if (aside) {
-      aside.querySelector('h3').textContent = 'Prefer to talk first?';
-      aside.querySelector(':scope > p').textContent = 'Call or email us with questions about the partner program.';
-      const ready = aside.querySelectorAll('.contact-item')[2];
-      if (ready) {
-        ready.querySelector('span').textContent = 'HELPFUL TO SHARE';
-        ready.querySelector('p').textContent =
-          'What you do, the areas you cover and the kinds of homes or businesses you know.';
-      }
-    }
+  // APPLICATION: #/partnership/apply. Saved with the browser-local demo inquiries (topic: partnership).
+  const roles = [
+    'Property or real-estate agent',
+    'Electrician or contractor',
+    'Business owner',
+    'Community or group leader',
+    'Existing Techouse client',
+    'Something else',
+  ];
+  const audiences = ['Homeowners', 'Businesses', 'Factories or warehouses'];
+  const stages = ['About you', 'Your network', 'Review'];
+  function applyPage() {
+    const arrow = icon('arrow_forward');
+    const field = (id, label, attrs, hint = '') =>
+      `<div class="field"><label for="pa-${id}">${label}${hint ? ` <small>${hint}</small>` : ''}</label><input id="pa-${id}" name="${id}" ${attrs}></div>`;
+    return `<div class="container breadcrumb"><a href="#/">Home</a><span>/</span><a href="#/partnership">Be a partner</a><span>/</span><span>Apply</span></div>
+<section class="container page-hero partner-apply-hero"><h1>Apply to be<br>a partner.</h1><p>Three short steps. Nothing is binding until both sides sign the agreement.</p></section>
+<div class="container partner-apply">
+<div class="form-card partner-apply-card" id="partner-apply-area">
+<ol class="partner-apply-steps" aria-label="Application progress">${stages.map((name, i) => `<li data-stage="${i}"${i ? '' : ' aria-current="step"'}><span>${i + 1}</span>${name}</li>`).join('')}</ol>
+<form id="partner-apply" novalidate>
+<fieldset data-step="0"><legend>About you</legend><div class="field-grid">
+${field('name', 'Full name', 'autocomplete="name" required maxlength="100" placeholder="Your full name"')}
+${field('phone', 'Mobile number', 'type="tel" autocomplete="tel" required maxlength="35" placeholder="09XX XXX XXXX"')}
+${field('email', 'Email', 'type="email" autocomplete="email" maxlength="200" placeholder="you@example.com"', '(optional)')}
+${field('location', 'City or province', 'required maxlength="200" placeholder="e.g. Lipa, Batangas"')}
+</div></fieldset>
+<fieldset data-step="1" hidden><legend>Your network</legend>
+<div class="partner-choice-group" role="radiogroup" aria-labelledby="pa-role-label"><p class="partner-choice-label" id="pa-role-label">What best describes you?</p><div class="partner-choices">${roles.map((r, i) => `<label class="partner-choice"><input type="radio" name="role" value="${r}" required${i ? '' : ' data-first'}><span>${r}</span></label>`).join('')}</div></div>
+<fieldset class="partner-choice-group"><legend class="partner-choice-label">Who could you introduce? <small>(choose any)</small></legend><div class="partner-choices partner-choices-3">${audiences.map((a) => `<label class="partner-choice"><input type="checkbox" name="audience" value="${a}"><span>${a}</span></label>`).join('')}</div></fieldset>
+<div class="field"><label for="pa-network">Tell us about your network <small>(optional)</small></label><textarea id="pa-network" name="network" maxlength="2000" rows="4" placeholder="Where are they, and what kind of properties do they have?"></textarea></div>
+</fieldset>
+<fieldset data-step="2" hidden><legend>Review</legend>
+<dl class="partner-review" data-review></dl>
+<div class="partner-agree">
+<label><input type="checkbox" name="agreeRole" required><span>I understand partners work as independent contractors paid by commission, not as Techouse employees.</span></label>
+<label><input type="checkbox" name="agreeAccuracy" required><span>I will present Techouse pricing, warranties and terms accurately, without promises Techouse hasn’t made.</span></label>
+<label><input type="checkbox" name="agreeContact" required><span>Techouse may contact me about this application.</span></label>
+</div>
+<p class="form-note">Demo only. This application stays in your current browser and is not sent to Techouse.</p>
+</fieldset>
+<div class="partner-apply-actions"><button type="button" class="partner-apply-back" data-apply-back hidden>${icon('arrow_back')}Back</button><button type="button" class="button" data-apply-next>Continue ${arrow}</button><button type="submit" class="button partner-apply-submit" hidden>Save application ${arrow}</button></div>
+</form></div>
+<aside class="partner-apply-aside" aria-label="About the partner program">
+<img src="assets/reference-projects/reference-residential-01.jpg" alt="" loading="lazy" width="1440" height="948">
+<div><h2>What happens next</h2><ol><li><strong>We review your application</strong><span>Our solar team reads every one.</span></li><li><strong>We call you</strong><span>To get to know you and answer questions.</span></li><li><strong>We sign together</strong><span>The Solar Sales Agency Agreement, before a notary.</span></li></ol>
+<dl><div><dt>Commission</dt><dd>5%</dd></div><div><dt>Paid within</dt><dd>7 days</dd></div></dl>
+<p>Questions first? <a href="tel:+639855626888">Call +63 985 562 6888</a></p></div>
+</aside>
+</div>`;
   }
 
-  return { page, promo, mount, prepareInquiry, applyLink };
+  function mountApply() {
+    const form = document.querySelector('#partner-apply');
+    if (!form) return;
+    const steps = [...form.querySelectorAll(':scope > fieldset[data-step]')],
+      marks = [...document.querySelectorAll('.partner-apply-steps li')],
+      back = form.querySelector('[data-apply-back]'),
+      next = form.querySelector('[data-apply-next]'),
+      submit = form.querySelector('.partner-apply-submit'),
+      review = form.querySelector('[data-review]');
+    let current = 0;
+    const valid = (step) =>
+      [...steps[step].querySelectorAll('input,textarea,select')].every((el) => el.reportValidity());
+    const fillReview = () => {
+      const data = new FormData(form);
+      const rows = [
+        ['Name', data.get('name')],
+        ['Mobile', data.get('phone')],
+        ['Email', data.get('email') || 'Not given'],
+        ['Location', data.get('location')],
+        ['You are', data.get('role')],
+        ['Could introduce', data.getAll('audience').join(', ') || 'Not chosen'],
+      ];
+      review.innerHTML = rows
+        .map(([t, v]) => `<div><dt>${t}</dt><dd>${esc(String(v || '').trim())}</dd></div>`)
+        .join('');
+    };
+    const go = (index) => {
+      current = index;
+      steps.forEach((step, i) => (step.hidden = i !== current));
+      marks.forEach((mark, i) => {
+        mark.classList.toggle('done', i < current);
+        if (i === current) mark.setAttribute('aria-current', 'step');
+        else mark.removeAttribute('aria-current');
+      });
+      back.hidden = current === 0;
+      next.hidden = current === steps.length - 1;
+      submit.hidden = current !== steps.length - 1;
+      if (current === steps.length - 1) fillReview();
+      const first = steps[current].querySelector('input:not([type=checkbox]):not([type=radio]),input[data-first],textarea');
+      document.querySelector('#partner-apply-area').scrollIntoView({ block: 'start', behavior: 'instant' });
+      first?.focus({ preventScroll: true });
+    };
+    next.addEventListener('click', () => valid(current) && go(current + 1));
+    back.addEventListener('click', () => go(current - 1));
+    // Enter in a text field moves forward instead of submitting early.
+    form.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && event.target.matches('input:not([type=checkbox]):not([type=radio])') && current < steps.length - 1) {
+        event.preventDefault();
+        next.click();
+      }
+    });
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!valid(current)) return;
+      const data = new FormData(form);
+      const text = (k) => String(data.get(k) || '').trim();
+      const audience = data.getAll('audience').join(', ');
+      const record = {
+        topic: 'partnership',
+        name: text('name'),
+        company: text('role'),
+        email: text('email'),
+        phone: text('phone'),
+        division: 'solar',
+        location: text('location'),
+        capacity: '',
+        requirements: `Partner application\nRole: ${text('role')}\nCould introduce: ${audience || 'Not chosen'}${text('network') ? '\n\n' + text('network') : ''}`,
+      };
+      const saved = await window.TechouseInquiries?.add(record);
+      if (!saved) return;
+      const first = esc(record.name.split(/\s+/)[0]);
+      const area = document.querySelector('#partner-apply-area');
+      area.innerHTML = `<div class="success partner-apply-done" tabindex="-1"><div class="success-icon" aria-hidden="true">${icon('check')}</div><h2>Thank you, ${first}.</h2><p>Your demo application is saved in this browser. It has not been sent to Techouse.</p><p><strong>Demo reference</strong><br><code>${esc(saved.id)}</code></p><p>When applications go live, our solar team will call you on <strong>${esc(record.phone)}</strong> to talk it through.</p><div class="partner-apply-done-links"><a class="button" href="#/partnership">Back to Be a partner ${icon('arrow_outward', 'arrow')}</a><a class="text-link" href="#/partnership" data-go-terms>Read the terms again</a></div></div>`;
+      document.querySelector('.partner-apply-hero h1').innerHTML = 'Application<br>saved.';
+      area.querySelector('.success').focus({ preventScroll: true });
+      area.scrollIntoView({ block: 'start', behavior: 'instant' });
+    });
+  }
+  const esc = (v = '') =>
+    String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+
+  return { page, applyPage, promo, mount, applyLink };
 })();
