@@ -389,3 +389,140 @@ window.TechousePortfolioSamples = [
     ],
   },
 ];
+
+/**
+ * Illustrative samples shown on a division page until it has published projects of its own.
+ * Not Techouse projects: placeholder images, labelled "Illustrative sample" on the site.
+ * Built into the site (not stored content), so they also show on the hosted site and
+ * disappear for a division as soon as staff publish a real project for it.
+ */
+window.TechouseDivisionSamples = (() => {
+  const sample = (division, id, sector, title, location, capacity, description) => ({
+    id: `sample-${division}-${id}`,
+    division,
+    sector,
+    title,
+    location,
+    capacity,
+    description,
+    sample: true,
+    status: 'published',
+    image: `assets/placeholders/${division}.svg`,
+    gallery: [
+      {
+        src: `assets/placeholders/${division}.svg`,
+        caption: 'Placeholder · project photo coming soon',
+      },
+    ],
+  });
+  return [
+    sample(
+      'construction',
+      'home',
+      'residential',
+      'Two-storey family home',
+      'Rizal',
+      '2 storeys · cast-in-place',
+      'Illustrative example of a family home built with cast-in-place steel moulds, where walls and partitions are poured together. To be replaced with an approved Techouse project.',
+    ),
+    sample(
+      'construction',
+      'retail',
+      'commercial',
+      'Neighbourhood retail building',
+      'Laguna',
+      '3 storeys · ground-floor shops',
+      'Illustrative example of a small commercial building with shops below and offices above. To be replaced with an approved Techouse project.',
+    ),
+    sample(
+      'construction',
+      'warehouse',
+      'industrial',
+      'Light-industrial warehouse',
+      'Batangas',
+      'Single storey · open-span storage',
+      'Illustrative example of an open-span warehouse for storage and light assembly. To be replaced with an approved Techouse project.',
+    ),
+    sample(
+      'prefabrication',
+      'homes',
+      'housing',
+      'Three-storey precast homes',
+      'Cavite',
+      '6 modules · 3 storeys · 3 bedrooms',
+      'Illustrative example of a three-storey home assembled from steam-cured precast concrete modules, finished smooth without plastering. To be replaced with an approved Techouse project.',
+    ),
+    sample(
+      'prefabrication',
+      'classrooms',
+      'institutional',
+      'Modular classroom block',
+      'Bulacan',
+      '4 modules · 2 storeys',
+      'Illustrative example of classrooms built from standard 7.2 × 3.6 m modules, about 23 m² each. To be replaced with an approved Techouse project.',
+    ),
+    sample(
+      'prefabrication',
+      'apartments',
+      'commercial',
+      'Rental apartments',
+      'Pampanga',
+      '12 modules · 3 storeys',
+      'Illustrative example of stacked rental units with a shared open corridor along the module canopies. To be replaced with an approved Techouse project.',
+    ),
+    sample(
+      'development',
+      'townhouses',
+      'residential',
+      'Townhouse community',
+      'Rizal',
+      '24 units',
+      'Illustrative example of a gated townhouse community. To be replaced with an approved Techouse development.',
+    ),
+    sample(
+      'development',
+      'strip',
+      'commercial',
+      'Commercial strip',
+      'Laguna',
+      '8 lease spaces',
+      'Illustrative example of a roadside commercial strip with parking in front. To be replaced with an approved Techouse development.',
+    ),
+    sample(
+      'development',
+      'corner',
+      'mixed-use',
+      'Mixed-use corner building',
+      'Quezon City',
+      'Retail + 18 residential units',
+      'Illustrative example of shops on the ground floor with homes above. To be replaced with an approved Techouse development.',
+    ),
+    sample(
+      'elevators',
+      'install',
+      'installation',
+      'Office passenger lift',
+      'Makati',
+      'Hitachi passenger lift · 10 floors',
+      'Illustrative example of a new passenger lift installation in a mid-rise office building. To be replaced with an approved Techouse project.',
+    ),
+    sample(
+      'elevators',
+      'service',
+      'maintenance',
+      'Hospital bed lift service',
+      'Quezon City',
+      'EPSS hospital lift · 6 floors',
+      'Illustrative example of a scheduled maintenance contract: regular inspection, cable tightening and parts replacement. To be replaced with an approved Techouse project.',
+    ),
+    sample(
+      'elevators',
+      'modernise',
+      'modernisation',
+      'Lobby lift modernisation',
+      'Manila',
+      'Shanghai Mitsubishi · 12 floors',
+      'Illustrative example of refurbishing an older lift: new motor, controls and a refreshed cab interior. To be replaced with an approved Techouse project.',
+    ),
+  ];
+})();

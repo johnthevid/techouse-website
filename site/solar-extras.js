@@ -168,8 +168,51 @@ window.TechouseSolarExtras = (() => {
     weightedScroll(controller.signal);
     const links = document.createElement('div');
     links.className = 'solar-subnav-links';
+    links.id = 'solar-subnav-links';
     while (nav.firstChild) links.append(nav.firstChild);
     nav.append(links);
+    // PHONE MENU: under 700px the three section links sit behind one menu button that names the
+    // section in view; the links open as a dropdown below the bar (CSS hides the button above 700px).
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'solar-subnav-toggle';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-controls', links.id);
+    toggle.innerHTML = `${window.TechouseIcons.icon('menu')}<span class="visually-hidden">Sections: </span><span data-subnav-current>${links.querySelector('a').textContent}</span>`;
+    nav.prepend(toggle);
+    function setMenu(open, focusToggle = false) {
+      nav.classList.toggle('is-menu-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.querySelector('svg').outerHTML = window.TechouseIcons.icon(open ? 'close' : 'menu');
+      if (open) links.querySelector('a').focus({ preventScroll: true });
+      else if (focusToggle) toggle.focus({ preventScroll: true });
+    }
+    toggle.addEventListener('click', () => setMenu(!nav.classList.contains('is-menu-open')), options);
+    links.addEventListener('click', (e) => e.target.closest('a') && setMenu(false), options);
+    document.addEventListener(
+      'keydown',
+      (e) => e.key === 'Escape' && nav.classList.contains('is-menu-open') && setMenu(false, true),
+      options,
+    );
+    document.addEventListener(
+      'click',
+      (e) => nav.classList.contains('is-menu-open') && !nav.contains(e.target) && setMenu(false),
+      options,
+    );
+    // The menu button names the last section whose top has reached 40% of the way down the screen.
+    const sections = [...links.querySelectorAll('a[data-scroll]')]
+      .map((a) => [document.getElementById(a.dataset.scroll), a.textContent])
+      .filter(([el]) => el);
+    function syncCurrent() {
+      const line = innerHeight * 0.4;
+      const current = sections.filter(([el]) => el.getBoundingClientRect().top <= line).pop() || sections[0];
+      const label = toggle.querySelector('[data-subnav-current]');
+      if (current && label.textContent !== current[1]) label.textContent = current[1];
+      links.querySelectorAll('a[data-scroll]').forEach((a) => {
+        if (a.textContent === current?.[1]) a.setAttribute('aria-current', 'location');
+        else a.removeAttribute('aria-current');
+      });
+    }
     const call = document.createElement('a');
     call.className = 'button small solar-subnav-call';
     call.href = 'tel:+639855626888';
@@ -195,6 +238,7 @@ window.TechouseSolarExtras = (() => {
     let framePending = false;
     function update() {
       syncCall();
+      syncCurrent();
     }
     window.addEventListener(
       'scroll',

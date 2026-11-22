@@ -346,7 +346,8 @@ test("1.0.1 inquiry actions, annual estimate and visit lifecycle", async (t) => 
         await page.locator('.discovery-progress [data-step="1"]').click();
         await page.waitForSelector("#solar-estimator");
         await page.locator('#solar-estimator input[name="bill"]').fill("6000");
-        await page.locator("#solar-estimator .calculate-cost").click();
+        await page.locator('.solar-usage-choices label:has(input[value="50"])').click();
+        await page.locator('.solar-coverage-choices label:has(input[value="80"])').click();
         const inquiry = page.locator("#solar-estimate-inquiry");
         await inquiry.scrollIntoViewIfNeeded();
         await page.evaluate(() => new Promise(resolve => {

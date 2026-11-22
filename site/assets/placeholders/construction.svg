@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="Placeholder: project photo coming soon">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1d4538"/><stop offset="1" stop-color="#0f241e"/></linearGradient>
+    <pattern id="p" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1"/></pattern>
+  </defs>
+  <rect width="1200" height="800" fill="url(#g)"/>
+  <rect width="1200" height="800" fill="url(#p)"/>
+  <rect x="540" y="292" width="120" height="96" fill="none" stroke="#d4af68" stroke-width="4"/>
+  <circle cx="600" cy="340" r="26" fill="none" stroke="#d4af68" stroke-width="4"/>
+  <rect x="572" y="280" width="36" height="14" fill="#d4af68"/>
+  <text x="600" y="452" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" fill="#ffffff">Project photo coming soon</text>
+  <text x="600" y="500" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" letter-spacing="4" fill="#d4af68">CONSTRUCTION</text>
+</svg>

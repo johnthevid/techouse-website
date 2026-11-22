@@ -24,9 +24,13 @@ window.TechouseSolar = (() => {
 
   // USAGE -> NIGHT SHARE: three plain-language choices stand in for a day/night percentage.
   const USAGE = { 'Mostly daytime': 25, 'Day and night': 50, 'Mostly at night': 75 };
-  // Sensible first choice per property: homes use most power in the evening, businesses in the day.
-  const usageDefault = (sector) => (sector === 'Residential' ? 'Day and night' : 'Mostly daytime');
-  let usageChosen = null; // the visitor's own night share, kept across client-side routes
+  // Suggested answer per property: homes use most power in the evening, businesses in the day.
+  // It is marked on the tile, never pre-selected, so the visitor still answers it themselves.
+  const usageSuggestion = (sector) =>
+    sector === 'Residential'
+      ? ['Day and night', 'Suggested for homes']
+      : ['Mostly daytime', 'Suggested for businesses'];
+  const PROPERTY_ICONS = { Residential: 'home', Commercial: 'storefront', Industrial: 'factory' };
   // COVERAGE -> OFFSET: the estimator's three coverage choices, as words for the inquiry.
   const COVERAGE = { 50: 'Just the essentials', 80: 'Essentials and more', 95: 'Most of my bill' };
   // RECOMMENDED SETUP follows when electricity is used: mostly daytime needs no battery, a day and
@@ -41,12 +45,14 @@ window.TechouseSolar = (() => {
     const result = window.TechouseSolarCalculator.calculate(values);
     const chosen =
       result.scenarios.find((s) => s.id === values.scenario) ||
-      result.scenarios.find((s) => s.id === recommendedScenario(result.segment, result.nightShare)) ||
+      result.scenarios.find(
+        (s) => s.id === recommendedScenario(result.segment, result.nightShare),
+      ) ||
       result.scenarios[0];
     return { ...result, chosen };
   }
   const options = (name, values) =>
-    `<div class="solar-choices">${values.map((v) => `<label><input type="radio" name="${name}" value="${v}" ${choices[name] === v ? 'checked' : ''}><span>${v}</span></label>`).join('')}</div>`;
+    `<div class="solar-choices">${values.map((v) => `<label><input type="radio" name="${name}" value="${v}" ${choices[name] === v ? 'checked' : ''}><span>${PROPERTY_ICONS[v] ? window.TechouseIcons.icon(PROPERTY_ICONS[v], 'solar-choice-icon') : ''}${v}</span></label>`).join('')}</div>`;
   // CONTENT EDITING: section titles, questions, and educational explanations live in this template builder.
   function mount() {
     const host = document.querySelector('.division-page #solar-estimator');
@@ -68,7 +74,7 @@ window.TechouseSolar = (() => {
       'Next, let’s see what your solar project could cost.';
     estimator.querySelector('.section-heading span').remove();
     estimator.querySelector('.section-heading p').textContent =
-      'Enter your monthly bill. We’ll size the system around how you use electricity.';
+      'Enter your monthly bill, then answer two quick questions. We’ll handle the sizing and pricing.';
     // Staff set the monthly Meralco rate in the back office (Website customizer → Solar calculator).
     // Visitors see it as a quiet summary and only open "Fine-tune" if their rate differs.
     const settings = window.TechouseContent?.snapshot().settings || {};
@@ -106,8 +112,7 @@ window.TechouseSolar = (() => {
       '<a href="#solar-start" data-scroll="solar-start">Savings calculator</a><a href="#projects" data-scroll="projects">Project examples</a><a href="#solar-technical" data-scroll="solar-technical">Technical reference</a>';
     const learningDetails = document.createElement('details');
     learningDetails.className = 'solar-optional-guide';
-    learningDetails.innerHTML =
-      '<summary><span>Want to understand your solar options?</span><small>Optional · daytime use, batteries and roof shade</small></summary>';
+    learningDetails.innerHTML = `<summary><span class="guide-icon">${window.TechouseIcons.icon('routine')}</span><span class="guide-text"><span>Want to understand your solar options?</span><small>Daytime use, batteries and roof shade</small></span>${window.TechouseIcons.icon('expand_more', 'guide-chevron')}</summary>`;
     learn.querySelector('.section-heading span').remove();
     learn.querySelector('.section-heading h2').textContent = 'How solar fits everyday life';
     learn.querySelector('.section-heading p').textContent =
@@ -117,10 +122,14 @@ window.TechouseSolar = (() => {
     const technical = document.createElement('details');
     technical.className = 'solar-optional-guide solar-technical-guide';
     technical.id = 'solar-technical';
-    technical.innerHTML =
-      '<summary><span>For engineers and those who want the specifications</span><small>Optional · panels, inverters, batteries and datasheets</small></summary>';
+    technical.innerHTML = `<summary><span class="guide-icon">${window.TechouseIcons.icon('solar_power')}</span><span class="guide-text"><span>For engineers and those who want the specifications</span><small>Panels, inverters, batteries and datasheets</small></span>${window.TechouseIcons.icon('expand_more', 'guide-chevron')}</summary>`;
     learningDetails.after(technical);
     technical.append(products);
+    // Panel technology and equipment ranges, from the company presentation.
+    const panelTech = document.createElement('section');
+    panelTech.className = 'division-section solar-panel-tech';
+    panelTech.innerHTML = `<div class="section-heading"><h2>Two panel<br>technologies.</h2><p>Both from Skyworth. The difference shows when part of a panel is shaded or damaged.</p></div><div class="construction-project-types two-up"><article class="construction-type"><div class="construction-type-top">${window.TechouseIcons.icon('solar_power')}<span>BC · back contact</span></div><h3>Up to 660 W</h3><p>Cells are connected in parallel, so a fallen leaf, a crack or a shaded cell affects only that cell. The rest of the panel keeps producing.</p></article><article class="construction-type"><div class="construction-type-top">${window.TechouseIcons.icon('solar_power')}<span>TOPCon</span></div><h3>Up to 620 W</h3><p>High-efficiency cells connected in series strings. If one string is shaded or damaged, the panel loses about a sixth of its output while the other strings keep working.</p></article></div><dl class="division-specs"><div><dt>Single-phase inverters</dt><dd>Hybrid, up to 12 kW</dd></div><div><dt>Three-phase inverters</dt><dd>Low and high voltage, up to 125 kW</dd></div><div><dt>220 V three-phase</dt><dd>75 kW model</dd></div><div><dt>Battery packs</dt><dd>5–16 kWh low voltage; larger cabinets to order</dd></div><div><dt>Monitoring</dt><dd>Owner app, plus remote monitoring by our team</dd></div><div><dt>Panel weight</dt><dd>About 35 kg each, before rails and cabling</dd></div></dl><p class="division-note">Most three-phase supply in the Philippines is still 220 V, while most equipment is now made for 380 V and above, which is why 220 V three-phase models are limited. Custom-coloured panels, for example to match terracotta roofs, are available by container order.</p>`;
+    technical.append(panelTech);
     if (partner) {
       partner.innerHTML = `<div class="partner-identity"><span>TECHOUSE × SKYWORTH</span><strong>SKYWORTH</strong><small>Direct solar partner</small></div><div class="partner-message"><h3>Your direct connection<br>to Skyworth solar.</h3><p>Explore panels, inverters and battery storage with your direct Skyworth partner.</p><a class="text-link" href="#/inquiry?division=solar">Talk to our solar team ${window.TechouseIcons.icon('arrow_outward')}</a></div>`;
       technical.append(partner);
@@ -130,26 +139,23 @@ window.TechouseSolar = (() => {
     products.querySelector('.section-heading p').textContent =
       'Explore product ranges and manufacturer datasheets.';
     const discovery = intro.querySelector('form');
-    // Step answers feed the estimator's hidden inputs, so the calculation always matches them.
-    // The property type picks the estimate's first usage answer (homes: day and night, businesses:
-    // mostly daytime) until the visitor chooses one, and decides the pricing model.
-    let lastSector = choices.sector;
-    const setUsage = (value) => {
-      const radio = host.querySelector(`[name="nightShare"][value="${value}"]`);
-      if (radio) radio.checked = true;
+    // Step 1 answers feed the estimator: the property type decides the pricing model and which
+    // usage answer is marked as suggested.
+    const suggest = () => {
+      const [value, text] = usageSuggestion(choices.sector);
+      host.querySelectorAll('[name="nightShare"]').forEach((radio) => {
+        const tag = radio.closest('label').querySelector('.solar-suggest');
+        tag.hidden = USAGE[value] !== +radio.value;
+        tag.textContent = text;
+      });
     };
-    setUsage(usageChosen ?? USAGE[usageDefault(choices.sector)]);
     function update() {
       choices = Object.fromEntries(new FormData(discovery));
-      if (!usageChosen && choices.sector !== lastSector) setUsage(USAGE[usageDefault(choices.sector)]);
-      lastSector = choices.sector;
       host.elements.sector.value = choices.sector;
+      suggest();
       host.dispatchEvent(new Event('change'));
     }
     discovery.addEventListener('change', update);
-    host.addEventListener('change', (e) => {
-      if (e.target.name === 'nightShare') usageChosen = e.target.value;
-    });
     discovery.addEventListener('input', () => {
       choices = Object.fromEntries(new FormData(discovery));
     });

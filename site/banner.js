@@ -316,8 +316,8 @@ window.TechouseBanner = (() => {
       (event) => {
         if (event.key === 'Escape') {
           if (media.matches) {
-            const bottom = host.getBoundingClientRect().bottom;
-            if (point.y >= bottom - 112 || event.target.closest('.banner-scroll-cue')) {
+            // Keyboard has no pointer position here; only the scroll cue closes everything.
+            if (event.target.closest('.banner-scroll-cue')) {
               desktopOpen(null);
               return;
             }
@@ -426,6 +426,10 @@ window.TechouseBanner = (() => {
           if (host.isConnected) window.TechouseDivisions.clearPreviousPage();
         });
     }
+    // Phones get their own hero (mobile-home.js), built from these banners.
+    window.TechouseMobileHome?.mount(host);
+    // Touch tablets get the five panels opened by tapping (tablet-home.js).
+    window.TechouseTabletHome?.mount(host);
     teardown = () => {
       stopShowcase();
       cancelAnimationFrame(compactFrame);
@@ -434,6 +438,8 @@ window.TechouseBanner = (() => {
       arrivalAnimations.forEach((a) => a.cancel());
       controller.abort();
       media.removeEventListener('change', setup);
+      window.TechouseMobileHome?.destroy();
+      window.TechouseTabletHome?.destroy();
     };
   }
   return { html, header, mount, destroy: () => teardown() };

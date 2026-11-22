@@ -230,6 +230,14 @@ const divisions = [
 for (const id of divisions)
   for (const sel of ["h2", ".banner-division-label"])
     selectors.push(`[data-banner="${id}"] ${sel}`);
+// Project categories per division; keep in step with site/portfolio.js (divisions).
+const projectDivisions = {
+  solar: ["residential", "commercial", "industrial"],
+  construction: ["residential", "commercial", "industrial"],
+  prefabrication: ["housing", "institutional", "commercial"],
+  development: ["residential", "commercial", "mixed-use"],
+  elevators: ["installation", "maintenance", "modernisation"],
+};
 // Retired homepage fields are accepted only to clean older saved drafts on their next save.
 const retiredSelectors = new Set([
   ".company-intro p:nth-of-type(1)",
@@ -341,7 +349,12 @@ export function validateContent(input) {
             ? "assets/" + p.cover
             : p.cover || "",
         ),
-        createdAt: p.createdAt || new Date().toISOString(),
+        createdAt:
+          typeof p.createdAt === "string" &&
+          p.createdAt.length <= 40 &&
+          !Number.isNaN(Date.parse(p.createdAt))
+            ? p.createdAt
+            : new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
       for (const key of [
@@ -369,8 +382,11 @@ export function validateContent(input) {
         if (row[key] && !/^https:\/\//.test(row[key]))
           fail(400, "Reference links must use HTTPS.");
       if (type === "projects") {
-        if (!["residential", "commercial", "industrial"].includes(p.sector))
-          fail(400, "Invalid sector.");
+        // Each division has its own categories; older records have no division (solar).
+        const division = p.division === undefined ? "solar" : p.division;
+        if (!Object.hasOwn(projectDivisions, division)) fail(400, "Invalid division.");
+        if (!projectDivisions[division].includes(p.sector)) fail(400, "Invalid sector.");
+        row.division = division;
         row.sector = p.sector;
         row.reference = Boolean(p.reference);
         if (p.gallery !== undefined && !Array.isArray(p.gallery))
@@ -516,6 +532,9 @@ async function route(request, env) {
       s.id,
     ).first();
     if (!attempt) fail(429, "Too many verification attempts. Sign in again.");
+    // The per-session cap resets with each new password sign-in, so also cap
+    // second-factor guesses per account to slow TOTP guessing with a known password.
+    await rate(env, "mfa-user:" + s.email, 20, 3600);
     const input = await body(request);
     const user = await query(
       env,
@@ -739,7 +758,7 @@ export default {
     headers.set("X-Frame-Options", "SAMEORIGIN");
     headers.set(
       "Permissions-Policy",
-      "camera=(), microphone=(), geolocation=()",
+      "camera=(), microphone=(), geolocation=(self)",
     );
     headers.set(
       "Content-Security-Policy",

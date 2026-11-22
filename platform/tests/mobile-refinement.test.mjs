@@ -37,34 +37,90 @@ test('Compact touch homepage keeps one focused story and landscape calculator re
       });
     });
     await page.goto(f.env.APP_ORIGIN + '/');
-    await page.waitForSelector('.division-banner');
-    assert.equal(await page.locator('.division-banner.is-open').count(), 1);
-    const titles = await page.locator('.banner-title-row h2').allInnerTexts();
-    assert.deepEqual(titles, [
-      'Power your tomorrow.',
-      'Build your next chapter.',
-      'Rethink your space.',
-      'Shape your next address.',
-      'Rise to new possibilities.',
-    ]);
-    assert.equal(
-      await page.locator('.banner-scroll-cue').evaluate((el) => getComputedStyle(el).position),
-      'fixed',
-    );
-    assert.equal(await page.locator('.compact-scene-image.is-active').count(), 1);
-    await page.locator('.banner-trigger').nth(1).click();
-    assert.equal(await page.locator('.banner-construction.is-open').count(), 1);
-    await page.evaluate(() => window.scrollTo({ top: 100, behavior: 'instant' }));
-    await page.waitForTimeout(40);
-    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-    await page.waitForFunction(() =>
-      document.querySelector('.banner-solar').classList.contains('is-open'),
-    );
-    await page.locator('.banner-cta').first().click();
-    await page.waitForURL('**/#/divisions/solar');
+    // Phones (under 600px): one chapter, a 2 x 2 pill grid and a menu
+    const phone = width < 600;
+    if (phone) {
+      await page.waitForSelector('[data-mobile-home]');
+      const pills = page.locator('.mh-pill:not(.is-gone)');
+      assert.equal(await pills.count(), 4);
+      const tops = await pills.evaluateAll(
+        (els) => new Set(els.map((el) => Math.round(el.getBoundingClientRect().top))).size,
+      );
+      assert.equal(tops, 2);
+      await page.locator('.mh-pill[data-index="1"]').click();
+      await page.waitForFunction(() =>
+        document.querySelectorAll('.mh-chapter')[1].classList.contains('is-on'),
+      );
+      assert.equal(
+        await page.locator('.mh-pill[data-index="1"]').getAttribute('aria-hidden'),
+        'true',
+      );
+      await page.locator('.mh-menu-button').click();
+      assert.equal(await page.locator('.mh-menu-button').getAttribute('aria-expanded'), 'true');
+      assert.deepEqual(
+        await page
+          .locator('.mh-menu-list > *')
+          .allInnerTexts()
+          .then((t) => t.map((x) => x.split('\n')[0].trim())),
+        ['Our divisions', 'About Techouse', 'News', 'Join us & be a partner'],
+      );
+      await page.keyboard.press('Escape');
+      await page.locator('.mh-pill[data-index="0"]').click();
+      await page.waitForFunction(() =>
+        document.querySelectorAll('.mh-chapter')[0].classList.contains('is-on'),
+      );
+      await page.locator('.mh-chapter.is-on .mh-cta').click();
+      await page.waitForURL('**/#/divisions/solar');
+    } else if (width >= 600 && height >= 600) {
+      // Touch tablets: five panels, tap to open, X to close, the open panel's button navigates
+      await page.waitForSelector('[data-tablet-home]');
+      assert.equal(await page.locator('.division-banners').isVisible(), false);
+      assert.equal(await page.locator('.tp-panel').count(), 5);
+      assert.equal(await page.locator('.tp-panel.is-open').count(), 0);
+      await page.locator('.tp-panel[data-index="1"] .tp-hit').click();
+      assert.equal(
+        await page.locator('.tp-panel[data-index="1"]').getAttribute('class'),
+        'tp-panel is-open',
+      );
+      assert.match(page.url(), /\/$|#\/?$/);
+      await page.locator('.tp-panel[data-index="3"] .tp-hit').click();
+      assert.equal(await page.locator('.tp-panel.is-open').getAttribute('data-index'), '3');
+      await page.locator('.tp-panel.is-open .tp-close').click();
+      assert.equal(await page.locator('.tp-panel.is-open').count(), 0);
+      await page.locator('.tp-panel[data-index="0"] .tp-hit').click();
+      await page.locator('.tp-panel.is-open .tp-cta').click();
+      await page.waitForURL('**/#/divisions/solar');
+    } else {
+      await page.waitForSelector('.division-banner');
+      assert.equal(await page.locator('.division-banner.is-open').count(), 1);
+      const titles = await page.locator('.banner-title-row h2').allInnerTexts();
+      assert.deepEqual(titles, [
+        'Power your tomorrow.',
+        'Build your next chapter.',
+        'Rethink your space.',
+        'Shape your next address.',
+        'Rise to new possibilities.',
+      ]);
+      assert.equal(
+        await page.locator('.banner-scroll-cue').evaluate((el) => getComputedStyle(el).position),
+        'fixed',
+      );
+      assert.equal(await page.locator('.compact-scene-image.is-active').count(), 1);
+      await page.locator('.banner-trigger').nth(1).click();
+      assert.equal(await page.locator('.banner-construction.is-open').count(), 1);
+      await page.evaluate(() => window.scrollTo({ top: 100, behavior: 'instant' }));
+      await page.waitForTimeout(40);
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+      await page.waitForFunction(() =>
+        document.querySelector('.banner-solar').classList.contains('is-open'),
+      );
+      await page.locator('.banner-cta').first().click();
+      await page.waitForURL('**/#/divisions/solar');
+    }
     await page.locator('.discovery-progress [data-step="1"]').click();
     await page.locator('#solar-estimator [name="bill"]').fill('6000');
-    await page.locator('.calculate-cost').click();
+    await page.locator('.solar-usage-choices label:has(input[value="50"])').click();
+    await page.locator('.solar-coverage-choices label:has(input[value="80"])').click();
     assert.equal(await page.locator('#solar-estimate-inquiry').isVisible(), true);
     assert.equal(
       await page.locator('#estimate-result').evaluate((el) => el.innerText.includes('null')),

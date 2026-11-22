@@ -164,25 +164,46 @@
 }
 
 
-/* ===== SIMPLE INPUTS =====
-   One typed value (the bill), one three-way choice (coverage), and a quiet "Fine-tune" for the
-   rate and panel. Square choice tiles match the planner's step choices. */
+/* ===== ESTIMATE INPUTS =====
+   One typed value (the bill), then two questions asked one at a time. An answered question folds
+   into a one-line summary and the next slides in (240ms, position and opacity only). Square tiles
+   match the planner's step choices; fields 48px, labels 14px, text 16px. */
 #solar-estimator .estimate-inputs {
   grid-template-columns: minmax(0, 1fr);
-  gap: 18px;
-  padding: 22px;
+  align-content: start;
+  gap: 20px;
+  padding: 28px;
 }
 #solar-estimator .solar-bill-field {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   color: #1c352a;
 }
-#solar-estimator .solar-bill-field input {
+#solar-estimator .solar-bill-input {
+  position: relative;
+  display: block;
+  margin-top: 6px;
+}
+#solar-estimator .solar-bill-input > span {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #596752;
+  pointer-events: none;
+}
+#solar-estimator .solar-bill-input input {
+  height: 52px;
   min-height: 52px;
-  margin-top: 8px;
+  margin: 0;
+  padding-left: 36px;
   font-size: 22px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
+}
+#solar-estimator .solar-bill-input input[aria-invalid] {
+  border-color: #a63b2a;
 }
 #solar-estimator .solar-bill-field small,
 #solar-estimator .solar-fine-tune small {
@@ -191,7 +212,34 @@
   font-size: 12px;
   font-weight: 400;
   line-height: 1.5;
-  color: #64705e;
+  color: #596752;
+}
+#solar-estimator .solar-questions {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+#solar-estimator .solar-question-count {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 13px;
+  color: #596752;
+  font-variant-numeric: tabular-nums;
+}
+#solar-estimator .solar-question-count i {
+  display: block;
+  width: 28px;
+  height: 3px;
+  background: #c9d1c4;
+  transition: background-color 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+#solar-estimator .solar-question-count i.is-on {
+  background: #1c352a;
+}
+#solar-estimator .solar-question-count span {
+  margin-left: 2px;
 }
 #solar-estimator .solar-tile-choices {
   margin: 0;
@@ -199,11 +247,22 @@
   border: 0;
   min-width: 0;
 }
+#solar-estimator .solar-tile-choices[hidden] {
+  display: none;
+}
+#solar-estimator .solar-tile-choices.is-entering {
+  animation: solar-question-in 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes solar-question-in {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
 #solar-estimator .solar-tile-choices legend {
   margin-bottom: 10px;
   padding: 0;
-  font-size: 15px;
-  font-weight: 600;
+  font: 600 17px/1.35 var(--display);
   color: #1c352a;
 }
 #solar-estimator .solar-tile-choices > div {
@@ -226,19 +285,25 @@
   padding: 0;
   opacity: 0;
 }
-#solar-estimator .solar-tile-choices span {
-  display: flex;
-  flex-direction: column;
+#solar-estimator .solar-tile-choices label > span {
+  display: grid;
+  align-content: start;
   gap: 4px;
   height: 100%;
-  padding: 14px;
+  min-height: 96px;
+  padding: 12px 14px;
   border: 1px solid #a7b4aa;
   background: #fbfaf5;
   color: #1c352a;
   transition:
-    background 0.18s ease,
-    color 0.18s ease,
-    border-color 0.18s ease;
+    background-color 150ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    color 150ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+#solar-estimator .solar-tile-choices .material-icon {
+  width: 22px;
+  height: 22px;
+  fill: #8d6329;
 }
 #solar-estimator .solar-tile-choices strong {
   font-size: 15px;
@@ -250,8 +315,22 @@
   line-height: 1.4;
   color: #596752;
 }
-#solar-estimator .solar-tile-choices label:hover span {
-  border-color: #526f48;
+#solar-estimator .solar-suggest {
+  justify-self: start;
+  margin-top: 2px;
+  padding: 1px 6px;
+  background: #efe3c6;
+  color: #5a4317;
+  font-size: 11px;
+  font-style: normal;
+}
+#solar-estimator .solar-suggest[hidden] {
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  #solar-estimator .solar-tile-choices label:hover > span {
+    border-color: #526f48;
+  }
 }
 #solar-estimator .solar-tile-choices input:checked + span {
   background: #203d32;
@@ -261,9 +340,60 @@
 #solar-estimator .solar-tile-choices input:checked + span small {
   color: #d6dfd2;
 }
+#solar-estimator .solar-tile-choices input:checked + span .material-icon {
+  fill: #e7cd99;
+}
 #solar-estimator .solar-tile-choices input:focus-visible + span {
   outline: 3px solid #a85d2c;
   outline-offset: 3px;
+}
+/* An answered question: one line, its answer and a way back. */
+#solar-estimator .solar-answer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 0 8px 0 14px;
+  border: 1px solid #d3d9cc;
+  background: #eef1e8;
+  font-size: 14px;
+}
+#solar-estimator .solar-answer[hidden] {
+  display: none;
+}
+#solar-estimator .solar-answer .material-icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: #1c352a;
+}
+#solar-estimator .solar-answer > span {
+  flex: none;
+  color: #596752;
+}
+#solar-estimator .solar-answer b {
+  font-weight: 600;
+  color: #1c352a;
+}
+#solar-estimator .solar-answer button {
+  margin-left: auto;
+  min-height: 44px;
+  padding: 0 6px;
+  border: 0;
+  background: none;
+  color: #1c352a;
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 #solar-estimator .solar-fine-tune {
   margin: 0;
@@ -277,34 +407,84 @@
   font-weight: 600;
   color: #1c352a;
 }
-#solar-estimator .solar-fine-tune[open] {
-  padding-bottom: 4px;
-}
 #solar-estimator .solar-fine-tune label {
   display: block;
   margin-top: 12px;
   font-size: 14px;
 }
-#solar-estimator .calculate-cost {
-  min-height: 48px;
+/* Waiting state: names the two answers still needed. */
+#solar-estimator #estimate-result .estimate-ready h3 {
+  margin: 0 0 8px;
+  font-size: clamp(24px, 2.4vw, 32px);
+  line-height: 1.2;
 }
-@media (max-width: 600px) {
+#estimate-result .estimate-ready ol {
+  display: grid;
+  gap: 8px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: #c6d5c9;
+}
+#estimate-result .estimate-ready li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#estimate-result .estimate-ready li > span {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid #ffffff40;
+  border-radius: 50%;
+  font-size: 12px;
+}
+#estimate-result .estimate-ready li.is-done > span {
+  background: #e7cd99;
+  border-color: #e7cd99;
+}
+#estimate-result .estimate-ready li.is-done .material-icon {
+  width: 14px;
+  height: 14px;
+  fill: #1c352a;
+}
+@media (max-width: 640px) {
   #solar-estimator .estimate-inputs {
     gap: 16px;
-    padding: 16px;
+    padding: 20px 16px;
   }
-  /* Phone: choices become full-width rows, title left and hint under it. */
+  /* Phone: choices become full-width rows, icon left, title and hint beside it. */
   #solar-estimator .solar-tile-choices > div {
     grid-template-columns: minmax(0, 1fr);
     gap: 6px;
   }
-  #solar-estimator .solar-tile-choices span {
-    padding: 12px 14px;
+  #solar-estimator .solar-tile-choices label > span {
+    grid-template-columns: 24px minmax(0, 1fr);
+    column-gap: 12px;
+    align-items: center;
+    min-height: 0;
+  }
+  #solar-estimator .solar-tile-choices .material-icon {
+    grid-row: span 2;
+  }
+  #solar-estimator .solar-tile-choices small,
+  #solar-estimator .solar-suggest {
+    grid-column: 2;
+  }
+  /* Until there is an estimate, the waiting panel would only repeat the questions above it. */
+  #estimate-result:has(.estimate-ready) {
+    display: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  #solar-estimator .solar-tile-choices span {
+  #solar-estimator .solar-tile-choices label > span,
+  #solar-estimator .solar-question-count i {
     transition: none;
+  }
+  #solar-estimator .solar-tile-choices.is-entering {
+    animation: none;
   }
 }
 
@@ -551,4 +731,636 @@
 }
 #estimate-result .estimate-stats .nowrap {
   white-space: nowrap;
+}
+
+/* ===== STEP 1: PROPERTY ===== */
+/* Each property type leads with its icon. */
+.solar-choices .solar-choice-icon {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+  fill: #8d6329;
+}
+.solar-choices input:checked + span .solar-choice-icon {
+  fill: #e7cd99;
+}
+/* Location: the field and "Use my location" share one row. */
+.solar-location-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+.solar-location-row input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.solar-locate {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1px solid #a7b4aa;
+  background: #fbfaf5;
+  color: #1c352a;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.solar-locate .material-icon {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+.solar-locate:disabled {
+  cursor: progress;
+  color: #596752;
+}
+@media (hover: hover) and (pointer: fine) {
+  .solar-locate:hover:not(:disabled) {
+    border-color: #1c352a;
+  }
+}
+@media (max-width: 640px) {
+  /* Phone: icons stand in for the property photo, so the step is one short column. */
+  .solar-planning-pages .discovery-stage .discovery-visual {
+    display: none;
+  }
+  .solar-location-row {
+    flex-direction: column;
+  }
+  .solar-locate {
+    justify-content: center;
+  }
+}
+
+/* ===== PRICE FIRST =====
+   The result shows the setup, the budget and the next step; savings, payback, system size and the
+   pricing note sit in one optional disclosure. */
+#estimate-result .estimate-setup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 8px;
+  margin: 0;
+}
+#estimate-result .estimate-setup b {
+  font-size: 15px;
+}
+#estimate-result .estimate-setup b::before {
+  content: '·';
+  margin-right: 8px;
+  color: #c6d5c9;
+  font-weight: 400;
+}
+#estimate-result .estimate-budget-highlight h3.animated-price {
+  margin: 8px 0 20px;
+}
+#estimate-result .estimate-budget-highlight .button {
+  margin-bottom: 0;
+}
+#estimate-result .estimate-more {
+  width: 100%;
+  margin-top: 20px;
+  border-top: 1px solid #ffffff25;
+}
+#estimate-result .estimate-more > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding-top: 8px;
+  color: #f4ead5;
+  font-size: 14px;
+  cursor: pointer;
+  list-style: none;
+}
+#estimate-result .estimate-more > summary::-webkit-details-marker {
+  display: none;
+}
+#estimate-result .estimate-more > summary::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  margin-left: 2px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+#estimate-result .estimate-more[open] > summary::after {
+  transform: translateY(2px) rotate(-135deg);
+}
+#estimate-result .estimate-more > summary:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+#estimate-result .estimate-more[open] {
+  padding-bottom: 4px;
+}
+#estimate-result .estimate-reason {
+  max-width: 52ch;
+  margin: 8px 0 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #bdcdbf;
+}
+#estimate-result .estimate-more .estimate-stats {
+  margin-bottom: 16px;
+}
+#estimate-result .estimate-more .estimate-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0 0 12px;
+}
+#estimate-result .estimate-more .estimate-metrics p {
+  margin: 0;
+  font-size: 12px;
+  color: #c6d5c9;
+}
+#estimate-result .estimate-more .estimate-metrics strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  color: #f4ead5;
+}
+#estimate-result .estimate-more .energy-equivalents {
+  margin-top: 12px;
+}
+@media (max-width: 600px) {
+  #estimate-result .estimate-more .estimate-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ===== SETUP CARDS =====
+   Name, price and monthly savings lead; the summary, payback and parts list are optional. */
+.solar-scenarios > div {
+  align-items: start;
+}
+.solar-scenario {
+  cursor: default;
+}
+.solar-scenario-pick {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+}
+.solar-scenario-save {
+  font-size: 14px;
+  color: #34433b;
+  font-variant-numeric: tabular-nums;
+}
+.solar-scenario-more {
+  border-top: 1px solid #dce0d8;
+}
+.solar-scenario-more > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: #1c352a;
+  font-size: 13px;
+  cursor: pointer;
+  list-style: none;
+}
+.solar-scenario-more > summary::-webkit-details-marker {
+  display: none;
+}
+.solar-scenario-more > summary::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  margin-left: 2px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.solar-scenario-more[open] > summary::after {
+  transform: translateY(2px) rotate(-135deg);
+}
+.solar-scenario-more > summary:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.solar-scenario-more .solar-scenario-summary {
+  margin: 0 0 10px;
+}
+.solar-scenario-payback {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #dce0d8;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.solar-scenario-payback small {
+  font-size: 12px;
+  font-weight: 400;
+  color: #64705e;
+}
+@media (prefers-reduced-motion: reduce) {
+  #estimate-result .estimate-more > summary::after,
+  .solar-scenario-more > summary::after {
+    transition: none;
+  }
+}
+/* Phone: the planner's fieldset reset (.solar-start fieldset) also strips this section's spacing, so
+   restore it here; 32px separates the comparison from the dark estimate panel above. */
+@media (max-width: 600px) {
+  #solar-estimator .solar-scenarios {
+    padding: 32px 0 24px;
+  }
+}
+
+/* ===== PHONE SECTION MENU =====
+   Under 700px the section links collapse into one menu button that names the section in view;
+   the links open as a dropdown under the bar (a 6px drop, 200ms in, 120ms out). */
+.solar-subnav-toggle {
+  display: none;
+}
+@media (max-width: 700px) {
+  .solar-streamlined .division-subnav {
+    justify-content: space-between;
+    min-height: 56px;
+    padding: 0 8px 0 4px;
+  }
+  .solar-subnav-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 12px;
+    border: 0;
+    background: none;
+    color: #182522;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .solar-subnav-toggle .material-icon {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+  }
+  /* A white panel under the beige bar, with a hairline, a soft shadow and a light dim over the
+     page, so the open menu reads as its own layer. */
+  .solar-streamlined .division-subnav .solar-subnav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 6px 0;
+    border-top: 1px solid #c9d1c4;
+    border-bottom: 1px solid #c9d1c4;
+    background: #fff;
+    box-shadow:
+      0 12px 24px rgb(24 37 34 / 0.16),
+      0 0 0 100vmax rgb(24 37 34 / 0.28);
+    clip-path: inset(0 0 -100vmax 0);
+    font-size: 15px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition:
+      opacity 120ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      transform 120ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      visibility 0s linear 120ms;
+  }
+  .solar-streamlined .division-subnav.is-menu-open .solar-subnav-links {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-duration: 200ms, 200ms, 0s;
+    transition-delay: 0s;
+  }
+  .solar-streamlined .division-subnav .solar-subnav-links {
+    align-items: stretch;
+    text-align: left;
+  }
+  .solar-streamlined .division-subnav .solar-subnav-links a {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 48px;
+    padding: 0 20px 0 48px;
+    border-top: 1px solid #e6e9e1;
+  }
+  .solar-streamlined .division-subnav .solar-subnav-links a:first-child {
+    border-top: 0;
+  }
+  .solar-streamlined .division-subnav .solar-subnav-links a {
+    color: #182522;
+  }
+  .solar-streamlined .division-subnav .solar-subnav-links a[aria-current] {
+    background: #eef1e8;
+    font-weight: 600;
+    color: #1c352a;
+  }
+  .solar-streamlined .division-subnav .solar-subnav-links a:active {
+    background: #e2e8dc;
+  }
+  /* The open menu's button reads as pressed. */
+  .solar-streamlined .division-subnav.is-menu-open {
+    background: #fff;
+  }
+  .division-subnav .solar-subnav-call {
+    right: 8px;
+  }
+}
+@media (max-width: 700px) {
+  /* Items enter one after another (8px rise, 220ms, 40ms apart) once the panel has dropped, and
+     leave together faster (120ms) so closing never feels slower than opening. */
+  .solar-streamlined .division-subnav .solar-subnav-links a {
+    opacity: 0;
+    transform: translateY(-8px);
+    transition:
+      opacity 120ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      transform 120ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      background-color 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .solar-streamlined .division-subnav.is-menu-open .solar-subnav-links a {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .solar-streamlined .division-subnav.is-menu-open .solar-subnav-links a:nth-child(1) {
+    transition-delay: 60ms, 60ms, 0s;
+  }
+  .solar-streamlined .division-subnav.is-menu-open .solar-subnav-links a:nth-child(2) {
+    transition-delay: 100ms, 100ms, 0s;
+  }
+  .solar-streamlined .division-subnav.is-menu-open .solar-subnav-links a:nth-child(3) {
+    transition-delay: 140ms, 140ms, 0s;
+  }
+  /* The menu icon turns as it swaps to the close icon. */
+  .solar-subnav-toggle .material-icon {
+    animation: solar-menu-icon 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+}
+@keyframes solar-menu-icon {
+  from {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.8);
+  }
+}
+@media (max-width: 700px) and (prefers-reduced-motion: reduce) {
+  .solar-streamlined .division-subnav .solar-subnav-links,
+  .solar-streamlined .division-subnav .solar-subnav-links a,
+  .solar-streamlined .division-subnav.is-menu-open .solar-subnav-links a {
+    transform: none;
+    transition: none;
+  }
+  .solar-subnav-toggle .material-icon {
+    animation: none;
+  }
+}
+
+/* ===== PROJECT EXAMPLES =====
+   Savings stay the lead figure, on a full tint rather than a one-sided bar. On phones each project
+   is one compact row: photo left, name, place and savings right, the whole row a link. */
+.division-experience #projects .project-tile .project-tile-savings {
+  border-left: 0;
+}
+.division-experience #projects .portfolio-pagination[hidden] {
+  display: none;
+}
+@media (max-width: 650px) {
+  .division-experience #projects .project-tile {
+    position: relative;
+    grid-template-columns: 112px minmax(0, 1fr);
+    align-items: stretch;
+    min-height: 132px;
+  }
+  .division-experience #projects .project-tile .project-gallery,
+  .division-experience #projects .project-tile .project-photo-stage {
+    height: 100%;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+  .division-experience #projects .project-tile .project-photo-stage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .division-experience #projects .project-tile .project-story {
+    justify-content: center;
+    gap: 0;
+    padding: 12px 40px 12px 14px;
+  }
+  .division-experience #projects .project-tile .project-story > .pill {
+    order: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #64705e;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+  }
+  .division-experience #projects .project-tile .project-story h3 {
+    order: 1;
+    margin: 2px 0 2px;
+    font-size: 16px;
+    line-height: 1.3;
+  }
+  .division-experience #projects .project-tile .project-tile-facts {
+    order: 2;
+    margin: 0 0 8px;
+    font-size: 12px;
+  }
+  .division-experience #projects .project-tile .project-tile-savings {
+    order: 3;
+    display: block;
+    margin: 0;
+    padding: 0;
+    background: none;
+  }
+  .division-experience #projects .project-tile .project-tile-savings > span {
+    display: none;
+  }
+  .division-experience #projects .project-tile .project-tile-savings > strong {
+    font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+  .division-experience #projects .project-tile .project-tile-savings small::after {
+    content: ' est. savings';
+  }
+  /* The whole row is the link; its arrow stays as the cue, top right. */
+  .division-experience #projects .project-tile .project-tile-action {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 0;
+  }
+  .division-experience #projects .project-tile .project-tile-action .material-icon {
+    width: 18px;
+    height: 18px;
+  }
+  .division-experience #projects .portfolio-list,
+  .division-experience #projects [role='tabpanel'] > div {
+    gap: 10px;
+  }
+}
+
+/* ===== OPTIONAL GUIDES =====
+   The two optional deep dives read as one list: an icon, the question and what is inside, and a
+   chevron that turns when the row opens. */
+.solar-streamlined .solar-optional-guide {
+  margin: 0;
+  border: 1px solid #c7d0c3;
+  background: #fbfaf5;
+}
+.solar-streamlined #projects + .solar-optional-guide {
+  margin-top: 24px;
+}
+.solar-streamlined .solar-optional-guide + .solar-optional-guide {
+  border-top: 0;
+}
+.solar-streamlined .solar-optional-guide:last-of-type {
+  margin-bottom: 32px;
+}
+.solar-streamlined .solar-optional-guide > summary {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 24px;
+  align-items: center;
+  gap: 16px;
+  min-height: 80px;
+  padding: 16px 20px;
+  list-style: none;
+  transition: background-color 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.solar-streamlined .solar-optional-guide > summary::-webkit-details-marker {
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .solar-streamlined .solar-optional-guide > summary:hover {
+    background: #f1f3ea;
+  }
+}
+.solar-streamlined .solar-optional-guide .guide-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  background: #eef1e8;
+}
+.solar-streamlined .solar-optional-guide .guide-icon .material-icon {
+  width: 24px;
+  height: 24px;
+  fill: #8d6329;
+}
+.solar-streamlined .solar-optional-guide .guide-text > span {
+  display: block;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: #1c352a;
+}
+.solar-streamlined .solar-optional-guide > summary small {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #596752;
+}
+.solar-streamlined .solar-optional-guide .guide-chevron {
+  width: 24px;
+  height: 24px;
+  fill: #1c352a;
+  transition: transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.solar-streamlined .solar-optional-guide[open] > summary .guide-chevron {
+  transform: rotate(180deg);
+}
+.solar-streamlined .solar-optional-guide[open] > summary {
+  border-bottom: 1px solid #dce0d8;
+}
+@media (max-width: 650px) {
+  .solar-streamlined .solar-optional-guide > summary {
+    grid-template-columns: 40px minmax(0, 1fr) 20px;
+    gap: 12px;
+    min-height: 72px;
+    padding: 14px 16px;
+  }
+  .solar-streamlined .solar-optional-guide .guide-icon {
+    width: 40px;
+    height: 40px;
+  }
+  .solar-streamlined .solar-optional-guide .guide-text > span {
+    font-size: 15px;
+  }
+  .solar-streamlined .solar-optional-guide > summary small {
+    font-size: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .solar-streamlined .solar-optional-guide .guide-chevron,
+  .solar-streamlined .solar-optional-guide > summary {
+    transition: none;
+  }
+}
+
+/* ===== EQUIPMENT AND SPECIFICATIONS ===== */
+/* The partner box takes a full hairline instead of a one-sided bar. */
+#solar-technical .partner-band {
+  border: 1px solid #d6ddcf;
+}
+@media (max-width: 600px) {
+  /* Phone: each product range is one compact row, photo left and name with its link right; the
+     whole row stays one link (the link's ::after covers the card). */
+  #solar-technical .skyworth-showcase {
+    gap: 8px;
+  }
+  #solar-technical .skyworth-range-card {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    align-items: stretch;
+    min-height: 88px;
+  }
+  #solar-technical .skyworth-range-visual {
+    height: 100%;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+  #solar-technical .skyworth-range-copy {
+    justify-content: center;
+    gap: 4px;
+    padding: 12px 16px;
+  }
+  #solar-technical .skyworth-range-copy h3 {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.3;
+  }
+  #solar-technical .skyworth-range-copy .text-link {
+    align-self: flex-start;
+    padding-bottom: 2px;
+    font-size: 13px;
+  }
+  #solar-technical .skyworth-range-copy .text-link .material-icon {
+    width: 16px;
+    height: 16px;
+  }
+  #solar-technical .catalogue-note {
+    margin-top: 12px;
+    font-size: 12px;
+  }
+  #solar-technical .partner-band {
+    gap: 16px;
+    padding: 20px;
+  }
 }

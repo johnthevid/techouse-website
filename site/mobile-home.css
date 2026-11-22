@@ -1,0 +1,513 @@
+/* Phone homepage (max-width 599px). Tablet and desktop layouts are unchanged.
+   Tuned values from the approved mock-up: blur 10%, vignette 80%, shade 115%,
+   photo brightness 135%. Built by mobile-home.js inside .division-landing. */
+.mh,
+.mh-menu,
+.mh-menu-button {
+  display: none;
+}
+
+@media (max-width: 599px) {
+  .landing {
+    --mh-ease: cubic-bezier(0.22, 0.7, 0.2, 1);
+    --mh-ink: #12221e;
+    --mh-green: #173b30;
+    --mh-gold-sheen: linear-gradient(120deg, #b89657 0%, #e6cf8e 48%, #c7a35c 100%);
+    --mh-band-top: 200px;
+    --mh-grid-h: 96px;
+    --mh-bottom: calc(14px + env(safe-area-inset-bottom));
+    --mh-band-bottom: calc(var(--mh-bottom) + var(--mh-grid-h) + 12px);
+  }
+  /* The header sits over the photo; it already scrolls away with the page */
+  .landing #header {
+    background: transparent;
+  }
+  .landing .division-landing {
+    position: relative;
+    height: 100svh;
+    min-height: 600px;
+    padding: 0;
+    overflow: hidden;
+    background: #10231d;
+  }
+  .landing .division-banners,
+  .landing .compact-banner-scene {
+    display: none;
+  }
+  .landing .division-landing > .landing-intro {
+    position: absolute;
+    z-index: 4;
+    top: 92px;
+    left: 20px;
+    right: 20px;
+    width: auto;
+    margin: 0;
+    padding: 0;
+  }
+  /* The old floating scroll cue belongs to the banners; phones scroll naturally */
+  .landing .division-landing .banner-scroll-cue {
+    display: none;
+  }
+  .landing .landing-intro h1 {
+    font-size: 40px;
+    line-height: 42px;
+    letter-spacing: -0.045em;
+    text-shadow: 0 2px 22px rgba(0, 0, 0, 0.28);
+  }
+
+  .landing .mh {
+    display: block;
+    position: absolute;
+    inset: 0;
+    color: #fff;
+  }
+  .mh-photos,
+  .mh-photos > * {
+    position: absolute;
+    inset: 0;
+  }
+  .mh-photos > * {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    filter: brightness(1.35);
+    transition: opacity 650ms ease;
+  }
+  .mh-photos > .is-on {
+    opacity: 1;
+  }
+  /* Sharp behind the chapter, easing into a light blur above and below it */
+  .mh-blur,
+  .mh-tint {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    -webkit-mask-image: var(--mh-mask);
+    mask-image: var(--mh-mask);
+  }
+  .mh-blur-near {
+    -webkit-backdrop-filter: blur(1.2px);
+    backdrop-filter: blur(1.2px);
+    --mh-mask: linear-gradient(
+      180deg,
+      #000 calc(var(--mh-band-top) - 64px),
+      transparent calc(var(--mh-band-top) - 10px),
+      transparent calc(100% - var(--mh-band-bottom) + 30px),
+      #000 calc(100% - var(--mh-band-bottom) + 76px)
+    );
+  }
+  .mh-blur-far {
+    -webkit-backdrop-filter: blur(3.2px);
+    backdrop-filter: blur(3.2px);
+    --mh-mask: linear-gradient(
+      180deg,
+      #000 calc(var(--mh-band-top) - 196px),
+      transparent calc(var(--mh-band-top) - 110px),
+      transparent calc(100% - var(--mh-band-bottom) + 76px),
+      #000 calc(100% - var(--mh-band-bottom) + 226px)
+    );
+  }
+  .mh-tint {
+    background: rgba(7, 24, 20, 0.46);
+    --mh-mask: linear-gradient(
+      180deg,
+      #000 calc(var(--mh-band-top) - 30px),
+      transparent calc(var(--mh-band-top) + 10px),
+      transparent calc(100% - var(--mh-band-bottom) - 40px),
+      #000 calc(100% - var(--mh-band-bottom) + 60px)
+    );
+  }
+  .mh-band {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: var(--mh-band-top);
+    bottom: calc(var(--mh-band-bottom) - 80px);
+    background: linear-gradient(
+      180deg,
+      rgba(7, 24, 20, 0) 20%,
+      rgba(7, 24, 20, 0.72) calc(100% - 80px),
+      rgba(7, 24, 20, 0) 100%
+    );
+    pointer-events: none;
+  }
+  .mh-vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(
+        180deg,
+        rgba(4, 14, 12, 0.66) 0%,
+        rgba(4, 14, 12, 0.4) 120px,
+        rgba(4, 14, 12, 0) 235px
+      ),
+      radial-gradient(130% 80% at 50% 55%, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.26) 100%);
+  }
+
+  /* Chapters: all mounted; the old one sinks away as the new one rises in */
+  .mh-chapters {
+    position: absolute;
+    z-index: 3;
+    left: 20px;
+    right: 20px;
+    bottom: calc(var(--mh-band-bottom) + 14px);
+  }
+  .mh-chapter {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    justify-items: start;
+    opacity: 0;
+    transform: translateY(18px);
+    pointer-events: none;
+    transition:
+      opacity 260ms ease,
+      transform 360ms var(--mh-ease);
+  }
+  .mh-chapter.is-on {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    transition:
+      opacity 420ms ease 180ms,
+      transform 620ms var(--mh-ease) 180ms;
+  }
+  .mh-chapter.is-before {
+    transform: translateY(-14px);
+  }
+  .mh-count {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 18px;
+    letter-spacing: 0.28em;
+    color: #e6cf8e;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+  }
+  .mh-title {
+    margin: 10px 0 0;
+    font-family: Manrope, Arial, sans-serif;
+    font-size: 40px;
+    font-weight: 750;
+    line-height: 42px;
+    letter-spacing: -0.045em;
+    color: #fff;
+    text-shadow: 0 2px 22px rgba(0, 0, 0, 0.28);
+  }
+  .mh-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 14px 0 0;
+    font-size: 15px;
+    line-height: 22px;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+  }
+  .mh-label svg {
+    width: 18px;
+    height: 18px;
+    flex: none;
+  }
+  .mh-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 22px;
+    min-height: 48px;
+    margin-top: 20px;
+    padding: 0 18px 0 20px;
+    background: var(--mh-gold-sheen);
+    color: var(--mh-ink);
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .mh-cta svg {
+    width: 18px;
+    height: 18px;
+  }
+  .mh-cta:focus-visible,
+  .mh-pill:focus-visible,
+  .mh-menu a:focus-visible,
+  .mh-menu-button:focus-visible {
+    outline: 2px solid #e6cf8e;
+    outline-offset: 3px;
+  }
+
+  /* 2 x 2 pill grid: absolutely placed by script, rows always fill the width */
+  .mh-grid {
+    position: absolute;
+    z-index: 3;
+    left: 20px;
+    right: 20px;
+    bottom: var(--mh-bottom);
+    height: var(--mh-grid-h);
+  }
+  .mh-pill {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.08);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    font:
+      500 15px/1 'DM Sans',
+      Arial,
+      sans-serif;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      left 520ms var(--mh-ease) 60ms,
+      top 520ms var(--mh-ease) 60ms,
+      width 520ms var(--mh-ease) 60ms,
+      opacity 300ms ease 160ms,
+      transform 420ms var(--mh-ease) 160ms,
+      background-color 200ms ease,
+      border-color 200ms ease;
+  }
+  .mh-pill svg {
+    width: 18px;
+    height: 18px;
+    flex: none;
+  }
+  .mh-pill:active {
+    background: rgba(255, 255, 255, 0.24);
+  }
+  .mh-pill.is-gone {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.94);
+  }
+  .mh-pill.is-gone:not(.is-leaving) {
+    visibility: hidden;
+  }
+  .mh-pill.is-leaving {
+    transition:
+      opacity 180ms ease,
+      transform 220ms ease;
+  }
+  .mh-pill.is-entering {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  .mh-grid.is-instant .mh-pill,
+  .mh-pill.is-instant-one {
+    transition: none !important;
+  }
+  .mh-grid.is-measuring {
+    display: flex;
+    visibility: hidden;
+  }
+  .mh-grid.is-measuring .mh-pill {
+    position: static;
+    width: auto !important;
+  }
+
+  /* Follow the approved intro: hidden while it plays, revealed with the divisions */
+  .division-landing.intro-playing .mh-chapters,
+  .division-landing.intro-playing .mh-grid,
+  .division-landing[data-reveal-phase='headline'] .mh-chapters,
+  .division-landing[data-reveal-phase='headline'] .mh-grid {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .mh-chapters,
+  .mh-grid {
+    transition:
+      opacity 550ms cubic-bezier(0.22, 0.7, 0.2, 1),
+      transform 550ms cubic-bezier(0.22, 0.7, 0.2, 1);
+  }
+  .mh-grid {
+    transition-delay: 85ms;
+  }
+
+  /* Menu button after the call icon: three bars that become a close mark */
+  .landing .mh-menu-button {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-right: -10px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #fff;
+    cursor: pointer;
+  }
+  .mh-bars {
+    position: relative;
+    width: 22px;
+    height: 16px;
+  }
+  .mh-bars i {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    border-radius: 1px;
+    background: currentColor;
+    transition:
+      transform 420ms var(--mh-ease),
+      opacity 200ms ease,
+      top 420ms var(--mh-ease);
+  }
+  .mh-bars i:nth-child(1) {
+    top: 0;
+  }
+  .mh-bars i:nth-child(2) {
+    top: 7px;
+  }
+  .mh-bars i:nth-child(3) {
+    top: 14px;
+  }
+  .mh-menu-open .mh-bars i:nth-child(1) {
+    top: 7px;
+    transform: rotate(45deg);
+  }
+  .mh-menu-open .mh-bars i:nth-child(2) {
+    opacity: 0;
+  }
+  .mh-menu-open .mh-bars i:nth-child(3) {
+    top: 7px;
+    transform: rotate(-45deg);
+  }
+  html.mh-menu-open,
+  html.mh-menu-open body {
+    overflow: hidden;
+    touch-action: none;
+  }
+  .landing .mh-menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: fixed;
+    z-index: 29;
+    inset: 0;
+    padding: 100px 20px calc(24px + env(safe-area-inset-bottom));
+    background: rgba(8, 24, 20, 0.78);
+    -webkit-backdrop-filter: blur(26px) saturate(1.1);
+    backdrop-filter: blur(26px) saturate(1.1);
+    color: #fff;
+    opacity: 0;
+    visibility: hidden;
+    clip-path: inset(0 0 100% 0);
+    transition:
+      clip-path 520ms var(--mh-ease),
+      opacity 300ms ease,
+      visibility 0s linear 520ms;
+  }
+  .mh-menu-open .landing .mh-menu,
+  html.mh-menu-open .mh-menu {
+    opacity: 1;
+    visibility: visible;
+    clip-path: inset(0 0 0 0);
+    transition:
+      clip-path 560ms var(--mh-ease),
+      opacity 260ms ease,
+      visibility 0s;
+  }
+  .mh-menu-list > * {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    font-family: Manrope, Arial, sans-serif;
+    font-size: 26px;
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    color: #fff;
+    text-decoration: none;
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 200ms ease,
+      transform 200ms ease;
+  }
+  .mh-menu-list > *:last-child {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  }
+  .mh-menu-list svg {
+    width: 20px;
+    height: 20px;
+  }
+  .mh-menu-soon {
+    color: rgba(255, 255, 255, 0.72) !important;
+  }
+  .mh-menu-soon small {
+    font-family: 'DM Sans', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: #b8c4be;
+  }
+  html.mh-menu-open .mh-menu-list > * {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 380ms ease,
+      transform 520ms var(--mh-ease);
+  }
+  html.mh-menu-open .mh-menu-list > :nth-child(1) {
+    transition-delay: 120ms;
+  }
+  html.mh-menu-open .mh-menu-list > :nth-child(2) {
+    transition-delay: 170ms;
+  }
+  html.mh-menu-open .mh-menu-list > :nth-child(3) {
+    transition-delay: 220ms;
+  }
+  html.mh-menu-open .mh-menu-list > :nth-child(4) {
+    transition-delay: 270ms;
+  }
+  .mh-menu-foot {
+    display: grid;
+    justify-items: start;
+    gap: 10px;
+    font-size: 15px;
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+  .mh-menu-foot a {
+    color: #d6dfda;
+    text-decoration: none;
+  }
+  html.mh-menu-open .mh-menu-foot {
+    opacity: 1;
+    transition: opacity 400ms ease 320ms;
+  }
+  .mh-menu-foot .mh-menu-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 22px;
+    min-height: 52px;
+    margin-bottom: 8px;
+    padding: 0 22px 0 24px;
+    background: #fff;
+    color: var(--mh-green);
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .mh-menu-foot .mh-menu-cta svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 599px) and (prefers-reduced-motion: reduce) {
+  .mh *,
+  .mh-menu,
+  .mh-menu * {
+    transition: none !important;
+  }
+}

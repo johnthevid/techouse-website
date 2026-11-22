@@ -1,13 +1,86 @@
 # Current handoff
 
-Updated: 19 November 2026.
+Updated: 22 November 2026.
+
+## Latest: main merged into feature/partnership (22 Nov 2026)
+
+- `feature/partnership` brought up to date with `main` (6450b3b, includes the `bugfix/security` merge) at the user's request. Partnership is still not on `main`.
+- Only conflict: cache-version tags in `site/index.html`; took main's file and reran `refresh-assets.mjs`. `site/app.js` and `site/hover-performance.css` merged automatically.
+- Checks: `node --test tests/*.test.mjs` 36/36, including `partnership-browser.test.mjs` (Node 22 in the cloud container). Safari/physical devices not tested.
+- Not deployed.
+
+## Latest: manual security review and hardening (branch `bugfix/security`, 22 Nov 2026)
+
+- Task: run the claude-security plugin on the whole repository and patch its findings. The plugin could not run in the cloud session (its Workflow and agent tools are unavailable), so a manual review was done instead. It is not the plugin's verified multi-agent scan.
+- Reviewed: `platform/worker.mjs` (sign-in, invitations, TOTP/recovery, sessions, CSRF/origin, rate limits, content validation, headers/CSP), `deployments/techouse-1.0/` adapter and config, platform local/provisioning scripts, browser rendering of saved content (`app.js`, `portfolio.js`, `customizer.js`, `office-ui.js`, `admin.js`, `secure-office.js`), `site/.assetsignore`, and tracked files plus Git history for committed secrets. No XSS, injection, auth bypass or committed secret found.
+- Fixed in `platform/worker.mjs`:
+  1. Second-factor guessing: the five-attempt cap was per sign-in session, so someone with the password could start new sessions for more TOTP guesses (about 40 per 15 minutes). Added a per-account cap of 20 verify attempts per hour (`mfa-user:` rate key).
+  2. Project `createdAt` was stored unvalidated (any JSON type or size). It now accepts only a date string of 40 characters or fewer; anything else becomes the current time.
+- Tests: new `platform/tests/security-hardening.test.mjs` (both fail on the old code). Full suite 34/34 pass, browser tests included.
+- Not changed (noted only): HSTS has no `includeSubDomains`/`preload`, which is acceptable on a workers.dev host but worth adding on a custom domain; the per-email login cap can lock a known admin out for 15 minutes.
+- Merged into `main` at the user's request on 22 Nov 2026 (clean merge; 35/35 tests on the merged main, Node 22 in the cloud container).
+- Deployment: not deployed. The Worker change needs the user's release instruction; no database changes.
+
+## Latest: real-town GPS, menu motion, compact phone projects (branch `feature/solar-gps-projects`, 22 Nov 2026)
+
+- GPS: the live demo already worked but could only pick from 56 suggestion cities (Nasugbu became Tagaytay, Iligan became Cagayan de Oro). `site/assets/data/ph-places.json` (113 KB, 41 KB gzipped, fetched only on tap) holds 1,521 municipalities with provinces and 4,372 places; `experience.js` picks the nearest place within 25 km and fills "Town · Province". The 56-city list remains the fallback. Built by `platform/tools/ph-places/` from GeoNames via the all-the-cities package; credit in `site/assets/data/SOURCES.md` and in the fill message ("Place names from GeoNames"). Checked: Nasugbu, Iligan, Quezon City, Makati, Lipa, Baguio, Cebu, Davao, Tagbilaran, Puerto Princesa, Calamba; Singapore is refused.
+- Phone section menu: items enter 8px / 220 ms, 40 ms apart after the panel drops, leave together in 120 ms; the menu icon turns as it swaps. Reduced motion: no movement.
+- Projects (`solar-calculator.css`, `portfolio.js`): phone rows 112 px photo + text (section 1,977 → 875 px); savings tint without the gold left bar on all sizes; pagination hidden for a single page. Optional guides (`solar-journey.js`): icon, title, contents line and a chevron, joined into one list.
+- Checks: 32/32 (one run had a timing flake in update-101's slide counter; passed alone and on rerun).
+- Not merged to main; not deployed.
+
+## Latest: solar planner steps (branch `feature/solar-planner-steps`, 21 Nov 2026)
+
+- Mockup approved for phone; desktop step 1 kept as before with icons added (user's direction).
+- Step 1 (`site/experience.js`, `site/solar-journey.js`): Material icons home / storefront / factory on the property tiles (added to `icons.js` and `assets/icons/material-symbols.svg` with my_location, light_mode, routine, dark_mode, power, electric_bolt; official 24px weight-400 paths). Phone hides the property photo. "Use my location" uses the browser's position and picks the nearest of the 56 listed cities (approximate coordinates in `experience.js`, 50 km limit); nothing is stored or sent. Hidden when geolocation or a secure context is unavailable.
+- `platform/worker.mjs` Permissions-Policy: `geolocation=(self)` (was `geolocation=()`, which blocked the button). Camera and microphone remain off.
+- Step 2 (`site/divisions.js`): bill, then "When do you use the most electricity?", then "How much of your bill should solar take on?" one at a time; answered questions fold into summaries with Change. No pre-selection; homes see "Suggested for homes" on Day and night, businesses "Suggested for businesses" on Mostly daytime, coverage "Suggested" on Essentials and more. The estimate calculates when both are answered (Calculate button removed) and recalculates on answer changes, and 450 ms after bill or rate typing. Invalid bill or rate shows a note in the result panel. Keyboard: arrows browse, Enter or Space confirms.
+- Taste skill: installed from github.com/Leonxlnx/taste-skill as the user skill `design-taste-frontend` (not in the repo); its form and motion rules were applied. Its site gate targets whole marketing pages and was not run here.
+- Checks: 32/32 tests; impeccable detector flags only pre-existing homepage items (loading dot, intro clip-path, gold glow, stripes).
+- Result card (`site/divisions.js`, `solar-calculator.css`): setup and price, then the Let's talk button; savings, payback, system size, metrics, energy examples and the pricing note sit in `details.estimate-more`. Setup cards: `div.solar-scenario` holding the radio label (name, price, "Saves about ₱… a month") and `details.solar-scenario-more` (summary, payback, parts). Opening a card's details does not select it.
+- Phone section menu (`site/solar-extras.js`, `solar-calculator.css`, under 700px): `.solar-subnav-toggle` names the section in view (the last one whose top reaches 40% of the screen), opens `#solar-subnav-links` as a dropdown, closes on a link, Escape or an outside tap, and marks the current link with `aria-current`. Comparison spacing on phones restored to 32px above. Construction's section bar is unchanged.
+- Not merged to main; not deployed. The demo branch needs main merged in after approval.
+
+## Latest: division and About content from the company presentation (`feature/division-projects`, merged into main 22 Nov 2026; not deployed)
+
+Written in the company's voice from the recorded Taglish company introduction (no quotes, no named speaker; the user's choice). Excluded: pricing, the royalty project, bank minimums, sales Q&A and the Solar Group joint venture (awaiting confirmation).
+
+- Prefabrication (new page in `divisions.js`): how modules are made, standard module specs (7.2 × 3.6 × 3 m, ~23 m², 15 cm walls, 12 cm roof, 3,000–5,000 PSI, up to 3 storeys), uses, delivery FAQ, brief.
+- Elevator engineering (new page): three brands (Hitachi China-made; EPSS by Yida Express Elevator Co., Ltd., Huzhou, per the user; Shanghai Mitsubishi), lift types, installation/maintenance/modernisation, FAQ, brief.
+- Construction: new "Two ways we build" section (precast modules vs cast-in-place up to ~10 storeys) and subnav link.
+- Solar (`solar-journey.js`): BC vs TOPCon and equipment ranges inside the technical reference panel. Calculator unchanged.
+- About (`app.js`): "Our story" timeline and "How we work" values after the CMS-editable introduction.
+- New `site/division-content.css`. Real estate stays generic.
+- Facts to confirm with the client before release are listed in the conversation summary; tests 33 of 33.
+- Prefabrication 3D module (`site/module-3d.js`, styles in `division-content.css`): shaped after the client's factory footage (closed grey concrete box, 2.4 m doorway at one end under a 0.6 m roof canopy, a front window, two recessed panels on the back; client videos are not in the repo), drawn on a canvas with its own projection (no library, no CSS 3D, so Safari matches Chrome). Blocks are painted far to near using separating planes, ordered only where their screen outlines overlap, so there is no clipping, stacked or single. Dragging turns the whole model; on release it coasts with the flick and eases back into the slow sway (no snap). Dimension labels are upright HTML placed at projected points on the edges facing the viewer, glide across when the facing edge changes, and stay inside the frame. "Stack to 3 storeys" drops two more modules in. Pauses off-screen and in hidden tabs; static under reduced motion. Checked at 1280 px and 390 px, including drag and stacking.
+
+## Earlier: project showcase on every division (branch `feature/division-projects`)
+
+From `main`; not merged, not deployed. No database migration: projects stay in the content record, which already accepted a `division` field.
+
+- `site/portfolio.js`: one showcase for all divisions, configured per division (categories, key-fact label, heading). Solar is unchanged (sectors, savings estimate, investment and roof details). Construction (residential/commercial/industrial), Prefabrication (housing, schools & dormitories, commercial), Real estate (residential, commercial, mixed-use) and Elevators (new installation, maintenance, modernisation) show their own facts; a division without published projects shows a "Project stories are on the way" note with an inquiry link.
+- Routes: `#/divisions/<division>/projects/<id>` opens the project dialog over its division page; "Back to project examples" returns to that division's section. Every non-solar division page now has the `#projects` section.
+- Back office (Projects): a Division field switches categories and the key-fact label; solar-only fields (system, payback, maintenance, roof) hide for other divisions; the library filters by division. Records without a division are Solar.
+- `platform/worker.mjs` validates the division and its categories (`projectDivisions`, kept in step with `portfolio.js`). New test `platform/tests/division-projects.test.mjs`.
+- Tests: 33 of 33 pass. Browser-checked: all five division pages, project dialogs, direct project links, and creating/editing/filtering an Elevators project in the back office.
+- Next: real project photos and details from the client (Dasmariñas prefab homes, Malabon, elevator jobs); confirm the Binangonan project may be claimed publicly.
+
+## Latest: phone and tablet homepage merged into main (20 Nov 2026)
+
+`feature/mobile-view` merged into `main` at the user's instruction. Not deployed; publishing still needs a separate release instruction.
+
+- Phones (under 600px): chapter over a 2 × 2 pill grid with a menu (`site/mobile-home.*`). Touch tablets (600px+ wide and tall, no hover): five panels opened by tapping (`site/tablet-home.*`). Desktop and trackpad tablets keep the hover banners. Details in the two feature-branch sections below.
+- Conflicts resolved: `site/index.html` kept main's Solar Calculator assets and added the two new modules, then asset versions were regenerated; `platform/tests/mobile-refinement.test.mjs` kept the phone/tablet branches and main's two-step planner (`data-step="1"`).
+- Tests on the merge: 32 of 32 pass.
 
 ## Latest: repository cleanup (20 Nov 2026)
 
 - `main`: asset-version fix and test (3d236cf), then this cleanup. `develop` fast-forwarded to `main` so feature → develop → main works again.
 - Deleted branches whose commits are all in `main`: `claude/loving-goodall-89njs2`, `integrate/homepage-refinement`, `feature/solar-calcu`, `feature/homepage-refinement` (its demo Worker files live on `demo/cleaned-solar`).
 - Untouched, awaiting the user's decision: `feature/mobile-view` (1 commit not in main, created 20 Nov), `feature/partnership` (1), `feature/page-builder` (3), `feature/staff-chatbot` (5), `feature/tip-assistant` (1). `demo/1.0.1` kept as the preserved snapshot.
-- Demo: `demo/cleaned-solar` is the only branch to deploy `techouse-cleaned` from (WORKFLOW.md, Presentation demo). Live demo, checked 20 Nov: serves the two-step planner and works in a fresh browser, but its asset tags are the stale ones, so returning visitors get the old three-step files. Needs a redeploy from `demo/cleaned-solar`; no Cloudflare token is available in the cloud session.
+- Demo: `demo/cleaned-solar` is the only branch to deploy `techouse-cleaned` from (WORKFLOW.md, Presentation demo). Redeployed 20 Nov 2026, 01:33 UTC; the live index.html asset versions match `demo/cleaned-solar` exactly. Live check: two-step planner, no page errors or failed requests at 1440 and 390 px.
+- `feature/partnership`: `main` merged in (footer keeps the Be a partner link; partnership and Construction inquiry prefills both kept); 33/33 tests.
+- Branch deletions and archive tags are refused from the cloud session; the user deletes `feature/staff-chatbot`, `feature/tip-assistant` and the four merged branches on GitHub. `feature/page-builder` kept on hold; `feature/mobile-view` in progress.
 - Code tidy: removed 288 lines of CSS for the removed planner step and sliders (`experience.css`, `hover-performance.css`, `mobile-refinement.css`, `solar-extras.css`, `content-tools.css`); screenshots before and after are pixel-identical at 1440 and 390 px. Asset versions refreshed.
 - Prettier not run: the repository has no Prettier configuration, and Prettier's defaults would rewrite quoting across the codebase.
 - Checks: 32/32.
@@ -105,7 +178,31 @@ Ten live browser check groups passed with no uncaught errors or remote writes; H
 
 Local review remains 19 passing checks, with approved intro/hover/slider sources unchanged. Inquiry delivery/calendar scheduling remain browser-local demos.
 
-## Latest: project agent skills (feature/homepage-refinement)
+## Latest: touch-tablet homepage (feature/mobile-view)
+
+Added on `feature/mobile-view`; not merged to `main`, not deployed.
+
+- New `site/tablet-home.js` and `site/tablet-home.css`, mounted from `banner.js` like the phone module (they share `TechouseMobileHome.read`).
+- Applies at 600px wide and 600px tall or more on devices without hover (touch tablets: iPad mini, iPad, iPad Pro, Galaxy Tab, open Galaxy Z Fold). Desktop, laptops and tablets with a mouse or trackpad keep the hover banners; landscape phones keep the old accordion.
+- Five panels from the desktop, opened by tapping: a tap opens a panel without navigating, its button goes to the division, the round X (or Escape) closes it, tapping another panel switches. Landscape uses the desktop columns (others greyscale; titles sized to fit); portrait uses stacked bands below the question, with the first band's own photo running up behind the header, blurred and vignetted. The page scrolls normally to About and the footer.
+- Phone breakpoint moved from 767px to 599px so the iPad mini and open Fold get the tablet panels.
+- Fixed an existing `banner.js` crash: Escape on touch layouts referenced an undefined `point`.
+- Tests: mobile-refinement now covers the tablet tap flow at 768 x 1024 and 1024 x 768. 22 of 25 pass; the same 3 older solar-page failures remain (removed `[data-scroll="estimator"]` link).
+
+## Earlier: phone homepage (feature/mobile-view)
+
+Branch `feature/mobile-view` (from `feature/homepage-refinement`) carries the approved phone homepage, from the client proposal's Option 3 "Pill grid". Not merged to `main`; not deployed.
+
+- New `site/mobile-home.js` and `site/mobile-home.css`, loaded from `index.html`; `banner.js` mounts/destroys the module with the landing. Applies under 600px (was 768px until the tablet layout landed); desktop banners are unchanged.
+- Layout: one full-screen division photo, the chosen division as a chapter (counter, headline, label, gold call-to-action), the other four as a balanced 2 × 2 pill grid. Pills are placed absolutely by script, so taps never reflow into extra rows; a returning division takes the tapped pill's slot.
+- Tuned values from the mock-up dials: blur 10%, vignette 80%, shade 115%, photo brightness 135%.
+- Header gains a menu button after the call icon: Our divisions, About Techouse, News, Join us & be a partner (coming soon), Start a project, email, phone. Page scroll is locked while it is open; Escape closes it.
+- Content is read from the rendered banners, so CMS banner text and images carry over. The approved intro is untouched; the chapter and pills follow its reveal phases.
+- Tests: homepage-refinement and mobile-refinement updated for the phone hero and passing. 22 of 25 pass; the 3 failures (round3-browser F3, solar-catalogue-navigation, update-101-browser) also fail without this change: they click the solar page's removed `[data-scroll="estimator"]` link.
+- Mock-ups (proposal and concept pages, stageshow scenes) are not in the repository yet.
+- Next: tablet and unusual-screen mock-ups (iPad mini, iPad, Android and tall tablets, Galaxy Fold, Surface Duo).
+
+## Earlier: project agent skills (feature/homepage-refinement)
 
 Added third-party design skills under `.claude/skills/` so every Claude Code session on this repository loads them: `unslop` (heydamir/unslop, CC BY 4.0, keep the author credit) and `stageshow` (benjitaylor/skills, MIT). Scripts were reviewed before install; no install hooks. `.gitignore` now admits only `.claude/skills/`; other `.claude/` files (local settings, state) stay untracked. No website behavior changed; no deployment. Next: homepage refinement on this branch, starting with an unslop audit. Homepage intro animation remains off-limits without explicit instruction.
 

@@ -121,11 +121,14 @@ window.TechouseContent = (() => {
         }
     window.TechousePortfolio.destroy();
     const section = document.querySelector('#projects');
+    // The division comes from the route (#/divisions/<id>...); projects are filtered to it.
+    const division = path.startsWith('/divisions/') ? path.split('/')[2] : 'solar';
     if (section)
       window.TechousePortfolio.mount(
         section,
         data.projects.filter((p) => p.status !== 'draft'),
         imageURL,
+        division,
       );
     const customizer = document.querySelector('#website-customizer');
     if (customizer) updateCustomizer(customizer, '');
@@ -212,17 +215,17 @@ window.TechouseContent = (() => {
             group.id === 'solar-rate'
               ? rateFields()
               : group.id === 'images'
-              ? `<div class="image-editor-grid">${divisions.map((id) => `<div class="content-field"><label for="banner-upload-${id}">${id.charAt(0).toUpperCase() + id.slice(1)}</label><img class="upload-preview" src="${imageURL(data.images[id] || 'assets/' + defaultImages[id])}" data-default-image="${escape('assets/' + defaultImages[id])}" alt="${id} banner preview"><input id="banner-upload-${id}" type="file" accept="image/jpeg,image/png,image/webp" data-banner-upload="${id}"><label class="restore-image"><input type="checkbox" name="remove-${id}"> Use original image</label></div>`).join('')}</div>`
-              : fields
-                  .filter(group.filter)
-                  .map(([page, selector, label]) => {
-                    const original = (
-                      roots[page].querySelector(selector)?.textContent || ''
-                    ).trim();
-                    const index = fields.findIndex((f) => f[1] === selector);
-                    return `<div class="content-field"><div class="customizer-field-heading"><label for="custom-text-${index}">${escape(label)}</label><button type="button" data-reset-field="${escape(selector)}" aria-label="Restore default for ${escape(label)}">Restore default</button></div><textarea id="custom-text-${index}" name="${escape(selector)}" rows="${label.includes('paragraph') || label.includes('description') ? 4 : 2}" maxlength="2000" data-default="${escape(original)}">${escape(data.text[selector] ?? original)}</textarea></div>`;
-                  })
-                  .join('')
+                ? `<div class="image-editor-grid">${divisions.map((id) => `<div class="content-field"><label for="banner-upload-${id}">${id.charAt(0).toUpperCase() + id.slice(1)}</label><img class="upload-preview" src="${imageURL(data.images[id] || 'assets/' + defaultImages[id])}" data-default-image="${escape('assets/' + defaultImages[id])}" alt="${id} banner preview"><input id="banner-upload-${id}" type="file" accept="image/jpeg,image/png,image/webp" data-banner-upload="${id}"><label class="restore-image"><input type="checkbox" name="remove-${id}"> Use original image</label></div>`).join('')}</div>`
+                : fields
+                    .filter(group.filter)
+                    .map(([page, selector, label]) => {
+                      const original = (
+                        roots[page].querySelector(selector)?.textContent || ''
+                      ).trim();
+                      const index = fields.findIndex((f) => f[1] === selector);
+                      return `<div class="content-field"><div class="customizer-field-heading"><label for="custom-text-${index}">${escape(label)}</label><button type="button" data-reset-field="${escape(selector)}" aria-label="Restore default for ${escape(label)}">Restore default</button></div><textarea id="custom-text-${index}" name="${escape(selector)}" rows="${label.includes('paragraph') || label.includes('description') ? 4 : 2}" maxlength="2000" data-default="${escape(original)}">${escape(data.text[selector] ?? original)}</textarea></div>`;
+                    })
+                    .join('')
           }</section>`,
       )
       .join(
@@ -258,7 +261,11 @@ window.TechouseContent = (() => {
     });
   }
   function projectsPage(top, tabs) {
-    return `<section class="container admin-shell">${top('Solar project stories', 'Add previous work, upload a photo, and choose whether it is published. Keep examples labeled until replaced with approved company projects.')}${tabs('projects')}<div class="customizer-grid"><form class="form-card" id="project-editor"><h2 id="project-editor-title">Add a project</h2><input type="hidden" name="projectId">${[
+    return `<section class="container admin-shell">${top('Project stories', 'Add previous work for any division, upload photos, and choose whether it is published. Keep examples labeled until replaced with approved company projects.')}${tabs('projects')}<div class="customizer-grid"><form class="form-card" id="project-editor"><h2 id="project-editor-title">Add a project</h2><input type="hidden" name="projectId"><label class="content-field">Division<select name="division" data-project-division>${Object.entries(
+      window.TechousePortfolio.divisions,
+    )
+      .map(([id, kind]) => `<option value="${id}">${kind.name}</option>`)
+      .join('')}</select><small>Shown on this division’s page.</small></label>${[
       ['title', 'Project title'],
       ['location', 'Location'],
       ['capacity', 'System capacity'],
@@ -269,8 +276,30 @@ window.TechouseContent = (() => {
       )
       .join(
         '',
-      )}<label class="content-field">Project description<textarea name="description" required maxlength="2500"></textarea></label><h3 class="project-editor-section-heading">Investment & property</h3><p class="project-editor-section-note">Optional details shown in the project portfolio. Leave unknown values blank.</p>${projectDetailFields.map(([name, label, hint]) => `<label class="content-field">${label}<input name="${name}" maxlength="500" placeholder="${escape(hint)}"></label>`).join('')}<h3 class="project-editor-section-heading">Project story</h3>${projectStoryFields.map(([name, label, hint]) => `<label class="content-field">${label}<textarea name="${name}" maxlength="2500" placeholder="${escape(hint)}"></textarea></label>`).join('')}<h3 class="project-editor-section-heading">Photos & publication</h3><label class="content-field">Project photos<input type="file" multiple accept="image/jpeg,image/png,image/webp" data-project-upload><small>Add up to 3 images. Manage or remove each photo below.</small></label><img class="upload-preview" id="project-image-preview" src="assets/solar.jpg" alt="Project image preview"><label class="content-field">Sector<select name="sector"><option value="residential">Residential</option><option value="commercial">Commercial</option><option value="industrial">Industrial</option></select></label><label class="content-field">Status<select name="status"><option value="published">Published</option><option value="draft">Draft</option></select></label><label><input type="checkbox" name="sample" checked> Illustrative sample, not completed company work</label><p id="project-status" role="status"></p><button class="button" type="submit">Save project</button> <button type="button" class="button outline" data-new-project>New project</button></form><div>${data.projects.map((p) => `<article class="form-card project-admin-card"><span class="pill">${p.sample ? 'SAMPLE · ' : ''}${escape(p.status)}</span><h3>${escape(p.title)}</h3><p>${escape(p.location)} · ${escape(p.capacity)}</p><button type="button" class="text-link" data-edit-project="${escape(p.id)}">Edit</button> <button type="button" class="text-link" data-delete-project="${escape(p.id)}">Remove</button></article>`).join('')}</div></div></section>`;
+      )}<label class="content-field">Project description<textarea name="description" required maxlength="2500"></textarea></label><h3 class="project-editor-section-heading">Investment & property</h3><p class="project-editor-section-note">Optional details shown in the project portfolio. Leave unknown values blank. Solar projects also show system, payback, maintenance and roof details.</p>${projectDetailFields.map(([name, label, hint]) => `<label class="content-field" ${name === 'projectCost' ? '' : 'data-solar-only'}>${label}<input name="${name}" maxlength="500" placeholder="${escape(hint)}"></label>`).join('')}<h3 class="project-editor-section-heading">Project story</h3>${projectStoryFields.map(([name, label, hint]) => `<label class="content-field">${label}<textarea name="${name}" maxlength="2500" placeholder="${escape(hint)}"></textarea></label>`).join('')}<h3 class="project-editor-section-heading">Photos & publication</h3><label class="content-field">Project photos<input type="file" multiple accept="image/jpeg,image/png,image/webp" data-project-upload><small>Add up to 3 images. Manage or remove each photo below.</small></label><img class="upload-preview" id="project-image-preview" src="assets/solar.jpg" alt="Project image preview"><label class="content-field">Category<select name="sector"></select></label><label class="content-field">Status<select name="status"><option value="published">Published</option><option value="draft">Draft</option></select></label><label><input type="checkbox" name="sample" checked> Illustrative sample, not completed company work</label><p id="project-status" role="status"></p><button class="button" type="submit">Save project</button> <button type="button" class="button outline" data-new-project>New project</button></form><div>${data.projects.map((p) => `<article class="form-card project-admin-card"><span class="pill">${p.sample ? 'SAMPLE · ' : ''}${escape(p.status)}</span><h3>${escape(p.title)}</h3><p>${escape(p.location)} · ${escape(p.capacity)}</p><button type="button" class="text-link" data-edit-project="${escape(p.id)}">Edit</button> <button type="button" class="text-link" data-delete-project="${escape(p.id)}">Remove</button></article>`).join('')}</div></div></section>`;
   }
+  // Division picks the category list and the label of the key fact (capacity, scope, modules...).
+  function syncProjectDivision(form, sector) {
+    const kind =
+      window.TechousePortfolio.divisions[form.elements.division.value] ||
+      window.TechousePortfolio.divisions.solar;
+    const select = form.elements.sector;
+    const keep = sector ?? select.value;
+    select.replaceChildren(
+      ...Object.entries(kind.sectors).map(([id, label]) => new Option(label, id)),
+    );
+    select.value = Object.hasOwn(kind.sectors, keep) ? keep : Object.keys(kind.sectors)[0];
+    const fact = form.elements.capacity;
+    fact.closest('label').firstChild.textContent = kind.fact;
+    fact.placeholder = kind.factHint;
+    form.querySelectorAll('[data-solar-only]').forEach((el) => {
+      el.hidden = form.elements.division.value !== 'solar';
+    });
+  }
+  document.addEventListener('change', (event) => {
+    const select = event.target.closest('[data-project-division]');
+    if (select) syncProjectDivision(select.form);
+  });
   // Resize uploads before storage; only decoded raster images are accepted.
   async function upload(file) {
     if (!file || !['image/jpeg', 'image/png', 'image/webp'].includes(file.type))
@@ -443,7 +472,8 @@ window.TechouseContent = (() => {
       const project = {
         ...previous,
         id: values.projectId || 'project-' + crypto.randomUUID(),
-        sector: values.sector || 'residential',
+        division: values.division || 'solar',
+        sector: values.sector,
         title: values.title.trim(),
         location: values.location.trim(),
         capacity: values.capacity.trim(),
@@ -464,7 +494,7 @@ window.TechouseContent = (() => {
         ![project.title, project.location, project.capacity, project.description].every(Boolean)
       ) {
         document.querySelector('#project-status').textContent =
-          'Please complete the title, location, capacity and project description.';
+          'Please complete the title, location, key fact and project description.';
         return;
       }
       const next = structuredClone(data);
@@ -501,6 +531,7 @@ window.TechouseContent = (() => {
     delete form.dataset.image;
     delete form.dataset.gallery;
     document.querySelector('#project-image-preview').src = 'assets/solar.jpg';
+    syncProjectDivision(form);
     if (button.hasAttribute('data-edit-project')) {
       const project = data.projects.find((p) => p.id === button.dataset.editProject);
       for (const name of [
@@ -514,7 +545,8 @@ window.TechouseContent = (() => {
       ])
         form.elements[name].value = project[name] || '';
       form.elements.projectId.value = project.id;
-      form.elements.sector.value = project.sector || 'residential';
+      form.elements.division.value = window.TechousePortfolio.divisionOf(project);
+      syncProjectDivision(form, project.sector);
       form.elements.sample.checked = project.sample;
       form.dataset.image = project.image;
       document.querySelector('#project-image-preview').src = imageURL(project.image);
@@ -610,6 +642,7 @@ window.TechouseContent = (() => {
     );
   }
   return {
+    syncProjectDivision,
     imageURL,
     apply,
     page,

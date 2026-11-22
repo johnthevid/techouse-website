@@ -32,7 +32,17 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
       });
     });
     await page.goto(f.env.APP_ORIGIN + '/');
-    await page.waitForSelector('.division-banner');
+    // Phones show the mobile hero; the banners stay in the page as its source
+    await page.waitForSelector(width < 600 ? '[data-mobile-home]' : '.division-banner');
+    if (width < 600) {
+      assert.equal(await page.locator('.division-banners').isVisible(), false);
+      assert.equal(await page.locator('.mh-pill:not(.is-gone)').count(), 4);
+      assert.equal(
+        await page.locator('.mh-chapter.is-on .mh-title').innerText(),
+        'Power your\n tomorrow.'.replace('\n ', '\n'),
+      );
+      assert.equal(await page.locator('.mh-menu-button').count(), 1);
+    }
     if (width === 1440) {
       await page.locator('.skip-intro').click();
       await page.waitForFunction(
@@ -174,7 +184,7 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
       .evaluate((img) => {
         img.src = '/assets/solar.jpg?refinement-slow';
       });
-    await page.waitForSelector('.division-banner.is-image-slow');
+    await page.waitForSelector('.division-banner.is-image-slow', { state: 'attached' });
     release();
     await page.waitForFunction(
       () => document.querySelector('.banner-color-layer').dataset.previewState === 'ready',
@@ -187,7 +197,7 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
       .evaluate((img) => {
         img.src = '/missing-refinement.jpg';
       });
-    await page.waitForSelector('.division-banner.is-image-error');
+    await page.waitForSelector('.division-banner.is-image-error', { state: 'attached' });
     assert.deepEqual(errors, []);
     if (width > 900) {
       await page.locator('.banner-trigger').first().focus();
@@ -203,7 +213,9 @@ test('Brand opening completes, skips and cleans up navigation and failed imagery
   const f = await fixture(t);
   const browser = await chromium.launch({ channel: 'chrome', headless: true });
   t.after(() => browser.close());
-  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const page = await browser.newPage({
+    viewport: { width: 1440, height: 900 },
+  });
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.route('**/*', async (route) => {
@@ -220,7 +232,10 @@ test('Brand opening completes, skips and cleans up navigation and failed imagery
     });
   });
   const unlocked = async () => {
-    await page.waitForSelector('.brand-intro', { state: 'detached', timeout: 8000 });
+    await page.waitForSelector('.brand-intro', {
+      state: 'detached',
+      timeout: 8000,
+    });
     assert.equal(
       await page.evaluate(
         () =>
