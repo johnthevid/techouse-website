@@ -1,106 +1,316 @@
 /**
  * Prefabrication: an animated 3D view of the standard precast module, drawn to scale
- * (7.2 × 3.6 × 3 m, 15 cm walls, 12 cm roof) with CSS 3D transforms. No 3D library.
- * It sways slowly, can be dragged to rotate, and stacks to three storeys on request.
+ * (7.2 × 3.6 × 3 m, 15 cm walls, 12 cm roof) on a canvas with a small built-in 3D
+ * projection: no 3D library and no CSS 3D, so it renders the same in every browser.
+ * The whole model turns (slow sway, or drag); dimension labels are plain text placed
+ * over it and always stay upright, facing the viewer. Stacks to three storeys on request.
  * Holds still under reduced motion and pauses while off-screen or hidden.
  */
 'use strict';
 window.TechouseModule3D = (() => {
-  const M = 34; // pixels per metre
-  const L = 7.2 * M;
-  const W = 3.6 * M;
-  const H = 3 * M;
-  const WALL = Math.max(5, 0.15 * M);
-  const ROOF = Math.max(4, 0.12 * M);
+  // Dimensions in metres.
+  const L = 7.2;
+  const W = 3.6;
+  const H = 3;
+  const WALL = 0.15;
+  const ROOF = 0.12;
+  const OVERHANG_END = 0.3;
+  const CANOPY = 0.5;
   let teardown = () => {};
 
-  // One flat face of the scene; x, y, z are the face centre (y up), sizes in px.
-  const face = (cls, w, h, transform) =>
-    `<div class="m3d-face ${cls}" style="width:${w}px;height:${h}px;transform:translate(-50%,-50%) ${transform}"></div>`;
-
-  // A solid block (used for the walls and the roof slab), centred at x, y, z.
-  function block(cls, x, y, z, lx, ly, lz, inner = 0) {
-    const at = `translate3d(${x}px,${-y}px,${z}px)`;
-    return `<div class="m3d-block ${cls}">${[
-      face('m3d-top', lx, lz, `${at} translateY(${-ly / 2}px) rotateX(90deg)`),
-      face(
-        cls === 'm3d-roof' ? 'm3d-inner' : 'm3d-bottom',
-        lx,
-        lz,
-        `${at} translateY(${ly / 2}px) rotateX(90deg)`,
+  // An axis-aligned block between two corners; kind sets its colour.
+  const box = (x0, y0, z0, x1, y1, z1, kind) => ({ x0, y0, z0, x1, y1, z1, kind });
+  // One module: floor slab, two long walls and the roof slab, open at both ends.
+  // Pieces meet edge to edge (no overlaps), so faces never fight each other.
+  function moduleBoxes(level) {
+    const y = level * H;
+    return [
+      box(-L / 2, y, -W / 2, L / 2, y + WALL, W / 2, 'floor'),
+      box(-L / 2, y + WALL, W / 2 - WALL, L / 2, y + H - ROOF, W / 2, 'wall-front'),
+      box(-L / 2, y + WALL, -W / 2, L / 2, y + H - ROOF, -W / 2 + WALL, 'wall-back'),
+      box(
+        -L / 2 - OVERHANG_END,
+        y + H - ROOF,
+        -W / 2 - CANOPY,
+        L / 2 + OVERHANG_END,
+        y + H,
+        W / 2 + CANOPY,
+        'roof',
       ),
-      face(inner === 1 ? 'm3d-inner' : 'm3d-side', lx, ly, `${at} translateZ(${lz / 2}px)`),
-      face(inner === -1 ? 'm3d-inner' : 'm3d-side', lx, ly, `${at} translateZ(${-lz / 2}px)`),
-      face('m3d-end', lz, ly, `${at} translateX(${lx / 2}px) rotateY(90deg)`),
-      face('m3d-end', lz, ly, `${at} translateX(${-lx / 2}px) rotateY(90deg)`),
-    ].join('')}</div>`;
+    ];
   }
-
-  // The module: floor, two long walls and the roof slab, open at both ends.
-  function module(level) {
-    const y0 = level * H;
-    return `<div class="m3d-module" data-level="${level}">${[
-      block('m3d-floor', 0, y0 + WALL / 2, 0, L, WALL, W),
-      block('m3d-wall', 0, y0 + H / 2, W / 2 - WALL / 2, L, H - ROOF, WALL, -1),
-      block('m3d-wall', 0, y0 + H / 2, -W / 2 + WALL / 2, L, H - ROOF, WALL, 1),
-      block('m3d-roof', 0, y0 + H - ROOF / 2, 0, L + 0.6 * M, ROOF, W + 1 * M),
-    ].join('')}</div>`;
+  // The six faces of a block, each with its outward normal.
+  function faces(b) {
+    const { x0, y0, z0, x1, y1, z1 } = b;
+    return [
+      {
+        n: [0, 1, 0],
+        p: [
+          [x0, y1, z0],
+          [x1, y1, z0],
+          [x1, y1, z1],
+          [x0, y1, z1],
+        ],
+      },
+      {
+        n: [0, -1, 0],
+        p: [
+          [x0, y0, z0],
+          [x0, y0, z1],
+          [x1, y0, z1],
+          [x1, y0, z0],
+        ],
+      },
+      {
+        n: [0, 0, 1],
+        p: [
+          [x0, y0, z1],
+          [x0, y1, z1],
+          [x1, y1, z1],
+          [x1, y0, z1],
+        ],
+      },
+      {
+        n: [0, 0, -1],
+        p: [
+          [x0, y0, z0],
+          [x1, y0, z0],
+          [x1, y1, z0],
+          [x0, y1, z0],
+        ],
+      },
+      {
+        n: [1, 0, 0],
+        p: [
+          [x1, y0, z0],
+          [x1, y0, z1],
+          [x1, y1, z1],
+          [x1, y1, z0],
+        ],
+      },
+      {
+        n: [-1, 0, 0],
+        p: [
+          [x0, y0, z0],
+          [x0, y1, z0],
+          [x0, y1, z1],
+          [x0, y0, z1],
+        ],
+      },
+    ].map((f) => ({ ...f, kind: b.kind }));
   }
-
-  // Dimension labels sit on the scene's edges and turn with it.
-  const label = (text, x, y, z, cls = '') =>
-    `<span class="m3d-label ${cls}" data-x="${x}" data-y="${y}" data-z="${z}">${text}</span>`;
-
-  function markup() {
-    return `<div class="m3d-stage" aria-hidden="true"><div class="m3d-scene">
-      <div class="m3d-ground" style="width:${L + 4 * M}px;height:${W + 4 * M}px;transform:translate(-50%,-50%) rotateX(90deg)"></div>
-      ${module(0)}${module(1)}${module(2)}
-      ${label('7.2 m', 0, -14, W / 2 + 30, 'm3d-length')}
-      ${label('3.6 m', L / 2 + 34, -14, 0, 'm3d-width')}
-      ${label('3 m', -L / 2 - 28, H / 2, W / 2 + 8, 'm3d-height')}
-      ${label('15 cm walls · 12 cm roof', -L / 2 + 20, H + 34, W / 2, 'm3d-note')}
-      ${label('Up to 3 storeys', 0, 3 * H + 40, 0, 'm3d-storeys')}
-    </div></div>`;
+  // Concrete, with the room's interior (inner wall faces, roof underside) in shadow.
+  function baseColour(face) {
+    if (face.kind === 'floor' && face.n[1] === 1) return [176, 170, 158];
+    const inner =
+      (face.kind === 'wall-front' && face.n[2] === -1) ||
+      (face.kind === 'wall-back' && face.n[2] === 1) ||
+      (face.kind === 'roof' && face.n[1] === -1);
+    return inner ? [104, 99, 91] : [222, 217, 205];
   }
 
   function mount(host) {
     teardown();
     if (!host) return;
-    host.insertAdjacentHTML('afterbegin', markup());
-    const scene = host.querySelector('.m3d-scene');
+    host.insertAdjacentHTML(
+      'afterbegin',
+      `<div class="m3d-stage"><canvas aria-hidden="true"></canvas><div class="m3d-labels" aria-hidden="true">
+        <span class="m3d-label" data-anchor="length">7.2 m</span>
+        <span class="m3d-label" data-anchor="width">3.6 m</span>
+        <span class="m3d-label" data-anchor="height">3 m</span>
+        <span class="m3d-label m3d-note" data-anchor="note">15 cm walls · 12 cm roof</span>
+        <span class="m3d-label m3d-storeys" data-anchor="storeys">Up to 3 storeys</span>
+      </div></div>`,
+    );
+    const stage = host.querySelector('.m3d-stage');
+    const canvas = stage.querySelector('canvas');
+    const ctx = canvas.getContext('2d');
+    const labels = [...stage.querySelectorAll('.m3d-label')];
     const toggle = host.querySelector('[data-m3d-stack]');
     const calm = matchMedia('(prefers-reduced-motion: reduce)');
     const controller = new AbortController();
     const options = { signal: controller.signal };
-    let yaw = -32;
-    let pitch = -24;
+    const levels = [0, 1, 2].map((level) => ({ level, boxes: moduleBoxes(level) }));
+    // Labels sit along the edges facing the camera (sx, sz: which side it is on).
+    const anchorFor = (key, sx, sz) =>
+      ({
+        length: [0, -0.2, sz * (W / 2 + CANOPY + 0.5)],
+        width: [sx * (L / 2 + OVERHANG_END + 0.8), -0.2, 0],
+        height: [-sx * (L / 2 + OVERHANG_END + 0.7), H / 2, sz * (W / 2)],
+        note: [-sx * (L / 2 - 0.8), H + 0.8, sz * (W / 2)],
+        storeys: [0, 3 * H + 0.9, 0],
+      })[key];
+    let yaw = -0.6;
+    let elevation = 0.42;
+    let stack = 0; // 0 = one module, 1 = three storeys (animated between)
+    let target = 0;
     let drag = null;
     let visible = false;
     let frame = 0;
     let last = 0;
     let t = 0;
-    const labels = [...host.querySelectorAll('.m3d-label')];
-    const paint = () => {
-      const stacked = host.classList.contains('is-stacked');
-      scene.style.transform = `translateY(${stacked ? 96 : 20}px) scale(${stacked ? 0.72 : 1}) rotateX(${pitch}deg) rotateY(${yaw}deg)`;
-      // Labels stay on their edges but always face the viewer.
-      for (const el of labels)
-        el.style.transform = `translate3d(${el.dataset.x}px,${-el.dataset.y}px,${el.dataset.z}px) rotateY(${-yaw}deg) rotateX(${-pitch}deg) scale(${stacked ? 1 / 0.72 : 1}) translate(-50%,-50%)`;
+    let size = { w: 0, h: 0 };
+
+    // Camera: orbit by yaw (around the vertical axis) and elevation (looking down).
+    const DIST = 26;
+    const rotate = ([x, y, z], view) => {
+      const cy = Math.cos(view.yaw);
+      const sy = Math.sin(view.yaw);
+      const ce = Math.cos(view.elevation);
+      const se = Math.sin(view.elevation);
+      const x1 = x * cy + z * sy;
+      const z1 = -x * sy + z * cy;
+      return [x1, y * ce - z1 * se, y * se + z1 * ce];
     };
-    // A slow sway keeps the labels readable instead of spinning the module fully round.
+    function project([x, y, z], view) {
+      const cam = rotate([x, y - view.centre, z], view);
+      const k = view.focal / (DIST - cam[2]);
+      return { x: view.cx + cam[0] * k, y: view.cy - cam[1] * k, cam };
+    }
+    const LIGHT = (() => {
+      const v = [-0.35, 0.8, 0.5];
+      const m = Math.hypot(...v);
+      return v.map((c) => c / m);
+    })();
+
+    function draw() {
+      if (!size.w) return;
+      const ease = stack * stack * (3 - 2 * stack);
+      const view = {
+        yaw,
+        elevation,
+        // Frame one module, or zoom out to the three-storey stack.
+        focal: (Math.min(size.w * 0.72, size.h * 1.15) * DIST) / 9.5 / (1 + ease * 0.75),
+        centre: H / 2 + ease * H,
+        cx: size.w / 2,
+        cy: size.h * 0.5,
+      };
+      ctx.clearRect(0, 0, size.w, size.h);
+      // Soft ground shadow under the footprint.
+      const g = project([0, 0, 0], view);
+      const r = Math.max(40, (size.w * 0.3) / (1 + ease * 0.75));
+      const shadow = ctx.createRadialGradient(g.x, g.y, 0, g.x, g.y, r);
+      shadow.addColorStop(0, 'rgba(23,59,48,0.2)');
+      shadow.addColorStop(1, 'rgba(23,59,48,0)');
+      ctx.fillStyle = shadow;
+      ctx.beginPath();
+      ctx.ellipse(g.x, g.y, r, r * 0.28, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Camera position in model space, for ordering blocks and placing labels.
+      const ce = Math.cos(elevation);
+      const camera = [
+        -DIST * ce * Math.sin(yaw),
+        DIST * Math.sin(elevation) + view.centre,
+        DIST * ce * Math.cos(yaw),
+      ];
+      // Gather every shown block, lifted by its drop-in offset.
+      const blocks = [];
+      for (const { level, boxes } of levels) {
+        const shown = level === 0 ? 1 : Math.max(0, Math.min(1, ease * 2 - (level - 1) * 0.6));
+        if (shown <= 0) continue;
+        const drop = (1 - shown) * 3.2;
+        for (const b of boxes)
+          blocks.push({ ...b, y0: b.y0 + drop, y1: b.y1 + drop, alpha: shown });
+      }
+      // Blocks never overlap, so a plane always separates any two of them: the one on
+      // the camera's side of that plane is nearer. Paint far blocks first.
+      const axes = [
+        ['x0', 'x1', 0],
+        ['y0', 'y1', 1],
+        ['z0', 'z1', 2],
+      ];
+      const behind = (a, b) => {
+        for (const [lo, hi, i] of axes) {
+          if (a[hi] <= b[lo]) return camera[i] > b[lo];
+          if (b[hi] <= a[lo]) return camera[i] < a[lo];
+        }
+        return false;
+      };
+      const order = [];
+      const state = new Map();
+      const visit = (b) => {
+        if (state.get(b)) return;
+        state.set(b, 1);
+        for (const other of blocks) if (other !== b && behind(other, b)) visit(other);
+        order.push(b);
+      };
+      blocks.forEach(visit);
+      // Within a convex block, front faces never overlap, so any order works.
+      const polys = [];
+      for (const b of order)
+        for (const f of faces(b)) {
+          const pts = f.p.map((point) => project(point, view));
+          const n = rotate(f.n, view);
+          const c = pts.reduce((acc, q) => acc.map((v, i) => v + q.cam[i] / 4), [0, 0, 0]);
+          // Back-face cull against the camera at (0, 0, DIST).
+          if (-n[0] * c[0] - n[1] * c[1] + n[2] * (DIST - c[2]) <= 0) continue;
+          const lit = n[0] * LIGHT[0] + n[1] * LIGHT[1] + n[2] * LIGHT[2];
+          const light = 0.62 + 0.38 * Math.max(0, lit);
+          polys.push({
+            pts,
+            alpha: b.alpha,
+            rgb: baseColour(f).map((v) => Math.round(v * light)),
+          });
+        }
+      ctx.lineJoin = 'round';
+      for (const p of polys) {
+        ctx.globalAlpha = p.alpha;
+        ctx.beginPath();
+        p.pts.forEach((q, i) => (i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y)));
+        ctx.closePath();
+        ctx.fillStyle = `rgb(${p.rgb.join(',')})`;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(23,59,48,0.22)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      // Labels: plain upright text placed at their projected points.
+      for (const el of labels) {
+        const key = el.dataset.anchor;
+        const q = project(
+          anchorFor(key, Math.sign(camera[0]) || 1, Math.sign(camera[2]) || 1),
+          view,
+        );
+        // Keep every label inside the frame, whatever the angle.
+        const hw = el.offsetWidth / 2 + 8;
+        const hh = el.offsetHeight / 2 + 8;
+        const x = Math.max(hw, Math.min(size.w - hw, q.x));
+        const y = Math.max(hh, Math.min(size.h - hh, q.y));
+        el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+        el.classList.toggle(
+          'is-hidden',
+          (key === 'storeys' && ease < 0.95) || (key === 'note' && ease > 0.05),
+        );
+      }
+    }
+
+    const resize = () => {
+      const rect = stage.getBoundingClientRect();
+      const ratio = Math.min(2, devicePixelRatio || 1);
+      size = { w: rect.width, h: rect.height };
+      canvas.width = Math.round(rect.width * ratio);
+      canvas.height = Math.round(rect.height * ratio);
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      draw();
+    };
+
+    const running = () => visible && !document.hidden && !calm.matches;
     const tick = (now) => {
       frame = 0;
-      const dt = last ? Math.min(64, now - last) : 16;
+      const dt = last ? Math.min(64, now - last) / 1000 : 0.016;
       last = now;
       if (!drag) {
-        t += dt / 1000;
-        yaw = -32 + Math.sin(t * 0.45) * 18;
+        t += dt;
+        yaw = -0.6 + Math.sin(t * 0.45) * 0.34;
       }
-      paint();
-      if (visible && !calm.matches && !document.hidden) frame = requestAnimationFrame(tick);
+      stack += (target - stack) * Math.min(1, dt * 4.5);
+      if (Math.abs(target - stack) < 0.001) stack = target;
+      draw();
+      if (running()) frame = requestAnimationFrame(tick);
     };
     const play = () => {
-      if (!frame && visible && !calm.matches && !document.hidden) {
+      if (!frame && running()) {
         last = 0;
         frame = requestAnimationFrame(tick);
       }
@@ -114,20 +324,30 @@ window.TechouseModule3D = (() => {
       if (visible) play();
       else stop();
     });
-    watcher.observe(host);
+    watcher.observe(stage);
+    const sizer = new ResizeObserver(resize);
+    sizer.observe(stage);
     document.addEventListener(
       'visibilitychange',
       () => (document.hidden ? stop() : play()),
       options,
     );
-    calm.addEventListener('change', () => (calm.matches ? stop() : play()), options);
+    calm.addEventListener(
+      'change',
+      () => {
+        if (calm.matches) {
+          stop();
+          draw();
+        } else play();
+      },
+      options,
+    );
 
-    // Drag to turn the module; the sway resumes from where it was left.
-    const stage = host.querySelector('.m3d-stage');
+    // Drag turns the whole model; the sway resumes from where it was left.
     stage.addEventListener(
       'pointerdown',
       (event) => {
-        drag = { x: event.clientX, y: event.clientY, yaw, pitch };
+        drag = { x: event.clientX, y: event.clientY, yaw, elevation };
         stage.setPointerCapture(event.pointerId);
         stage.classList.add('is-dragging');
       },
@@ -137,9 +357,12 @@ window.TechouseModule3D = (() => {
       'pointermove',
       (event) => {
         if (!drag) return;
-        yaw = drag.yaw + (event.clientX - drag.x) * 0.4;
-        pitch = Math.max(-60, Math.min(-6, drag.pitch - (event.clientY - drag.y) * 0.25));
-        paint();
+        yaw = drag.yaw + (event.clientX - drag.x) * 0.008;
+        elevation = Math.max(
+          0.08,
+          Math.min(1.1, drag.elevation + (event.clientY - drag.y) * 0.005),
+        );
+        draw();
       },
       options,
     );
@@ -147,7 +370,10 @@ window.TechouseModule3D = (() => {
       if (!drag) return;
       drag = null;
       stage.classList.remove('is-dragging');
-      t = Math.asin(Math.max(-1, Math.min(1, (yaw + 32) / 18))) / 0.45 || 0;
+      // Continue the sway from the dragged angle, without a jump.
+      const s = Math.max(-1, Math.min(1, (yaw + 0.6) / 0.34));
+      t = Math.asin(s) / 0.45;
+      if (Math.abs((yaw + 0.6) / 0.34) > 1) yaw = -0.6 + Math.sign(yaw + 0.6) * 0.34;
     };
     stage.addEventListener('pointerup', release, options);
     stage.addEventListener('pointercancel', release, options);
@@ -155,20 +381,24 @@ window.TechouseModule3D = (() => {
     toggle?.addEventListener(
       'click',
       () => {
-        const stacked = !host.classList.contains('is-stacked');
-        host.classList.toggle('is-stacked', stacked);
-        toggle.setAttribute('aria-pressed', String(stacked));
-        toggle.querySelector('span').textContent = stacked
+        target = target ? 0 : 1;
+        toggle.setAttribute('aria-pressed', String(Boolean(target)));
+        toggle.querySelector('span').textContent = target
           ? 'Show one module'
           : 'Stack to 3 storeys';
-        paint();
+        if (running()) play();
+        else {
+          stack = target;
+          draw();
+        }
       },
       options,
     );
-    paint();
+    resize();
     teardown = () => {
       stop();
       watcher.disconnect();
+      sizer.disconnect();
       controller.abort();
       teardown = () => {};
     };
