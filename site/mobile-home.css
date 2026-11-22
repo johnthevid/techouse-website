@@ -434,15 +434,17 @@
     width: 20px;
     height: 20px;
   }
-  .mh-menu-soon {
-    color: rgba(255, 255, 255, 0.72) !important;
+  .mh-menu-partner > span {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
-  .mh-menu-soon small {
+  .mh-menu-partner small {
     font-family: 'DM Sans', Arial, sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 500;
     letter-spacing: 0.01em;
-    color: #b8c4be;
+    color: #e6cf99;
   }
   html.mh-menu-open .mh-menu-list > * {
     opacity: 1;

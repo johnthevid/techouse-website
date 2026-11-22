@@ -1,5 +1,9 @@
 # Current handoff
 
+## Main now includes the partner program (22 Nov 2026, not deployed)
+
+Merged `claude/busy-hopper-jnb9qg` (Be a partner page, application page, partner banners, Refer & Earn links, review fixes) into `main` at the user's request, after a code review whose six findings were fixed (partner applications kept out of project-inquiry history and the repeat-inquiry prompt, back-office labelling, swipe reset, build-stamp date guard, header CTA suppression, new `platform/tests/partner-program.test.mjs`). Conflicts with the `unslop` polish were resolved by keeping main's sentence-case footer and kicker-free About page and re-adding the partner links/promo; asset versions regenerated. Tests 36/36; public and back-office routes smoke-checked at 1440 and 390 with no errors or overflow.
+
 ## Main now includes `unslop` (22 Nov 2026, not deployed)
 
 Merged `unslop` into `main` on top of the security hardening and footer stamp already there. Conflicts were the footer line (kept the sentence-case version with the stamp and LinkedIn) and asset versions (regenerated with `refresh-assets.mjs`). Checks: 35/35 tests, 0 page errors on 16 routes at desktop and phone width. The live site is still the 4 Nov release; publishing needs the user's release instruction.
@@ -9,7 +13,28 @@ Merged `unslop` into `main` on top of the security hardening and footer stamp al
 - Every footer shows branch · version (build) · last updated in Manila time, from `site/build-info.js`, written by `deployments/techouse-1.0/refresh-assets.mjs` (branch hidden on `main`). See WORKFLOW.md.
 - LinkedIn links to the official page (linkedin.com/in/techouse-construction-corporation-969516415) instead of "coming soon".
 
+
+## Footer: build stamp and LinkedIn (applied to every branch)
+
+- Every footer shows branch · version (build) · last updated in Manila time, from `site/build-info.js`, written by `deployments/techouse-1.0/refresh-assets.mjs` (branch hidden on `main`). See WORKFLOW.md.
+- LinkedIn links to the official page (linkedin.com/in/techouse-construction-corporation-969516415) instead of "coming soon".
+
 Updated: 22 November 2026.
+
+## Latest: Be a partner page and partner banners (branch `claude/busy-hopper-jnb9qg`, 22 Nov 2026)
+
+- Task: build the solar sales partner page from the agent agreement (Solar Sales Agency Agreement) and the user-approved Claude Design draft, in the site's current design system, with catchy promo banners and lighter mobile/desktop copy.
+- New `site/partner.js` and `site/partner.css`. Route `#/partnership` reuses the division-page cover, sticky subnav and question list. Order (user's): cover "Refer solar. Earn 5%." → earnings slider (illustration only) → 7-step journey slideshow with n/7 progress and photos → plain-words term sheet with "Read the fine print" → You / Techouse expectations → questions → dark close with an oversized gold button. No eyebrow labels. Phones hide section ledes and role descriptions.
+- Terms shown publicly (user confirmed): 5% per closed, signed and paid project; paid within 7 days of final payment; 6-month renewing term; 15 days' notice; chargebacks, confidentiality, responsibility, Philippine law/Makati venue in the fine print. The general manager's name and ID number are not on the site.
+- Application page `#/partnership/apply` (`TechousePartner.applyPage`/`mountApply`): three steps (About you → Your network → Review) with per-step validation, role tiles, audience tiles, a review list and three required agreements; a green side panel shows what happens next. It saves through `window.TechouseInquiries.add` (new in `app.js`) into the same browser-local demo inquiries with `topic: 'partnership'`; back-office cards show a "Partner application" pill. Nothing is sent to Techouse; the page says so. Old `#/inquiry?topic=partnership` links redirect to the application page.
+- Banners: Solar page after project examples (₱25,000 worked example, labelled), About after "How we work" (three-step route), Divisions strip above the directory, Updates strip after the posts. Homepage banners and intro untouched.
+- Navigation: header "Join Us!" placeholder → "Be a partner" link; phone menu "Coming soon" → "Be a partner · Earn 5% referring solar clients"; footer Explore gains "Be a partner". On the partner page the header action reads "Become a partner".
+- Landing header (`banner.js`): "Refer & Earn" button (handshake icon, gold outline, metallic gold on hover) between Call us and Request a quote, linking to `#/partnership`; it fades in with the existing header actions, so the intro is unchanged. Hidden under 600px, where the phone menu carries the link. Footer Let's talk gains "Refer & earn 5%". Checked at 1440, 1024, 820 and 390.
+- Partner pages (`#/partnership`, `#/partnership/apply`): the header hides Call us and the phone menu's duplicate "Become a partner" item, leaving the "Be a partner" nav link. The footer Explore column no longer lists Be a partner (Let's talk keeps "Refer & earn 5%"). Merged the remote footer build-stamp/LinkedIn commits; `site/index.html` conflict resolved by regenerating asset versions.
+- Photos are existing site assets (Unsplash and third-party reference projects), marked "Illustrative photo" on the journey.
+- `platform/tests/mobile-refinement.test.mjs`: phone menu label expectation updated. Tests 35/35 (Node 22 in the cloud container). Browser-checked at 1440 and 390: calculator, slideshow (buttons, dots, arrow keys, swipe), fine print, inquiry prefill, no console errors or horizontal overflow. Asset versions refreshed with `deployments/techouse-1.0/refresh-assets.mjs`.
+- To confirm with Techouse: what the 5% is calculated on, lead attribution between partners, how soon applicants are called, and the company name (agreement says "Techouse Construction Corporation"; site says "Techouse Technology Construction Corp").
+- Not merged to main; not deployed. Supersedes the generic draft on `feature/partnership`.
 
 ## Latest: manual security review and hardening (branch `bugfix/security`, 22 Nov 2026)
 

@@ -239,15 +239,16 @@ function routeInfo() {
 function buildStamp(own = false) {
   const b = window.TechouseBuild;
   if (!b) return '';
-  const when = new Intl.DateTimeFormat('en-PH', {
+  const updated = new Date(b.updated);
+  const when = Number.isFinite(+updated) ? new Intl.DateTimeFormat('en-PH', {
     timeZone: 'Asia/Manila',
     day: 'numeric',
     month: 'short',
     year: 'numeric',
     hour: 'numeric',
     minute: '2-digit',
-  }).format(new Date(b.updated));
-  const parts = [b.branch && b.branch !== 'main' ? `Branch ${b.branch}` : '', `Version ${b.version} (build ${b.build})`, `Updated ${when} PHT`];
+  }).format(updated) : '';
+  const parts = [b.branch && b.branch !== 'main' ? `Branch ${b.branch}` : '', `Version ${b.version} (build ${b.build})`, when ? `Updated ${when} PHT` : ''];
   return `<p class="footer-build${own ? ' container' : ''}">${parts.filter(Boolean).map(esc).join(' · ')}</p>`;
 }
 
@@ -260,7 +261,9 @@ function syncInquiryCta() {
   );
   if (!headerCta || document.body.classList.contains('office-page')) return;
   const candidates = [
-    ...document.querySelectorAll('#main a.button[href*="/inquiry"], #footer a[href*="/inquiry"]'),
+    ...document.querySelectorAll(
+      '#main a.button[href*="/inquiry"], #main a.button[href*="/partnership/apply"], #footer a[href*="/inquiry"]',
+    ),
   ];
   const visible = new Set();
   inquiryCtaObserver = new IntersectionObserver(
@@ -292,10 +295,16 @@ function renderHeader(path) {
   }
   const solarPage = /^\/divisions\/solar(?:\/|$)/.test(path);
   const divisionId = getDivision(path.split('/')[2])?.id;
-  const inquiryLink = divisionId ? '#/inquiry?division=' + divisionId : '#/inquiry';
-  const inquiryLabel = solarPage ? 'Request a quote' : 'Start a project';
+  const partnerPage = path === '/partnership';
+  const partnerSection = path.startsWith('/partnership');
+  const inquiryLink = partnerPage
+    ? window.TechousePartner.applyLink
+    : divisionId
+      ? '#/inquiry?division=' + divisionId
+      : '#/inquiry';
+  const inquiryLabel = partnerPage ? 'Become a partner' : solarPage ? 'Request a quote' : 'Start a project';
   $('#header').innerHTML =
-    `<div class="container nav"><a href="#/" aria-label="Techouse home">${brand}</a><nav class="nav-links" id="site-nav" aria-label="Main navigation"><a class="${path.startsWith('/division') ? 'active' : ''}" href="#/divisions">Our divisions</a><a class="${path === '/about' ? 'active' : ''}" href="#/about">About Techouse</a><a class="${path === '/updates' ? 'active' : ''}" href="#/updates">News</a><span class="nav-placeholder" role="link" aria-disabled="true" title="Coming soon">Join us</span><a class="mobile-inquiry" href="${inquiryLink}">${inquiryLabel} ${arrow}</a></nav><div class="nav-actions"><a class="header-call" href="tel:+639855626888" aria-label="Call Techouse at +63 985 562 6888">${window.TechouseIcons.icon('call')}<span>Call us</span></a><a class="button small" href="${inquiryLink}">${inquiryLabel} ${arrow}</a><button class="menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">${window.TechouseIcons.icon('menu')}</button></div></div>`;
+    `<div class="container nav"><a href="#/" aria-label="Techouse home">${brand}</a><nav class="nav-links" id="site-nav" aria-label="Main navigation"><a class="${path.startsWith('/division') ? 'active' : ''}" href="#/divisions">Our divisions</a><a class="${path === '/about' ? 'active' : ''}" href="#/about">About Techouse</a><a class="${path === '/updates' ? 'active' : ''}" href="#/updates">News</a><a class="${partnerSection ? 'active' : ''}" href="#/partnership">Be a partner</a>${partnerSection ? '' : `<a class="mobile-inquiry" href="${inquiryLink}">${inquiryLabel} ${arrow}</a>`}</nav><div class="nav-actions">${partnerSection ? '' : `<a class="header-call" href="tel:+639855626888" aria-label="Call Techouse at +63 985 562 6888">${window.TechouseIcons.icon('call')}<span>Call us</span></a>`}<a class="button small" href="${inquiryLink}">${inquiryLabel} ${arrow}</a><button class="menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">${window.TechouseIcons.icon('menu')}</button></div></div>`;
 }
 function renderFooter(path) {
   const office = path === '/office' || path.startsWith('/office/');
@@ -306,7 +315,7 @@ function renderFooter(path) {
     return;
   }
   $('#footer').innerHTML =
-    `<div class="container"><div class="footer-top"><div class="footer-brand"><a href="#/" aria-label="Techouse home">${brand}</a><p class="footer-company-name">Techouse Technology Construction Corp</p><p class="footer-copyright">© ${new Date().getFullYear()} Techouse. All rights reserved.</p></div><div class="footer-col"><span>Explore</span><a href="#/divisions">Our divisions</a><a href="#/about">About Techouse</a><a href="#/updates">Company updates</a><a href="#/office">Employee back office</a></div><div class="footer-col"><span>Let’s talk</span><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a><a href="tel:+639855626888">+63 985 562 6888</a><a href="#/inquiry">Start a project ${arrow}</a></div><nav class="footer-col footer-socials" aria-label="Social media"><span>Social</span><a href="https://www.facebook.com/profile.php?id=61590728812899" target="_blank" rel="noopener noreferrer">Facebook ↗</a><a href="https://www.tiktok.com/@asiatechouse" target="_blank" rel="noopener noreferrer">TikTok ↗</a><a href="https://www.linkedin.com/in/techouse-construction-corporation-969516415/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a></nav></div>${buildStamp()}</div>`;
+    `<div class="container"><div class="footer-top"><div class="footer-brand"><a href="#/" aria-label="Techouse home">${brand}</a><p class="footer-company-name">Techouse Technology Construction Corp</p><p class="footer-copyright">© ${new Date().getFullYear()} Techouse. All rights reserved.</p></div><div class="footer-col"><span>Explore</span><a href="#/divisions">Our divisions</a><a href="#/about">About Techouse</a><a href="#/updates">Company updates</a><a href="#/office">Employee back office</a></div><div class="footer-col"><span>Let’s talk</span><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a><a href="tel:+639855626888">+63 985 562 6888</a><a href="#/inquiry">Start a project ${arrow}</a><a class="footer-partner-link" href="#/partnership">Refer &amp; earn 5% ${arrow}</a></div><nav class="footer-col footer-socials" aria-label="Social media"><span>Social</span><a href="https://www.facebook.com/profile.php?id=61590728812899" target="_blank" rel="noopener noreferrer">Facebook ↗</a><a href="https://www.tiktok.com/@asiatechouse" target="_blank" rel="noopener noreferrer">TikTok ↗</a><a href="https://www.linkedin.com/in/techouse-construction-corporation-969516415/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a></nav></div>${buildStamp()}</div>`;
 }
 const breadcrumb = (title) =>
   `<div class="container breadcrumb"><a href="#/">Home</a><span>/</span><span>${esc(title)}</span></div>`;
@@ -358,17 +367,18 @@ function divisionPage(id) {
   return d ? window.TechouseDivisions.page(d, divisions, elevatorArt, arrow) : notFound();
 }
 function about() {
-  return `${breadcrumb('About Techouse')}<section class="container page-hero about-introduction"><h1>New ways to build.<br>More ways forward.</h1><p>Techouse brings construction technologies and solar energy solutions to the Philippines—connecting your plans with possibilities for the spaces you build and the energy you use.</p></section><div class="container content-columns about-company"><div><h2>One company.<br>Five ways to move forward.</h2><p>Techouse Technology Construction Corp brings together construction, solar energy, prefabricated buildings, real estate development and elevator engineering. Each division offers a different starting point for your project.</p><p>Whether you’re exploring rooftop solar, planning a building or considering a new use for your property, start with what you want to achieve. Explore the relevant division, share your requirements, and discuss the next step with our team.</p><a class="text-link" href="#/divisions">Find your division ${arrow}</a></div>${window.TechouseAbout.panel()}</div><section class="container about-story"><div class="section-heading"><h2>From lifts<br>to rooftops.</h2><p>Techouse grew one practical step at a time, adding each division when we could stand behind it.</p></div><ol><li><strong>Where we started</strong><p>Before solar, Techouse offered two things: construction technology and elevators, supplied and serviced through manufacturers in China.</p></li><li><strong>New ways to build</strong><p>We brought steel-mould building to the Philippines: precast concrete modules cast in steel moulds, and cast-in-place construction poured on site.</p></li><li><strong>Solar energy</strong><p>With Skyworth panels, inverters and batteries, we added solar for homes and businesses, sized to how each property really uses power.</p></li><li><strong>Five divisions today</strong><p>Construction, prefabrication, solar, real estate development and elevator engineering: one team for the whole project.</p></li></ol></section><section class="container about-values"><div class="section-heading"><h2>Practical, honest,<br>built to last.</h2></div><div><article><h3>Direct from the source</h3><p>We buy from manufacturers through our partners in China, so our prices don’t carry layers of resellers.</p></article><article><h3>Built to be maintained</h3><p>Nothing lasts without care. We plan maintenance from day one, whether it’s a lift, a solar system or a building.</p></article><article><h3>Honest numbers</h3><p>We size solar on realistic sun hours and efficiency, not best-case figures, and we’ll tell you when a project isn’t worth it.</p></article><article><h3>Made for local conditions</h3><p>We plan around Philippine realities: 220-volt three-phase supply, road and crane limits, lot setbacks and island logistics.</p></article></div></section><section class="container about-pathways"><div class="section-heading"><h2>Start with your next step.</h2></div><div>${divisions.map((d) => `<a href="#/divisions/${d.id}"><span>${d.number}</span><strong>${esc(d.short)}</strong>${arrow}</a>`).join('')}</div></section>${cta('Have a project in mind?', 'Tell us what you’re planning. We’ll help you find the right conversation to start.')}`;
+  return `${breadcrumb('About Techouse')}<section class="container page-hero about-introduction"><h1>New ways to build.<br>More ways forward.</h1><p>Techouse brings construction technologies and solar energy solutions to the Philippines—connecting your plans with possibilities for the spaces you build and the energy you use.</p></section><div class="container content-columns about-company"><div><h2>One company.<br>Five ways to move forward.</h2><p>Techouse Technology Construction Corp brings together construction, solar energy, prefabricated buildings, real estate development and elevator engineering. Each division offers a different starting point for your project.</p><p>Whether you’re exploring rooftop solar, planning a building or considering a new use for your property, start with what you want to achieve. Explore the relevant division, share your requirements, and discuss the next step with our team.</p><a class="text-link" href="#/divisions">Find your division ${arrow}</a></div>${window.TechouseAbout.panel()}</div><section class="container about-story"><div class="section-heading"><h2>From lifts<br>to rooftops.</h2><p>Techouse grew one practical step at a time, adding each division when we could stand behind it.</p></div><ol><li><strong>Where we started</strong><p>Before solar, Techouse offered two things: construction technology and elevators, supplied and serviced through manufacturers in China.</p></li><li><strong>New ways to build</strong><p>We brought steel-mould building to the Philippines: precast concrete modules cast in steel moulds, and cast-in-place construction poured on site.</p></li><li><strong>Solar energy</strong><p>With Skyworth panels, inverters and batteries, we added solar for homes and businesses, sized to how each property really uses power.</p></li><li><strong>Five divisions today</strong><p>Construction, prefabrication, solar, real estate development and elevator engineering: one team for the whole project.</p></li></ol></section><section class="container about-values"><div class="section-heading"><h2>Practical, honest,<br>built to last.</h2></div><div><article><h3>Direct from the source</h3><p>We buy from manufacturers through our partners in China, so our prices don’t carry layers of resellers.</p></article><article><h3>Built to be maintained</h3><p>Nothing lasts without care. We plan maintenance from day one, whether it’s a lift, a solar system or a building.</p></article><article><h3>Honest numbers</h3><p>We size solar on realistic sun hours and efficiency, not best-case figures, and we’ll tell you when a project isn’t worth it.</p></article><article><h3>Made for local conditions</h3><p>We plan around Philippine realities: 220-volt three-phase supply, road and crane limits, lot setbacks and island logistics.</p></article></div></section><div class="container">${window.TechousePartner.promo('about')}</div><section class="container about-pathways"><div class="section-heading"><h2>Start with your next step.</h2></div><div>${divisions.map((d) => `<a href="#/divisions/${d.id}"><span>${d.number}</span><strong>${esc(d.short)}</strong>${arrow}</a>`).join('')}</div></section>${cta('Have a project in mind?', 'Tell us what you’re planning. We’ll help you find the right conversation to start.')}`;
 }
 
 // Returning visitors can review browser-local requests without accidentally creating duplicates.
 function mountInquiryHistory(showCurrent = true) {
   const grid = document.querySelector('.contact-grid');
-  if (!grid || !inquiries.length) return;
+  const saved = [...inquiries]
+    .reverse()
+    .filter((q) => q && typeof q.id === 'string' && !isPartnerApplication(q));
+  if (!grid || !saved.length) return;
   grid.classList.add('inquiry-workspace');
   document.body.classList.add('has-saved-inquiry');
-  const saved = [...inquiries].reverse().filter((q) => q && typeof q.id === 'string');
-  if (!saved.length) return;
   let history = document.querySelector('#saved-inquiry-history');
   if (!history) {
     history = document.createElement('section');
@@ -550,6 +560,18 @@ function showSavedInquiry(q) {
   expansion.dataset.revealed = 'true';
 }
 window.TechouseInquiry = { showSavedInquiry, showInquiryOverview };
+// Partner applications share the store but are not project inquiries.
+const isPartnerApplication = (q) => q?.topic === 'partnership';
+// Other pages (the partner application) save into the same browser-local demo inquiries.
+window.TechouseInquiries = {
+  async add(record) {
+    const q = { ...record, id: uid('DEMO').toUpperCase(), createdAt: new Date().toISOString() };
+    const next = [...inquiries, q];
+    if (!(await saveStore(inquiryKey, next))) return null;
+    inquiries = next;
+    return q;
+  },
+};
 function inquiryPage(selected) {
   return `${breadcrumb('Start a project')}<section class="container page-hero"><h1>Your next project<br>starts here.</h1><p>Tell us what you have in mind. Choose a division and share the details that matter.</p></section><div class="container contact-grid"><div class="form-card" id="inquiry-form-area"><h2>Tell us about your project.</h2><p>Fields marked * are required.</p><form id="inquiry-form"><div class="field-grid"><div class="field"><label for="inquiry-name">Full name *</label><input id="inquiry-name" name="name" autocomplete="name" required maxlength="100" placeholder="Your full name"></div><div class="field"><label for="inquiry-company">Company <small>(optional)</small></label><input id="inquiry-company" name="company" autocomplete="organization" maxlength="150" placeholder="Company or organization"></div><div class="field"><label for="inquiry-email">Email address *</label><input id="inquiry-email" name="email" type="email" autocomplete="email" required maxlength="200" placeholder="you@example.com"></div><div class="field"><label for="inquiry-phone">Mobile number <small>(optional)</small></label><input id="inquiry-phone" name="phone" type="tel" autocomplete="tel" maxlength="35" placeholder="+63"></div><div class="field"><label for="inquiry-division">Division *</label><select id="inquiry-division" name="division" required>${divisionOptions(getDivision(selected) ? selected : '')}</select></div><div class="field"><label for="inquiry-location">Project location *</label><input id="inquiry-location" name="location" required maxlength="200" placeholder="City / province"></div><div class="field full"><label for="inquiry-capacity">Size or required capacity <small>(optional)</small></label><input id="inquiry-capacity" name="capacity" maxlength="150" placeholder="e.g. 100 sq m, 10 kW, or number of units"></div><div class="field full"><label for="inquiry-requirements">Project requirements *</label><textarea id="inquiry-requirements" name="requirements" required minlength="10" maxlength="5000" placeholder="Tell us about your project, timeline, and any specific requirements."></textarea></div></div><p class="form-note">Demo only. This inquiry stays in your current browser and is not sent to Techouse. Use example details for the presentation.</p><div class="form-actions"><button class="button" type="submit">Save demo inquiry ${arrow}</button><small>No message will be sent.</small></div></form></div><aside class="contact-aside"><h3>Prefer a direct conversation?</h3><p>Call or email the team directly.</p><div class="contact-item"><span>Email</span><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a></div><div class="contact-item"><span>Phone</span><a href="tel:+639855626888">+63 985 562 6888</a></div><div class="contact-item"><span>Helpful to have ready</span><p>A project location, a short brief, and any available plans or site details.</p></div></aside></div>`;
 }
@@ -560,7 +582,7 @@ function updatesPage() {
     .map((d) => `<button data-update-filter="${d.id}" aria-pressed="false">${d.short}</button>`)
     .join(
       '',
-    )}</div><div class="post-grid" id="updates-grid">${list.length ? list.map(postCard).join('') : '<div class="empty-state"><h3>More stories are on the way.</h3><p>Check back for news and ideas from Techouse. In the meantime, explore what’s possible for your next project.</p><a class="button small" href="#/divisions">Explore our divisions</a></div>'}</div></section>`;
+    )}</div><div class="post-grid" id="updates-grid">${list.length ? list.map(postCard).join('') : '<div class="empty-state"><h3>More stories are on the way.</h3><p>Check back for news and ideas from Techouse. In the meantime, explore what’s possible for your next project.</p><a class="button small" href="#/divisions">Explore our divisions</a></div>'}</div></section>${window.TechousePartner.promo('strip')}`;
 }
 function postPage(id) {
   const p = posts.find((x) => x.id === id && x.status === 'published');
@@ -649,7 +671,7 @@ function editorPage(id) {
   return `<section class="container admin-shell"><a class="back-link" href="#/office/posts">← Back to posts</a><div style="height:24px"></div>${adminTop(p ? 'Edit website post' : 'Create a website post', 'Write in plain text, choose a cover, and save a draft or publish to the website.')}<form id="post-form" data-id="${esc(id || '')}"><div class="editor-layout"><div class="form-card"><div class="field"><label for="post-title">Post title *</label><input id="post-title" name="title" required maxlength="120" placeholder="Give your update a clear title" value="${esc(draft.title)}"></div><div class="field"><label for="post-summary">Short introduction *</label><textarea id="post-summary" name="summary" required maxlength="220" rows="3" placeholder="A short summary for the Updates page">${esc(draft.summary)}</textarea></div><div class="field"><label for="post-body">Post content *</label><textarea class="editor-body" id="post-body" name="body" required maxlength="12000" placeholder="Write your update here. Separate paragraphs with a blank line.">${esc(draft.body)}</textarea></div><div class="field"><label for="post-example">Content label</label><select id="post-example" name="sample"><option value="false" ${!draft.sample ? 'selected' : ''}>Regular post</option><option value="true" ${draft.sample ? 'selected' : ''}>Example / presentation content</option></select></div></div><aside class="editor-aside"><h3>Post settings</h3><div class="field"><label for="post-division">Division *</label><select id="post-division" name="division" required>${divisionOptions(draft.division, true)}</select></div><div class="field"><label for="post-cover">Cover image</label><select id="post-cover" name="cover">${covers.map((name, i) => `<option value="${name}" ${draft.cover === name ? 'selected' : ''}>${['Architecture', 'Solar panels', 'Construction site', 'Building facade'][i]} · illustrative</option>`).join('')}</select></div><img class="editor-cover" id="cover-preview" src="${coverURL(draft.cover)}" alt="Selected illustrative cover"><button class="button" type="submit" name="action" value="published">${p?.status === 'published' ? 'Update published post' : 'Publish post'} ${arrow}</button><button class="button outline" type="submit" name="action" value="draft">Save as draft</button><p>Published posts appear in the website’s Updates section. A draft stays in this back office.<br><br>${window.TechouseAdmin ? 'Saved changes publish to the shared website.' : 'Changes save in this browser.'}</p></aside></div></form></section>`;
 }
 function inquiryCard(q) {
-  return `<div class="inquiry-card" data-reviewed="${!!q.reviewedAt}" data-inquiry-search="${esc([q.name, q.email, q.location, q.company].join(' ').toLowerCase())}"><div class="post-meta"><span class="pill">${q.reviewedAt ? 'Reviewed' : 'New'}</span><span class="pill">${esc(category(q.division))}</span><span>${dateText(q.createdAt)}</span></div><h3>${esc(q.name)}</h3><p>${esc(q.location)}${q.company ? ' · ' + esc(q.company) : ''}</p><p>${esc(q.email)}</p><div class="row-actions"><button data-view-inquiry="${esc(q.id)}">View inquiry</button><button class="danger" data-delete-inquiry="${esc(q.id)}">Delete</button></div></div>`;
+  return `<div class="inquiry-card" data-reviewed="${!!q.reviewedAt}" data-inquiry-search="${esc([q.name, q.email, q.phone, q.location, q.company].join(' ').toLowerCase())}"><div class="post-meta"><span class="pill">${q.reviewedAt ? 'Reviewed' : 'New'}</span><span class="pill">${q.topic === 'partnership' ? 'Partner application' : esc(category(q.division))}</span><span>${dateText(q.createdAt)}</span></div><h3>${esc(q.name)}</h3><p>${esc(q.location)}${q.company ? ' · ' + esc(q.company) : ''}</p><p>${esc(q.email || q.phone || '')}</p><div class="row-actions"><button data-view-inquiry="${esc(q.id)}">View inquiry</button><button class="danger" data-delete-inquiry="${esc(q.id)}">Delete</button></div></div>`;
 }
 function adminInquiries() {
   return `<section class="container admin-shell">${adminTop('Inquiries', 'Review requests and prepare your follow-up.')} ${adminTabs('inquiries')}<div class="office-delivery-note">Email delivery is not connected yet. These requests are saved in this browser.</div><div class="admin-tools"><div class="filter-buttons"><button class="active" data-inquiry-filter="all">All (${inquiries.length})</button><button data-inquiry-filter="new">Awaiting review (${inquiries.filter((q) => !q.reviewedAt).length})</button></div><input id="inquiry-search" class="search-input" type="search" aria-label="Search inquiries" placeholder="Search name, email or location…"></div><div class="inquiry-list">${inquiries.length ? [...inquiries].reverse().map(inquiryCard).join('') : '<div class="empty-state"><h3>No inquiries yet.</h3><p>Requests saved through the inquiry form will appear here.</p><a class="button small" href="#/inquiry">Open inquiry form ' + arrow + '</a></div>'}</div></section>`;
@@ -661,6 +683,10 @@ let activePostFilter = 'all';
 // RENDER LIFECYCLE: select a template, inject it, then mount module interactions in dependency order.
 function render() {
   const { path, params } = routeInfo();
+  if (path === '/inquiry' && params.get('topic') === 'partnership') {
+    location.replace('#/partnership/apply');
+    return;
+  }
   const returningHome = path === '/' && render.previousPath && render.previousPath !== '/';
   if (window.TechousePlatformMode && !window.TechouseAdmin && path.startsWith('/office')) {
     location.replace('/admin');
@@ -678,12 +704,17 @@ function render() {
   if (returningHome) window.TechouseDivisions.preservePreviousPage();
   document.body.classList.toggle(
     'division-page',
-    path.startsWith('/divisions/') &&
-      !path.startsWith('/divisions/solar/products/') &&
-      !/^\/divisions\/[a-z-]+\/projects\//.test(path),
+    path === '/partnership' ||
+      (path.startsWith('/divisions/') &&
+        !path.startsWith('/divisions/solar/products/') &&
+        !/^\/divisions\/[a-z-]+\/projects\//.test(path)),
   );
   document.body.classList.toggle('landing', path === '/');
-  document.body.classList.toggle('division-content-page', path.startsWith('/divisions/'));
+  document.body.classList.toggle(
+    'division-content-page',
+    path.startsWith('/divisions/') || path === '/partnership',
+  );
+  document.body.classList.toggle('partner-apply-page', path === '/partnership/apply');
   activePostFilter = 'all';
   document.body.classList.toggle('inquiry-page', path === '/inquiry');
   document.body.classList.remove(
@@ -704,7 +735,7 @@ function render() {
   if (path === '/') html = window.TechouseBanner.html(divisions, elevatorArt, arrow);
   else if (path === '/divisions') {
     title = 'Our divisions';
-    html = `${breadcrumb('Our divisions')}<section class="container page-hero divisions-introduction"><div><h1>What are you<br>building next?</h1></div><p>A lower electricity bill. A new space. A building brought to life. Explore our five divisions and find the right place to begin.</p></section>${divisionDirectory()}${cta()}`;
+    html = `${breadcrumb('Our divisions')}<section class="container page-hero divisions-introduction"><div><h1>What are you<br>building next?</h1></div><p>A lower electricity bill. A new space. A building brought to life. Explore our five divisions and find the right place to begin.</p></section>${window.TechousePartner.promo('directory')}${divisionDirectory()}${cta()}`;
   } else if (/^\/divisions\/[a-z-]+\/projects\//.test(path)) {
     // A project opens over its division page as a dialog.
     const owner = divisions.some((d) => d.id === path.split('/')[2]) ? path.split('/')[2] : 'solar';
@@ -721,6 +752,12 @@ function render() {
     const id = path.split('/')[2];
     title = getDivision(id)?.name || 'Page unavailable';
     html = divisionPage(id);
+  } else if (path === '/partnership') {
+    title = 'Be a partner';
+    html = window.TechousePartner.page();
+  } else if (path === '/partnership/apply') {
+    title = 'Apply to be a partner';
+    html = window.TechousePartner.applyPage();
   } else if (path === '/about') {
     title = 'About Techouse';
     html = about();
@@ -785,6 +822,7 @@ function render() {
   window.TechouseExperience?.mount();
   window.TechouseSolarExtras?.mount();
   window.TechouseOfficeUI?.mount();
+  window.TechousePartner.mount(path);
   syncInquiryCta();
   if (
     path === '/inquiry' &&
@@ -859,19 +897,30 @@ async function viewInquiry(id) {
       render();
     }
   }
-  const fields = [
-    ['Reference', q.id],
-    ['Division', category(q.division)],
-    ['Name', q.name],
-    ['Company', q.company || 'Not provided'],
-    ['Email', q.email],
-    ['Mobile', q.phone || 'Not provided'],
-    ['Project location', q.location],
-    ['Size / capacity', q.capacity || 'Not provided'],
-    ['Requirements', q.requirements],
-  ];
+  const partner = isPartnerApplication(q);
+  const fields = partner
+    ? [
+        ['Reference', q.id],
+        ['Type', 'Solar partner application'],
+        ['Name', q.name],
+        ['Mobile', q.phone || 'Not provided'],
+        ['Email', q.email || 'Not provided'],
+        ['Location', q.location],
+        ['Application', q.requirements],
+      ]
+    : [
+        ['Reference', q.id],
+        ['Division', category(q.division)],
+        ['Name', q.name],
+        ['Company', q.company || 'Not provided'],
+        ['Email', q.email || 'Not provided'],
+        ['Mobile', q.phone || 'Not provided'],
+        ['Project location', q.location],
+        ['Size / capacity', q.capacity || 'Not provided'],
+        ['Requirements', q.requirements],
+      ];
   openModal(
-    `<h2 id="modal-title">Project inquiry</h2><p>Saved in this browser · email delivery not connected.</p><dl class="inquiry-detail">${fields.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl><div class="modal-actions"><button class="button outline" data-close-modal>Close inquiry</button></div>`,
+    `<h2 id="modal-title">${partner ? 'Partner application' : 'Project inquiry'}</h2><p>Saved in this browser · email delivery not connected.</p><dl class="inquiry-detail">${fields.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl><div class="modal-actions"><button class="button outline" data-close-modal>${partner ? 'Close application' : 'Close inquiry'}</button></div>`,
   );
 }
 // Ask before starting another request, without losing the estimate captured by the form handler.
@@ -973,7 +1022,7 @@ document.addEventListener(
     const href = link.getAttribute('href');
     if (!/^#\/inquiry(?:\?|$)/.test(href)) return;
     const count = Array.isArray(inquiries)
-      ? inquiries.filter((q) => q && typeof q.id === 'string').length
+      ? inquiries.filter((q) => q && typeof q.id === 'string' && !isPartnerApplication(q)).length
       : 0;
     if (!count) return;
     // Capture prevents route-transition handlers from navigating; the target form still captures its estimate.
