@@ -62,7 +62,7 @@ window.TechouseMobileHome = (() => {
   }
 
   function menuMarkup(arrow) {
-    return `<div class="mh-menu" id="mh-menu" aria-hidden="true" inert><nav class="mh-menu-list" aria-label="Main navigation"><a href="#/divisions">Our divisions ${arrow}</a><a href="#/about">About Techouse ${arrow}</a><a href="#/updates">News ${arrow}</a><span class="mh-menu-soon" role="link" aria-disabled="true">Join us &amp; be a partner<small>Coming soon</small></span></nav><div class="mh-menu-foot"><a class="mh-menu-cta" href="#/inquiry">Start a project ${arrow}</a><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a><a href="tel:+639855626888">+63 985 562 6888</a></div></div>`;
+    return `<div class="mh-menu" id="mh-menu" aria-hidden="true" inert><nav class="mh-menu-list" aria-label="Main navigation"><a href="#/divisions">Our divisions ${arrow}</a><a href="#/about">About Techouse ${arrow}</a><a href="#/updates">News ${arrow}</a><a class="mh-menu-partner" href="#/partnership"><span>Be a partner<small>Earn 5% referring solar clients</small></span>${arrow}</a></nav><div class="mh-menu-foot"><a class="mh-menu-cta" href="#/inquiry">Start a project ${arrow}</a><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a><a href="tel:+639855626888">+63 985 562 6888</a></div></div>`;
   }
 
   function mount(host) {

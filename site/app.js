@@ -275,10 +275,15 @@ function renderHeader(path) {
   }
   const solarPage = /^\/divisions\/solar(?:\/|$)/.test(path);
   const divisionId = getDivision(path.split('/')[2])?.id;
-  const inquiryLink = divisionId ? '#/inquiry?division=' + divisionId : '#/inquiry';
-  const inquiryLabel = solarPage ? 'Request a quote' : 'Start a project';
+  const partnerPage = path === '/partnership';
+  const inquiryLink = partnerPage
+    ? window.TechousePartner.applyLink
+    : divisionId
+      ? '#/inquiry?division=' + divisionId
+      : '#/inquiry';
+  const inquiryLabel = partnerPage ? 'Become a partner' : solarPage ? 'Request a quote' : 'Start a project';
   $('#header').innerHTML =
-    `<div class="container nav"><a href="#/" aria-label="Techouse home">${brand}</a><nav class="nav-links" id="site-nav" aria-label="Main navigation"><a class="${path.startsWith('/division') ? 'active' : ''}" href="#/divisions">Our divisions</a><a class="${path === '/about' ? 'active' : ''}" href="#/about">About Techouse</a><a class="${path === '/updates' ? 'active' : ''}" href="#/updates">News</a><span class="nav-placeholder" role="link" aria-disabled="true" title="Coming soon">Join Us!</span><a class="mobile-inquiry" href="${inquiryLink}">${inquiryLabel} ${arrow}</a></nav><div class="nav-actions"><a class="header-call" href="tel:+639855626888" aria-label="Call Techouse at +63 985 562 6888">${window.TechouseIcons.icon('call')}<span>Call us</span></a><a class="button small" href="${inquiryLink}">${inquiryLabel} ${arrow}</a><button class="menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">${window.TechouseIcons.icon('menu')}</button></div></div>`;
+    `<div class="container nav"><a href="#/" aria-label="Techouse home">${brand}</a><nav class="nav-links" id="site-nav" aria-label="Main navigation"><a class="${path.startsWith('/division') ? 'active' : ''}" href="#/divisions">Our divisions</a><a class="${path === '/about' ? 'active' : ''}" href="#/about">About Techouse</a><a class="${path === '/updates' ? 'active' : ''}" href="#/updates">News</a><a class="${partnerPage ? 'active' : ''}" href="#/partnership">Be a partner</a><a class="mobile-inquiry" href="${inquiryLink}">${inquiryLabel} ${arrow}</a></nav><div class="nav-actions"><a class="header-call" href="tel:+639855626888" aria-label="Call Techouse at +63 985 562 6888">${window.TechouseIcons.icon('call')}<span>Call us</span></a><a class="button small" href="${inquiryLink}">${inquiryLabel} ${arrow}</a><button class="menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">${window.TechouseIcons.icon('menu')}</button></div></div>`;
 }
 function renderFooter(path) {
   const office = path === '/office' || path.startsWith('/office/');
@@ -289,7 +294,7 @@ function renderFooter(path) {
     return;
   }
   $('#footer').innerHTML =
-    `<div class="container"><div class="footer-top"><div class="footer-brand"><a href="#/" aria-label="Techouse home">${brand}</a><p class="footer-company-name">Techouse Technology Construction Corp</p><p class="footer-copyright">© ${new Date().getFullYear()} Techouse. All rights reserved.</p></div><div class="footer-col"><span>EXPLORE</span><a href="#/divisions">Our divisions</a><a href="#/about">About Techouse</a><a href="#/updates">Company updates</a><a href="#/office">Employee back office</a></div><div class="footer-col"><span>LET’S TALK</span><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a><a href="tel:+639855626888">+63 985 562 6888</a><a href="#/inquiry">Start a project ${arrow}</a></div><nav class="footer-col footer-socials" aria-label="Social media"><span>SOCIAL</span><a href="https://www.facebook.com/profile.php?id=61590728812899" target="_blank" rel="noopener noreferrer">Facebook ↗</a><a href="https://www.tiktok.com/@asiatechouse" target="_blank" rel="noopener noreferrer">TikTok ↗</a><span class="social-pending">LinkedIn · coming soon</span></nav></div></div>`;
+    `<div class="container"><div class="footer-top"><div class="footer-brand"><a href="#/" aria-label="Techouse home">${brand}</a><p class="footer-company-name">Techouse Technology Construction Corp</p><p class="footer-copyright">© ${new Date().getFullYear()} Techouse. All rights reserved.</p></div><div class="footer-col"><span>EXPLORE</span><a href="#/divisions">Our divisions</a><a href="#/about">About Techouse</a><a href="#/updates">Company updates</a><a href="#/partnership">Be a partner</a><a href="#/office">Employee back office</a></div><div class="footer-col"><span>LET’S TALK</span><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a><a href="tel:+639855626888">+63 985 562 6888</a><a href="#/inquiry">Start a project ${arrow}</a></div><nav class="footer-col footer-socials" aria-label="Social media"><span>SOCIAL</span><a href="https://www.facebook.com/profile.php?id=61590728812899" target="_blank" rel="noopener noreferrer">Facebook ↗</a><a href="https://www.tiktok.com/@asiatechouse" target="_blank" rel="noopener noreferrer">TikTok ↗</a><span class="social-pending">LinkedIn · coming soon</span></nav></div></div>`;
 }
 const breadcrumb = (title) =>
   `<div class="container breadcrumb"><a href="#/">Home</a><span>/</span><span>${esc(title)}</span></div>`;
@@ -341,7 +346,7 @@ function divisionPage(id) {
   return d ? window.TechouseDivisions.page(d, divisions, elevatorArt, arrow) : notFound();
 }
 function about() {
-  return `${breadcrumb('About Techouse')}<section class="container page-hero about-introduction"><div class="eyebrow">GET TO KNOW TECHOUSE</div><h1>New ways to build.<br>More ways forward.</h1><p>Techouse brings construction technologies and solar energy solutions to the Philippines—connecting your plans with possibilities for the spaces you build and the energy you use.</p></section><div class="container content-columns about-company"><div><h2>One company.<br>Five ways to move forward.</h2><p>Techouse Technology Construction Corp brings together construction, solar energy, prefabricated buildings, real estate development and elevator engineering. Each division offers a different starting point for your project.</p><p>Whether you’re exploring rooftop solar, planning a building or considering a new use for your property, start with what you want to achieve. Explore the relevant division, share your requirements, and discuss the next step with our team.</p><a class="text-link" href="#/divisions">Find your division ${arrow}</a></div>${window.TechouseAbout.panel()}</div><section class="container about-story"><div class="section-heading"><span>OUR STORY</span><h2>From lifts<br>to rooftops.</h2><p>Techouse grew one practical step at a time, adding each division when we could stand behind it.</p></div><ol><li><strong>Where we started</strong><p>Before solar, Techouse offered two things: construction technology and elevators, supplied and serviced through manufacturers in China.</p></li><li><strong>New ways to build</strong><p>We brought steel-mould building to the Philippines: precast concrete modules cast in steel moulds, and cast-in-place construction poured on site.</p></li><li><strong>Solar energy</strong><p>With Skyworth panels, inverters and batteries, we added solar for homes and businesses, sized to how each property really uses power.</p></li><li><strong>Five divisions today</strong><p>Construction, prefabrication, solar, real estate development and elevator engineering: one team for the whole project.</p></li></ol></section><section class="container about-values"><div class="section-heading"><span>HOW WE WORK</span><h2>Practical, honest,<br>built to last.</h2></div><div><article><h3>Direct from the source</h3><p>We buy from manufacturers through our partners in China, so our prices don’t carry layers of resellers.</p></article><article><h3>Built to be maintained</h3><p>Nothing lasts without care. We plan maintenance from day one, whether it’s a lift, a solar system or a building.</p></article><article><h3>Honest numbers</h3><p>We size solar on realistic sun hours and efficiency, not best-case figures, and we’ll tell you when a project isn’t worth it.</p></article><article><h3>Made for local conditions</h3><p>We plan around Philippine realities: 220-volt three-phase supply, road and crane limits, lot setbacks and island logistics.</p></article></div></section><section class="container about-pathways"><div class="section-heading"><span>WHAT ARE YOU PLANNING?</span><h2>Start with your next step.</h2></div><div>${divisions.map((d) => `<a href="#/divisions/${d.id}"><span>${d.number}</span><strong>${esc(d.short)}</strong>${arrow}</a>`).join('')}</div></section>${cta('Have a project in mind?', 'Tell us what you’re planning. We’ll help you find the right conversation to start.')}`;
+  return `${breadcrumb('About Techouse')}<section class="container page-hero about-introduction"><div class="eyebrow">GET TO KNOW TECHOUSE</div><h1>New ways to build.<br>More ways forward.</h1><p>Techouse brings construction technologies and solar energy solutions to the Philippines—connecting your plans with possibilities for the spaces you build and the energy you use.</p></section><div class="container content-columns about-company"><div><h2>One company.<br>Five ways to move forward.</h2><p>Techouse Technology Construction Corp brings together construction, solar energy, prefabricated buildings, real estate development and elevator engineering. Each division offers a different starting point for your project.</p><p>Whether you’re exploring rooftop solar, planning a building or considering a new use for your property, start with what you want to achieve. Explore the relevant division, share your requirements, and discuss the next step with our team.</p><a class="text-link" href="#/divisions">Find your division ${arrow}</a></div>${window.TechouseAbout.panel()}</div><section class="container about-story"><div class="section-heading"><span>OUR STORY</span><h2>From lifts<br>to rooftops.</h2><p>Techouse grew one practical step at a time, adding each division when we could stand behind it.</p></div><ol><li><strong>Where we started</strong><p>Before solar, Techouse offered two things: construction technology and elevators, supplied and serviced through manufacturers in China.</p></li><li><strong>New ways to build</strong><p>We brought steel-mould building to the Philippines: precast concrete modules cast in steel moulds, and cast-in-place construction poured on site.</p></li><li><strong>Solar energy</strong><p>With Skyworth panels, inverters and batteries, we added solar for homes and businesses, sized to how each property really uses power.</p></li><li><strong>Five divisions today</strong><p>Construction, prefabrication, solar, real estate development and elevator engineering: one team for the whole project.</p></li></ol></section><section class="container about-values"><div class="section-heading"><span>HOW WE WORK</span><h2>Practical, honest,<br>built to last.</h2></div><div><article><h3>Direct from the source</h3><p>We buy from manufacturers through our partners in China, so our prices don’t carry layers of resellers.</p></article><article><h3>Built to be maintained</h3><p>Nothing lasts without care. We plan maintenance from day one, whether it’s a lift, a solar system or a building.</p></article><article><h3>Honest numbers</h3><p>We size solar on realistic sun hours and efficiency, not best-case figures, and we’ll tell you when a project isn’t worth it.</p></article><article><h3>Made for local conditions</h3><p>We plan around Philippine realities: 220-volt three-phase supply, road and crane limits, lot setbacks and island logistics.</p></article></div></section><div class="container">${window.TechousePartner.promo('about')}</div><section class="container about-pathways"><div class="section-heading"><span>WHAT ARE YOU PLANNING?</span><h2>Start with your next step.</h2></div><div>${divisions.map((d) => `<a href="#/divisions/${d.id}"><span>${d.number}</span><strong>${esc(d.short)}</strong>${arrow}</a>`).join('')}</div></section>${cta('Have a project in mind?', 'Tell us what you’re planning. We’ll help you find the right conversation to start.')}`;
 }
 
 // Returning visitors can review browser-local requests without accidentally creating duplicates.
@@ -543,7 +548,7 @@ function updatesPage() {
     .map((d) => `<button data-update-filter="${d.id}" aria-pressed="false">${d.short}</button>`)
     .join(
       '',
-    )}</div><div class="post-grid" id="updates-grid">${list.length ? list.map(postCard).join('') : '<div class="empty-state"><h3>More stories are on the way.</h3><p>Check back for news and ideas from Techouse. In the meantime, explore what’s possible for your next project.</p><a class="button small" href="#/divisions">Explore our divisions</a></div>'}</div></section>`;
+    )}</div><div class="post-grid" id="updates-grid">${list.length ? list.map(postCard).join('') : '<div class="empty-state"><h3>More stories are on the way.</h3><p>Check back for news and ideas from Techouse. In the meantime, explore what’s possible for your next project.</p><a class="button small" href="#/divisions">Explore our divisions</a></div>'}</div></section>${window.TechousePartner.promo('strip')}`;
 }
 function postPage(id) {
   const p = posts.find((x) => x.id === id && x.status === 'published');
@@ -661,12 +666,17 @@ function render() {
   if (returningHome) window.TechouseDivisions.preservePreviousPage();
   document.body.classList.toggle(
     'division-page',
-    path.startsWith('/divisions/') &&
-      !path.startsWith('/divisions/solar/products/') &&
-      !/^\/divisions\/[a-z-]+\/projects\//.test(path),
+    path === '/partnership' ||
+      (path.startsWith('/divisions/') &&
+        !path.startsWith('/divisions/solar/products/') &&
+        !/^\/divisions\/[a-z-]+\/projects\//.test(path)),
   );
   document.body.classList.toggle('landing', path === '/');
-  document.body.classList.toggle('division-content-page', path.startsWith('/divisions/'));
+  document.body.classList.toggle(
+    'division-content-page',
+    path.startsWith('/divisions/') || path === '/partnership',
+  );
+  document.body.classList.remove('partner-inquiry');
   activePostFilter = 'all';
   document.body.classList.toggle('inquiry-page', path === '/inquiry');
   document.body.classList.remove(
@@ -687,7 +697,7 @@ function render() {
   if (path === '/') html = window.TechouseBanner.html(divisions, elevatorArt, arrow);
   else if (path === '/divisions') {
     title = 'Our divisions';
-    html = `${breadcrumb('Our divisions')}<section class="container page-hero divisions-introduction"><div><h1>What are you<br>building next?</h1></div><p>A lower electricity bill. A new space. A building brought to life. Explore our five divisions and find the right place to begin.</p></section>${divisionDirectory()}${cta()}`;
+    html = `${breadcrumb('Our divisions')}<section class="container page-hero divisions-introduction"><div><h1>What are you<br>building next?</h1></div><p>A lower electricity bill. A new space. A building brought to life. Explore our five divisions and find the right place to begin.</p></section>${window.TechousePartner.promo('directory')}${divisionDirectory()}${cta()}`;
   } else if (/^\/divisions\/[a-z-]+\/projects\//.test(path)) {
     // A project opens over its division page as a dialog.
     const owner = divisions.some((d) => d.id === path.split('/')[2]) ? path.split('/')[2] : 'solar';
@@ -704,6 +714,9 @@ function render() {
     const id = path.split('/')[2];
     title = getDivision(id)?.name || 'Page unavailable';
     html = divisionPage(id);
+  } else if (path === '/partnership') {
+    title = 'Be a partner';
+    html = window.TechousePartner.page();
   } else if (path === '/about') {
     title = 'About Techouse';
     html = about();
@@ -768,6 +781,9 @@ function render() {
   window.TechouseExperience?.mount();
   window.TechouseSolarExtras?.mount();
   window.TechouseOfficeUI?.mount();
+  window.TechousePartner.mount(path);
+  if (path === '/inquiry' && params.get('topic') === 'partnership')
+    window.TechousePartner.prepareInquiry();
   syncInquiryCta();
   if (
     path === '/inquiry' &&

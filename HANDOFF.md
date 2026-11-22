@@ -2,6 +2,19 @@
 
 Updated: 22 November 2026.
 
+## Latest: Be a partner page and partner banners (branch `claude/busy-hopper-jnb9qg`, 22 Nov 2026)
+
+- Task: build the solar sales partner page from the agent agreement (Solar Sales Agency Agreement) and the user-approved Claude Design draft, in the site's current design system, with catchy promo banners and lighter mobile/desktop copy.
+- New `site/partner.js` and `site/partner.css`. Route `#/partnership` reuses the division-page cover, sticky subnav and question list. Order (user's): cover "Refer solar. Earn 5%." → earnings slider (illustration only) → 7-step journey slideshow with n/7 progress and photos → plain-words term sheet with "Read the fine print" → You / Techouse expectations → questions → dark close with an oversized gold button. No eyebrow labels. Phones hide section ledes and role descriptions.
+- Terms shown publicly (user confirmed): 5% per closed, signed and paid project; paid within 7 days of final payment; 6-month renewing term; 15 days' notice; chargebacks, confidentiality, responsibility, Philippine law/Makati venue in the fine print. The general manager's name and ID number are not on the site.
+- Apply goes to the existing inquiry form via `#/inquiry?topic=partnership` (`TechousePartner.prepareInquiry` retitles it, selects Solar, hides capacity, rewrites the side panel). The form is still the browser-local demo: applications are not sent anywhere.
+- Banners: Solar page after project examples (₱25,000 worked example, labelled), About after "How we work" (three-step route), Divisions strip above the directory, Updates strip after the posts. Homepage banners and intro untouched.
+- Navigation: header "Join Us!" placeholder → "Be a partner" link; phone menu "Coming soon" → "Be a partner · Earn 5% referring solar clients"; footer Explore gains "Be a partner". On the partner page the header action reads "Become a partner".
+- Photos are existing site assets (Unsplash and third-party reference projects), marked "Illustrative photo" on the journey.
+- `platform/tests/mobile-refinement.test.mjs`: phone menu label expectation updated. Tests 35/35 (Node 22 in the cloud container). Browser-checked at 1440 and 390: calculator, slideshow (buttons, dots, arrow keys, swipe), fine print, inquiry prefill, no console errors or horizontal overflow. Asset versions refreshed with `deployments/techouse-1.0/refresh-assets.mjs`.
+- To confirm with Techouse: what the 5% is calculated on, lead attribution between partners, how soon applicants are called, and the company name (agreement says "Techouse Construction Corporation"; site says "Techouse Technology Construction Corp").
+- Not merged to main; not deployed. Supersedes the generic draft on `feature/partnership`.
+
 ## Latest: manual security review and hardening (branch `bugfix/security`, 22 Nov 2026)
 
 - Task: run the claude-security plugin on the whole repository and patch its findings. The plugin could not run in the cloud session (its Workflow and agent tools are unavailable), so a manual review was done instead. It is not the plugin's verified multi-agent scan.
