@@ -10,6 +10,10 @@ Ask Codex to read AGENTS.md and HANDOFF.md and check `git status` and the curren
 
 Use a descriptive update branch for new work. Keep `main` for approved code. Work on one computer at a time on a shared task unless separate branches are deliberately used.
 
+## Footer build stamp
+
+Every page footer shows the branch, version and when the site files last changed, for example `Branch unslop · Version 1.0.1 (build 66) · Updated Nov 23, 2026, 5:06 AM PHT`. The branch is left out on `main`. `node deployments/techouse-1.0/refresh-assets.mjs` writes it to `site/build-info.js`; run it after editing site files and after a merge, then commit the result. It only rewrites the stamp when the branch or a linked script or stylesheet changed, and the version comes from `platform/package.json`.
+
 ## Before changing computers
 
 Update HANDOFF.md, review the changed files, commit them with an accurate message, then push the branch to GitHub. Unfinished work can be saved as a clearly labeled work-in-progress commit on that branch. Confirm that the push succeeded before shutting down.
