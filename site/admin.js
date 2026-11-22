@@ -92,7 +92,7 @@
         ? 'Connect your authenticator to keep your workspace secure.'
         : 'Confirm it’s you before opening your workspace.'
       : 'Sign in to manage your website content, projects and inquiries.';
-    $('#auth-step-label').textContent = mfa ? '02 / VERIFY YOUR IDENTITY' : '01 / YOUR ACCOUNT';
+    $('#auth-step-label').textContent = mfa ? '02 / Verify your identity' : '01 / Your account';
     document.querySelectorAll('[data-auth-step]').forEach((item) => {
       if (item.dataset.authStep === (mfa ? 'mfa' : 'login'))
         item.setAttribute('aria-current', 'step');

@@ -225,7 +225,7 @@ window.TechouseCatalogue = (() => {
         )
         .join('')}</div>
       <div class="catalogue-footnote"><p>Specifications follow the linked manufacturer datasheets. Website images illustrate related Skyworth product families; the image model is named in Technical details and may differ from the listed range.</p><p>Our team can confirm exact equipment, compatibility and availability for your project.</p></div>
-      <section class="catalogue-partnership" aria-label="Techouse and Skyworth partnership"><div class="catalogue-partner-identity"><span>TECHOUSE × SKYWORTH</span><strong>SKYWORTH</strong><small>Direct solar partner</small></div><div class="catalogue-partner-message"><h2>Skyworth equipment.<br>Your project, with Techouse.</h2><p>Talk to our solar team about panels, inverters and battery storage suited to your property.</p><a class="text-link" href="#/inquiry?division=solar">Talk to our solar team ${icon}</a></div></section>
+      <section class="catalogue-partnership" aria-label="Techouse and Skyworth partnership"><div class="catalogue-partner-identity"><span>TECHOUSE × SKYWORTH</span><strong>Skyworth</strong><small>Direct solar partner</small></div><div class="catalogue-partner-message"><h2>Skyworth equipment.<br>Your project, with Techouse.</h2><p>Talk to our solar team about panels, inverters and battery storage suited to your property.</p><a class="text-link" href="#/inquiry?division=solar">Talk to our solar team ${icon}</a></div></section>
       <a class="back-divisions" href="#/divisions/solar">← Back to Solar energy</a>
     </div></article>`;
   }

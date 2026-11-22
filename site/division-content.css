@@ -25,8 +25,8 @@ article.construction-type:hover {
 .division-specs dt {
   margin-bottom: 8px;
   font-size: 13px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
   color: #896c3b;
 }
 .division-specs dd {

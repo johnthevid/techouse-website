@@ -181,7 +181,7 @@
   }
   .mh-count {
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 18px;
     letter-spacing: 0.28em;
     color: #e6cf8e;
@@ -221,7 +221,7 @@
     background: var(--mh-gold-sheen);
     color: var(--mh-ink);
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 600;
     text-decoration: none;
   }
   .mh-cta svg {
@@ -448,7 +448,7 @@
     font-family: 'DM Sans', Arial, sans-serif;
     font-size: 12px;
     font-weight: 500;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.01em;
     color: #b8c4be;
   }
   html.mh-menu-open .mh-menu-list > * {
@@ -496,7 +496,7 @@
     background: #fff;
     color: var(--mh-green);
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
   }
   .mh-menu-foot .mh-menu-cta svg {
     width: 18px;

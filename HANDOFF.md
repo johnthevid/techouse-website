@@ -2,6 +2,20 @@
 
 Updated: 19 November 2026.
 
+## Latest: unslop polish pass (branch `unslop`, 22 Nov 2026)
+
+Run with the unslop skill in polish mode (the site was already mostly designed; brand, photography, palette, square corners and layout kept).
+
+- Copy: exclamation marks removed from the banner buttons ("Let’s start saving" etc.) and the nav ("Join us"). Headline full stops kept as brand voice (user's choice).
+- Labels: every all-caps tracked label is now sentence case with normal tracking, at 12–13px instead of 8–11px (footer headings, page kickers, division card tags, section numbers, contact labels, sample/reference badges, back office meta, table headings, prefab spec labels). The homepage intro kicker (`.landing-kicker`, approved intro) was left exactly as it was.
+- Weights: 700 → 600 on buttons, labels and tabs outside the intro and the logo wordmark.
+- Inquiry page: removed the internal notes ("Contact details from the existing Techouse website", "should be confirmed … before a public launch"); the aside now says "Call or email the team directly."
+- About: removed the grey "The people behind Techouse" placeholder box; the Meet the team text remains.
+- Motion: the homepage banner logo no longer breathes on a loop (user approved); the intro animation itself is unchanged.
+- Kept by the user's choice: the metallic gold CTA buttons. Kept as approved designs: the phone homepage glass pills.
+- Checks: 33/33 tests; screenshots of every route at 1440 px and 390 px.
+- Not merged to main; not deployed.
+
 ## Latest: real-town GPS, menu motion, compact phone projects (branch `feature/solar-gps-projects`, 22 Nov 2026)
 
 - GPS: the live demo already worked but could only pick from 56 suggestion cities (Nasugbu became Tagaytay, Iligan became Cagayan de Oro). `site/assets/data/ph-places.json` (113 KB, 41 KB gzipped, fetched only on tap) holds 1,521 municipalities with provinces and 4,372 places; `experience.js` picks the nearest place within 25 km and fills "Town · Province". The 56-city list remains the fallback. Built by `platform/tools/ph-places/` from GeoNames via the all-the-cities package; credit in `site/assets/data/SOURCES.md` and in the fill message ("Place names from GeoNames"). Checked: Nasugbu, Iligan, Quezon City, Makati, Lipa, Baguio, Cebu, Davao, Tagbilaran, Puerto Princesa, Calamba; Singapore is refused.

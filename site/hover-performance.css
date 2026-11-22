@@ -634,8 +634,8 @@
   line-height: 1.6;
 }
 #footer .footer-col > span:first-child {
-  font-size: 11px;
-  letter-spacing: 0.12em;
+  font-size: 13px;
+  letter-spacing: 0.01em;
   margin: 0 0 12px;
   line-height: 1.6;
 }
@@ -964,7 +964,7 @@ body:not(.office-page) #footer:not(.office-footer) > .container {
   border-radius: 50%;
   background: #faf9f2;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 600;
 }
 .solar-planning-pages > .discovery-progress .step-label {
   display: block;
@@ -1050,7 +1050,7 @@ body:not(.office-page) #footer:not(.office-footer) > .container {
   color: #173b30;
   border: 1px solid #f4f2e8;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.4;
   text-decoration: none;
   pointer-events: auto;

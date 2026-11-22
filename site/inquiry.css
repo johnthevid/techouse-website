@@ -318,7 +318,7 @@
   padding: 0;
   margin: 0;
   font-size: 0.7rem;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.01em;
   color: #d0ddd2;
 }
 .saved-inquiry-current .inquiry-ticket-heading .ticket-reference strong {
@@ -438,7 +438,7 @@
 }
 .inquiry-project-slide > div > span {
   font-size: 0.65rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.01em;
   color: #52605a;
 }
 .inquiry-project-slide h3 {
@@ -565,13 +565,13 @@
 }
 .saved-reference-button .saved-card-kicker {
   font-size: 0.65rem;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.01em;
   font-weight: 600;
   color: #52605a;
 }
 .saved-reference-button .saved-card-title {
   font-size: 1.2rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 .saved-reference-button .saved-card-location {
   font-size: 0.9rem;
@@ -794,7 +794,7 @@
 .inquiry-back > span {
   color: #52605a;
   font-size: 0.65rem;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.01em;
 }
 .inquiry-details .inquiry-back,
 .inquiry-details.has-saved-inquiry .contact-grid {
@@ -902,7 +902,7 @@
 }
 .inquiry-expansion-bar > span {
   font-size: 0.65rem;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.01em;
   color: #52605a;
 }
 .inquiry-expansion-bar > button {

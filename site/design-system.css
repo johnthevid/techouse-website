@@ -117,3 +117,23 @@ html[data-office-theme="dark"] .office-page :is(input,textarea,select) { backgro
 html[data-office-theme="dark"] .office-page :is(h1,h2,h3,strong,label,.text-link,.admin-tabs a,.button.outline,.office-signout) { color: #edf2ea; }
 html[data-office-theme="grey"] .office-page :is(.office-tool-card,.form-card,.office-overview-stats a,.admin-disclosure,#header,.office-footer,.customizer-panel,.customizer-savebar) { background: #f0f1ef; }
 @media(max-width:650px) { .office-header-bar { flex-wrap: wrap; padding-block: 12px; } .office-header-controls { width: 100%; margin-left: 0; gap: 10px; } }
+
+/* Labels: sentence case at a readable size (replaces the old tracked capitals). */
+.eyebrow,
+.section-heading > span,
+.basic-division > div > span,
+#footer .footer-col > span:first-child,
+.footer-col > span,
+.contact-item span,
+.table-heading span,
+.post-meta span,
+.managed-project-meta,
+.project-mode-badge {
+  font-size: 13px;
+}
+.pill,
+.post-meta .pill,
+.project-story .pill,
+.post-row .status {
+  font-size: 12px;
+}

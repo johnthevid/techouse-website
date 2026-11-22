@@ -7,14 +7,14 @@ window.TechouseBanner = (() => {
   let teardown = () => {};
   // EDITABLE COPY: display labels may change; object keys must match app.js division ids.
   const copy = {
-    solar: { title: 'Power your<br> tomorrow.', cta: 'Let’s start saving!' },
-    construction: { title: 'Build your<br> next chapter.', cta: 'Let’s start building!' },
-    prefabrication: { title: 'Rethink<br> your space.', cta: 'Let’s start creating!' },
+    solar: { title: 'Power your<br> tomorrow.', cta: 'Let’s start saving' },
+    construction: { title: 'Build your<br> next chapter.', cta: 'Let’s start building' },
+    prefabrication: { title: 'Rethink<br> your space.', cta: 'Let’s start creating' },
     development: {
       title: 'Shape your<br> next address.',
-      cta: 'Let’s start shaping possibilities!',
+      cta: 'Let’s start shaping possibilities',
     },
-    elevators: { title: 'Rise to new<br> possibilities.', cta: 'Let’s start elevating!' },
+    elevators: { title: 'Rise to new<br> possibilities.', cta: 'Let’s start elevating' },
   };
   function header(brand, arrow) {
     return `<div class="banner-nav"><a href="#company" class="banner-company-link" aria-label="About Techouse">${brand}</a><div class="banner-nav-right"><a class="header-call" href="tel:+639855626888" aria-label="Call Techouse at +63 985 562 6888">${window.TechouseIcons.icon('call')}<span>Call us</span></a><a class="banner-global-quote" href="#/inquiry">Request a quote ${arrow}</a></div></div>`;

@@ -242,8 +242,8 @@
 }
 .project-facts dt {
   font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  text-transform: none;
+  letter-spacing: 0.01em;
   color: #657365;
   margin-bottom: 5px;
 }
@@ -499,7 +499,7 @@
 }
 .customizer-live-preview > span {
   font-size: 10px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.01em;
   color: #64705e;
 }
 .customizer-live-preview h3 {
@@ -652,7 +652,7 @@
 }
 .preview-panel-heading > div > span {
   font-size: 10px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.01em;
   color: #64705e;
 }
 .preview-panel-heading h3 {
@@ -820,7 +820,7 @@
   min-width: 48px;
   color: #64705e;
   font-size: 10px;
-  text-transform: uppercase;
+  text-transform: none;
 }
 .draft-change-list em {
   font-size: 12px;
@@ -926,9 +926,9 @@
   object-fit: cover;
 }
 .managed-project-meta {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0.01em;
   color: #64705e;
 }
 .managed-project-row h3 {
@@ -1258,8 +1258,8 @@
   margin: -4px -4px 4px;
 }
 .project-mode-badge {
-  font-size: 11px;
-  letter-spacing: 0.09em;
+  font-size: 12px;
+  letter-spacing: 0.01em;
   color: #244d3d;
   font-weight: 600;
 }
@@ -1558,7 +1558,7 @@ html[data-office-theme="dark"] body.office-page :is(.status,.pill,.preview-draft
 .directory-card:nth-child(4),.directory-card:nth-child(5) { grid-column: span 3; }
 .directory-image { position: relative; overflow: hidden; aspect-ratio: 3 / 2; background: #e2e9dc; }
 .directory-image > img { width: 100%; height: 100%; display: block; object-fit: cover; }
-.directory-image > span { position: absolute; bottom: 16px; left: 18px; background: #fffdf2ed; color: #244332; padding: 8px 12px; font-size: 12px; letter-spacing: .07em; text-transform: uppercase; }
+.directory-image > span { position: absolute; bottom: 16px; left: 18px; background: #fffdf2ed; color: #244332; padding: 8px 12px; font-size: 12px; letter-spacing: 0.01em; text-transform: none; }
 .directory-image .icon-scene { height: 100%; display: grid; place-items: center; }
 .directory-image .icon-scene svg { max-height: 90%; width: 70%; }
 .directory-copy { padding: 26px; flex: 1; display: flex; flex-direction: column; }
@@ -1577,7 +1577,7 @@ html[data-office-theme="dark"] body.office-page :is(.status,.pill,.preview-draft
 @media(max-width:600px) { .division-directory { grid-template-columns: 1fr; } }
 .directory-projects { background: #203e30; color: #fff9eb; }
 .directory-projects-intro { aspect-ratio: 3 / 2; padding: 28px; display: flex; flex-direction: column; justify-content: space-between; background: #2c4d3a; }
-.directory-projects-intro .eyebrow { color: #d9c89b; font-size: 10px; }
+.directory-projects-intro .eyebrow { color: #d9c89b; font-size: 13px; }
 .directory-projects-intro > svg { width: 42px; height: 42px; color: #d9c89b; }
 .directory-projects-caption { font-size: clamp(24px,2.4vw,34px); line-height: 1.2; letter-spacing: -.025em; }
 .directory-projects .directory-copy p { color: #ccd7c9; }
@@ -1622,7 +1622,7 @@ html[data-office-theme="dark"] body.office-page :is(.status,.pill,.preview-draft
 #projects .project-photo-stage { min-height: 210px; aspect-ratio: auto; }
 #projects .portfolio-card > .project-story { padding: 18px 22px; }
 #projects .project-story h3 { font-size: 22px; margin: 8px 0 12px; }
-#projects .project-story > .pill { font-size: 9px; padding: 4px 7px; }
+#projects .project-story > .pill { font-size: 12px; padding: 4px 7px; }
 #projects .project-facts { grid-template-columns: .8fr .6fr 1.3fr; gap: 12px; margin-bottom: 12px; }
 #projects .project-facts div:last-child { grid-column: auto; }
 #projects .project-facts dt { font-size: 9px; margin-bottom: 4px; }
@@ -1701,7 +1701,7 @@ html[data-office-theme="dark"] body.office-page :is(.status,.pill,.preview-draft
 
 /* The estimated monthly saving is the first and strongest message in each portfolio tile. */
 #projects .project-tile .project-story { display: flex; flex-direction: column; justify-content: center; }
-#projects .project-tile .project-story > .pill { order: 0; align-self: flex-start; font-size: 8px; }
+#projects .project-tile .project-story > .pill { order: 0; align-self: flex-start; font-size: 11px; }
 #projects .project-tile .project-tile-savings { order: 1; padding: 12px 14px; margin: 12px 0 10px; background: #e8eee0; border-left: 3px solid #ae8a4e; gap: 6px; }
 #projects .project-tile-savings > span { color: #4b654b; font-size: 11px; }
 #projects .project-tile-savings > strong { color: #244d36; font-size: clamp(28px,2.3vw,36px); line-height: 1.15; letter-spacing: -.025em; }
@@ -1713,7 +1713,7 @@ html[data-office-theme="dark"] body.office-page :is(.status,.pill,.preview-draft
 .solar-streamlined #projects { padding-bottom: 20px; }
 .solar-streamlined #projects + .solar-optional-guide { margin-top: 12px; }
 #projects .portfolio-pagination { margin-top: 18px; }
-.skyworth-range-copy .range-model-label { display: inline-block; align-self: flex-start; padding: 5px 8px; background: #e9eddf; color: #35553b; font-size: 10px; letter-spacing: .05em; }
+.skyworth-range-copy .range-model-label { display: inline-block; align-self: flex-start; padding: 5px 8px; background: #e9eddf; color: #35553b; font-size: 10px; letter-spacing: 0.01em; }
 .range-selection-reason { margin: 10px 0 4px; color: #466044; font-size: 12px; line-height: 1.5; }
 
 /* Theme the preview's editor chrome without changing the embedded public website. */
@@ -1928,12 +1928,9 @@ html[data-office-theme="dark"] body.office-page #header .office-signout:hover { 
 .about-company .about-people-panel { background: #e8eddf; border: 1px solid #c5d0bd; padding: 32px; }
 .about-people-tabs { display: flex; gap: 24px; border-bottom: 1px solid #bac8b4; margin: 24px 0; }
 .about-people-tabs button { border: 0; border-bottom: 2px solid transparent; background: transparent; color: #53634f; padding: 10px 0; font: inherit; font-size: 14px; cursor: pointer; }
-.about-people-tabs button[aria-selected="true"] { color: #19372b; font-weight: 700; border-color: #9c7b43; }
+.about-people-tabs button[aria-selected="true"] { color: #19372b; font-weight: 600; border-color: #9c7b43; }
 .about-people-tabs button:focus-visible { outline: 2px solid #9c7b43; outline-offset: 4px; }
 .about-people-panel [hidden] { display: none; }
-.about-team-placeholder { min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: #d7e0ce; color: #496047; }
-.about-team-placeholder svg { width: 48px; height: 48px; }
-.about-team-placeholder span { font-size: 10px; letter-spacing: .12em; }
 .about-people-panel h3 { font-size: 20px; line-height: 1.3; margin: 20px 0 8px; }
 .about-people-panel .about-profile-pending { font-size: 12px; color: #6b7864; margin-bottom: 0; }
 .about-leader { display: grid; grid-template-columns: 100px minmax(0,1fr); gap: 24px; padding-block: 16px; }

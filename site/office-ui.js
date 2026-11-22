@@ -157,7 +157,7 @@ window.TechouseOfficeUI = (() => {
     refresh();
     if (!dirty) return;
     const modal = dialog();
-    modal.innerHTML = `<div class="office-dialog-heading"><div><span class="eyebrow">UNSAVED CHANGES</span><h2>${leaving ? 'Save your changes before leaving?' : 'Review your draft changes'}</h2></div><button type="button" data-close-review aria-label="Close changes review">${window.TechouseIcons.icon('close')}</button></div><p>Your website still shows the saved version. Select a change to find it in the editor.</p><div class="draft-change-list">${changes.map((change, i) => `<button type="button" data-find-change="${i}"><strong>${esc(change.label)}</strong><span><small>Saved</small>${esc(change.before.slice(0, 180) || '(default / empty)')}</span><span><small>Draft</small>${esc(change.after.slice(0, 180) || '(default / empty)')}</span><em>Show in editor ↗</em></button>`).join('')}</div><div class="office-dialog-actions"><button type="button" class="button outline" data-close-review>Keep editing</button>${leaving ? '<button type="button" class="button outline" data-discard-leave>Discard & leave</button><button type="button" class="button" data-save-leave>Save & leave</button>' : '<button type="button" class="button outline" data-cancel-editing>Cancel editing</button><button type="button" class="button" data-save-review>Save changes</button>'}</div>`;
+    modal.innerHTML = `<div class="office-dialog-heading"><div><span class="eyebrow">Unsaved changes</span><h2>${leaving ? 'Save your changes before leaving?' : 'Review your draft changes'}</h2></div><button type="button" data-close-review aria-label="Close changes review">${window.TechouseIcons.icon('close')}</button></div><p>Your website still shows the saved version. Select a change to find it in the editor.</p><div class="draft-change-list">${changes.map((change, i) => `<button type="button" data-find-change="${i}"><strong>${esc(change.label)}</strong><span><small>Saved</small>${esc(change.before.slice(0, 180) || '(default / empty)')}</span><span><small>Draft</small>${esc(change.after.slice(0, 180) || '(default / empty)')}</span><em>Show in editor ↗</em></button>`).join('')}</div><div class="office-dialog-actions"><button type="button" class="button outline" data-close-review>Keep editing</button>${leaving ? '<button type="button" class="button outline" data-discard-leave>Discard & leave</button><button type="button" class="button" data-save-leave>Save & leave</button>' : '<button type="button" class="button outline" data-cancel-editing>Cancel editing</button><button type="button" class="button" data-save-review>Save changes</button>'}</div>`;
     modal.onclick = async (event) => {
       const find = event.target.closest('[data-find-change]');
       if (find) {
@@ -233,7 +233,7 @@ window.TechouseOfficeUI = (() => {
     const panel = document.createElement('aside');
     panel.className = 'banner-preview-panel';
     panel.innerHTML =
-      '<div class="preview-panel-heading"><div><span>LIVE WEBSITE PREVIEW</span><h3>Your banners, as visitors see them</h3></div><span class="preview-draft-label">Draft preview</span></div><div class="preview-toolbar"><button type="button" class="button small" data-replay-preview>Replay intro animation</button><button type="button" class="button outline small" data-final-preview>Show final view</button><button type="button" class="text-link" data-expand-preview>Full screen ↗</button></div><div class="banner-preview-viewport"><iframe title="Draft website preview" width="1440" height="900" tabindex="-1"></iframe></div><p class="preview-help">Uses your unsaved copy and images with the actual website layout. Previewing does not save changes.</p>';
+      '<div class="preview-panel-heading"><div><span>Live website preview</span><h3>Your banners, as visitors see them</h3></div><span class="preview-draft-label">Draft preview</span></div><div class="preview-toolbar"><button type="button" class="button small" data-replay-preview>Replay intro animation</button><button type="button" class="button outline small" data-final-preview>Show final view</button><button type="button" class="text-link" data-expand-preview>Full screen ↗</button></div><div class="banner-preview-viewport"><iframe title="Draft website preview" width="1440" height="900" tabindex="-1"></iframe></div><p class="preview-help">Uses your unsaved copy and images with the actual website layout. Previewing does not save changes.</p>';
     form.querySelector('.customizer-live-preview').before(panel);
     iframe = panel.querySelector('iframe');
     const url = new URL(location.href);
@@ -442,7 +442,7 @@ window.TechouseOfficeUI = (() => {
     const editing = !!editor.elements.projectId.value;
     editor.dataset.mode = editing ? 'edit' : 'new';
     const badge = editor.querySelector('.project-mode-badge');
-    badge.textContent = editing ? 'EDITING EXISTING PROJECT' : 'CREATING A NEW PROJECT';
+    badge.textContent = editing ? 'Editing existing project' : 'Creating a new project';
     editor.querySelector('.project-editor-help').textContent = editing
       ? 'Update this project’s details, gallery and publishing status.'
       : 'Start a separate project story. Save a draft while details are still being prepared.';
