@@ -275,162 +275,6 @@ article.construction-type:hover {
   color: #6b746f;
 }
 
-/* Editorial rows: replace equal card grids on Construction, Prefabrication and Elevators. */
-.division-index {
-  border-top: 1px solid #d1d8cb;
-}
-.division-index-row {
-  display: grid;
-  grid-template-columns: minmax(150px, 0.55fr) minmax(0, 1.15fr) minmax(0, 1fr) 44px;
-  align-items: center;
-  gap: 32px;
-  padding: 32px 0;
-  border-bottom: 1px solid #d1d8cb;
-  color: #182522;
-  text-decoration: none;
-}
-.division-index-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #315747;
-  font-size: 14px;
-  font-weight: 600;
-}
-.division-index-label .material-icon {
-  width: 22px;
-  height: 22px;
-  flex: none;
-}
-.division-index-row h3 {
-  margin: 0;
-  font-size: clamp(24px, 2.3vw, 34px);
-  line-height: 1.15;
-  letter-spacing: -0.025em;
-  text-wrap: balance;
-  transition: color 250ms ease;
-}
-.division-index-row p {
-  margin: 0;
-  max-width: 46ch;
-  color: #5a6662;
-  line-height: 1.7;
-}
-.division-index-go {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border: 1px solid #c3ccbd;
-  color: #173b30;
-  transition:
-    background-color 250ms ease,
-    border-color 250ms ease,
-    color 250ms ease;
-}
-.division-index-go .material-icon {
-  width: 20px;
-  height: 20px;
-  transition: transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-a.division-index-row:hover h3,
-a.division-index-row:focus-visible h3 {
-  color: #315747;
-}
-a.division-index-row:hover .division-index-go,
-a.division-index-row:focus-visible .division-index-go {
-  background: #173b30;
-  border-color: #173b30;
-  color: #fffdf5;
-}
-a.division-index-row:hover .division-index-go .material-icon,
-a.division-index-row:focus-visible .division-index-go .material-icon {
-  transform: translate(2px, -2px);
-}
-a.division-index-row:focus-visible {
-  outline: 2px solid #b99258;
-  outline-offset: 4px;
-}
-
-/* Two methods side by side, divided by a hairline. */
-.division-compare {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  border-top: 1px solid #d1d8cb;
-  border-bottom: 1px solid #d1d8cb;
-}
-.division-compare-item {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 40px 48px 44px 0;
-}
-.division-compare-item + .division-compare-item {
-  padding: 40px 0 44px 48px;
-  border-left: 1px solid #d1d8cb;
-}
-.division-compare-item h3 {
-  margin: 28px 0 16px;
-  font-size: clamp(30px, 3.2vw, 48px);
-  line-height: 1.08;
-  letter-spacing: -0.035em;
-}
-.division-compare-item p {
-  max-width: 48ch;
-  margin: 0 0 28px;
-  color: #5a6662;
-  line-height: 1.7;
-}
-.division-compare-item .text-link {
-  margin-top: auto;
-}
-
-@media (max-width: 900px) {
-  .division-index-row {
-    grid-template-columns: minmax(0, 1fr) 44px;
-    gap: 12px 16px;
-    padding: 24px 0;
-  }
-  .division-index-label {
-    grid-column: 1;
-    grid-row: 1;
-  }
-  .division-index-go {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    align-self: start;
-  }
-  .division-index-row h3,
-  .division-index-row p {
-    grid-column: 1;
-  }
-  article.division-index-row h3,
-  article.division-index-row p {
-    grid-column: 1 / -1;
-  }
-  .division-compare {
-    grid-template-columns: 1fr;
-  }
-  .division-compare-item,
-  .division-compare-item + .division-compare-item {
-    padding: 28px 0 32px;
-    border-left: 0;
-  }
-  .division-compare-item + .division-compare-item {
-    border-top: 1px solid #d1d8cb;
-  }
-  .division-compare-item h3 {
-    margin: 20px 0 12px;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .division-index-row h3,
-  .division-index-go,
-  .division-index-go .material-icon {
-    transition: none;
-  }
-}
-
 /* The closing brief sits last on each division page; keep air before the next band. */
 .construction-content > .construction-brief:last-child {
   margin-bottom: 96px;
@@ -451,5 +295,164 @@ a.division-index-row:focus-visible {
   }
   .construction-content > .construction-brief:last-child {
     margin-bottom: 64px;
+  }
+}
+
+/* Division cards: icon tile and label, one bold heading, one short line, action with an arrow box.
+   Scoped to .division-cards so Solar's panel-technology cards keep their approved look. */
+.division-cards .construction-type {
+  padding: 32px 32px 28px;
+}
+.division-cards .construction-type-top {
+  gap: 14px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.division-card-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex: none;
+  background: #edf1e7;
+  color: #315747;
+}
+.division-cards .construction-type-top .division-card-icon .material-icon {
+  width: 26px;
+  height: 26px;
+}
+.division-cards .construction-type h3 {
+  margin: 40px 0 12px;
+  font-size: clamp(26px, 2.3vw, 34px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.division-cards .construction-type p {
+  margin: 0 0 32px;
+  font-size: 16px;
+  line-height: 1.55;
+}
+.division-cards .construction-type-action {
+  align-items: center;
+  padding-top: 16px;
+}
+.division-card-go {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border: 1px solid #c3ccbd;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease;
+}
+.division-card-go .material-icon {
+  width: 20px;
+  height: 20px;
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.division-cards a.construction-type:hover .division-card-go,
+.division-cards a.construction-type:focus-visible .division-card-go {
+  background: #173b30;
+  border-color: #173b30;
+  color: #fffdf5;
+}
+.division-cards a.construction-type:hover .division-card-go .material-icon,
+.division-cards a.construction-type:focus-visible .division-card-go .material-icon {
+  transform: translate(2px, -2px);
+}
+.division-cards a.construction-type:focus-visible {
+  outline: 2px solid #b99258;
+  outline-offset: 3px;
+}
+
+/* Numbered steps: a large gold number, a short title and one line; the rule draws in order. */
+.division-steps ol {
+  gap: 40px;
+}
+.division-steps li {
+  position: relative;
+  padding-top: 28px;
+  border-top: 1px solid #e3dccb;
+}
+.division-steps li::before {
+  content: none;
+}
+.step-number {
+  display: block;
+  margin-bottom: 28px;
+  font-size: 44px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: #b99258;
+}
+.step-rule {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #b99258;
+  transform-origin: left center;
+}
+.division-steps strong {
+  display: block;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.division-steps p {
+  margin: 10px 0 0;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+/* Prefabrication specs: the four headline figures lead, the rest follow smaller. */
+.division-specs > .is-key dd {
+  font-size: clamp(24px, 2.2vw, 30px);
+  letter-spacing: -0.02em;
+}
+
+/* Entrance: blocks below the fold wait hidden until divisions.js plays them in. */
+.reveal-wait[data-reveal-list] > *,
+.reveal-wait[data-reveal-steps] > li > :not(.step-rule) {
+  opacity: 0;
+}
+.reveal-wait .step-rule {
+  transform: scaleX(0);
+}
+
+@media (max-width: 900px) {
+  .division-cards .construction-type {
+    padding: 24px 24px 20px;
+  }
+  .division-cards .construction-type h3 {
+    margin-top: 28px;
+  }
+  .division-cards .construction-type p {
+    margin-bottom: 24px;
+  }
+  .division-steps ol {
+    gap: 32px;
+  }
+  .step-number {
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .division-card-go,
+  .division-card-go .material-icon {
+    transition: none;
+  }
+  .reveal-wait[data-reveal-list] > *,
+  .reveal-wait[data-reveal-steps] > li > :not(.step-rule) {
+    opacity: 1;
+  }
+  .reveal-wait .step-rule {
+    transform: none;
   }
 }
