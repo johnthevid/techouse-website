@@ -41,7 +41,6 @@ window.TechouseMobileHome = (() => {
   }
 
   function markup(items, arrow) {
-    const count = String(items.length).padStart(2, '0');
     return `<div class="mh" data-mobile-home>
       <div class="mh-photos" aria-hidden="true">${items.map((d, i) => (d.image ? `<img src="${esc(d.image)}" alt="" class="${i ? '' : 'is-on'}" ${i ? 'loading="lazy"' : 'fetchpriority="high"'} decoding="async">` : '<span></span>')).join('')}</div>
       <div class="mh-blur mh-blur-near" aria-hidden="true"></div><div class="mh-blur mh-blur-far" aria-hidden="true"></div>
@@ -49,7 +48,7 @@ window.TechouseMobileHome = (() => {
       <div class="mh-chapters" aria-live="polite">${items
         .map(
           (d, i) =>
-            `<div class="mh-chapter ${i ? 'is-after' : 'is-on'}" ${i ? 'aria-hidden="true" inert' : ''}><span class="mh-count">${String(i + 1).padStart(2, '0')} / ${count}</span><h2 class="mh-title">${d.title}</h2><p class="mh-label">${d.icon}<span>${esc(d.label)}</span></p><a class="mh-cta" href="${esc(d.href)}">${esc(d.cta)} ${arrow}</a></div>`,
+            `<div class="mh-chapter ${i ? 'is-after' : 'is-on'}" ${i ? 'aria-hidden="true" inert' : ''}><h2 class="mh-title">${d.title}</h2><p class="mh-label">${d.icon}<span>${esc(d.label)}</span></p><a class="mh-cta" href="${esc(d.href)}">${esc(d.cta)} ${arrow}</a></div>`,
         )
         .join('')}</div>
       <div class="mh-grid" role="group" aria-label="Choose a division">${items

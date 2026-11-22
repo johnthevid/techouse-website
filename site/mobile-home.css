@@ -179,16 +179,8 @@
   .mh-chapter.is-before {
     transform: translateY(-14px);
   }
-  .mh-count {
-    font-size: 13px;
-    font-weight: 600;
-    line-height: 18px;
-    letter-spacing: 0.28em;
-    color: #e6cf8e;
-    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
-  }
   .mh-title {
-    margin: 10px 0 0;
+    margin: 0;
     font-family: Manrope, Arial, sans-serif;
     font-size: 40px;
     font-weight: 750;
