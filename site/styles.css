@@ -2146,3 +2146,25 @@ dialog .modal-actions {
     gap: 18px;
   }
 }
+
+/* Build stamp: branch, version and last update (app.js buildStamp). */
+#footer .footer-build {
+  margin-top: 24px;
+  margin-bottom: 0;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 12px;
+  line-height: 18px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.6;
+}
+#footer .footer-build.container {
+  border-top: 0;
+  padding-bottom: 16px;
+}
+/* Keep the stamp clear of the fixed Back to top button. */
+@media (max-width: 760px) {
+  #footer .footer-build {
+    padding-bottom: 80px;
+  }
+}
