@@ -234,6 +234,23 @@ function routeInfo() {
   const [path, query = ''] = raw.split('?');
   return { path: path.replace(/\/$/, '') || '/', params: new URLSearchParams(query) };
 }
+// Build stamp (site/build-info.js): branch, version and last update, so previews are never guessed.
+// The branch is left out on main, which is what the live site runs.
+function buildStamp(own = false) {
+  const b = window.TechouseBuild;
+  if (!b) return '';
+  const when = new Intl.DateTimeFormat('en-PH', {
+    timeZone: 'Asia/Manila',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(new Date(b.updated));
+  const parts = [b.branch && b.branch !== 'main' ? `Branch ${b.branch}` : '', `Version ${b.version} (build ${b.build})`, `Updated ${when} PHT`];
+  return `<p class="footer-build${own ? ' container' : ''}">${parts.filter(Boolean).map(esc).join(' · ')}</p>`;
+}
+
 // SHARED LAYOUT: header and footer are regenerated for each route.
 let inquiryCtaObserver;
 function syncInquiryCta() {
@@ -291,11 +308,11 @@ function renderFooter(path) {
   $('#footer').classList.toggle('office-footer', office);
   if (office) {
     $('#footer').innerHTML =
-      `<div class="container office-footer-bar"><div><strong>Techouse · Back office</strong><p>Website content management</p></div><span>${window.TechouseAdmin ? 'Staff workspace · Sign out when you’re finished.' : 'Local workspace · Changes stay in this browser.'}</span></div>`;
+      `<div class="container office-footer-bar"><div><strong>Techouse · Back office</strong><p>Website content management</p></div><span>${window.TechouseAdmin ? 'Staff workspace · Sign out when you’re finished.' : 'Local workspace · Changes stay in this browser.'}</span></div>${buildStamp(true)}`;
     return;
   }
   $('#footer').innerHTML =
-    `<div class="container"><div class="footer-top"><div class="footer-brand"><a href="#/" aria-label="Techouse home">${brand}</a><p class="footer-company-name">Techouse Technology Construction Corp</p><p class="footer-copyright">© ${new Date().getFullYear()} Techouse. All rights reserved.</p></div><div class="footer-col"><span>EXPLORE</span><a href="#/divisions">Our divisions</a><a href="#/about">About Techouse</a><a href="#/updates">Company updates</a><a href="#/partnership">Be a partner</a><a href="#/office">Employee back office</a></div><div class="footer-col"><span>LET’S TALK</span><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a><a href="tel:+639855626888">+63 985 562 6888</a><a href="#/inquiry">Start a project ${arrow}</a><a class="footer-partner-link" href="#/partnership">Refer &amp; earn 5% ${arrow}</a></div><nav class="footer-col footer-socials" aria-label="Social media"><span>SOCIAL</span><a href="https://www.facebook.com/profile.php?id=61590728812899" target="_blank" rel="noopener noreferrer">Facebook ↗</a><a href="https://www.tiktok.com/@asiatechouse" target="_blank" rel="noopener noreferrer">TikTok ↗</a><span class="social-pending">LinkedIn · coming soon</span></nav></div></div>`;
+    `<div class="container"><div class="footer-top"><div class="footer-brand"><a href="#/" aria-label="Techouse home">${brand}</a><p class="footer-company-name">Techouse Technology Construction Corp</p><p class="footer-copyright">© ${new Date().getFullYear()} Techouse. All rights reserved.</p></div><div class="footer-col"><span>EXPLORE</span><a href="#/divisions">Our divisions</a><a href="#/about">About Techouse</a><a href="#/updates">Company updates</a><a href="#/partnership">Be a partner</a><a href="#/office">Employee back office</a></div><div class="footer-col"><span>LET’S TALK</span><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a><a href="tel:+639855626888">+63 985 562 6888</a><a href="#/inquiry">Start a project ${arrow}</a><a class="footer-partner-link" href="#/partnership">Refer &amp; earn 5% ${arrow}</a></div><nav class="footer-col footer-socials" aria-label="Social media"><span>SOCIAL</span><a href="https://www.facebook.com/profile.php?id=61590728812899" target="_blank" rel="noopener noreferrer">Facebook ↗</a><a href="https://www.tiktok.com/@asiatechouse" target="_blank" rel="noopener noreferrer">TikTok ↗</a><a href="https://www.linkedin.com/in/techouse-construction-corporation-969516415/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a></nav></div>${buildStamp()}</div>`;
 }
 const breadcrumb = (title) =>
   `<div class="container breadcrumb"><a href="#/">Home</a><span>/</span><span>${esc(title)}</span></div>`;
