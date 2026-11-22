@@ -22,7 +22,19 @@ Updated: 19 November 2026.
 - Phone section menu (`site/solar-extras.js`, `solar-calculator.css`, under 700px): `.solar-subnav-toggle` names the section in view (the last one whose top reaches 40% of the screen), opens `#solar-subnav-links` as a dropdown, closes on a link, Escape or an outside tap, and marks the current link with `aria-current`. Comparison spacing on phones restored to 32px above. Construction's section bar is unchanged.
 - Not merged to main; not deployed. The demo branch needs main merged in after approval.
 
-## Latest: project showcase on every division (branch `feature/division-projects`)
+## Latest: division and About content from the company presentation (branch `feature/division-projects`)
+
+Written in the company's voice from the recorded Taglish company introduction (no quotes, no named speaker; the user's choice). Excluded: pricing, the royalty project, bank minimums, sales Q&A and the Solar Group joint venture (awaiting confirmation).
+
+- Prefabrication (new page in `divisions.js`): how modules are made, standard module specs (7.2 × 3.6 × 3 m, ~23 m², 15 cm walls, 12 cm roof, 3,000–5,000 PSI, up to 3 storeys), uses, delivery FAQ, brief.
+- Elevator engineering (new page): three brands (Hitachi China-made; EPSS by Yida Express Elevator Co., Ltd., Huzhou, per the user; Shanghai Mitsubishi), lift types, installation/maintenance/modernisation, FAQ, brief.
+- Construction: new "Two ways we build" section (precast modules vs cast-in-place up to ~10 storeys) and subnav link.
+- Solar (`solar-journey.js`): BC vs TOPCon and equipment ranges inside the technical reference panel. Calculator unchanged.
+- About (`app.js`): "Our story" timeline and "How we work" values after the CMS-editable introduction.
+- New `site/division-content.css`. Real estate stays generic.
+- Facts to confirm with the client before release are listed in the conversation summary; tests 33 of 33.
+
+## Earlier: project showcase on every division (branch `feature/division-projects`)
 
 From `main`; not merged, not deployed. No database migration: projects stay in the content record, which already accepted a `division` field.
 

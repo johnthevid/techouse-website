@@ -1,0 +1,157 @@
+/* Content modules for the division and About pages (specifications, lists, story, values).
+   Builds on the construction components in hover-performance.css; square-cornered throughout. */
+.construction-project-types.two-up {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+article.construction-type {
+  cursor: default;
+}
+article.construction-type:hover {
+  border-color: #d1d8cb;
+  background: #fffdf5;
+}
+
+/* Specification sheet: label over value, ruled like the process steps */
+.division-specs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0 32px;
+  margin: 0;
+}
+.division-specs > div {
+  padding: 20px 0 22px;
+  border-top: 1px solid #b99258;
+}
+.division-specs dt {
+  margin-bottom: 8px;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #896c3b;
+}
+.division-specs dd {
+  margin: 0;
+  font-size: 21px;
+  line-height: 1.35;
+  color: #182522;
+}
+.solar-panel-tech .division-specs {
+  margin-top: 36px;
+}
+.division-note {
+  max-width: 760px;
+  margin: 24px 0 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #5a6662;
+}
+.division-note-wide {
+  margin: -32px 0 0;
+}
+
+/* What we install: a compact checked list */
+.division-type-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.division-type-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+  border: 1px solid #d1d8cb;
+  background: #fffdf5;
+  color: #182522;
+  font-size: 17px;
+  font-weight: 600;
+}
+.division-type-list .material-icon {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  color: #315747;
+}
+
+/* About: our story (numbered timeline) and how we work */
+.about-story,
+.about-values {
+  padding-block: 72px 24px;
+}
+.about-story ol {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 32px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: story;
+}
+.about-story li {
+  counter-increment: story;
+  padding-top: 24px;
+  border-top: 1px solid #b99258;
+}
+.about-story li::before {
+  content: '0' counter(story);
+  display: block;
+  margin-bottom: 18px;
+  color: #896c3b;
+}
+.about-story strong {
+  font-size: 22px;
+  color: #182522;
+}
+.about-story p,
+.about-values p {
+  color: #5a6662;
+  line-height: 1.7;
+}
+.about-values > div:last-child {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.about-values article {
+  padding: 28px;
+  border: 1px solid #d1d8cb;
+  background: #fffdf5;
+}
+.about-values h3 {
+  margin: 0 0 10px;
+  font-size: 22px;
+  color: #173b30;
+}
+.about-values p {
+  margin: 0;
+}
+
+@media (max-width: 1100px) {
+  .division-specs,
+  .division-type-list,
+  .about-story ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  .construction-project-types.two-up,
+  .division-specs,
+  .division-type-list,
+  .about-story ol,
+  .about-values > div:last-child {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .division-specs dd {
+    font-size: 19px;
+  }
+  .division-note-wide {
+    margin-top: -16px;
+  }
+  .about-story,
+  .about-values {
+    padding-block: 48px 8px;
+  }
+}
