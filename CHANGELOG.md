@@ -4,6 +4,8 @@ Recorded milestones for the Techouse website. Dates use the project's Asia/Manil
 
 ## Unreleased — Solar Calculator
 
+- Phone equipment ranges (Solar panels, Inverters, Battery storage) become compact rows with a small photo and "View all models"; the open specifications section drops from 2,035px to 1,125px and the link no longer overlaps the image note. The Skyworth partner box takes a full hairline instead of a one-sided bar.
+
 - "Use my location" names the real municipality and province (e.g. Nasugbu · Batangas) from about 4,400 Philippine places bundled with the site (GeoNames, CC BY 4.0); the position never leaves the browser. The phone section menu's items slide in one after another and leave together. Phone project examples become compact rows (photo, name, place, savings); the savings tint loses its one-sided bar; paging hides when there is one page. The two optional guides become one list with icons and turning chevrons.
 
 - Phone solar section bar: the three section links collapse into one menu button that names the section in view and opens them as a dropdown; the bar drops from 119px to 56px. Desktop unchanged (the bar stays pinned to the top once the page scrolls past the solar banner).
