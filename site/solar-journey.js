@@ -45,7 +45,9 @@ window.TechouseSolar = (() => {
     const result = window.TechouseSolarCalculator.calculate(values);
     const chosen =
       result.scenarios.find((s) => s.id === values.scenario) ||
-      result.scenarios.find((s) => s.id === recommendedScenario(result.segment, result.nightShare)) ||
+      result.scenarios.find(
+        (s) => s.id === recommendedScenario(result.segment, result.nightShare),
+      ) ||
       result.scenarios[0];
     return { ...result, chosen };
   }
@@ -110,8 +112,7 @@ window.TechouseSolar = (() => {
       '<a href="#solar-start" data-scroll="solar-start">Savings calculator</a><a href="#projects" data-scroll="projects">Project examples</a><a href="#solar-technical" data-scroll="solar-technical">Technical reference</a>';
     const learningDetails = document.createElement('details');
     learningDetails.className = 'solar-optional-guide';
-    learningDetails.innerHTML =
-      `<summary><span class="guide-icon">${window.TechouseIcons.icon('routine')}</span><span class="guide-text"><span>Want to understand your solar options?</span><small>Daytime use, batteries and roof shade</small></span>${window.TechouseIcons.icon('expand_more', 'guide-chevron')}</summary>`;
+    learningDetails.innerHTML = `<summary><span class="guide-icon">${window.TechouseIcons.icon('routine')}</span><span class="guide-text"><span>Want to understand your solar options?</span><small>Daytime use, batteries and roof shade</small></span>${window.TechouseIcons.icon('expand_more', 'guide-chevron')}</summary>`;
     learn.querySelector('.section-heading span').remove();
     learn.querySelector('.section-heading h2').textContent = 'How solar fits everyday life';
     learn.querySelector('.section-heading p').textContent =
@@ -121,10 +122,14 @@ window.TechouseSolar = (() => {
     const technical = document.createElement('details');
     technical.className = 'solar-optional-guide solar-technical-guide';
     technical.id = 'solar-technical';
-    technical.innerHTML =
-      `<summary><span class="guide-icon">${window.TechouseIcons.icon('solar_power')}</span><span class="guide-text"><span>For engineers and those who want the specifications</span><small>Panels, inverters, batteries and datasheets</small></span>${window.TechouseIcons.icon('expand_more', 'guide-chevron')}</summary>`;
+    technical.innerHTML = `<summary><span class="guide-icon">${window.TechouseIcons.icon('solar_power')}</span><span class="guide-text"><span>For engineers and those who want the specifications</span><small>Panels, inverters, batteries and datasheets</small></span>${window.TechouseIcons.icon('expand_more', 'guide-chevron')}</summary>`;
     learningDetails.after(technical);
     technical.append(products);
+    // Panel technology and equipment ranges, from the company presentation.
+    const panelTech = document.createElement('section');
+    panelTech.className = 'division-section solar-panel-tech';
+    panelTech.innerHTML = `<div class="section-heading"><h2>Two panel<br>technologies.</h2><p>Both from Skyworth. The difference shows when part of a panel is shaded or damaged.</p></div><div class="construction-project-types two-up"><article class="construction-type"><div class="construction-type-top">${window.TechouseIcons.icon('solar_power')}<span>BC · back contact</span></div><h3>Up to 660 W</h3><p>Cells are connected in parallel, so a fallen leaf, a crack or a shaded cell affects only that cell. The rest of the panel keeps producing.</p></article><article class="construction-type"><div class="construction-type-top">${window.TechouseIcons.icon('solar_power')}<span>TOPCon</span></div><h3>Up to 620 W</h3><p>High-efficiency cells connected in series strings. If one string is shaded or damaged, the panel loses about a sixth of its output while the other strings keep working.</p></article></div><dl class="division-specs"><div><dt>Single-phase inverters</dt><dd>Hybrid, up to 12 kW</dd></div><div><dt>Three-phase inverters</dt><dd>Low and high voltage, up to 125 kW</dd></div><div><dt>220 V three-phase</dt><dd>75 kW model</dd></div><div><dt>Battery packs</dt><dd>5–16 kWh low voltage; larger cabinets to order</dd></div><div><dt>Monitoring</dt><dd>Owner app, plus remote monitoring by our team</dd></div><div><dt>Panel weight</dt><dd>About 35 kg each, before rails and cabling</dd></div></dl><p class="division-note">Most three-phase supply in the Philippines is still 220 V, while most equipment is now made for 380 V and above, which is why 220 V three-phase models are limited. Custom-coloured panels, for example to match terracotta roofs, are available by container order.</p>`;
+    technical.append(panelTech);
     if (partner) {
       partner.innerHTML = `<div class="partner-identity"><span>TECHOUSE × SKYWORTH</span><strong>SKYWORTH</strong><small>Direct solar partner</small></div><div class="partner-message"><h3>Your direct connection<br>to Skyworth solar.</h3><p>Explore panels, inverters and battery storage with your direct Skyworth partner.</p><a class="text-link" href="#/inquiry?division=solar">Talk to our solar team ${window.TechouseIcons.icon('arrow_outward')}</a></div>`;
       technical.append(partner);

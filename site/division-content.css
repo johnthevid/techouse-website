@@ -1,0 +1,269 @@
+/* Content modules for the division and About pages (specifications, lists, story, values).
+   Builds on the construction components in hover-performance.css; square-cornered throughout. */
+.construction-project-types.two-up {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+article.construction-type {
+  cursor: default;
+}
+article.construction-type:hover {
+  border-color: #d1d8cb;
+  background: #fffdf5;
+}
+
+/* Specification sheet: label over value, ruled like the process steps */
+.division-specs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0 32px;
+  margin: 0;
+}
+.division-specs > div {
+  padding: 20px 0 22px;
+  border-top: 1px solid #b99258;
+}
+.division-specs dt {
+  margin-bottom: 8px;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #896c3b;
+}
+.division-specs dd {
+  margin: 0;
+  font-size: 21px;
+  line-height: 1.35;
+  color: #182522;
+}
+.solar-panel-tech .division-specs {
+  margin-top: 36px;
+}
+.division-note {
+  max-width: 760px;
+  margin: 24px 0 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #5a6662;
+}
+.division-note-wide {
+  margin: -32px 0 0;
+}
+
+/* What we install: a compact checked list */
+.division-type-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.division-type-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+  border: 1px solid #d1d8cb;
+  background: #fffdf5;
+  color: #182522;
+  font-size: 17px;
+  font-weight: 600;
+}
+.division-type-list .material-icon {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  color: #315747;
+}
+
+/* About: our story (numbered timeline) and how we work */
+.about-story,
+.about-values {
+  padding-block: 72px 24px;
+}
+.about-story ol {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 32px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: story;
+}
+.about-story li {
+  counter-increment: story;
+  padding-top: 24px;
+  border-top: 1px solid #b99258;
+}
+.about-story li::before {
+  content: '0' counter(story);
+  display: block;
+  margin-bottom: 18px;
+  color: #896c3b;
+}
+.about-story strong {
+  font-size: 22px;
+  color: #182522;
+}
+.about-story p,
+.about-values p {
+  color: #5a6662;
+  line-height: 1.7;
+}
+.about-values > div:last-child {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.about-values article {
+  padding: 28px;
+  border: 1px solid #d1d8cb;
+  background: #fffdf5;
+}
+.about-values h3 {
+  margin: 0 0 10px;
+  font-size: 22px;
+  color: #173b30;
+}
+.about-values p {
+  margin: 0;
+}
+
+@media (max-width: 1100px) {
+  .division-specs,
+  .division-type-list,
+  .about-story ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  .construction-project-types.two-up,
+  .division-specs,
+  .division-type-list,
+  .about-story ol,
+  .about-values > div:last-child {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .division-specs dd {
+    font-size: 19px;
+  }
+  .division-note-wide {
+    margin-top: -16px;
+  }
+  .about-story,
+  .about-values {
+    padding-block: 48px 8px;
+  }
+}
+
+/* Prefabrication: animated 3D standard module (module-3d.js draws it on a canvas) */
+.module-3d {
+  position: relative;
+  margin: 0 0 40px;
+  border: 1px solid #d1d8cb;
+  background:
+    radial-gradient(120% 80% at 50% 100%, #e9e6dc 0%, rgba(233, 230, 220, 0) 70%), #f6f4ec;
+  overflow: hidden;
+}
+.m3d-stage {
+  position: relative;
+  height: 420px;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+}
+.m3d-stage.is-dragging {
+  cursor: grabbing;
+}
+.m3d-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.m3d-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.m3d-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 4px 9px;
+  background: #173b30;
+  color: #fff;
+  font:
+    600 13px/1.2 'DM Sans',
+    Arial,
+    sans-serif;
+  white-space: nowrap;
+  transition: opacity 300ms ease;
+}
+.m3d-label.is-hidden {
+  opacity: 0;
+}
+.m3d-note {
+  background: #fffdf5;
+  color: #173b30;
+  border: 1px solid #b99258;
+}
+.m3d-storeys {
+  background: #b99258;
+  color: #12221e;
+}
+.module-3d figcaption {
+  position: absolute;
+  left: 24px;
+  bottom: 20px;
+  right: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  pointer-events: none;
+  color: #5a6662;
+  font-size: 13px;
+}
+.module-3d figcaption button {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid #173b30;
+  background: #fffdf5;
+  color: #173b30;
+  font:
+    600 14px 'DM Sans',
+    Arial,
+    sans-serif;
+  cursor: pointer;
+}
+.module-3d figcaption button[aria-pressed='true'] {
+  background: #173b30;
+  color: #fff;
+}
+.module-3d figcaption button:focus-visible {
+  outline: 2px solid #b99258;
+  outline-offset: 3px;
+}
+@media (max-width: 700px) {
+  .m3d-stage {
+    height: 340px;
+  }
+  .m3d-label {
+    font-size: 12px;
+    padding: 3px 7px;
+  }
+  .module-3d figcaption {
+    position: static;
+    padding: 0 16px 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .m3d-label {
+    transition: none;
+  }
+}

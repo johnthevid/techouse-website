@@ -230,6 +230,14 @@ const divisions = [
 for (const id of divisions)
   for (const sel of ["h2", ".banner-division-label"])
     selectors.push(`[data-banner="${id}"] ${sel}`);
+// Project categories per division; keep in step with site/portfolio.js (divisions).
+const projectDivisions = {
+  solar: ["residential", "commercial", "industrial"],
+  construction: ["residential", "commercial", "industrial"],
+  prefabrication: ["housing", "institutional", "commercial"],
+  development: ["residential", "commercial", "mixed-use"],
+  elevators: ["installation", "maintenance", "modernisation"],
+};
 // Retired homepage fields are accepted only to clean older saved drafts on their next save.
 const retiredSelectors = new Set([
   ".company-intro p:nth-of-type(1)",
@@ -369,8 +377,11 @@ export function validateContent(input) {
         if (row[key] && !/^https:\/\//.test(row[key]))
           fail(400, "Reference links must use HTTPS.");
       if (type === "projects") {
-        if (!["residential", "commercial", "industrial"].includes(p.sector))
-          fail(400, "Invalid sector.");
+        // Each division has its own categories; older records have no division (solar).
+        const division = p.division === undefined ? "solar" : p.division;
+        if (!Object.hasOwn(projectDivisions, division)) fail(400, "Invalid division.");
+        if (!projectDivisions[division].includes(p.sector)) fail(400, "Invalid sector.");
+        row.division = division;
         row.sector = p.sector;
         row.reference = Boolean(p.reference);
         if (p.gallery !== undefined && !Array.isArray(p.gallery))

@@ -22,6 +22,30 @@ Updated: 19 November 2026.
 - Phone section menu (`site/solar-extras.js`, `solar-calculator.css`, under 700px): `.solar-subnav-toggle` names the section in view (the last one whose top reaches 40% of the screen), opens `#solar-subnav-links` as a dropdown, closes on a link, Escape or an outside tap, and marks the current link with `aria-current`. Comparison spacing on phones restored to 32px above. Construction's section bar is unchanged.
 - Not merged to main; not deployed. The demo branch needs main merged in after approval.
 
+## Latest: division and About content from the company presentation (branch `feature/division-projects`)
+
+Written in the company's voice from the recorded Taglish company introduction (no quotes, no named speaker; the user's choice). Excluded: pricing, the royalty project, bank minimums, sales Q&A and the Solar Group joint venture (awaiting confirmation).
+
+- Prefabrication (new page in `divisions.js`): how modules are made, standard module specs (7.2 × 3.6 × 3 m, ~23 m², 15 cm walls, 12 cm roof, 3,000–5,000 PSI, up to 3 storeys), uses, delivery FAQ, brief.
+- Elevator engineering (new page): three brands (Hitachi China-made; EPSS by Yida Express Elevator Co., Ltd., Huzhou, per the user; Shanghai Mitsubishi), lift types, installation/maintenance/modernisation, FAQ, brief.
+- Construction: new "Two ways we build" section (precast modules vs cast-in-place up to ~10 storeys) and subnav link.
+- Solar (`solar-journey.js`): BC vs TOPCon and equipment ranges inside the technical reference panel. Calculator unchanged.
+- About (`app.js`): "Our story" timeline and "How we work" values after the CMS-editable introduction.
+- New `site/division-content.css`. Real estate stays generic.
+- Facts to confirm with the client before release are listed in the conversation summary; tests 33 of 33.
+- Prefabrication 3D module (`site/module-3d.js`, styles in `division-content.css`): shaped after the client's factory footage (closed grey concrete box, 2.4 m doorway at one end under a 0.6 m roof canopy, a front window, two recessed panels on the back; client videos are not in the repo), drawn on a canvas with its own projection (no library, no CSS 3D, so Safari matches Chrome). Blocks are painted far to near using separating planes, ordered only where their screen outlines overlap, so there is no clipping, stacked or single. Dragging turns the whole model; on release it coasts with the flick and eases back into the slow sway (no snap). Dimension labels are upright HTML placed at projected points on the edges facing the viewer, glide across when the facing edge changes, and stay inside the frame. "Stack to 3 storeys" drops two more modules in. Pauses off-screen and in hidden tabs; static under reduced motion. Checked at 1280 px and 390 px, including drag and stacking.
+
+## Earlier: project showcase on every division (branch `feature/division-projects`)
+
+From `main`; not merged, not deployed. No database migration: projects stay in the content record, which already accepted a `division` field.
+
+- `site/portfolio.js`: one showcase for all divisions, configured per division (categories, key-fact label, heading). Solar is unchanged (sectors, savings estimate, investment and roof details). Construction (residential/commercial/industrial), Prefabrication (housing, schools & dormitories, commercial), Real estate (residential, commercial, mixed-use) and Elevators (new installation, maintenance, modernisation) show their own facts; a division without published projects shows a "Project stories are on the way" note with an inquiry link.
+- Routes: `#/divisions/<division>/projects/<id>` opens the project dialog over its division page; "Back to project examples" returns to that division's section. Every non-solar division page now has the `#projects` section.
+- Back office (Projects): a Division field switches categories and the key-fact label; solar-only fields (system, payback, maintenance, roof) hide for other divisions; the library filters by division. Records without a division are Solar.
+- `platform/worker.mjs` validates the division and its categories (`projectDivisions`, kept in step with `portfolio.js`). New test `platform/tests/division-projects.test.mjs`.
+- Tests: 33 of 33 pass. Browser-checked: all five division pages, project dialogs, direct project links, and creating/editing/filtering an Elevators project in the back office.
+- Next: real project photos and details from the client (Dasmariñas prefab homes, Malabon, elevator jobs); confirm the Binangonan project may be claimed publicly.
+
 ## Latest: phone and tablet homepage merged into main (20 Nov 2026)
 
 `feature/mobile-view` merged into `main` at the user's instruction. Not deployed; publishing still needs a separate release instruction.
