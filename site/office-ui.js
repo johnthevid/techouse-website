@@ -543,7 +543,7 @@ window.TechouseOfficeUI = (() => {
     editor.classList.add('compact-project-editor');
     editor.insertAdjacentHTML(
       'afterbegin',
-      '<div class="project-mode-header"><span class="project-mode-badge"></span></div>',
+      `<button type="button" class="project-editor-back" data-editor-back>${window.TechouseIcons.icon('arrow_back')}Back to library</button><div class="project-mode-header"><span class="project-mode-badge"></span></div>`,
     );
     editor
       .querySelector('#project-image-preview')
@@ -581,10 +581,21 @@ window.TechouseOfficeUI = (() => {
     document.addEventListener(
       'click',
       (event) => {
-        if (event.target.closest('[data-edit-project],[data-new-project]'))
+        const opener = event.target.closest('[data-edit-project],[data-new-project]');
+        if (opener)
           queueMicrotask(() => {
-            if (editor.isConnected) editorMode(editor);
+            if (!editor.isConnected) return;
+            editorMode(editor);
+            // Phones show the library first; the editor opens on Add or Edit and closes on Cancel.
+            const fromEditor = editor.contains(opener);
+            grid.classList.toggle('editor-open', !fromEditor);
+            if (matchMedia('(max-width: 760px)').matches)
+              (fromEditor ? browser : editor).scrollIntoView({ block: 'start' });
           });
+        if (event.target.closest('[data-editor-back]')) {
+          grid.classList.remove('editor-open');
+          browser.scrollIntoView({ block: 'start' });
+        }
       },
       { signal: controller.signal },
     );

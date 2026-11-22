@@ -1,5 +1,15 @@
 # Current handoff
 
+## Latest: division heroes, page layouts and back office on phones (branch `feature/division-heroes`, 22 Nov 2026, not merged or deployed)
+
+- Heroes for Construction, Prefabrication, Elevators and Real estate development follow the approved Solar pattern: benefit headline, playful subline, icon button that scrolls to the page's first section. Copy lives in `HEROES` in `site/divisions.js`. Solar is untouched (markup verified identical).
+- Development copy invites a conversation only; it does not advertise services (the division data notes they are unconfirmed).
+- Layouts: equal three-card grids replaced by editorial rows (`.division-index`) and a two-column comparison (`.division-compare`), styled in `division-content.css` under new class names because Solar still uses `.construction-project-types`. Project showcase moved mid-page as proof; the "Bring what you have" brief now closes each page. Section menus gained Projects and swipe sideways on phones.
+- Real estate development now has a section menu, a three-step "how it starts" section, projects and the closing brief, instead of repeating its tagline as a heading.
+- Back office on phones (`content-tools.css` end block, `office-ui.js`): tabs and filters swipe in one row; Projects shows the library first and opens the editor on Add or Edit with a Back to library button; 44px row actions; paging in one row; styled file picker. Desktop unchanged.
+- Checks: 35/35 tests, 0 page errors on 16 routes (desktop and phone), Impeccable detector found nothing in the changed code (its four warnings are older global styles).
+- Needs client review: the new hero and section copy.
+
 ## Main now includes `unslop` (22 Nov 2026, not deployed)
 
 Merged `unslop` into `main` on top of the security hardening and footer stamp already there. Conflicts were the footer line (kept the sentence-case version with the stamp and LinkedIn) and asset versions (regenerated with `refresh-assets.mjs`). Checks: 35/35 tests, 0 page errors on 16 routes at desktop and phone width. The live site is still the 4 Nov release; publishing needs the user's release instruction.
