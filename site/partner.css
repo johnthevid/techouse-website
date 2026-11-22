@@ -740,7 +740,17 @@
   }
 }
 
-/* Application page (#/partnership/apply) */
+/* Application page (#/partnership/apply): the partner ground, not the generic form page. */
+body.partner-apply-page {
+  background: #f3f0e8;
+}
+#partner-apply > fieldset > legend:focus {
+  outline: none;
+}
+#partner-apply > fieldset > legend:focus-visible {
+  outline: 2px solid #b98626;
+  outline-offset: 4px;
+}
 .partner-apply-hero {
   padding-bottom: 44px;
 }
@@ -771,7 +781,7 @@
   border-top: 4px solid #d1d8cb;
   font-size: 14px;
   font-weight: 600;
-  color: #56625d;
+  color: var(--pp-muted);
 }
 .partner-apply-steps li span {
   width: 26px;
@@ -825,14 +835,15 @@
   font-size: 16px;
   min-height: 50px;
 }
-.partner-choice-group {
-  margin: 0 0 26px;
+#partner-apply .partner-choice-group {
+  margin: 0 0 28px;
 }
 .partner-choice-label {
   margin: 0 0 12px;
   padding: 0;
   font-size: 14px;
   font-weight: 600;
+  color: var(--ink);
 }
 .partner-choice-label small {
   font-weight: 400;
@@ -895,7 +906,7 @@
 }
 .partner-review dt {
   font-size: 14px;
-  color: #56625d;
+  color: var(--pp-muted);
 }
 .partner-review dd {
   margin: 0;
@@ -967,7 +978,7 @@
 .partner-apply-aside {
   position: sticky;
   top: 110px;
-  background: #1d3a2f;
+  background: var(--pp-green);
   color: #fff;
 }
 .partner-apply-aside > img {
@@ -1003,7 +1014,7 @@
   content: counter(next);
   grid-row: span 2;
   font-family: var(--display);
-  color: #e6cf99;
+  color: var(--pp-gold);
 }
 .partner-apply-aside li strong {
   font-size: 16px;
@@ -1031,7 +1042,7 @@
   font-size: 30px;
   font-weight: 500;
   letter-spacing: -0.04em;
-  color: #e6cf99;
+  color: var(--pp-gold);
 }
 .partner-apply-aside > div > p {
   margin: 24px 0 0;
@@ -1039,7 +1050,7 @@
   color: #c3d0c7;
 }
 .partner-apply-aside a {
-  color: #e6cf99;
+  color: var(--pp-gold);
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -1047,6 +1058,9 @@
 .partner-apply-done .success-icon .material-icon {
   width: 28px;
   height: 28px;
+}
+.partner-apply-done-links .button {
+  margin-top: 0;
 }
 .partner-apply-done-links {
   display: flex;
@@ -1138,6 +1152,15 @@
   .partner-apply-actions .button {
     flex: 1;
     padding: 0 18px;
+    white-space: nowrap;
+  }
+  .partner-apply-back {
+    width: 54px;
+    padding: 0;
+    justify-content: center;
+  }
+  .partner-apply-back span {
+    display: none;
   }
   .partner-apply-aside > img,
   .partner-apply-aside dl {

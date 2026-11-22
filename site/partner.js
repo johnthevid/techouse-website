@@ -243,24 +243,24 @@ window.TechousePartner = (() => {
     const arrow = icon('arrow_forward');
     const field = (id, label, attrs, hint = '') =>
       `<div class="field"><label for="pa-${id}">${label}${hint ? ` <small>${hint}</small>` : ''}</label><input id="pa-${id}" name="${id}" ${attrs}></div>`;
-    return `<div class="container breadcrumb"><a href="#/">Home</a><span>/</span><a href="#/partnership">Be a partner</a><span>/</span><span>Apply</span></div>
+    return `<div class="partner-page partner-apply-wrap"><div class="container breadcrumb"><a href="#/">Home</a><span>/</span><a href="#/partnership">Be a partner</a><span>/</span><span>Apply</span></div>
 <section class="container page-hero partner-apply-hero"><h1>Apply to be<br>a partner.</h1><p>Three short steps. Nothing is binding until both sides sign the agreement.</p></section>
 <div class="container partner-apply">
 <div class="form-card partner-apply-card" id="partner-apply-area">
 <ol class="partner-apply-steps" aria-label="Application progress">${stages.map((name, i) => `<li data-stage="${i}"${i ? '' : ' aria-current="step"'}><span>${i + 1}</span>${name}</li>`).join('')}</ol>
 <form id="partner-apply" novalidate>
-<fieldset data-step="0"><legend>About you</legend><div class="field-grid">
+<fieldset data-step="0"><legend tabindex="-1">About you</legend><div class="field-grid">
 ${field('name', 'Full name', 'autocomplete="name" required maxlength="100" placeholder="Your full name"')}
 ${field('phone', 'Mobile number', 'type="tel" autocomplete="tel" required maxlength="35" placeholder="09XX XXX XXXX"')}
 ${field('email', 'Email', 'type="email" autocomplete="email" maxlength="200" placeholder="you@example.com"', '(optional)')}
 ${field('location', 'City or province', 'required maxlength="200" placeholder="e.g. Lipa, Batangas"')}
 </div></fieldset>
-<fieldset data-step="1" hidden><legend>Your network</legend>
+<fieldset data-step="1" hidden><legend tabindex="-1">Your network</legend>
 <div class="partner-choice-group" role="radiogroup" aria-labelledby="pa-role-label"><p class="partner-choice-label" id="pa-role-label">What best describes you?</p><div class="partner-choices">${roles.map((r, i) => `<label class="partner-choice"><input type="radio" name="role" value="${r}" required${i ? '' : ' data-first'}><span>${r}</span></label>`).join('')}</div></div>
 <fieldset class="partner-choice-group"><legend class="partner-choice-label">Who could you introduce? <small>(choose any)</small></legend><div class="partner-choices partner-choices-3">${audiences.map((a) => `<label class="partner-choice"><input type="checkbox" name="audience" value="${a}"><span>${a}</span></label>`).join('')}</div></fieldset>
 <div class="field"><label for="pa-network">Tell us about your network <small>(optional)</small></label><textarea id="pa-network" name="network" maxlength="2000" rows="4" placeholder="Where are they, and what kind of properties do they have?"></textarea></div>
 </fieldset>
-<fieldset data-step="2" hidden><legend>Review</legend>
+<fieldset data-step="2" hidden><legend tabindex="-1">Review</legend>
 <dl class="partner-review" data-review></dl>
 <div class="partner-agree">
 <label><input type="checkbox" name="agreeRole" required><span>I understand partners work as independent contractors paid by commission, not as Techouse employees.</span></label>
@@ -269,15 +269,15 @@ ${field('location', 'City or province', 'required maxlength="200" placeholder="e
 </div>
 <p class="form-note">Demo only. This application stays in your current browser and is not sent to Techouse.</p>
 </fieldset>
-<div class="partner-apply-actions"><button type="button" class="partner-apply-back" data-apply-back hidden>${icon('arrow_back')}Back</button><button type="button" class="button" data-apply-next>Continue ${arrow}</button><button type="submit" class="button partner-apply-submit" hidden>Save application ${arrow}</button></div>
+<div class="partner-apply-actions"><button type="button" class="partner-apply-back" data-apply-back aria-label="Back" hidden>${icon('arrow_back')}<span>Back</span></button><button type="button" class="button" data-apply-next>Continue ${arrow}</button><button type="submit" class="button partner-apply-submit" hidden>Save application ${arrow}</button></div>
 </form></div>
 <aside class="partner-apply-aside" aria-label="About the partner program">
 <img src="assets/reference-projects/reference-residential-01.jpg" alt="" loading="lazy" width="1440" height="948">
-<div><h2>What happens next</h2><ol><li><strong>We review your application</strong><span>Our solar team reads every one.</span></li><li><strong>We call you</strong><span>To get to know you and answer questions.</span></li><li><strong>We sign together</strong><span>The Solar Sales Agency Agreement, before a notary.</span></li></ol>
+<div><h2>What happens next</h2><ol><li><strong>We review your application</strong></li><li><strong>We call you</strong><span>To get to know you and answer questions.</span></li><li><strong>We sign together</strong><span>The Solar Sales Agency Agreement, before a notary.</span></li></ol>
 <dl><div><dt>Commission</dt><dd>5%</dd></div><div><dt>Paid within</dt><dd>7 days</dd></div></dl>
 <p>Questions first? <a href="tel:+639855626888">Call +63 985 562 6888</a></p></div>
 </aside>
-</div>`;
+</div></div>`;
   }
 
   function mountApply() {
@@ -307,6 +307,7 @@ ${field('location', 'City or province', 'required maxlength="200" placeholder="e
         .join('');
     };
     const go = (index) => {
+      const direction = index > current ? 1 : -1;
       current = index;
       steps.forEach((step, i) => (step.hidden = i !== current));
       marks.forEach((mark, i) => {
@@ -318,9 +319,17 @@ ${field('location', 'City or province', 'required maxlength="200" placeholder="e
       next.hidden = current === steps.length - 1;
       submit.hidden = current !== steps.length - 1;
       if (current === steps.length - 1) fillReview();
-      const first = steps[current].querySelector('input:not([type=checkbox]):not([type=radio]),input[data-first],textarea');
       document.querySelector('#partner-apply-area').scrollIntoView({ block: 'start', behavior: 'instant' });
-      first?.focus({ preventScroll: true });
+      // Focus the step heading so keyboard and screen-reader users land on the new step.
+      steps[current].querySelector(':scope > legend')?.focus({ preventScroll: true });
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches)
+        steps[current].animate(
+          [
+            { opacity: 0, transform: `translateX(${direction * 16}px)` },
+            { opacity: 1, transform: 'none' },
+          ],
+          { duration: 360, easing: 'cubic-bezier(.16,1,.3,1)' },
+        );
     };
     next.addEventListener('click', () => valid(current) && go(current + 1));
     back.addEventListener('click', () => go(current - 1));
@@ -340,7 +349,7 @@ ${field('location', 'City or province', 'required maxlength="200" placeholder="e
       const record = {
         topic: 'partnership',
         name: text('name'),
-        company: text('role'),
+        company: '',
         email: text('email'),
         phone: text('phone'),
         division: 'solar',
