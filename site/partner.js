@@ -200,6 +200,9 @@ window.TechousePartner = (() => {
     const media = root.querySelector('.partner-slide-media');
     let startX = null;
     media.addEventListener('pointerdown', (event) => (startX = event.clientX));
+    const resetSwipe = () => (startX = null);
+    media.addEventListener('pointercancel', resetSwipe);
+    media.addEventListener('pointerleave', resetSwipe);
     media.addEventListener('pointerup', (event) => {
       if (startX === null) return;
       const delta = event.clientX - startX;
