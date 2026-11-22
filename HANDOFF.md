@@ -22,6 +22,17 @@ Updated: 19 November 2026.
 - Phone section menu (`site/solar-extras.js`, `solar-calculator.css`, under 700px): `.solar-subnav-toggle` names the section in view (the last one whose top reaches 40% of the screen), opens `#solar-subnav-links` as a dropdown, closes on a link, Escape or an outside tap, and marks the current link with `aria-current`. Comparison spacing on phones restored to 32px above. Construction's section bar is unchanged.
 - Not merged to main; not deployed. The demo branch needs main merged in after approval.
 
+## Latest: project showcase on every division (branch `feature/division-projects`)
+
+From `main`; not merged, not deployed. No database migration: projects stay in the content record, which already accepted a `division` field.
+
+- `site/portfolio.js`: one showcase for all divisions, configured per division (categories, key-fact label, heading). Solar is unchanged (sectors, savings estimate, investment and roof details). Construction (residential/commercial/industrial), Prefabrication (housing, schools & dormitories, commercial), Real estate (residential, commercial, mixed-use) and Elevators (new installation, maintenance, modernisation) show their own facts; a division without published projects shows a "Project stories are on the way" note with an inquiry link.
+- Routes: `#/divisions/<division>/projects/<id>` opens the project dialog over its division page; "Back to project examples" returns to that division's section. Every non-solar division page now has the `#projects` section.
+- Back office (Projects): a Division field switches categories and the key-fact label; solar-only fields (system, payback, maintenance, roof) hide for other divisions; the library filters by division. Records without a division are Solar.
+- `platform/worker.mjs` validates the division and its categories (`projectDivisions`, kept in step with `portfolio.js`). New test `platform/tests/division-projects.test.mjs`.
+- Tests: 33 of 33 pass. Browser-checked: all five division pages, project dialogs, direct project links, and creating/editing/filtering an Elevators project in the back office.
+- Next: real project photos and details from the client (Dasmariñas prefab homes, Malabon, elevator jobs); confirm the Binangonan project may be claimed publicly.
+
 ## Latest: phone and tablet homepage merged into main (20 Nov 2026)
 
 `feature/mobile-view` merged into `main` at the user's instruction. Not deployed; publishing still needs a separate release instruction.

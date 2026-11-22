@@ -488,7 +488,8 @@ window.TechouseOfficeUI = (() => {
     });
     const matches = all.filter(
       (project) =>
-        (projectSector === 'all' || (project.sector || 'residential') === projectSector) &&
+        (projectSector === 'all' ||
+          window.TechousePortfolio.divisionOf(project) === projectSector) &&
         `${project.title} ${project.location} ${project.capacity}`
           .toLowerCase()
           .includes(projectQuery.toLowerCase()),
@@ -500,7 +501,7 @@ window.TechouseOfficeUI = (() => {
       button.querySelector('span').textContent = all.filter(
         (p) =>
           button.dataset.officeSector === 'all' ||
-          (p.sector || 'residential') === button.dataset.officeSector,
+          window.TechousePortfolio.divisionOf(p) === button.dataset.officeSector,
       ).length;
     });
     browser.querySelector('.managed-project-list').innerHTML =
@@ -508,7 +509,7 @@ window.TechouseOfficeUI = (() => {
         .slice(projectPage * 5, projectPage * 5 + 5)
         .map(
           (project) =>
-            `<article class="managed-project-row"><img src="${esc(project.image || 'assets/solar.jpg')}" alt="" loading="lazy"><div><span class="managed-project-meta">${esc(project.sector || 'residential')} · ${esc(project.status)}${project.sample ? ' · Sample' : ''}</span><h3>${esc(project.title)}</h3><p>${esc(project.location)} · ${esc(project.capacity)}</p></div><div class="managed-project-actions"><button type="button" data-edit-project="${esc(project.id)}" aria-label="Edit ${esc(project.title)}">${window.TechouseIcons.icon('dashboard')} Edit</button><button type="button" data-delete-project="${esc(project.id)}" aria-label="Remove ${esc(project.title)}">Remove</button></div></article>`,
+            `<article class="managed-project-row"><img src="${esc(project.image || 'assets/solar.jpg')}" alt="" loading="lazy"><div><span class="managed-project-meta">${esc(window.TechousePortfolio.divisions[window.TechousePortfolio.divisionOf(project)].name)} · ${esc(window.TechousePortfolio.divisions[window.TechousePortfolio.divisionOf(project)].sectors[project.sector] || project.sector || '')} · ${esc(project.status)}${project.sample ? ' · Sample' : ''}</span><h3>${esc(project.title)}</h3><p>${esc(project.location)} · ${esc(project.capacity)}</p></div><div class="managed-project-actions"><button type="button" data-edit-project="${esc(project.id)}" aria-label="Edit ${esc(project.title)}">${window.TechouseIcons.icon('dashboard')} Edit</button><button type="button" data-delete-project="${esc(project.id)}" aria-label="Remove ${esc(project.title)}">Remove</button></div></article>`,
         )
         .join('') ||
       (projectStatus === 'draft' && !projectQuery && projectSector === 'all'
@@ -537,7 +538,7 @@ window.TechouseOfficeUI = (() => {
       )
       .join(
         '',
-      )}</div><div class="office-sector-tabs" aria-label="Filter projects by sector">${['all', 'residential', 'commercial', 'industrial'].map((sector) => `<button type="button" data-office-sector="${sector}" aria-pressed="false">${sector.charAt(0).toUpperCase() + sector.slice(1)} <span></span></button>`).join('')}</div><label class="project-search-label">Search projects<input type="search" class="search-input" placeholder="Search title, location or capacity" aria-label="Search projects" value="${esc(projectQuery)}"></label><div class="managed-project-list"></div><div class="managed-project-pagination"><button type="button" class="button outline small" data-office-page="-1" aria-label="Previous five projects">← Previous</button><span class="managed-page-status" role="status" aria-live="polite"></span><button type="button" class="button outline small" data-office-page="1" aria-label="Next five projects">Next →</button></div>`;
+      )}</div><div class="office-sector-tabs" aria-label="Filter projects by division">${[['all', 'All'], ...Object.entries(window.TechousePortfolio.divisions).map(([id, kind]) => [id, kind.name])].map(([id, label]) => `<button type="button" data-office-sector="${id}" aria-pressed="false">${esc(label)} <span></span></button>`).join('')}</div><label class="project-search-label">Search projects<input type="search" class="search-input" placeholder="Search title, location or capacity" aria-label="Search projects" value="${esc(projectQuery)}"></label><div class="managed-project-list"></div><div class="managed-project-pagination"><button type="button" class="button outline small" data-office-page="-1" aria-label="Previous five projects">← Previous</button><span class="managed-page-status" role="status" aria-live="polite"></span><button type="button" class="button outline small" data-office-page="1" aria-label="Next five projects">Next →</button></div>`;
     grid.prepend(browser);
     editor.classList.add('compact-project-editor');
     editor.insertAdjacentHTML(
@@ -627,6 +628,7 @@ window.TechouseOfficeUI = (() => {
       },
       { signal: controller.signal },
     );
+    window.TechouseContent.syncProjectDivision(editor);
     renderProjects();
     editorMode(editor, false);
   }

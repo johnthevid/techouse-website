@@ -663,7 +663,7 @@ function render() {
     'division-page',
     path.startsWith('/divisions/') &&
       !path.startsWith('/divisions/solar/products/') &&
-      !path.startsWith('/divisions/solar/projects/'),
+      !/^\/divisions\/[a-z-]+\/projects\//.test(path),
   );
   document.body.classList.toggle('landing', path === '/');
   document.body.classList.toggle('division-content-page', path.startsWith('/divisions/'));
@@ -688,9 +688,11 @@ function render() {
   else if (path === '/divisions') {
     title = 'Our divisions';
     html = `${breadcrumb('Our divisions')}<section class="container page-hero divisions-introduction"><div><h1>What are you<br>building next?</h1></div><p>A lower electricity bill. A new space. A building brought to life. Explore our five divisions and find the right place to begin.</p></section>${divisionDirectory()}${cta()}`;
-  } else if (path.startsWith('/divisions/solar/projects/')) {
-    title = 'Solar project portfolio';
-    html = divisionPage('solar');
+  } else if (/^\/divisions\/[a-z-]+\/projects\//.test(path)) {
+    // A project opens over its division page as a dialog.
+    const owner = divisions.some((d) => d.id === path.split('/')[2]) ? path.split('/')[2] : 'solar';
+    title = 'Project portfolio';
+    html = divisionPage(owner);
   } else if (path.startsWith('/divisions/solar/products/')) {
     const kind = path.split('/')[4];
     title =
@@ -747,6 +749,15 @@ function render() {
   }
   $('#main').innerHTML = html;
   window.TechouseContent?.apply(path);
+  // "Back to project examples" returns to a division's projects section (Solar handles its own).
+  if (
+    /^\/divisions\/[a-z-]+$/.test(path) &&
+    path !== '/divisions/solar' &&
+    params.get('section') === 'projects'
+  )
+    requestAnimationFrame(() =>
+      document.querySelector('#projects')?.scrollIntoView({ behavior: 'instant' }),
+    );
   if (path === '/') window.TechouseBanner.mount(returningHome);
   window.TechouseDivisions.mount();
   window.TechouseSolar?.prefill();
@@ -768,7 +779,7 @@ function render() {
   document.title = `${title} — Techouse`;
   window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   if (path.startsWith('/divisions/solar/products/')) window.TechouseCatalogue.revealBanner();
-  if (path.startsWith('/divisions/solar/projects/'))
+  if (/^\/divisions\/[a-z-]+\/projects\//.test(path))
     window.TechousePortfolio.openProject(path.split('/')[4] || '');
 }
 function decodeSegment(value = '') {

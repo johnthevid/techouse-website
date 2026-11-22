@@ -4,7 +4,8 @@ window.TechousePortfolio = (() => {
   // Client presentation is local-only. Never change the stored sample flags.
   const clientPreview = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
   function presentationProject(project) {
-    if (!clientPreview || !project.sample) return project;
+    // Local preview polish applies to the solar samples only.
+    if (!clientPreview || !project.sample || divisionOf(project) !== 'solar') return project;
     return {
       ...project,
       sample: false,
@@ -17,11 +18,76 @@ window.TechousePortfolio = (() => {
     };
   }
   let cleanup = () => {};
-  const sectors = {
-    residential: 'Residential',
-    commercial: 'Commercial',
-    industrial: 'Industrial',
+  // Every division has its own categories, key-fact label and showcase heading.
+  // Keep ids in step with platform/worker.mjs (projectDivisions).
+  const divisions = {
+    solar: {
+      name: 'Solar',
+      sectors: { residential: 'Residential', commercial: 'Commercial', industrial: 'Industrial' },
+      fact: 'System capacity',
+      factHint: 'For example, 10.5 kWp',
+      kicker: 'PROJECT STORIES',
+      heading: 'Their rooftops went solar.<br>Look how much they’re saving.',
+      intro: 'Explore solar project examples and their potential monthly electricity savings.',
+      noun: 'solar',
+    },
+    construction: {
+      name: 'Construction',
+      sectors: { residential: 'Residential', commercial: 'Commercial', industrial: 'Industrial' },
+      fact: 'Scope',
+      factHint: 'For example, 3-storey house · cast-in-place',
+      kicker: 'IN THE FIELD',
+      heading: 'Built, and<br>standing.',
+      intro: 'Homes, workplaces and facilities from our construction teams.',
+      noun: 'construction',
+    },
+    prefabrication: {
+      name: 'Prefabrication',
+      sectors: {
+        housing: 'Housing',
+        institutional: 'Schools & dormitories',
+        commercial: 'Commercial',
+      },
+      fact: 'Modules',
+      factHint: 'For example, 6 modules · 3 storeys',
+      kicker: 'IN THE FIELD',
+      heading: 'Modules,<br>put to work.',
+      intro: 'Precast homes, classrooms and spaces assembled from our modules.',
+      noun: 'prefabrication',
+    },
+    development: {
+      name: 'Real estate',
+      sectors: { residential: 'Residential', commercial: 'Commercial', 'mixed-use': 'Mixed-use' },
+      fact: 'Scale',
+      factHint: 'For example, 24 units · 1.2 hectares',
+      kicker: 'IN THE FIELD',
+      heading: 'Places we’ve<br>helped shape.',
+      intro: 'Developments we have planned and delivered.',
+      noun: 'development',
+    },
+    elevators: {
+      name: 'Elevators',
+      sectors: {
+        installation: 'New installation',
+        maintenance: 'Maintenance',
+        modernisation: 'Modernisation',
+      },
+      fact: 'Lift',
+      factHint: 'For example, Hitachi passenger lift · 8 floors',
+      kicker: 'IN THE FIELD',
+      heading: 'Lifts we’ve installed<br>and keep running.',
+      intro: 'Installations, maintenance contracts and modernisations across our three brands.',
+      noun: 'elevator',
+    },
   };
+  const divisionOf = (project) => (divisions[project.division] ? project.division : 'solar');
+  const kindOf = (project) => divisions[divisionOf(project)];
+  const sectorOf = (project) => {
+    const keys = Object.keys(kindOf(project).sectors);
+    return keys.includes(project.sector) ? project.sector : keys[0];
+  };
+  const projectHref = (project) =>
+    `#/divisions/${divisionOf(project)}/projects/${encodeURIComponent(project.id)}`;
   const esc = (value) =>
     String(value || '').replace(
       /[&<>"']/g,
@@ -50,27 +116,45 @@ window.TechousePortfolio = (() => {
       ? project.gallery
       : [{ src: project.image || 'assets/solar.jpg', caption: project.title }];
   }
-  function mount(section, projects, imageURL) {
+  function mount(section, projects, imageURL, division = 'solar') {
     cleanup();
     if (!section) return;
-    projects = projects.map(presentationProject);
+    const kind = divisions[division] || divisions.solar;
+    const sectors = kind.sectors;
+    const solar = kind === divisions.solar;
+    projects = projects.filter((p) => divisionOf(p) === division).map(presentationProject);
     const requestedSector = new URLSearchParams(location.hash.split('?')[1]).get('sector');
-    let sector = sectors[requestedSector] ? requestedSector : 'residential';
-    const pages = { residential: 0, commercial: 0, industrial: 0 };
+    const firstWithProjects =
+      Object.keys(sectors).find((id) => projects.some((p) => sectorOf(p) === id)) ||
+      Object.keys(sectors)[0];
+    let sector = sectors[requestedSector] ? requestedSector : firstWithProjects;
+    const pages = Object.fromEntries(Object.keys(sectors).map((id) => [id, 0]));
     const controller = new AbortController();
-    section.innerHTML = `<div class="section-heading"><span>05 / PROJECT STORIES</span><h2>Their rooftops went solar.<br>Look how much they’re saving.</h2><p>Explore solar project examples and their potential monthly electricity savings. ${clientPreview ? 'Compare system sizes, project details and estimated savings.' : 'Projects include illustrative samples and credited references; savings are estimates, not verified customer results. Images do not represent completed Techouse installations.'}</p></div><div class="portfolio-toolbar"><div class="portfolio-sectors" role="tablist" aria-label="Project sectors">${Object.entries(
+    const note = solar
+      ? clientPreview
+        ? 'Compare system sizes, project details and estimated savings.'
+        : 'Projects include illustrative samples and credited references; savings are estimates, not verified customer results. Images do not represent completed Techouse installations.'
+      : '';
+    const heading = `<div class="section-heading"><span>${solar ? '05 / ' : ''}${kind.kicker}</span><h2>${kind.heading}</h2><p>${kind.intro}${note ? ' ' + note : ''}</p></div>`;
+    // A division without published projects yet keeps its place on the page with an honest note.
+    if (!projects.length) {
+      section.innerHTML = `${heading}<div class="portfolio-coming-soon"><span>${window.TechouseIcons.icon('construction')}</span><div><h3>Project stories are on the way.</h3><p>We’re preparing photos and details of our ${kind.noun} work. In the meantime, tell us about your project and we’ll share relevant examples.</p><a class="text-link" href="#/inquiry?division=${division}">Start a conversation ${window.TechouseIcons.icon('arrow_outward')}</a></div></div>`;
+      cleanup = () => {};
+      return;
+    }
+    section.innerHTML = `${heading}<div class="portfolio-toolbar"><div class="portfolio-sectors" role="tablist" aria-label="Project sectors">${Object.entries(
       sectors,
     )
       .map(
         ([id, label]) =>
-          `<button type="button" id="portfolio-tab-${id}" role="tab" aria-controls="portfolio-panel" data-sector="${id}">${label} <span>${projects.filter((p) => (p.sector || 'residential') === id).length}</span></button>`,
+          `<button type="button" id="portfolio-tab-${id}" role="tab" aria-controls="portfolio-panel" data-sector="${id}">${label} <span>${projects.filter((p) => sectorOf(p) === id).length}</span></button>`,
       )
       .join(
         '',
       )}</div></div><div id="portfolio-panel" role="tabpanel"></div><div class="portfolio-pagination"><button type="button" class="button outline" data-project-page="-1" aria-label="Previous project page">${window.TechouseIcons.icon('arrow_back')} Previous</button><p role="status" aria-live="polite" id="portfolio-page-status"></p><button type="button" class="button outline" data-project-page="1" aria-label="Next project page">Next ${window.TechouseIcons.icon('arrow_forward')}</button></div>`;
     const panel = section.querySelector('#portfolio-panel');
     function display() {
-      const list = projects.filter((p) => (p.sector || 'residential') === sector),
+      const list = projects.filter((p) => sectorOf(p) === sector),
         total = Math.max(1, Math.ceil(list.length / pageSize));
       pages[sector] = Math.min(pages[sector], total - 1);
       const start = pages[sector] * pageSize;
@@ -80,13 +164,13 @@ window.TechousePortfolio = (() => {
         tab.tabIndex = active ? 0 : -1;
       });
       panel.setAttribute('aria-labelledby', `portfolio-tab-${sector}`);
-      panel.innerHTML = `<div class="portfolio-section-label"><h3>${sectors[sector]} solar</h3><span>${list.length} ${list.length === 1 ? 'project' : 'projects'}</span></div><div class="portfolio-horizontal-list">${
+      panel.innerHTML = `<div class="portfolio-section-label"><h3>${sectors[sector]}${solar ? ' solar' : ''}</h3><span>${list.length} ${list.length === 1 ? 'project' : 'projects'}</span></div><div class="portfolio-horizontal-list">${
         list
           .slice(start, start + pageSize)
           .map((p) => {
             const photos = gallery(p);
-            const savings = monthlySavings(p.capacity);
-            return `<a class="portfolio-card portfolio-horizontal project-tile" data-project="${esc(p.id)}" href="#/divisions/solar/projects/${encodeURIComponent(p.id)}"><div class="project-gallery"><div class="project-photo-stage"><img class="project-slide-image" src="${imageURL(photos[0].src)}" alt="${esc(photos[0].caption || p.title)}" loading="lazy" width="1200" height="800"></div></div><div class="project-story"><span class="pill">${p.reference ? 'ONLINE REFERENCE' : p.sample ? 'ILLUSTRATIVE SAMPLE' : 'TECHOUSE PROJECT'}</span><h3>${esc(p.title)}</h3><p class="project-tile-facts">${esc(p.location)} <span aria-hidden="true">·</span> ${esc(p.capacity)}</p>${savings === null ? '' : `<div class="project-tile-savings"><span>Estimated monthly savings</span><strong>~₱${savings.toLocaleString('en-PH')}<small> / month</small></strong></div>`}<span class="project-tile-action">View project portfolio ${window.TechouseIcons.icon('arrow_outward')}</span></div></a>`;
+            const savings = solar ? monthlySavings(p.capacity) : null;
+            return `<a class="portfolio-card portfolio-horizontal project-tile" data-project="${esc(p.id)}" href="${projectHref(p)}"><div class="project-gallery"><div class="project-photo-stage"><img class="project-slide-image" src="${imageURL(photos[0].src)}" alt="${esc(photos[0].caption || p.title)}" loading="lazy" width="1200" height="800"></div></div><div class="project-story"><span class="pill">${p.reference ? 'ONLINE REFERENCE' : p.sample ? 'ILLUSTRATIVE SAMPLE' : 'TECHOUSE PROJECT'}</span><h3>${esc(p.title)}</h3><p class="project-tile-facts">${esc(p.location)} <span aria-hidden="true">·</span> ${esc(p.capacity)}</p>${savings === null ? '' : `<div class="project-tile-savings"><span>Estimated monthly savings</span><strong>~₱${savings.toLocaleString('en-PH')}<small> / month</small></strong></div>`}<span class="project-tile-action">View project portfolio ${window.TechouseIcons.icon('arrow_outward')}</span></div></a>`;
           })
           .join('') || '<p class="empty-state">No published projects in this sector yet.</p>'
       }</div>`;
@@ -137,8 +221,8 @@ window.TechousePortfolio = (() => {
           event.key === 'Home'
             ? 0
             : event.key === 'End'
-              ? 2
-              : (i + (event.key === 'ArrowRight' ? 1 : 2)) % 3;
+              ? ids.length - 1
+              : (i + (event.key === 'ArrowRight' ? 1 : ids.length - 1)) % ids.length;
         sector = ids[i];
         display();
         section.querySelector(`[data-sector="${sector}"]`).focus();
@@ -161,11 +245,16 @@ window.TechousePortfolio = (() => {
       (project) => project.id === decoded && project.status !== 'draft',
     );
     const p = record ? presentationProject(record) : null;
+    const routeDivision = location.hash.split('/')[2] || 'solar';
     if (!p)
-      return '<section class="container page-hero"><h1>Project unavailable.</h1><a class="text-link" href="#/divisions/solar?section=projects">Back to project examples</a></section>';
+      return `<section class="container page-hero"><h1>Project unavailable.</h1><a class="text-link" href="#/divisions/${esc(divisions[routeDivision] ? routeDivision : 'solar')}?section=projects">Back to project examples</a></section>`;
+    const kind = kindOf(p);
+    const division = divisionOf(p);
+    const solar = division === 'solar';
+    const sectorLabel = kind.sectors[sectorOf(p)];
     const imageURL = window.TechouseContent.imageURL;
     const icon = window.TechouseIcons.icon('arrow_outward');
-    return `<article class="container solar-project-page"><a class="text-link project-portfolio-back" href="#/divisions/solar?section=projects&sector=${encodeURIComponent(p.sector)}">${window.TechouseIcons.icon('arrow_back')} Back to project examples</a><header class="project-portfolio-heading"><div><span class="eyebrow">${p.reference ? 'ONLINE REFERENCE · ' + esc(p.provider) : p.sample ? 'ILLUSTRATIVE SAMPLE' : 'TECHOUSE PROJECT'} / ${esc(sectors[p.sector] || 'Solar')}</span><h1>${esc(p.title)}</h1><p>${esc(p.location)} · ${esc(p.capacity)}</p></div><a class="button small" href="#/inquiry?division=solar">Discuss a similar project ${icon}</a></header><div class="project-portfolio-layout"><div class="project-portfolio-gallery">${gallery(
+    return `<article class="container solar-project-page" data-division="${division}"><a class="text-link project-portfolio-back" href="#/divisions/${division}?section=projects&sector=${encodeURIComponent(sectorOf(p))}">${window.TechouseIcons.icon('arrow_back')} Back to project examples</a><header class="project-portfolio-heading"><div><span class="eyebrow">${p.reference ? 'ONLINE REFERENCE · ' + esc(p.provider) : p.sample ? 'ILLUSTRATIVE SAMPLE' : 'TECHOUSE PROJECT'} / ${esc(sectorLabel)}</span><h1>${esc(p.title)}</h1><p>${esc(p.location)} · ${esc(p.capacity)}</p></div><a class="button small" href="#/inquiry?division=${division}">Discuss a similar project ${icon}</a></header><div class="project-portfolio-layout"><div class="project-portfolio-gallery">${gallery(
       p,
     )
       .map(
@@ -174,9 +263,12 @@ window.TechousePortfolio = (() => {
       )
       .join(
         '',
-      )}</div><aside class="project-portfolio-summary"><h2>Project overview</h2><dl class="project-facts"><div><dt>Location</dt><dd>${esc(p.location)}</dd></div><div><dt>Capacity</dt><dd>${esc(p.capacity)}</dd></div><div><dt>Application</dt><dd>${esc(p.system || sectors[p.sector] + ' solar')}</dd></div></dl>${savingsDetail(p)}<h3>About this project</h3><p>${esc(p.description)}</p>${p.sample ? '<p class="project-sample-note">Illustrative example, not a completed Techouse installation. Savings are planning estimates, not measured customer results.</p>' : ''}${safeSource(p.source) ? `<a class="text-link" href="${esc(safeSource(p.source))}" target="_blank" rel="noopener">Reference: ${esc(p.provider)} ${icon}</a>` : ''}</aside></div></article>`;
+      )}</div><aside class="project-portfolio-summary"><h2>Project overview</h2><dl class="project-facts"><div><dt>Location</dt><dd>${esc(p.location)}</dd></div><div><dt>${solar ? 'Capacity' : esc(kind.fact)}</dt><dd>${esc(p.capacity)}</dd></div><div><dt>${solar ? 'Application' : 'Category'}</dt><dd>${esc(p.system || sectorLabel + (solar ? ' solar' : ''))}</dd></div></dl>${solar ? savingsDetail(p) : ''}<h3>About this project</h3><p>${esc(p.description)}</p>${p.sample ? `<p class="project-sample-note">Illustrative example, not completed Techouse work.${solar ? ' Savings are planning estimates, not measured customer results.' : ''}</p>` : ''}${safeSource(p.source) ? `<a class="text-link" href="${esc(safeSource(p.source))}" target="_blank" rel="noopener">Reference: ${esc(p.provider)} ${icon}</a>` : ''}</aside></div></article>`;
   }
   function projectDetails(project) {
+    const story = `<h3>Engineering challenges & solutions</h3><p>${esc(project.engineeringChallenges || (project.sample ? 'This is a planning example. No completed engineering work is claimed.' : 'Project engineering notes have not been added yet.'))}</p><h3>Client feedback</h3><p>${esc(project.clientFeedback || (project.sample ? 'No client testimonial — this is an illustrative project.' : 'Client feedback has not been published.'))}</p>`;
+    if (divisionOf(project) !== 'solar')
+      return `<section class="project-extra-details">${project.projectCost ? `<h3>Investment</h3><dl><div><dt>Project cost</dt><dd>${esc(project.projectCost)}</dd></div></dl>` : ''}${story}</section>`;
     const rows = [
       ['Project cost', project.projectCost || 'To be confirmed after a site assessment'],
       [
@@ -216,7 +308,7 @@ window.TechousePortfolio = (() => {
     document.querySelector('#project-detail-dialog')?.remove();
     const dialog = document.createElement('dialog');
     dialog.id = 'project-detail-dialog';
-    dialog.setAttribute('aria-label', 'Solar project details');
+    dialog.setAttribute('aria-label', 'Project details');
     dialog.innerHTML = `<button type="button" class="project-dialog-close" aria-label="Close project details">${window.TechouseIcons.icon('close')}</button>${projectPage(id)}`;
     const back = dialog.querySelector('.project-portfolio-back');
     back?.remove();
@@ -271,7 +363,7 @@ window.TechousePortfolio = (() => {
     dialog.querySelector('.project-dialog-close').focus({ preventScroll: true });
   }
   document.addEventListener('click', (event) => {
-    const link = event.target.closest('a[href^="#/divisions/solar/projects/"]');
+    const link = event.target.closest('a[href^="#/divisions/"][href*="/projects/"]');
     if (
       !link ||
       event.defaultPrevented ||
@@ -287,6 +379,8 @@ window.TechousePortfolio = (() => {
   });
   window.addEventListener('hashchange', closeProject);
   return {
+    divisions,
+    divisionOf,
     mount,
     projectPage,
     openProject,

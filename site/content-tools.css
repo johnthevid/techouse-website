@@ -1989,3 +1989,45 @@ html.contact-dialog-open { overflow: hidden; }
 #contact-options-dialog { overscroll-behavior: contain; }
 .compact-project-editor .project-editor-section-heading { grid-column: 1/-1; font-size: 17px; margin: 12px 0 0; padding-top: 20px; border-top: 1px solid var(--line); }
 .compact-project-editor .project-editor-section-note { grid-column: 1/-1; margin: 0; font-size: 12px; color: var(--muted); }
+
+/* Division showcase before its first published project: keeps its place with an honest note. */
+.portfolio-coming-soon {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  margin-top: 28px;
+  padding: 28px;
+  border: 1px solid #d7ddd2;
+  background: #fffdf8;
+  color: #173b30;
+}
+.portfolio-coming-soon > span {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  background: #173b30;
+  color: #fff;
+}
+.portfolio-coming-soon > span svg {
+  width: 24px;
+  height: 24px;
+}
+.portfolio-coming-soon h3 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+.portfolio-coming-soon p {
+  margin: 8px 0 14px;
+  max-width: 60ch;
+  color: #4f5d57;
+  line-height: 1.6;
+}
+@media (max-width: 599px) {
+  .portfolio-coming-soon {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 22px;
+  }
+}
