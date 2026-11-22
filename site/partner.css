@@ -692,6 +692,54 @@
   min-height: 44px;
 }
 
+/* Landing header: the partner program's entry point beside "Request a quote". */
+#header .banner-nav .partner-header-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid #e6cf99;
+  color: #f3e3b8;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-shadow: 0 1px 4px #0008;
+  background: #0b211b59;
+  transition:
+    background-position 650ms ease,
+    color 300ms ease,
+    border-color 300ms ease;
+}
+#header .banner-nav .partner-header-cta .material-icon {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+#header .banner-nav .partner-header-cta:hover,
+#header .banner-nav .partner-header-cta:focus-visible {
+  background: linear-gradient(115deg, #b98626 0%, #e6bf5c 21%, #fff0ad 41%, #dbad45 60%, #f5d77e 79%, #bd8a2c 100%);
+  background-size: 180% 100%;
+  color: #211b0d;
+  text-shadow: none;
+  border-color: #f5d77e;
+}
+#footer .footer-partner-link {
+  color: #8a6420;
+  font-weight: 600;
+}
+@media (max-width: 600px) {
+  /* Phones reach the program from the menu. */
+  #header .banner-nav .partner-header-cta {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #header .banner-nav .partner-header-cta {
+    transition: none;
+  }
+}
+
 /* Inquiry form prepared for a partner application */
 .partner-inquiry .page-hero h1 {
   max-width: 760px;

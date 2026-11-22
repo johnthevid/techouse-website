@@ -5,6 +5,11 @@
 - Every footer shows branch · version (build) · last updated in Manila time, from `site/build-info.js`, written by `deployments/techouse-1.0/refresh-assets.mjs` (branch hidden on `main`). See WORKFLOW.md.
 - LinkedIn links to the official page (linkedin.com/in/techouse-construction-corporation-969516415) instead of "coming soon".
 
+## Footer: build stamp and LinkedIn (applied to every branch)
+
+- Every footer shows branch · version (build) · last updated in Manila time, from `site/build-info.js`, written by `deployments/techouse-1.0/refresh-assets.mjs` (branch hidden on `main`). See WORKFLOW.md.
+- LinkedIn links to the official page (linkedin.com/in/techouse-construction-corporation-969516415) instead of "coming soon".
+
 Updated: 22 November 2026.
 
 ## Latest: Be a partner page and partner banners (branch `claude/busy-hopper-jnb9qg`, 22 Nov 2026)
@@ -15,6 +20,7 @@ Updated: 22 November 2026.
 - Apply goes to the existing inquiry form via `#/inquiry?topic=partnership` (`TechousePartner.prepareInquiry` retitles it, selects Solar, hides capacity, rewrites the side panel). The form is still the browser-local demo: applications are not sent anywhere.
 - Banners: Solar page after project examples (₱25,000 worked example, labelled), About after "How we work" (three-step route), Divisions strip above the directory, Updates strip after the posts. Homepage banners and intro untouched.
 - Navigation: header "Join Us!" placeholder → "Be a partner" link; phone menu "Coming soon" → "Be a partner · Earn 5% referring solar clients"; footer Explore gains "Be a partner". On the partner page the header action reads "Become a partner".
+- Landing header (`banner.js`): "Refer & Earn" button (handshake icon, gold outline, metallic gold on hover) between Call us and Request a quote, linking to `#/partnership`; it fades in with the existing header actions, so the intro is unchanged. Hidden under 600px, where the phone menu carries the link. Footer Let's talk gains "Refer & earn 5%". Checked at 1440, 1024, 820 and 390.
 - Photos are existing site assets (Unsplash and third-party reference projects), marked "Illustrative photo" on the journey.
 - `platform/tests/mobile-refinement.test.mjs`: phone menu label expectation updated. Tests 35/35 (Node 22 in the cloud container). Browser-checked at 1440 and 390: calculator, slideshow (buttons, dots, arrow keys, swipe), fine print, inquiry prefill, no console errors or horizontal overflow. Asset versions refreshed with `deployments/techouse-1.0/refresh-assets.mjs`.
 - To confirm with Techouse: what the 5% is calculated on, lead attribution between partners, how soon applicants are called, and the company name (agreement says "Techouse Construction Corporation"; site says "Techouse Technology Construction Corp").
