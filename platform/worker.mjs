@@ -349,7 +349,12 @@ export function validateContent(input) {
             ? "assets/" + p.cover
             : p.cover || "",
         ),
-        createdAt: p.createdAt || new Date().toISOString(),
+        createdAt:
+          typeof p.createdAt === "string" &&
+          p.createdAt.length <= 40 &&
+          !Number.isNaN(Date.parse(p.createdAt))
+            ? p.createdAt
+            : new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
       for (const key of [
@@ -527,6 +532,9 @@ async function route(request, env) {
       s.id,
     ).first();
     if (!attempt) fail(429, "Too many verification attempts. Sign in again.");
+    // The per-session cap resets with each new password sign-in, so also cap
+    // second-factor guesses per account to slow TOTP guessing with a known password.
+    await rate(env, "mfa-user:" + s.email, 20, 3600);
     const input = await body(request);
     const user = await query(
       env,

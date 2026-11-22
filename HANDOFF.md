@@ -1,6 +1,18 @@
 # Current handoff
 
-Updated: 19 November 2026.
+Updated: 22 November 2026.
+
+## Latest: manual security review and hardening (branch `bugfix/security`, 22 Nov 2026)
+
+- Task: run the claude-security plugin on the whole repository and patch its findings. The plugin could not run in the cloud session (its Workflow and agent tools are unavailable), so a manual review was done instead. It is not the plugin's verified multi-agent scan.
+- Reviewed: `platform/worker.mjs` (sign-in, invitations, TOTP/recovery, sessions, CSRF/origin, rate limits, content validation, headers/CSP), `deployments/techouse-1.0/` adapter and config, platform local/provisioning scripts, browser rendering of saved content (`app.js`, `portfolio.js`, `customizer.js`, `office-ui.js`, `admin.js`, `secure-office.js`), `site/.assetsignore`, and tracked files plus Git history for committed secrets. No XSS, injection, auth bypass or committed secret found.
+- Fixed in `platform/worker.mjs`:
+  1. Second-factor guessing: the five-attempt cap was per sign-in session, so someone with the password could start new sessions for more TOTP guesses (about 40 per 15 minutes). Added a per-account cap of 20 verify attempts per hour (`mfa-user:` rate key).
+  2. Project `createdAt` was stored unvalidated (any JSON type or size). It now accepts only a date string of 40 characters or fewer; anything else becomes the current time.
+- Tests: new `platform/tests/security-hardening.test.mjs` (both fail on the old code). Full suite 34/34 pass, browser tests included.
+- Not changed (noted only): HSTS has no `includeSubDomains`/`preload`, which is acceptable on a workers.dev host but worth adding on a custom domain; the per-email login cap can lock a known admin out for 15 minutes.
+- Merged into `main` at the user's request on 22 Nov 2026 (clean merge; 35/35 tests on the merged main, Node 22 in the cloud container).
+- Deployment: not deployed. The Worker change needs the user's release instruction; no database changes.
 
 ## Latest: real-town GPS, menu motion, compact phone projects (branch `feature/solar-gps-projects`, 22 Nov 2026)
 
