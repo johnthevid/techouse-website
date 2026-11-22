@@ -273,7 +273,7 @@ ${field('location', 'City or province', 'required maxlength="200" placeholder="e
 </form></div>
 <aside class="partner-apply-aside" aria-label="About the partner program">
 <img src="assets/reference-projects/reference-residential-01.jpg" alt="" loading="lazy" width="1440" height="948">
-<div><h2>What happens next</h2><ol><li><strong>We review your application</strong></li><li><strong>We call you</strong><span>To get to know you and answer questions.</span></li><li><strong>We sign together</strong><span>The Solar Sales Agency Agreement, before a notary.</span></li></ol>
+<div><h2>What happens next</h2><ol><li><strong>We review your application</strong><span>Using the details you share here.</span></li><li><strong>We call you</strong><span>To get to know you and answer questions.</span></li><li><strong>We sign together</strong><span>The Solar Sales Agency Agreement, before a notary.</span></li></ol>
 <dl><div><dt>Commission</dt><dd>5%</dd></div><div><dt>Paid within</dt><dd>7 days</dd></div></dl>
 <p>Questions first? <a href="tel:+639855626888">Call +63 985 562 6888</a></p></div>
 </aside>
