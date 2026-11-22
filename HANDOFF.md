@@ -1,5 +1,10 @@
 # Current handoff
 
+## Footer: build stamp and LinkedIn (applied to every branch)
+
+- Every footer shows branch · version (build) · last updated in Manila time, from `site/build-info.js`, written by `deployments/techouse-1.0/refresh-assets.mjs` (branch hidden on `main`). See WORKFLOW.md.
+- LinkedIn links to the official page (linkedin.com/in/techouse-construction-corporation-969516415) instead of "coming soon".
+
 Updated: 22 November 2026.
 
 ## Latest: main merged into feature/partnership (22 Nov 2026)
