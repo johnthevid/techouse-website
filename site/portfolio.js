@@ -86,6 +86,20 @@ window.TechousePortfolio = (() => {
     const keys = Object.keys(kindOf(project).sectors);
     return keys.includes(project.sector) ? project.sector : keys[0];
   };
+  // Published projects first; built-in samples only stand in while a division has none.
+  const divisionSamples = (division) =>
+    (window.TechouseDivisionSamples || []).filter((p) => p.division === division);
+  function findProject(id) {
+    const published = window.TechouseContent.snapshot().projects.filter(
+      (p) => p.status !== 'draft',
+    );
+    const record = published.find((p) => p.id === id);
+    if (record) return record;
+    const fallback = (window.TechouseDivisionSamples || []).find((p) => p.id === id);
+    return fallback && !published.some((p) => divisionOf(p) === fallback.division)
+      ? fallback
+      : null;
+  }
   const projectHref = (project) =>
     `#/divisions/${divisionOf(project)}/projects/${encodeURIComponent(project.id)}`;
   const esc = (value) =>
@@ -122,7 +136,10 @@ window.TechousePortfolio = (() => {
     const kind = divisions[division] || divisions.solar;
     const sectors = kind.sectors;
     const solar = kind === divisions.solar;
-    projects = projects.filter((p) => divisionOf(p) === division).map(presentationProject);
+    projects = projects.filter((p) => divisionOf(p) === division);
+    const usingSamples = !projects.length && division !== 'solar';
+    if (usingSamples) projects = divisionSamples(division);
+    projects = projects.map(presentationProject);
     const requestedSector = new URLSearchParams(location.hash.split('?')[1]).get('sector');
     const firstWithProjects =
       Object.keys(sectors).find((id) => projects.some((p) => sectorOf(p) === id)) ||
@@ -130,11 +147,13 @@ window.TechousePortfolio = (() => {
     let sector = sectors[requestedSector] ? requestedSector : firstWithProjects;
     const pages = Object.fromEntries(Object.keys(sectors).map((id) => [id, 0]));
     const controller = new AbortController();
-    const note = solar
-      ? clientPreview
-        ? 'Compare system sizes, project details and estimated savings.'
-        : 'Projects include illustrative samples and credited references; savings are estimates, not verified customer results. Images do not represent completed Techouse installations.'
-      : '';
+    const note = usingSamples
+      ? 'These are illustrative samples with placeholder photos; our own project stories will replace them.'
+      : solar
+        ? clientPreview
+          ? 'Compare system sizes, project details and estimated savings.'
+          : 'Projects include illustrative samples and credited references; savings are estimates, not verified customer results. Images do not represent completed Techouse installations.'
+        : '';
     const heading = `<div class="section-heading"><span>${solar ? '05 / ' : ''}${kind.kicker}</span><h2>${kind.heading}</h2><p>${kind.intro}${note ? ' ' + note : ''}</p></div>`;
     // A division without published projects yet keeps its place on the page with an honest note.
     if (!projects.length) {
@@ -241,9 +260,7 @@ window.TechousePortfolio = (() => {
     } catch {
       decoded = '';
     }
-    const record = window.TechouseContent.snapshot().projects.find(
-      (project) => project.id === decoded && project.status !== 'draft',
-    );
+    const record = findProject(decoded);
     const p = record ? presentationProject(record) : null;
     const routeDivision = location.hash.split('/')[2] || 'solar';
     if (!p)
@@ -319,9 +336,7 @@ window.TechousePortfolio = (() => {
     } catch {
       decoded = '';
     }
-    const project = window.TechouseContent.snapshot().projects.find(
-      (p) => p.id === decoded && p.status !== 'draft',
-    );
+    const project = findProject(decoded);
     if (project)
       dialog
         .querySelector('.solar-project-page')
