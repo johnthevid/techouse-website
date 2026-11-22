@@ -72,7 +72,7 @@ window.TechouseSolar = (() => {
     wrap.closest('.division-experience').classList.add('solar-streamlined');
     estimator.querySelector('.section-heading h2').textContent =
       'Next, let’s see what your solar project could cost.';
-    estimator.querySelector('.section-heading span').remove();
+    estimator.querySelector('.section-heading > span')?.remove();
     estimator.querySelector('.section-heading p').textContent =
       'Enter your monthly bill, then answer two quick questions. We’ll handle the sizing and pricing.';
     // Staff set the monthly Meralco rate in the back office (Website customizer → Solar calculator).
@@ -95,12 +95,11 @@ window.TechouseSolar = (() => {
     const products = wrap.querySelector('#products');
     products.querySelector('.section-heading h2').innerHTML =
       'Meet the technology<br>behind your next step.';
-    products.querySelector('.section-heading span').textContent = '04 / LOOK A LITTLE CLOSER';
     products.querySelector('.product-grid').outerHTML = window.TechouseCatalogue.showcase();
     products.querySelectorAll(':scope > .catalogue-note').forEach((note, index) => {
       if (index > 0) note.remove();
     });
-    wrap.querySelector('#projects .section-heading span').remove();
+    wrap.querySelector('#projects .section-heading > span')?.remove();
     const partner = wrap.querySelector('.partner-band');
     if (partner) {
       partner.querySelector('span').textContent = 'TECHOUSE × SKYWORTH';
@@ -113,7 +112,7 @@ window.TechouseSolar = (() => {
     const learningDetails = document.createElement('details');
     learningDetails.className = 'solar-optional-guide';
     learningDetails.innerHTML = `<summary><span class="guide-icon">${window.TechouseIcons.icon('routine')}</span><span class="guide-text"><span>Want to understand your solar options?</span><small>Daytime use, batteries and roof shade</small></span>${window.TechouseIcons.icon('expand_more', 'guide-chevron')}</summary>`;
-    learn.querySelector('.section-heading span').remove();
+    learn.querySelector('.section-heading > span')?.remove();
     learn.querySelector('.section-heading h2').textContent = 'How solar fits everyday life';
     learn.querySelector('.section-heading p').textContent =
       'Explore these points whenever you want more detail.';
@@ -134,7 +133,7 @@ window.TechouseSolar = (() => {
       partner.innerHTML = `<div class="partner-identity"><span>TECHOUSE × SKYWORTH</span><strong>Skyworth</strong><small>Direct solar partner</small></div><div class="partner-message"><h3>Your direct connection<br>to Skyworth solar.</h3><p>Explore panels, inverters and battery storage with your direct Skyworth partner.</p><a class="text-link" href="#/inquiry?division=solar">Talk to our solar team ${window.TechouseIcons.icon('arrow_outward')}</a></div>`;
       technical.append(partner);
     }
-    products.querySelector('.section-heading span').remove();
+    products.querySelector('.section-heading > span')?.remove();
     products.querySelector('.section-heading h2').textContent = 'Equipment and specifications';
     products.querySelector('.section-heading p').textContent =
       'Explore product ranges and manufacturer datasheets.';
