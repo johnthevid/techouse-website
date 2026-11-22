@@ -760,6 +760,8 @@ function render() {
     );
   if (path === '/') window.TechouseBanner.mount(returningHome);
   window.TechouseDivisions.mount();
+  // Prefabrication's 3D standard module (no-op on other pages).
+  window.TechouseModule3D?.mount(document.querySelector('[data-module-3d]'));
   window.TechouseSolar?.prefill();
   if (path === '/inquiry') mountInquiryHistory();
   window.TechouseReadability?.mount();

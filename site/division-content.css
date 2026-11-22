@@ -155,3 +155,176 @@ article.construction-type:hover {
     padding-block: 48px 8px;
   }
 }
+
+/* Prefabrication: animated 3D standard module (module-3d.js) */
+.module-3d {
+  position: relative;
+  margin: 0 0 40px;
+  border: 1px solid #d1d8cb;
+  background:
+    radial-gradient(120% 80% at 50% 100%, #e9e6dc 0%, rgba(233, 230, 220, 0) 70%), #f6f4ec;
+  overflow: hidden;
+}
+.m3d-stage {
+  position: relative;
+  height: 400px;
+  perspective: 1400px;
+  perspective-origin: 50% 35%;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+}
+.m3d-stage.is-dragging {
+  cursor: grabbing;
+}
+.m3d-scene,
+.m3d-module,
+.m3d-block {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+.m3d-scene {
+  inset: 62% auto auto 50%;
+  width: 0;
+  height: 0;
+  transition: transform 700ms cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.m3d-face,
+.m3d-ground,
+.m3d-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  backface-visibility: visible;
+}
+.m3d-face {
+  outline: 1px solid rgba(23, 59, 48, 0.12);
+}
+.m3d-top {
+  background: linear-gradient(135deg, #ebe8df, #dedad0);
+}
+.m3d-side {
+  background: linear-gradient(180deg, #d6d2c7, #c4bfb3);
+}
+.m3d-end {
+  background: #a9a397;
+}
+.m3d-bottom {
+  background: #8f8a80;
+}
+.m3d-inner {
+  background: linear-gradient(180deg, #6f6b63, #57544e);
+}
+.m3d-roof .m3d-top {
+  background: linear-gradient(135deg, #f1eee6, #e2ded3);
+}
+.m3d-floor .m3d-top {
+  background: repeating-linear-gradient(90deg, #cbc6ba 0 24px, #c3beb2 24px 25px);
+}
+.m3d-ground {
+  background: radial-gradient(closest-side, rgba(23, 59, 48, 0.18), rgba(23, 59, 48, 0));
+}
+.m3d-module[data-level='1'],
+.m3d-module[data-level='2'] {
+  opacity: 0;
+  transform: translateY(-140px);
+  transition:
+    opacity 380ms ease,
+    transform 700ms cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.module-3d.is-stacked .m3d-module[data-level='1'],
+.module-3d.is-stacked .m3d-module[data-level='2'] {
+  opacity: 1;
+  transform: none;
+}
+.module-3d.is-stacked .m3d-module[data-level='2'] {
+  transition-delay: 180ms;
+}
+.m3d-label {
+  padding: 4px 9px;
+  background: #173b30;
+  color: #fff;
+  font:
+    600 13px/1.2 'DM Sans',
+    Arial,
+    sans-serif;
+  white-space: nowrap;
+}
+.m3d-note {
+  background: #fffdf5;
+  color: #173b30;
+  border: 1px solid #b99258;
+  transition: opacity 300ms ease;
+}
+.module-3d.is-stacked .m3d-note,
+.module-3d:not(.is-stacked) .m3d-storeys {
+  opacity: 0;
+}
+.m3d-storeys {
+  background: #b99258;
+  color: #12221e;
+  transition: opacity 300ms ease 400ms;
+}
+.module-3d figcaption {
+  position: absolute;
+  left: 24px;
+  bottom: 20px;
+  right: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  pointer-events: none;
+  color: #5a6662;
+  font-size: 13px;
+}
+.module-3d figcaption button {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid #173b30;
+  background: #fffdf5;
+  color: #173b30;
+  font:
+    600 14px 'DM Sans',
+    Arial,
+    sans-serif;
+  cursor: pointer;
+}
+.module-3d figcaption button[aria-pressed='true'] {
+  background: #173b30;
+  color: #fff;
+}
+.module-3d figcaption button:focus-visible {
+  outline: 2px solid #b99258;
+  outline-offset: 3px;
+}
+@media (max-width: 700px) {
+  .m3d-stage {
+    height: 340px;
+  }
+  .m3d-scene {
+    scale: 0.62;
+  }
+  /* The scene is scaled down on phones; keep the labels legible. */
+  .m3d-label {
+    font-size: 19px;
+    padding: 5px 12px;
+  }
+  .module-3d figcaption {
+    position: static;
+    padding: 0 16px 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .m3d-scene,
+  .m3d-module,
+  .m3d-note {
+    transition: none !important;
+  }
+}
