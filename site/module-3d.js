@@ -140,8 +140,13 @@ window.TechouseModule3D = (() => {
         note: [-sx * (L / 2 - 0.8), H + 0.8, sz * (W / 2)],
         storeys: [0, 3 * H + 0.9, 0],
       })[key];
-    let yaw = -0.6;
-    let elevation = 0.42;
+    const HOME_YAW = -0.6;
+    const HOME_ELEVATION = 0.42;
+    let yaw = HOME_YAW;
+    let elevation = HOME_ELEVATION;
+    const placed = new Map(); // each label's last screen position
+    let spin = 0; // turn speed carried over from a drag (radians per second)
+    let settle = 1; // 0 just after a release, 1 once back under the sway
     let stack = 0; // 0 = one module, 1 = three storeys (animated between)
     let target = 0;
     let drag = null;
@@ -275,8 +280,20 @@ window.TechouseModule3D = (() => {
         // Keep every label inside the frame, whatever the angle.
         const hw = el.offsetWidth / 2 + 8;
         const hh = el.offsetHeight / 2 + 8;
-        const x = Math.max(hw, Math.min(size.w - hw, q.x));
-        const y = Math.max(hh, Math.min(size.h - hh, q.y));
+        let x = Math.max(hw, Math.min(size.w - hw, q.x));
+        let y = Math.max(hh, Math.min(size.h - hh, q.y));
+        // When a label moves to the edge now facing the viewer, glide it across
+        // instead of jumping; small moves follow the model exactly.
+        const at = placed.get(el);
+        if (at && !calm.matches) {
+          const gap = Math.hypot(x - at.x, y - at.y);
+          if (at.gliding || gap > 24) {
+            x = at.x + (x - at.x) * 0.2;
+            y = at.y + (y - at.y) * 0.2;
+            at.gliding = gap > 1.5;
+          }
+        }
+        placed.set(el, { x, y, gliding: at?.gliding });
         el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
         el.classList.toggle(
           'is-hidden',
@@ -302,7 +319,13 @@ window.TechouseModule3D = (() => {
       last = now;
       if (!drag) {
         t += dt;
-        yaw = -0.6 + Math.sin(t * 0.45) * 0.34;
+        // After a drag: coast on the release spin, then ease back into the sway.
+        yaw += spin * dt;
+        spin *= Math.exp(-dt * 3.5);
+        settle = Math.min(1, settle + dt * 0.8);
+        const pull = 1 - Math.exp(-dt * 1.8 * settle * settle);
+        yaw += (HOME_YAW + Math.sin(t * 0.45) * 0.34 - yaw) * pull;
+        elevation += (HOME_ELEVATION - elevation) * pull;
       }
       stack += (target - stack) * Math.min(1, dt * 4.5);
       if (Math.abs(target - stack) < 0.001) stack = target;
@@ -347,7 +370,15 @@ window.TechouseModule3D = (() => {
     stage.addEventListener(
       'pointerdown',
       (event) => {
-        drag = { x: event.clientX, y: event.clientY, yaw, elevation };
+        drag = {
+          x: event.clientX,
+          y: event.clientY,
+          yaw,
+          elevation,
+          lastX: event.clientX,
+          at: event.timeStamp,
+        };
+        spin = 0;
         stage.setPointerCapture(event.pointerId);
         stage.classList.add('is-dragging');
       },
@@ -358,6 +389,14 @@ window.TechouseModule3D = (() => {
       (event) => {
         if (!drag) return;
         yaw = drag.yaw + (event.clientX - drag.x) * 0.008;
+        // Track how fast it is being turned, for momentum on release.
+        const ms = event.timeStamp - drag.at;
+        if (ms > 0) {
+          const speed = ((event.clientX - drag.lastX) * 0.008 * 1000) / ms;
+          spin = spin * 0.6 + speed * 0.4;
+        }
+        drag.lastX = event.clientX;
+        drag.at = event.timeStamp;
         elevation = Math.max(
           0.08,
           Math.min(1.1, drag.elevation + (event.clientY - drag.y) * 0.005),
@@ -368,12 +407,15 @@ window.TechouseModule3D = (() => {
     );
     const release = () => {
       if (!drag) return;
-      drag = null;
       stage.classList.remove('is-dragging');
-      // Continue the sway from the dragged angle, without a jump.
-      const s = Math.max(-1, Math.min(1, (yaw + 0.6) / 0.34));
-      t = Math.asin(s) / 0.45;
-      if (Math.abs((yaw + 0.6) / 0.34) > 1) yaw = -0.6 + Math.sign(yaw + 0.6) * 0.34;
+      // A drag that stopped before release carries no spin.
+      if (performance.now() - drag.at > 80) spin = 0;
+      spin = Math.max(-6, Math.min(6, spin));
+      drag = null;
+      settle = 0;
+      // Return the short way round if the model was spun past half a turn.
+      const home = HOME_YAW + Math.sin(t * 0.45) * 0.34;
+      yaw = home + Math.atan2(Math.sin(yaw - home), Math.cos(yaw - home));
     };
     stage.addEventListener('pointerup', release, options);
     stage.addEventListener('pointercancel', release, options);
