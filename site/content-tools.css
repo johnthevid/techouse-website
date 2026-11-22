@@ -2031,3 +2031,7 @@ html.contact-dialog-open { overflow: hidden; }
     padding: 22px;
   }
 }
+/* Project editor: fields for other divisions stay out of the way (the field layout sets display). */
+#project-editor .content-field[hidden] {
+  display: none;
+}
