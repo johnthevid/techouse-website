@@ -45,14 +45,18 @@ test('Three-step solar planner preserves selections, calculation and responsive 
     await page.locator('#solar-discovery input[value="Commercial"]').check();
     await page.locator('[data-next]').click();
     assert.equal(await page.locator('#estimator').isVisible(), true);
-    // A business defaults to daytime use; the visitor's own choice then wins.
+    // A business sees daytime use suggested, not pre-selected; the visitor answers it.
     assert.equal(
-      await page.locator('#solar-estimator input[name="nightShare"]:checked').inputValue(),
-      '25',
+      await page.locator('#solar-estimator input[name="nightShare"]:checked').count(),
+      0,
     );
-    await page.locator('.solar-usage-choices label:has(input[value="75"])').click();
+    assert.equal(
+      await page.locator('label:has(input[name="nightShare"][value="25"]) .solar-suggest').textContent(),
+      'Suggested for businesses',
+    );
     await page.locator('#solar-estimator input[name="bill"]').fill('6000');
-    await page.locator('.calculate-cost').click();
+    await page.locator('.solar-usage-choices label:has(input[value="75"])').click();
+    await page.locator('.solar-coverage-choices label:has(input[value="80"])').click();
     assert.equal(await page.locator('#solar-estimate-inquiry').isVisible(), true);
     assert.equal(
       await page.locator('#estimate-result').evaluate((el) => el.innerText.includes('null')),
@@ -70,6 +74,8 @@ test('Three-step solar planner preserves selections, calculation and responsive 
       await page.locator('#solar-discovery input[value="Commercial"]').isChecked(),
       true,
     );
+    if (await page.locator('.solar-subnav-toggle').isVisible())
+      await page.locator('.solar-subnav-toggle').click();
     await page.locator('.division-subnav [data-scroll="solar-start"]').click();
     await page.locator('.discovery-progress [data-step="1"]').click();
     assert.equal(await page.locator('#estimator').isVisible(), true);

@@ -4,6 +4,12 @@ Recorded milestones for the Techouse website. Dates use the project's Asia/Manil
 
 ## Unreleased — Solar Calculator
 
+- Phone solar section bar: the three section links collapse into one menu button that names the section in view and opens them as a dropdown; the bar drops from 119px to 56px. Desktop unchanged (the bar stays pinned to the top once the page scrolls past the solar banner).
+
+- Make the price and "Let's talk" the focus of the estimate: savings, payback, system size, the reason and the pricing note move into "See savings, payback and system size". Setup cards show name, price and monthly savings; the summary, payback and parts list move into "What's included".
+
+- Step 2 asks its two questions one at a time: an answered question folds into a one-line summary with Change, the next slides in, and the estimate appears once both are answered (no Calculate button; nothing pre-selected, a "Suggested" tag instead). Step 1 adds Material icons to the property types, hides the photo on phones, and adds "Use my location", which fills the nearest listed city on the device (coordinates never leave the browser). The Worker's Permissions-Policy now allows geolocation for the site's own origin only.
+
 - Make the solar planner two steps: property type and optional location, then the estimate (bill, daily use, coverage). Redesign the result card: setup name with why it fits, the price, then savings, payback and system size in one row. Sentence-case labels in the result and setup comparison; restore the comparison's side padding.
 
 - Simplify the calculator to one typed value. Step 2 asks "When do you use the most electricity?" (Mostly during the day / Day and night / Mostly at night) in place of the goal question; step 3 asks for the monthly bill and "How much of your bill should solar take on?" (Just the essentials / Essentials and more / Most of my bill). The two sliders are gone; the electricity rate and panel type move into an optional "Fine-tune" disclosure. Homes always use residential pricing; businesses switch to C&I above 24 kWp. Coverage choices recalculate a showing result immediately.

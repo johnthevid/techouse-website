@@ -357,65 +357,66 @@ window.TechouseExperience = (() => {
     input.setAttribute('aria-describedby', 'location-suggestions-note');
     const list = document.createElement('datalist');
     list.id = 'ph-location-options';
+    // [suggestion, latitude, longitude]: approximate city centres for "Use my location".
     const cities = [
-      'Manila · Metro Manila',
-      'Quezon City · Metro Manila',
-      'Makati · Metro Manila',
-      'Taguig · Metro Manila',
-      'Pasig · Metro Manila',
-      'Mandaluyong · Metro Manila',
-      'Pasay · Metro Manila',
-      'Parañaque · Metro Manila',
-      'Las Piñas · Metro Manila',
-      'Muntinlupa · Metro Manila',
-      'Marikina · Metro Manila',
-      'San Juan · Metro Manila',
-      'Caloocan · Metro Manila',
-      'Malabon · Metro Manila',
-      'Navotas · Metro Manila',
-      'Valenzuela · Metro Manila',
-      'Pateros · Metro Manila',
-      'Antipolo · Rizal',
-      'Cainta · Rizal',
-      'Taytay · Rizal',
-      'Bacoor · Cavite',
-      'Imus · Cavite',
-      'Dasmariñas · Cavite',
-      'General Trias · Cavite',
-      'Tagaytay · Cavite',
-      'Santa Rosa · Laguna',
-      'Biñan · Laguna',
-      'Calamba · Laguna',
-      'San Pedro · Laguna',
-      'Batangas City · Batangas',
-      'Lipa · Batangas',
-      'Malolos · Bulacan',
-      'Meycauayan · Bulacan',
-      'San Jose del Monte · Bulacan',
-      'Angeles · Pampanga',
-      'San Fernando · Pampanga',
-      'Tarlac City · Tarlac',
-      'Baguio · Benguet',
-      'Dagupan · Pangasinan',
-      'Laoag · Ilocos Norte',
-      'Legazpi · Albay',
-      'Naga · Camarines Sur',
-      'Puerto Princesa · Palawan',
-      'Cebu City · Cebu',
-      'Mandaue · Cebu',
-      'Lapu-Lapu · Cebu',
-      'Iloilo City · Iloilo',
-      'Bacolod · Negros Occidental',
-      'Dumaguete · Negros Oriental',
-      'Tacloban · Leyte',
-      'Tagbilaran · Bohol',
-      'Davao City · Davao Region',
-      'Cagayan de Oro · Misamis Oriental',
-      'General Santos · South Cotabato',
-      'Zamboanga City · Zamboanga Peninsula',
-      'Butuan · Agusan del Norte',
+      ['Manila · Metro Manila', 14.5995, 120.9842],
+      ['Quezon City · Metro Manila', 14.676, 121.0437],
+      ['Makati · Metro Manila', 14.5547, 121.0244],
+      ['Taguig · Metro Manila', 14.5176, 121.0509],
+      ['Pasig · Metro Manila', 14.5764, 121.0851],
+      ['Mandaluyong · Metro Manila', 14.5794, 121.0359],
+      ['Pasay · Metro Manila', 14.5378, 121.0014],
+      ['Parañaque · Metro Manila', 14.4793, 121.0198],
+      ['Las Piñas · Metro Manila', 14.4445, 120.9939],
+      ['Muntinlupa · Metro Manila', 14.4081, 121.0415],
+      ['Marikina · Metro Manila', 14.6507, 121.1029],
+      ['San Juan · Metro Manila', 14.6019, 121.0355],
+      ['Caloocan · Metro Manila', 14.6507, 120.9668],
+      ['Malabon · Metro Manila', 14.6681, 120.9658],
+      ['Navotas · Metro Manila', 14.6667, 120.9417],
+      ['Valenzuela · Metro Manila', 14.7011, 120.983],
+      ['Pateros · Metro Manila', 14.5454, 121.0687],
+      ['Antipolo · Rizal', 14.586, 121.1761],
+      ['Cainta · Rizal', 14.5786, 121.1222],
+      ['Taytay · Rizal', 14.5574, 121.1324],
+      ['Bacoor · Cavite', 14.459, 120.9459],
+      ['Imus · Cavite', 14.4297, 120.9367],
+      ['Dasmariñas · Cavite', 14.3294, 120.9367],
+      ['General Trias · Cavite', 14.3869, 120.8817],
+      ['Tagaytay · Cavite', 14.1153, 120.9621],
+      ['Santa Rosa · Laguna', 14.3122, 121.1114],
+      ['Biñan · Laguna', 14.3333, 121.0833],
+      ['Calamba · Laguna', 14.2117, 121.1653],
+      ['San Pedro · Laguna', 14.3595, 121.0473],
+      ['Batangas City · Batangas', 13.7565, 121.0583],
+      ['Lipa · Batangas', 13.9411, 121.1631],
+      ['Malolos · Bulacan', 14.8527, 120.816],
+      ['Meycauayan · Bulacan', 14.7344, 120.9572],
+      ['San Jose del Monte · Bulacan', 14.8139, 121.0453],
+      ['Angeles · Pampanga', 15.145, 120.5887],
+      ['San Fernando · Pampanga', 15.0286, 120.6898],
+      ['Tarlac City · Tarlac', 15.4802, 120.5979],
+      ['Baguio · Benguet', 16.4023, 120.596],
+      ['Dagupan · Pangasinan', 16.0433, 120.3333],
+      ['Laoag · Ilocos Norte', 18.196, 120.5927],
+      ['Legazpi · Albay', 13.1391, 123.7438],
+      ['Naga · Camarines Sur', 13.6218, 123.1948],
+      ['Puerto Princesa · Palawan', 9.7392, 118.7353],
+      ['Cebu City · Cebu', 10.3157, 123.8854],
+      ['Mandaue · Cebu', 10.3236, 123.9223],
+      ['Lapu-Lapu · Cebu', 10.3103, 123.9494],
+      ['Iloilo City · Iloilo', 10.7202, 122.5621],
+      ['Bacolod · Negros Occidental', 10.6765, 122.9509],
+      ['Dumaguete · Negros Oriental', 9.3068, 123.3054],
+      ['Tacloban · Leyte', 11.2444, 125.0039],
+      ['Tagbilaran · Bohol', 9.65, 123.85],
+      ['Davao City · Davao Region', 7.1907, 125.4553],
+      ['Cagayan de Oro · Misamis Oriental', 8.4542, 124.6319],
+      ['General Santos · South Cotabato', 6.1164, 125.1716],
+      ['Zamboanga City · Zamboanga Peninsula', 6.9214, 122.079],
+      ['Butuan · Agusan del Norte', 8.9475, 125.5406],
     ];
-    cities.forEach((city) => {
+    cities.forEach(([city]) => {
       const option = document.createElement('option');
       option.value = city;
       list.append(option);
@@ -423,9 +424,67 @@ window.TechouseExperience = (() => {
     input.after(list);
     const hint = document.createElement('small');
     hint.id = 'location-suggestions-note';
-    hint.textContent =
+    hint.setAttribute('aria-live', 'polite');
+    const defaultHint =
       'Choose a suggested city or municipality, or enter your location if it is not listed.';
+    hint.textContent = defaultHint;
     input.closest('label').append(hint);
+    // USE MY LOCATION: the browser's position picks the nearest listed city on this device.
+    // The coordinates are never stored or sent anywhere; the visitor can edit the result.
+    if (navigator.geolocation && window.isSecureContext) {
+      const locate = document.createElement('button');
+      locate.type = 'button';
+      locate.className = 'solar-locate';
+      locate.innerHTML = `${window.TechouseIcons.icon('my_location')}<span>Use my location</span>`;
+      const row = document.createElement('span');
+      row.className = 'solar-location-row';
+      input.before(row);
+      row.append(input, locate);
+      const nearest = (lat, lon) => {
+        const rad = Math.PI / 180;
+        return cities
+          .map(([name, a, b]) => {
+            const dLat = (a - lat) * rad;
+            const dLon = (b - lon) * rad;
+            const h =
+              Math.sin(dLat / 2) ** 2 + Math.cos(lat * rad) * Math.cos(a * rad) * Math.sin(dLon / 2) ** 2;
+            return { name, km: 12742 * Math.asin(Math.sqrt(h)) };
+          })
+          .sort((x, y) => x.km - y.km)[0];
+      };
+      locate.addEventListener('click', () => {
+        locate.disabled = true;
+        locate.querySelector('span').textContent = 'Finding your location…';
+        const done = (message) => {
+          locate.disabled = false;
+          locate.querySelector('span').textContent = 'Use my location';
+          hint.textContent = message;
+        };
+        navigator.geolocation.getCurrentPosition(
+          ({ coords }) => {
+            const match = nearest(coords.latitude, coords.longitude);
+            if (match.km > 50) {
+              done('Your location is not near a city on our list. Type your city or municipality.');
+              return;
+            }
+            input.value = match.name;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+            done(`Filled with the nearest listed city, ${match.name.split(' · ')[0]}. Edit it if your property is elsewhere.`);
+          },
+          (error) =>
+            done(
+              error.code === error.PERMISSION_DENIED
+                ? 'Location access was not allowed. Type your city or municipality instead.'
+                : 'We could not get your location. Type your city or municipality instead.',
+            ),
+          { enableHighAccuracy: false, timeout: 10000, maximumAge: 600000 },
+        );
+      });
+      input.addEventListener('input', (e) => {
+        if (e.isTrusted) hint.textContent = defaultHint;
+      });
+    }
     const steps = [...form.querySelectorAll('fieldset')];
     let step = 0;
     const layout = document.createElement('div');

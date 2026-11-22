@@ -12,7 +12,7 @@ window.TechouseDivisions = (() => {
   <article><div class="product-art brochure-art"><img src="assets/solar-catalogue/datasheet-5.jpg" alt="Skyworth 3–12 kW hybrid inverter brochure" loading="lazy"></div><small>02 / CONVERT</small><h3>Inverters</h3><p>Connect generation to everyday use. Explore grid-tied or hybrid configurations with the team.</p><a href="#/divisions/solar/products/inverters">Explore inverters ↗</a></article>
   <article><div class="product-art brochure-art"><img src="assets/solar-catalogue/datasheet-2.jpg" alt="Skyworth SWR battery range brochure" loading="lazy"></div><small>03 / STORE</small><h3>Battery storage</h3><p>Discuss backup priorities and storage options for a system designed around your needs.</p><a href="#/divisions/solar/products/batteries">Explore battery storage ↗</a></article></div><p class="catalogue-note">Skyworth product ranges · Select a category to explore models and datasheets.</p></section>
   <section class="project-showcase division-section" id="projects"><div class="section-heading"><span>02 / IN THE FIELD</span><h2>Energy, put to work.</h2><p>A home for our completed solar installations. Project photos, locations and system details will appear here as the portfolio is added.</p></div><div class="project-placeholder"><img src="assets/solar.jpg" alt="Illustrative solar rooftop, not a completed Techouse installation" loading="lazy"><div><span>PAST PROJECTS / PORTFOLIO PREVIEW</span><h3>The next story<br>starts on a rooftop.</h3><p>Approved Techouse project stories coming soon.</p></div></div></section>
-  <section class="estimator division-section" id="estimator"><div class="section-heading"><span>03 / PLAN YOUR PROJECT</span><h2>What could solar<br>look like for you?</h2><p>Get a starting budget using editable sample assumptions. A site assessment and equipment selection will determine your final proposal.</p></div><form id="solar-estimator"><div class="estimate-inputs"><label class="solar-bill-field">Your monthly electricity bill (₱)<input name="bill" type="number" inputmode="numeric" min="500" max="5000000" step="100" value="6000" required><small>Any recent bill is fine. Round numbers work.</small></label><fieldset class="solar-tile-choices solar-usage-choices"><legend>When do you use the most electricity?</legend><div><label><input type="radio" name="nightShare" value="25"><span><strong>Mostly daytime</strong><small>Shop hours, home office</small></span></label><label><input type="radio" name="nightShare" value="50" checked><span><strong>Day and night</strong><small>Spread through the day</small></span></label><label><input type="radio" name="nightShare" value="75"><span><strong>Mostly at night</strong><small>Aircon and lights after dark</small></span></label></div></fieldset><fieldset class="solar-tile-choices solar-coverage-choices"><legend>How much of your bill should solar take on?</legend><div><label><input type="radio" name="offset" value="50"><span><strong>Just the essentials</strong><small>Lights, fans, fridge, Wi‑Fi</small></span></label><label><input type="radio" name="offset" value="80" checked><span><strong>Essentials and more</strong><small>Plus aircon and appliances</small></span></label><label><input type="radio" name="offset" value="95"><span><strong>Most of my bill</strong><small>Solar as your main power</small></span></label></div></fieldset><input type="hidden" name="sector" value="Residential"><details class="solar-fine-tune"><summary>Using <b data-rate-summary>₱16/kWh</b> · Fine-tune (optional)</summary><label>Electricity rate (₱ / kWh)<input name="rate" type="number" min="1" max="100" step="0.0001" value="16" required><small data-rate-note>Typical Meralco rate. Edit to match your bill.</small></label><label>Panel technology<select name="panel"><option value="topcon">620 W TOPCon</option><option value="bc">660 W back-contact (BC)</option></select></label></details></div><div class="estimate-result" aria-live="polite" aria-atomic="true" id="estimate-result"></div></form><p class="estimate-disclaimer">Planning illustration only, not a quotation or savings guarantee. Uses Techouse equipment pricing, 4.5 peak sun hours/day, 20% system losses and 30 days/month. Energy offset assumes generation is used on site; no export credits are assumed. Roof suitability, shading, permits, electrical upgrades, actual tariffs and battery sizing need assessment.</p></section>`;
+  <section class="estimator division-section" id="estimator"><div class="section-heading"><span>03 / PLAN YOUR PROJECT</span><h2>What could solar<br>look like for you?</h2><p>Get a starting budget using editable sample assumptions. A site assessment and equipment selection will determine your final proposal.</p></div><form id="solar-estimator"><div class="estimate-inputs"><label class="solar-bill-field">Your monthly electricity bill<span class="solar-bill-input"><span aria-hidden="true">₱</span><input name="bill" type="number" inputmode="numeric" min="500" max="5000000" step="100" value="6000" required aria-describedby="solar-bill-note"></span><small id="solar-bill-note">Any recent bill is fine. Round numbers work.</small></label><div class="solar-questions"><p class="solar-question-count"><i aria-hidden="true"></i><i aria-hidden="true"></i><span aria-live="polite">Question 1 of 2</span></p><div class="solar-answer" data-answer="nightShare" hidden>${window.TechouseIcons.icon('check')}<span>Most use</span><b></b><button type="button" data-change="nightShare">Change<span class="visually-hidden"> when you use the most electricity</span></button></div><fieldset class="solar-tile-choices solar-usage-choices" data-question="nightShare"><legend>When do you use the most electricity?</legend><div><label><input type="radio" name="nightShare" value="25" required><span>${window.TechouseIcons.icon('light_mode')}<strong>Mostly daytime</strong><small>Shop hours, home office</small><em class="solar-suggest" hidden></em></span></label><label><input type="radio" name="nightShare" value="50" required><span>${window.TechouseIcons.icon('routine')}<strong>Day and night</strong><small>Spread through the day</small><em class="solar-suggest" hidden></em></span></label><label><input type="radio" name="nightShare" value="75" required><span>${window.TechouseIcons.icon('dark_mode')}<strong>Mostly at night</strong><small>Aircon and lights after dark</small><em class="solar-suggest" hidden></em></span></label></div></fieldset><div class="solar-answer" data-answer="offset" hidden>${window.TechouseIcons.icon('check')}<span>Solar covers</span><b></b><button type="button" data-change="offset">Change<span class="visually-hidden"> how much solar should cover</span></button></div><fieldset class="solar-tile-choices solar-coverage-choices" data-question="offset" hidden><legend>How much of your bill should solar take on?</legend><div><label><input type="radio" name="offset" value="50" required><span>${window.TechouseIcons.icon('power')}<strong>Just the essentials</strong><small>Lights, fans, fridge, Wi‑Fi</small><em class="solar-suggest" hidden></em></span></label><label><input type="radio" name="offset" value="80" required><span>${window.TechouseIcons.icon('electric_bolt')}<strong>Essentials and more</strong><small>Plus aircon and appliances</small><em class="solar-suggest">Suggested</em></span></label><label><input type="radio" name="offset" value="95" required><span>${window.TechouseIcons.icon('home')}<strong>Most of my bill</strong><small>Solar as your main power</small><em class="solar-suggest" hidden></em></span></label></div></fieldset></div><input type="hidden" name="sector" value="Residential"><details class="solar-fine-tune"><summary>Using <b data-rate-summary>₱16/kWh</b> · Fine-tune (optional)</summary><label>Electricity rate (₱ / kWh)<input name="rate" type="number" min="1" max="100" step="0.0001" value="16" required><small data-rate-note>Typical Meralco rate. Edit to match your bill.</small></label><label>Panel technology<select name="panel"><option value="topcon">620 W TOPCon</option><option value="bc">660 W back-contact (BC)</option></select></label></details></div><div class="estimate-result" aria-live="polite" aria-atomic="true" id="estimate-result"></div></form><p class="estimate-disclaimer">Planning illustration only, not a quotation or savings guarantee. Uses Techouse equipment pricing, 4.5 peak sun hours/day, 20% system losses and 30 days/month. Energy offset assumes generation is used on site; no export credits are assumed. Roof suitability, shading, permits, electrical upgrades, actual tariffs and battery sizing need assessment.</p></section>`;
   function constructionContent() {
     const icon = window.TechouseIcons.icon('arrow_outward');
     const types = [
@@ -179,18 +179,83 @@ window.TechouseDivisions = (() => {
       maximumFractionDigits: 0,
     });
     const peso = (n) => currency.format(n);
-    const calculateButton = document.createElement('button');
-    calculateButton.className = 'button calculate-cost';
-    calculateButton.type = 'submit';
-    calculateButton.textContent = 'Calculate cost →';
-    form.querySelector('.estimate-inputs').append(calculateButton);
-    function reset() {
+    // ONE QUESTION AT A TIME: when electricity is used, then how much solar should cover. An answered
+    // question folds into a one-line summary; the estimate appears once both are answered.
+    const QUESTIONS = ['nightShare', 'offset'];
+    const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const answer = (name) => form.querySelector(`[name="${name}"]:checked`);
+    const answered = () => QUESTIONS.every(answer);
+    const count = form.querySelector('.solar-question-count');
+    function ask(name) {
+      QUESTIONS.forEach((q, index) => {
+        const open = q === name;
+        form.querySelector(`[data-question="${q}"]`).hidden = !open;
+        form.querySelector(`[data-answer="${q}"]`).hidden = open || !answer(q);
+        if (open) count.querySelector('span').textContent = `Question ${index + 1} of 2`;
+        count.querySelectorAll('i')[index].classList.toggle('is-on', !!answer(q) || open);
+      });
+      const question = form.querySelector(`[data-question="${name}"]`);
+      question.classList.remove('is-entering');
+      if (!reduced()) {
+        void question.offsetWidth;
+        question.classList.add('is-entering');
+      }
+    }
+    function fold() {
+      QUESTIONS.forEach((q, index) => {
+        form.querySelector(`[data-question="${q}"]`).hidden = true;
+        const summary = form.querySelector(`[data-answer="${q}"]`);
+        summary.hidden = false;
+        count.querySelectorAll('i')[index].classList.add('is-on');
+      });
+      count.querySelector('span').textContent = 'Both questions answered';
+    }
+    function record(name) {
+      const choice = answer(name);
+      form.querySelector(`[data-answer="${name}"] b`).textContent =
+        choice.closest('label').querySelector('strong').textContent;
+      const next = QUESTIONS.find((q) => !answer(q));
+      if (next) ask(next);
+      else {
+        fold();
+        calculate();
+      }
+    }
+    let pointerAt = 0;
+    form.addEventListener('pointerdown', () => (pointerAt = Date.now()));
+    form.addEventListener('keydown', (e) => {
+      const radio = e.target.closest('input[type="radio"]');
+      if (!radio || !QUESTIONS.includes(radio.name) || ![' ', 'Enter'].includes(e.key)) return;
+      e.preventDefault();
+      radio.checked = true;
+      record(radio.name);
+      (
+        form.querySelector('[data-question]:not([hidden]) input') ||
+        [...form.querySelectorAll('[data-answer]:not([hidden]) button')].pop()
+      )?.focus();
+    });
+    form.addEventListener('click', (e) => {
+      // Choosing the answer already selected fires no change event; still close the question.
+      const radio = e.target.closest('input[type="radio"]');
+      if (radio && QUESTIONS.includes(radio.name))
+        setTimeout(() => {
+          if (!form.querySelector(`[data-question="${radio.name}"]`).hidden && radio.checked)
+            record(radio.name);
+        });
+      const change = e.target.closest('[data-change]');
+      if (!change) return;
+      ask(change.dataset.change);
+      form.querySelector(`[data-question="${change.dataset.change}"] input:checked`)?.focus();
+    });
+    function reset(message = '') {
       const hadEstimate = !!out.querySelector('.animated-price');
-      calculateButton.hidden = false;
       cancelAnimationFrame(countFrame);
       form.querySelector('.solar-scenarios')?.remove();
-      out.innerHTML =
-        '<div class="estimate-ready"><h3>Let’s put a number<br>to your plans.</h3><p>Enter your monthly bill and pick how much solar should take on. We’ll size the system and price it for you.</p><small>Techouse equipment pricing · indicative budget only</small></div>';
+      const steps = QUESTIONS.map(
+        (q, index) =>
+          `<li class="${answer(q) ? 'is-done' : ''}"><span>${answer(q) ? window.TechouseIcons.icon('check') : index + 1}</span>${['When you use electricity', 'How much solar should cover'][index]}</li>`,
+      ).join('');
+      out.innerHTML = `<div class="estimate-ready"><h3>Your estimate appears here</h3><p>${message || 'Answer two quick questions. We size the system and price it from the Techouse price list.'}</p><ol>${steps}</ol></div>`;
       if (hadEstimate && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
         out.getAnimations().forEach((animation) => animation.cancel());
         out.animate(
@@ -199,13 +264,6 @@ window.TechouseDivisions = (() => {
             { opacity: 1, transform: 'translateY(0)' },
           ],
           { duration: 320, easing: 'cubic-bezier(.2,.7,.2,1)' },
-        );
-        calculateButton.animate(
-          [
-            { opacity: 0, transform: 'translateY(6px)' },
-            { opacity: 1, transform: 'translateY(0)' },
-          ],
-          { duration: 280, easing: 'ease-out' },
         );
       }
     }
@@ -220,8 +278,9 @@ window.TechouseDivisions = (() => {
       Number.isFinite(s.paybackLow)
         ? `${calculator.formatPayback(s.paybackLow)} – ${calculator.formatPayback(s.paybackHigh)}`
         : 'Not reached';
+    // Each setup leads with its name, price and monthly savings; what it includes is optional.
     const scenarioCard = (s, recommended) =>
-      `<label class="solar-scenario"><input type="radio" name="scenario" value="${s.id}"${s.id === recommended ? ' checked' : ''}><span class="solar-scenario-head"><strong>${s.title}</strong>${s.id === recommended ? '<em>Recommended</em>' : ''}</span><span class="solar-scenario-price">${range(s)}</span><span class="solar-scenario-summary">${s.summary}</span><span class="solar-scenario-figures"><span><small>Monthly savings</small>${peso(s.savings)}</span><span><small>Payback</small>${payback(s)}</span></span><ul>${s.lines.map((l) => `<li><span>${l.qty} ×</span>${l.label}</li>`).join('')}</ul></label>`;
+      `<div class="solar-scenario"><label class="solar-scenario-pick"><input type="radio" name="scenario" value="${s.id}"${s.id === recommended ? ' checked' : ''}><span class="solar-scenario-head"><strong>${s.title}</strong>${s.id === recommended ? '<em>Recommended</em>' : ''}</span><span class="solar-scenario-price">${range(s)}</span><span class="solar-scenario-save">Saves about ${peso(s.savings)} a month</span></label><details class="solar-scenario-more"><summary>What’s included</summary><p class="solar-scenario-summary">${s.summary}</p><p class="solar-scenario-payback"><small>Payback</small>${payback(s)}</p><ul>${s.lines.map((l) => `<li><span>${l.qty} ×</span>${l.label}</li>`).join('')}</ul></details></div>`;
     // Selecting a setup refreshes the headline without recalculating or clearing the comparison.
     function select(id, animate = false) {
       const s = result?.scenarios.find((item) => item.id === id) || result?.scenarios[0];
@@ -256,8 +315,6 @@ window.TechouseDivisions = (() => {
       if (measured) heading.style.fontSize = `clamp(16px, ${9600 / measured}cqw, 46px)`;
       out.querySelector('.energy-equivalents')?.remove();
       window.TechouseSolarExtras?.updateEnergy(form, s.generation);
-      const energy = out.querySelector('.energy-equivalents');
-      if (energy) out.querySelector('.estimate-budget-references').append(energy);
       if (!animate || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       const start = performance.now(),
         lower = heading.querySelector('[data-price-low]'),
@@ -274,37 +331,40 @@ window.TechouseDivisions = (() => {
     }
     function calculate() {
       cancelAnimationFrame(countFrame);
-      if (!form.checkValidity()) {
-        form.querySelectorAll('input:invalid,select:invalid').forEach((input) => {
-          const details = input.closest('details');
-          if (details) details.open = true;
-        });
-        form.reportValidity();
-        return;
+      if (!answered()) return reset();
+      const bill = form.elements.bill;
+      bill.toggleAttribute('aria-invalid', !bill.validity.valid);
+      if (!bill.validity.valid) return reset('Enter a monthly bill from ₱500 to ₱5,000,000 to see your estimate.');
+      if (!form.elements.rate.validity.valid) {
+        form.querySelector('.solar-fine-tune').open = true;
+        return reset('Enter an electricity rate from ₱1 to ₱100 per kWh to see your estimate.');
       }
+      // The first estimate counts up and enters; later updates from a changed answer swap in place.
+      const first = !out.querySelector('.animated-price');
+      form.querySelector('.solar-scenarios')?.remove();
       result = calculator.calculate(Object.fromEntries(new FormData(form)));
       if (!result.scenarios.length) return;
       const recommended = window.TechouseSolar?.recommendedScenario(result.segment, result.nightShare) || 'day';
       recommendedId = recommended;
-      calculateButton.hidden = true;
       const tierNote =
         result.segment === 'commercial'
           ? 'Commercial and industrial pricing with 380 V grid-tied inverters.'
           : 'Techouse equipment pricing.';
-      out.innerHTML = `<div class="estimate-budget-highlight"><div class="estimate-setup"><span>Indicative budget</span><b data-scenario-title></b><p data-scenario-reason></p></div><h3 class="animated-price"></h3><dl class="estimate-economics estimate-stats"><div><dt>Monthly savings</dt><dd></dd></div><div><dt>Payback</dt><dd></dd></div><div><dt>System size</dt><dd></dd></div></dl><a class="button" href="#/inquiry?division=solar&estimate=1" id="solar-estimate-inquiry">Like this starting point? Let’s talk ↗</a><p class="estimate-economics-note">${tierNote} Includes panels, inverter, batteries where shown, mounting and installation. Final pricing follows a site review.</p></div><div class="estimate-budget-references"><details class="estimate-system-details"><summary>View estimated system size</summary><div class="estimate-metrics"><p><strong></strong>Solar capacity</p><p><strong></strong>Indicative panel area</p><p><strong></strong>Generation / month</p></div></details></div>`;
+      // PRICE FIRST: the budget and the next step lead; everything that explains them is optional.
+      out.innerHTML = `<div class="estimate-budget-highlight"><p class="estimate-setup"><span>Indicative budget</span><b data-scenario-title></b></p><h3 class="animated-price"></h3><a class="button" href="#/inquiry?division=solar&estimate=1" id="solar-estimate-inquiry">Like this starting point? Let’s talk ↗</a><details class="estimate-more"><summary>See savings, payback and system size</summary><p class="estimate-reason" data-scenario-reason></p><dl class="estimate-economics estimate-stats"><div><dt>Monthly savings</dt><dd></dd></div><div><dt>Payback</dt><dd></dd></div><div><dt>System size</dt><dd></dd></div></dl><div class="estimate-metrics"><p><strong></strong>Solar capacity</p><p><strong></strong>Indicative panel area</p><p><strong></strong>Generation / month</p></div><p class="estimate-economics-note">${tierNote} Includes panels, inverter, batteries where shown, mounting and installation. Final pricing follows a site review.</p></details></div>`;
       // Full-width comparison row below inputs and headline; outside the live region to keep announcements short.
       const scenarios = document.createElement('fieldset');
       scenarios.className = 'solar-scenarios';
       scenarios.dataset.count = result.scenarios.length;
       scenarios.innerHTML = `<legend><span>Compare setups</span>Select one to update your budget and discuss it with our team<small class="solar-swipe-hint">Swipe to see all ${result.scenarios.length} setups.</small></legend><div>${result.scenarios.map((s) => scenarioCard(s, recommended)).join('')}</div>`;
       out.after(scenarios);
-      select(recommended, true);
+      select(recommended, first);
       // Phone swipe row: start on the recommended card rather than the first one.
       const row = scenarios.querySelector(':scope > div');
       const pick = row.querySelector('input:checked')?.closest('.solar-scenario');
       if (pick && row.scrollWidth > row.clientWidth)
         row.scrollLeft += pick.getBoundingClientRect().left - row.getBoundingClientRect().left - 16;
-      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      if (first && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
         out.animate(
           [
             { opacity: 0.35, transform: 'translateY(10px)' },
@@ -327,20 +387,25 @@ window.TechouseDivisions = (() => {
       e.preventDefault();
       calculate();
     });
-    // Choosing a compared setup is not an input change. Once a result is showing, a usage or coverage choice
-    // recalculates straight away; typed values (bill, rate) invalidate the result until recalculated.
-    const live = (e) =>
-      ['offset', 'nightShare'].includes(e.target.name) && !!out.querySelector('.animated-price');
+    // Typed values (bill, rate) recalculate after a short pause; answers and the panel type at once.
+    // A change event on the form itself comes from step 1 (property type).
+    let typing;
     form.addEventListener('input', (e) => {
-      if (e.target.name !== 'scenario' && !live(e)) reset();
+      if (!['bill', 'rate'].includes(e.target.name) || !answered()) return;
+      clearTimeout(typing);
+      typing = setTimeout(calculate, 450);
     });
     form.addEventListener('change', (e) => {
-      if (e.target.name === 'scenario') select(e.target.value);
-      else if (live(e)) {
-        form.querySelector('.solar-scenarios')?.remove();
+      const name = e.target.name;
+      if (name === 'scenario') select(e.target.value);
+      else if (QUESTIONS.includes(name)) {
+        // Arrow keys move the selection; Enter or Space confirms it.
+        if (Date.now() - pointerAt < 1000) record(name);
+      }
+      else if (answered()) {
+        clearTimeout(typing);
         calculate();
       }
-      else reset();
     });
     reset();
     window.TechouseSolar?.connectEstimate(form);

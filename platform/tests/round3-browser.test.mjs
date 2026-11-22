@@ -292,31 +292,41 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
   assert.equal(await page.locator('[data-rate-summary]').textContent(), '₱15.55/kWh');
   await page.locator('.solar-fine-tune summary').click();
   await page.locator('#solar-estimator input[name="rate"]').fill('16');
-  await page.locator('#solar-estimator .calculate-cost').click();
-  await page.waitForSelector('.estimate-economics');
-  // Default answers: a home used day and night, "Essentials and more". The recommended setup stores
-  // half of the evening use.
+  // Nothing is pre-selected: the questions come one at a time and the estimate follows the second.
+  assert.equal(await page.locator('[data-question="offset"]').isVisible(), false);
+  assert.equal(await page.locator('.solar-suggest:not([hidden])').first().textContent(), 'Suggested for homes');
+  await page.locator('.solar-usage-choices label:has(input[value="50"])').click();
+  assert.equal(await page.locator('[data-answer="nightShare"] b').textContent(), 'Day and night');
+  await page.locator('.solar-coverage-choices label:has(input[value="80"])').click();
+  // Price and the next step lead; savings, payback and system size open on request.
+  await page.waitForSelector('#estimate-result .animated-price');
+  assert.equal(await page.locator('.estimate-economics').isVisible(), false);
+  assert.equal(await page.locator('#solar-estimate-inquiry').isVisible(), true);
+  await page.locator('.estimate-more > summary').click();
+  assert.equal(await page.locator('.estimate-economics').isVisible(), true);
+  // Setup cards show name, price and savings; their parts list opens on request.
+  assert.equal(await page.locator('.solar-scenario:has(input:checked) .solar-scenario-more ul').isVisible(), false);
+  // A home used day and night, "Essentials and more": the recommended setup stores half of the
+  // evening use.
   assert.equal(await page.locator('[data-scenario-title]').textContent(),'Day + 50% of night');
   assert.equal(await page.locator('.solar-scenario:has(input:checked) em').textContent(),'Recommended');
   assert.match(await page.locator('.solar-scenario:has(input:checked)').textContent(),/5\.12 kWh battery/);
   assert.equal(await page.locator('.estimate-economics dd').nth(0).textContent(),'₱4,285');
   assert.equal(await page.locator('.estimate-economics dd').nth(1).textContent(),'3 yrs 10 mos – 4 yrs 7 mos');
   assert.equal(await page.locator('.estimate-economics dd').nth(2).textContent(),'2.48 kWp + 5.12 kWh storage');
-  // A coverage choice recalculates straight away once a result is showing.
+  // Changing an answer recalculates straight away.
+  await page.locator('[data-change="offset"]').click();
   await page.locator('.solar-coverage-choices label:has(input[value="50"])').click();
   await page.waitForFunction(() => document.querySelector('.estimate-economics dd')?.textContent === '₱3,214');
   assert(!(await page.locator('#estimate-result').textContent()).includes('NaN'));
-  assert(await page.locator('.calculate-cost').isHidden());
-  await page.locator('#solar-estimator input[name="bill"]').fill('7000');
-  assert(await page.locator('.calculate-cost').isVisible());
+  // A bill below the minimum swaps the estimate for a note on what to enter.
+  await page.locator('#solar-estimator input[name="bill"]').fill('100');
+  await page.waitForSelector('#estimate-result .estimate-ready');
+  assert.match(await page.locator('#estimate-result').textContent(), /from ₱500/);
   assert.equal(await page.locator('.estimate-economics').count(),0);
-  await page.goto(f.env.APP_ORIGIN + '/#/divisions/solar');
-  await page.locator('.discovery-progress [data-step="1"]').click();
-  await page.waitForSelector('#solar-estimator');
+  // A valid bill brings the estimate back with the same answers.
   await page.locator('#solar-estimator input[name="bill"]').fill('6000');
-  await page.locator('.solar-coverage-choices label:has(input[value="50"])').click();
-  await page.locator('#solar-estimator .calculate-cost').click();
-  assert.equal(await page.locator('.estimate-economics dd').first().textContent(), '₱3,214');
+  await page.waitForFunction(() => document.querySelector('.estimate-economics dd')?.textContent === '₱3,214');
   await page.locator('#solar-estimate-inquiry').click();
   await page.locator('#repeat-inquiry-dialog [data-existing-action="view"]').click();
   await page.waitForSelector('#saved-inquiry-history');

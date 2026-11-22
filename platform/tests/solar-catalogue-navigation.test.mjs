@@ -32,14 +32,19 @@ test('Solar equipment navigation, official imagery and responsive catalogue', as
   await page.evaluate(() => scrollTo(0, 0));
   await page.waitForFunction(() => document.querySelector('.solar-subnav-call').inert);
   await page.locator('.discovery-progress [data-step="1"]').click();
-  assert.equal(await page.locator('#solar-estimator input[name="offset"]:checked').inputValue(), '80');
+  assert.equal(await page.locator('#solar-estimator input[name="offset"]:checked').count(), 0);
+  await page.locator('.solar-usage-choices label:has(input[value="50"])').click();
   await page.locator('.solar-coverage-choices label:has(input[value="95"])').click();
   assert.equal(await page.locator('#solar-estimator input[name="offset"]:checked').inputValue(), '95');
   await page.locator('.discovery-progress [data-step="0"]').click();
   await page.locator('#solar-discovery').scrollIntoViewIfNeeded();
   assert.match(await page.locator('.discovery-story-photo').getAttribute('alt'), /home interior/);
   await page.locator('.discovery-story-photo').evaluate((img) => img.decode());
+  // Step 1 icons and the location button.
+  assert.equal(await page.locator('#solar-discovery .solar-choice-icon').count(), 3);
+  assert.equal(await page.locator('.solar-locate').isVisible(), true);
   await page.locator('[data-next]').click();
+  await page.locator('[data-change="nightShare"]').click();
   await page.locator('.solar-usage-choices label:has(input[value="75"])').click();
   assert.equal(await page.locator('#solar-estimator input[name="nightShare"]:checked').inputValue(), '75');
   for (const [category, count] of [['panels', 3], ['inverters', 5], ['batteries', 3]]) {
@@ -72,12 +77,19 @@ test('Solar equipment navigation, official imagery and responsive catalogue', as
   }
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(f.env.APP_ORIGIN + '/#/divisions/solar');
+  // Phone: the section links sit behind one menu button that names the section in view.
+  await page.waitForSelector('.solar-subnav-toggle');
+  assert.equal(await page.locator('.solar-subnav-links a').first().isVisible(), false);
+  assert.equal(await page.locator('.division-subnav').evaluate((el) => el.getBoundingClientRect().height), 56);
+  await page.locator('.solar-subnav-toggle').click();
+  assert.equal(await page.locator('.solar-subnav-toggle').getAttribute('aria-expanded'), 'true');
   await page.locator('[data-scroll="solar-technical"]').click();
+  assert.equal(await page.locator('.solar-subnav-toggle').getAttribute('aria-expanded'), 'false');
   await page.waitForFunction(() => document.querySelector('#solar-technical').open);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   const button = await page.locator('.solar-subnav-call').boundingBox();
-  const links = await page.locator('.solar-subnav-links').boundingBox();
-  assert.ok(links.x + links.width <= button.x, 'Mobile navigation links must not overlap Call us');
+  const toggle = await page.locator('.solar-subnav-toggle').boundingBox();
+  assert.ok(toggle.x + toggle.width <= button.x, 'Mobile section menu must not overlap Call us');
   await page.screenshot({ path: '/tmp/refined-solar-mobile.png' });
   await page.locator('.solar-learning').evaluate((el) => { el.closest('details').open = true; });
   await page.locator('[data-forward]').click();

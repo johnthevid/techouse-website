@@ -24,9 +24,13 @@ window.TechouseSolar = (() => {
 
   // USAGE -> NIGHT SHARE: three plain-language choices stand in for a day/night percentage.
   const USAGE = { 'Mostly daytime': 25, 'Day and night': 50, 'Mostly at night': 75 };
-  // Sensible first choice per property: homes use most power in the evening, businesses in the day.
-  const usageDefault = (sector) => (sector === 'Residential' ? 'Day and night' : 'Mostly daytime');
-  let usageChosen = null; // the visitor's own night share, kept across client-side routes
+  // Suggested answer per property: homes use most power in the evening, businesses in the day.
+  // It is marked on the tile, never pre-selected, so the visitor still answers it themselves.
+  const usageSuggestion = (sector) =>
+    sector === 'Residential'
+      ? ['Day and night', 'Suggested for homes']
+      : ['Mostly daytime', 'Suggested for businesses'];
+  const PROPERTY_ICONS = { Residential: 'home', Commercial: 'storefront', Industrial: 'factory' };
   // COVERAGE -> OFFSET: the estimator's three coverage choices, as words for the inquiry.
   const COVERAGE = { 50: 'Just the essentials', 80: 'Essentials and more', 95: 'Most of my bill' };
   // RECOMMENDED SETUP follows when electricity is used: mostly daytime needs no battery, a day and
@@ -46,7 +50,7 @@ window.TechouseSolar = (() => {
     return { ...result, chosen };
   }
   const options = (name, values) =>
-    `<div class="solar-choices">${values.map((v) => `<label><input type="radio" name="${name}" value="${v}" ${choices[name] === v ? 'checked' : ''}><span>${v}</span></label>`).join('')}</div>`;
+    `<div class="solar-choices">${values.map((v) => `<label><input type="radio" name="${name}" value="${v}" ${choices[name] === v ? 'checked' : ''}><span>${PROPERTY_ICONS[v] ? window.TechouseIcons.icon(PROPERTY_ICONS[v], 'solar-choice-icon') : ''}${v}</span></label>`).join('')}</div>`;
   // CONTENT EDITING: section titles, questions, and educational explanations live in this template builder.
   function mount() {
     const host = document.querySelector('.division-page #solar-estimator');
@@ -68,7 +72,7 @@ window.TechouseSolar = (() => {
       'Next, let’s see what your solar project could cost.';
     estimator.querySelector('.section-heading span').remove();
     estimator.querySelector('.section-heading p').textContent =
-      'Enter your monthly bill. We’ll size the system around how you use electricity.';
+      'Enter your monthly bill, then answer two quick questions. We’ll handle the sizing and pricing.';
     // Staff set the monthly Meralco rate in the back office (Website customizer → Solar calculator).
     // Visitors see it as a quiet summary and only open "Fine-tune" if their rate differs.
     const settings = window.TechouseContent?.snapshot().settings || {};
@@ -130,26 +134,23 @@ window.TechouseSolar = (() => {
     products.querySelector('.section-heading p').textContent =
       'Explore product ranges and manufacturer datasheets.';
     const discovery = intro.querySelector('form');
-    // Step answers feed the estimator's hidden inputs, so the calculation always matches them.
-    // The property type picks the estimate's first usage answer (homes: day and night, businesses:
-    // mostly daytime) until the visitor chooses one, and decides the pricing model.
-    let lastSector = choices.sector;
-    const setUsage = (value) => {
-      const radio = host.querySelector(`[name="nightShare"][value="${value}"]`);
-      if (radio) radio.checked = true;
+    // Step 1 answers feed the estimator: the property type decides the pricing model and which
+    // usage answer is marked as suggested.
+    const suggest = () => {
+      const [value, text] = usageSuggestion(choices.sector);
+      host.querySelectorAll('[name="nightShare"]').forEach((radio) => {
+        const tag = radio.closest('label').querySelector('.solar-suggest');
+        tag.hidden = USAGE[value] !== +radio.value;
+        tag.textContent = text;
+      });
     };
-    setUsage(usageChosen ?? USAGE[usageDefault(choices.sector)]);
     function update() {
       choices = Object.fromEntries(new FormData(discovery));
-      if (!usageChosen && choices.sector !== lastSector) setUsage(USAGE[usageDefault(choices.sector)]);
-      lastSector = choices.sector;
       host.elements.sector.value = choices.sector;
+      suggest();
       host.dispatchEvent(new Event('change'));
     }
     discovery.addEventListener('change', update);
-    host.addEventListener('change', (e) => {
-      if (e.target.name === 'nightShare') usageChosen = e.target.value;
-    });
     discovery.addEventListener('input', () => {
       choices = Object.fromEntries(new FormData(discovery));
     });
