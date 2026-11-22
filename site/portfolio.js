@@ -154,7 +154,7 @@ window.TechousePortfolio = (() => {
           ? 'Compare system sizes, project details and estimated savings.'
           : 'Projects include illustrative samples and credited references; savings are estimates, not verified customer results. Images do not represent completed Techouse installations.'
         : '';
-    const heading = `<div class="section-heading"><span>${solar ? '05 / ' : ''}${kind.kicker}</span><h2>${kind.heading}</h2><p>${kind.intro}${note ? ' ' + note : ''}</p></div>`;
+    const heading = `<div class="section-heading"><h2>${kind.heading}</h2><p>${kind.intro}${note ? ' ' + note : ''}</p></div>`;
     // A division without published projects yet keeps its place on the page with an honest note.
     if (!projects.length) {
       section.innerHTML = `${heading}<div class="portfolio-coming-soon"><span>${window.TechouseIcons.icon('construction')}</span><div><h3>Project stories are on the way.</h3><p>We’re preparing photos and details of our ${kind.noun} work. In the meantime, tell us about your project and we’ll share relevant examples.</p><a class="text-link" href="#/inquiry?division=${division}">Start a conversation ${window.TechouseIcons.icon('arrow_outward')}</a></div></div>`;
@@ -271,7 +271,7 @@ window.TechousePortfolio = (() => {
     const sectorLabel = kind.sectors[sectorOf(p)];
     const imageURL = window.TechouseContent.imageURL;
     const icon = window.TechouseIcons.icon('arrow_outward');
-    return `<article class="container solar-project-page" data-division="${division}"><a class="text-link project-portfolio-back" href="#/divisions/${division}?section=projects&sector=${encodeURIComponent(sectorOf(p))}">${window.TechouseIcons.icon('arrow_back')} Back to project examples</a><header class="project-portfolio-heading"><div><span class="eyebrow">${p.reference ? 'ONLINE REFERENCE · ' + esc(p.provider) : p.sample ? 'Illustrative sample' : 'Techouse project'} / ${esc(sectorLabel)}</span><h1>${esc(p.title)}</h1><p>${esc(p.location)} · ${esc(p.capacity)}</p></div><a class="button small" href="#/inquiry?division=${division}">Discuss a similar project ${icon}</a></header><div class="project-portfolio-layout"><div class="project-portfolio-gallery">${gallery(
+    return `<article class="container solar-project-page" data-division="${division}"><a class="text-link project-portfolio-back" href="#/divisions/${division}?section=projects&sector=${encodeURIComponent(sectorOf(p))}">${window.TechouseIcons.icon('arrow_back')} Back to project examples</a><header class="project-portfolio-heading"><div><h1>${esc(p.title)}</h1><p>${esc(p.location)} · ${esc(p.capacity)} · ${esc(sectorLabel)}</p><p class="project-disclosure">${p.reference ? 'Online reference · ' + esc(p.provider) : p.sample ? 'Illustrative sample' : 'Techouse project'}</p></div><a class="button small" href="#/inquiry?division=${division}">Discuss a similar project ${icon}</a></header><div class="project-portfolio-layout"><div class="project-portfolio-gallery">${gallery(
       p,
     )
       .map(

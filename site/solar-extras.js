@@ -187,7 +187,11 @@ window.TechouseSolarExtras = (() => {
       if (open) links.querySelector('a').focus({ preventScroll: true });
       else if (focusToggle) toggle.focus({ preventScroll: true });
     }
-    toggle.addEventListener('click', () => setMenu(!nav.classList.contains('is-menu-open')), options);
+    toggle.addEventListener(
+      'click',
+      () => setMenu(!nav.classList.contains('is-menu-open')),
+      options,
+    );
     links.addEventListener('click', (e) => e.target.closest('a') && setMenu(false), options);
     document.addEventListener(
       'keydown',
@@ -205,7 +209,8 @@ window.TechouseSolarExtras = (() => {
       .filter(([el]) => el);
     function syncCurrent() {
       const line = innerHeight * 0.4;
-      const current = sections.filter(([el]) => el.getBoundingClientRect().top <= line).pop() || sections[0];
+      const current =
+        sections.filter(([el]) => el.getBoundingClientRect().top <= line).pop() || sections[0];
       const label = toggle.querySelector('[data-subnav-current]');
       if (current && label.textContent !== current[1]) label.textContent = current[1];
       links.querySelectorAll('a[data-scroll]').forEach((a) => {
@@ -281,7 +286,7 @@ window.TechouseSolarExtras = (() => {
     const title = hasSavings
       ? `You’re a step closer to saving <strong class="solar-savings-amount">${money.format(amount * 12)}<span>per year</span></strong>`
       : 'You’re a step closer to a solar-powered future.';
-    return `<span class="eyebrow">Your next step starts here</span><h2${modal ? ' id="modal-title"' : ''} class="solar-confirmation-title">${title}</h2><p class="solar-confirmation-intro">Let’s find the right solar setup for your property.</p>${hasSavings ? '<p class="solar-confirmation-note">Potential annual savings: your monthly estimate × 12. Subject to a site and usage review.</p>' : ''}<div class="modal-actions"><button class="button" type="button" data-request-visit data-inquiry-id="${reference}" aria-expanded="false">Request a site visit</button></div><p class="solar-confirmation-demo">Demo saved · ${reference}<br>No inquiry sent or callback booked. Live service: a representative will contact you to discuss your property.</p>`;
+    return `<h2${modal ? ' id="modal-title"' : ''} class="solar-confirmation-title">${title}</h2><p class="solar-confirmation-intro">Let’s find the right solar setup for your property.</p>${hasSavings ? '<p class="solar-confirmation-note">Potential annual savings: your monthly estimate × 12. Subject to a site and usage review.</p>' : ''}<div class="modal-actions"><button class="button" type="button" data-request-visit data-inquiry-id="${reference}" aria-expanded="false">Request a site visit</button></div><p class="solar-confirmation-demo">Demo saved · ${reference}<br>No inquiry sent or callback booked. Live service: a representative will contact you to discuss your property.</p>`;
   }
   // Entrance belongs to the dialog and its fading backdrop; no whole-page wipe.
   function revealConfirmation(update) {

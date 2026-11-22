@@ -13,6 +13,7 @@ Run with the unslop skill in polish mode (the site was already mostly designed; 
 - About: removed the grey "The people behind Techouse" placeholder box; the Meet the team text remains.
 - Motion: the homepage banner logo no longer breathes on a loop (user approved); the intro animation itself is unchanged.
 - Kept by the user's choice: the metallic gold CTA buttons. Kept as approved designs: the phone homepage glass pills.
+- Kickers removed (user's request): no small label or dash-and-label above any heading. Removed every `.eyebrow` (Get to know Techouse, Let’s start a conversation, Employee back office, Beyond the possibilities, 01 / Our divisions, site-visit and dialog eyebrows), every `.section-heading` opening span (Our story, How we work, In the field, 0x / …), the division section numbers, the solar story card labels and the 01/02/03 system step labels. Information worth keeping moved below the heading: the project page now shows location · capacity · category, then the sample/reference disclosure; catalogue subtitles sit under the product name. Kept: sample/reference pills on project cards, news category meta, back office meta, the phone homepage 01/05 counter, the approved homepage intro kicker.
 - Checks: 33/33 tests; screenshots of every route at 1440 px and 390 px.
 - Not merged to main; not deployed.
 

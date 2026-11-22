@@ -218,7 +218,7 @@ window.TechouseCatalogue = (() => {
         .map(
           (p, index) => `<article class="catalogue-product">
         <figure class="catalogue-product-figure"><div class="catalogue-image"><img src="${p.image}" alt="Skyworth ${p.websiteModel} product-family illustration" loading="lazy"></div></figure>
-        <div class="catalogue-copy"><span class="catalogue-product-kicker">${String(index + 1).padStart(2, '0')} / ${p.subtitle}</span><h2>${p.title}</h2><strong class="catalogue-capacity">${p.capacity}</strong>
+        <div class="catalogue-copy"><h2>${p.title}</h2><span class="catalogue-product-kicker">${p.subtitle}</span><strong class="catalogue-capacity">${p.capacity}</strong>
         <details class="model-specifications"><summary>Technical details</summary><p class="catalogue-image-reference">Website image: ${p.websiteModel} · related product family</p><ul>${p.specs.map((spec) => `<li>${spec}</li>`).join('')}</ul></details>
         <div class="catalogue-actions"><a class="button small" href="${encodeURI(p.pdf)}" target="_blank" rel="noopener">View datasheet ${icon}</a><a class="text-link" href="#/inquiry?division=solar">Enquire ${icon}</a></div></div>
       </article>`,

@@ -79,7 +79,7 @@ window.TechouseVisits = (() => {
     const card = document.createElement('section');
     card.className = 'visit-card';
     card.tabIndex = -1;
-    card.innerHTML = `<span class="eyebrow">Let’s take a closer look</span><h3>Request a site visit</h3><p>Choose a day and time that suit you. The team will need to confirm your visit.</p><p class="solar-confirmation-note">Demo calendar · sample times · Philippine time (UTC+8). No live availability.</p><form><div class="visit-month"><button type="button" data-month="-1" aria-label="Previous month">←</button><strong aria-live="polite"></strong><button type="button" data-month="1" aria-label="Next month">→</button></div><div class="visit-calendar" role="group" aria-label="Preferred visit date"></div><fieldset><legend>Preferred time</legend><div class="visit-times">${slots.map((s) => `<label><input type="radio" name="time" value="${s}" required><span>${s}</span></label>`).join('')}</div></fieldset><p data-selected aria-live="polite">Select a future weekday, then a time.</p><p data-error role="alert"></p><div class="modal-actions"><button class="button" type="submit">Done · save visit request</button><button class="button outline" type="button" data-cancel-visit>Cancel</button></div></form>`;
+    card.innerHTML = `<h3>Request a site visit</h3><p>Choose a day and time that suit you. The team will need to confirm your visit.</p><p class="solar-confirmation-note">Demo calendar · sample times · Philippine time (UTC+8). No live availability.</p><form><div class="visit-month"><button type="button" data-month="-1" aria-label="Previous month">←</button><strong aria-live="polite"></strong><button type="button" data-month="1" aria-label="Next month">→</button></div><div class="visit-calendar" role="group" aria-label="Preferred visit date"></div><fieldset><legend>Preferred time</legend><div class="visit-times">${slots.map((s) => `<label><input type="radio" name="time" value="${s}" required><span>${s}</span></label>`).join('')}</div></fieldset><p data-selected aria-live="polite">Select a future weekday, then a time.</p><p data-error role="alert"></p><div class="modal-actions"><button class="button" type="submit">Done · save visit request</button><button class="button outline" type="button" data-cancel-visit>Cancel</button></div></form>`;
     // Keep the confirmation intact in the left column while the calendar opens beside it.
     let confirmation = host.querySelector('.visit-confirmation-column');
     if (!confirmation) {
@@ -275,7 +275,7 @@ window.TechouseVisits = (() => {
     const visit = currentVisit?.inquiryId === q.id ? currentVisit : null;
     host.classList.remove('has-visit-card');
     host.classList.add('ticket-only');
-    host.innerHTML = `${host.tagName === 'DIALOG' ? '<button type="button" class="modal-close" aria-label="Close request ticket">×</button>' : ''}<article class="request-ticket" tabindex="-1"><span class="eyebrow">Your solar request</span><p class="ticket-reference">Reference <strong>${escape(q.id)}</strong></p><h2 id="${host.tagName === 'DIALOG' ? 'modal-title' : 'request-ticket-title'}">${escape(callbackTiming(q.createdAt))}</h2>${visit ? `<p class="ticket-visit"><strong>Preferred site visit</strong><br>${escape(visit.date)} · ${escape(visit.time)} Philippine time<br><small>Awaiting confirmation</small></p>` : ''}<p class="ticket-demo">Demo only — saved in this browser. No inquiry sent or call booked.</p><div class="modal-actions">${host.tagName === 'DIALOG' ? '<button type="button" class="button" data-stay>Close ticket</button>' : '<a class="button" href="#/divisions/solar">Back to solar</a>'}<a class="button outline" href="#/divisions/solar?section=projects">See how much others are saving ↗</a></div></article>`;
+    host.innerHTML = `${host.tagName === 'DIALOG' ? '<button type="button" class="modal-close" aria-label="Close request ticket">×</button>' : ''}<article class="request-ticket" tabindex="-1"><p class="ticket-reference">Reference <strong>${escape(q.id)}</strong></p><h2 id="${host.tagName === 'DIALOG' ? 'modal-title' : 'request-ticket-title'}">${escape(callbackTiming(q.createdAt))}</h2>${visit ? `<p class="ticket-visit"><strong>Preferred site visit</strong><br>${escape(visit.date)} · ${escape(visit.time)} Philippine time<br><small>Awaiting confirmation</small></p>` : ''}<p class="ticket-demo">Demo only — saved in this browser. No inquiry sent or call booked.</p><div class="modal-actions">${host.tagName === 'DIALOG' ? '<button type="button" class="button" data-stay>Close ticket</button>' : '<a class="button" href="#/divisions/solar">Back to solar</a>'}<a class="button outline" href="#/divisions/solar?section=projects">See how much others are saving ↗</a></div></article>`;
     syncCompletedPage(q, host.querySelector('.request-ticket'));
     const ticket = host.querySelector('.request-ticket');
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches)
@@ -340,7 +340,7 @@ window.TechouseVisits = (() => {
     projects.setAttribute('aria-roledescription', 'carousel');
     const portfolio =
       '#/divisions/solar?section=projects' + (selected ? `&sector=${selected}` : '');
-    projects.innerHTML = `<span class="eyebrow">Keep exploring</span><h2>See solar in action.</h2><p>Explore installations ${selected ? 'for properties like yours' : 'across different property types'}. Reference examples are not Techouse work.</p><div class="inquiry-project-window"><div class="inquiry-project-track">${
+    projects.innerHTML = `<h2>See solar in action.</h2><p>Explore installations ${selected ? 'for properties like yours' : 'across different property types'}. Reference examples are not Techouse work.</p><div class="inquiry-project-window"><div class="inquiry-project-track">${
       records
         .map((p, i) => {
           const image = /^(assets\/|data:image\/(jpeg|png|webp);base64,)/.test(p.image || '')
@@ -461,7 +461,7 @@ window.TechouseVisits = (() => {
             timeZone: 'UTC',
           })
         : currentVisit.date;
-      note.innerHTML = `<span class="eyebrow">Your site visit</span><h3>${escape(dateLabel)} <span>· ${escape(currentVisit.time)}</span></h3><p>Philippine time · preferred schedule</p><p class="visit-saved-note">Saved as a demo preference. No visit is booked or confirmed.</p>`;
+      note.innerHTML = `<h3>${escape(dateLabel)} <span>· ${escape(currentVisit.time)}</span></h3><p>Philippine time · preferred schedule</p><p class="visit-saved-note">Saved as a demo preference. No visit is booked or confirmed.</p>`;
       (host.querySelector('.inquiry-ticket-body') || host).append(note);
     },
     setInquiry(q) {

@@ -267,3 +267,10 @@ article.construction-type:hover {
     transition: none;
   }
 }
+
+/* Project page: sample / reference disclosure under the title */
+.project-disclosure {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #6b746f;
+}
