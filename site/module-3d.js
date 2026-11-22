@@ -1,6 +1,7 @@
 /**
  * Prefabrication: an animated 3D view of the standard precast module, drawn to scale
- * (7.2 × 3.6 × 3 m, 15 cm walls, 12 cm roof) on a canvas with a small built-in 3D
+ * (7.2 × 3.6 × 3 m, 15 cm walls, 12 cm roof) and shaped after the factory footage
+ * (closed box, doorway end under a roof canopy, front window, recessed back panels) on a canvas with a small built-in 3D
  * projection: no 3D library and no CSS 3D, so it renders the same in every browser.
  * The whole model turns (slow sway, or drag); dimension labels are plain text placed
  * over it and always stay upright, facing the viewer. Stacks to three storeys on request.
@@ -14,29 +15,55 @@ window.TechouseModule3D = (() => {
   const H = 3;
   const WALL = 0.15;
   const ROOF = 0.12;
-  const OVERHANG_END = 0.3;
-  const CANOPY = 0.5;
+  const CANOPY = 0.6; // roof runs out past the doorway end
   let teardown = () => {};
 
-  // An axis-aligned block between two corners; kind sets its colour.
-  const box = (x0, y0, z0, x1, y1, z1, kind) => ({ x0, y0, z0, x1, y1, z1, kind });
-  // One module: floor slab, two long walls and the roof slab, open at both ends.
-  // Pieces meet edge to edge (no overlaps), so faces never fight each other.
+  // An axis-aligned block between two corners. `inner` is the normal of its face that
+  // looks into the room (drawn in shadow); `panels` are recessed panels on a face.
+  const box = (x0, y0, z0, x1, y1, z1, kind, inner = null, panels = null) => ({
+    x0,
+    y0,
+    z0,
+    x1,
+    y1,
+    z1,
+    kind,
+    inner,
+    panels,
+  });
+  // One module, as in the factory footage: a closed monolithic box with a wide doorway
+  // at one end under a roof canopy, a window in the front long wall and two recessed
+  // panels on the back. Walls are split around the openings into blocks that meet
+  // edge to edge (no overlaps), so faces never fight each other.
   function moduleBoxes(level) {
     const y = level * H;
+    const base = y + WALL;
+    const top = y + H - ROOF;
+    const zIn = W / 2 - WALL;
+    // Front window: 1.4 m wide, sill 0.9 m, head 2.1 m above the floor.
+    const [wx0, wx1, sill, head] = [0.4, 1.8, base + 0.9, base + 2.1];
+    // Doorway at the +x end: 2.4 m wide, 2.4 m high.
+    const [dz, dh] = [1.2, base + 2.4];
+    const front = (x0, y0, x1, y1) => box(x0, y0, zIn, x1, y1, W / 2, 'wall', [0, 0, -1]);
+    const door = (z0, y0, z1, y1) => box(L / 2 - WALL, y0, z0, L / 2, y1, z1, 'wall', [-1, 0, 0]);
     return [
-      box(-L / 2, y, -W / 2, L / 2, y + WALL, W / 2, 'floor'),
-      box(-L / 2, y + WALL, W / 2 - WALL, L / 2, y + H - ROOF, W / 2, 'wall-front'),
-      box(-L / 2, y + WALL, -W / 2, L / 2, y + H - ROOF, -W / 2 + WALL, 'wall-back'),
-      box(
-        -L / 2 - OVERHANG_END,
-        y + H - ROOF,
-        -W / 2 - CANOPY,
-        L / 2 + OVERHANG_END,
-        y + H,
-        W / 2 + CANOPY,
-        'roof',
-      ),
+      box(-L / 2, y, -W / 2, L / 2, base, W / 2, 'floor'),
+      front(-L / 2, base, wx0, top),
+      front(wx1, base, L / 2, top),
+      front(wx0, base, wx1, sill),
+      front(wx0, head, wx1, top),
+      box(-L / 2, base, -W / 2, L / 2, top, -zIn, 'wall', [0, 0, 1], {
+        n: [0, 0, -1],
+        rects: [
+          [-L / 2 + 0.35, -0.12, y + 0.5, y + H - 0.45],
+          [0.12, L / 2 - 0.35, y + 0.5, y + H - 0.45],
+        ],
+      }),
+      box(-L / 2, base, -zIn, -L / 2 + WALL, top, zIn, 'wall', [1, 0, 0]),
+      door(-zIn, base, -dz, top),
+      door(dz, base, zIn, top),
+      door(-dz, dh, dz, top),
+      box(-L / 2, top, -W / 2, L / 2 + CANOPY, y + H, W / 2, 'roof', [0, -1, 0]),
     ];
   }
   // The six faces of a block, each with its outward normal.
@@ -97,16 +124,14 @@ window.TechouseModule3D = (() => {
           [x0, y0, z1],
         ],
       },
-    ].map((f) => ({ ...f, kind: b.kind }));
+    ].map((f) => ({ ...f, box: b }));
   }
-  // Concrete, with the room's interior (inner wall faces, roof underside) in shadow.
+  // Plain grey concrete; the room's interior (seen through the openings) in shadow.
+  const same = (a, b) => a && a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
   function baseColour(face) {
-    if (face.kind === 'floor' && face.n[1] === 1) return [176, 170, 158];
-    const inner =
-      (face.kind === 'wall-front' && face.n[2] === -1) ||
-      (face.kind === 'wall-back' && face.n[2] === 1) ||
-      (face.kind === 'roof' && face.n[1] === -1);
-    return inner ? [104, 99, 91] : [222, 217, 205];
+    const { kind, inner } = face.box;
+    if (kind === 'floor' && face.n[1] === 1) return [150, 149, 145];
+    return same(inner, face.n) ? [96, 96, 93] : [214, 213, 208];
   }
 
   function mount(host) {
@@ -134,9 +159,9 @@ window.TechouseModule3D = (() => {
     // Labels sit along the edges facing the camera (sx, sz: which side it is on).
     const anchorFor = (key, sx, sz) =>
       ({
-        length: [0, -0.2, sz * (W / 2 + CANOPY + 0.5)],
-        width: [sx * (L / 2 + OVERHANG_END + 0.8), -0.2, 0],
-        height: [-sx * (L / 2 + OVERHANG_END + 0.7), H / 2, sz * (W / 2)],
+        length: [0, -0.2, sz * (W / 2 + 0.9)],
+        width: [sx * (L / 2 + (sx > 0 ? CANOPY : 0) + 0.8), -0.2, 0],
+        height: [-sx * (L / 2 + 0.7), H / 2, sz * (W / 2)],
         note: [-sx * (L / 2 - 0.8), H + 0.8, sz * (W / 2)],
         storeys: [0, 3 * H + 0.9, 0],
       })[key];
@@ -215,7 +240,7 @@ window.TechouseModule3D = (() => {
         if (shown <= 0) continue;
         const drop = (1 - shown) * 3.2;
         for (const b of boxes)
-          blocks.push({ ...b, y0: b.y0 + drop, y1: b.y1 + drop, alpha: shown });
+          blocks.push({ ...b, y0: b.y0 + drop, y1: b.y1 + drop, alpha: shown, drop });
       }
       // Blocks never overlap, so a plane always separates any two of them: the one on
       // the camera's side of that plane is nearer. Paint far blocks first.
@@ -224,19 +249,48 @@ window.TechouseModule3D = (() => {
         ['y0', 'y1', 1],
         ['z0', 'z1', 2],
       ];
+      // Use a separating plane the camera is not inside of; a block is behind
+      // another when the camera is on the other block's side of that plane.
       const behind = (a, b) => {
         for (const [lo, hi, i] of axes) {
-          if (a[hi] <= b[lo]) return camera[i] > b[lo];
-          if (b[hi] <= a[lo]) return camera[i] < a[lo];
+          // a on the low side of b: decided unless the camera is in the gap.
+          if (a[hi] <= b[lo]) {
+            if (camera[i] >= b[lo]) return true;
+            if (camera[i] <= a[hi]) return false;
+          }
+          // a on the high side of b.
+          if (b[hi] <= a[lo]) {
+            if (camera[i] <= b[hi]) return true;
+            if (camera[i] >= a[lo]) return false;
+          }
         }
         return false;
       };
+      // Only blocks whose outlines overlap on screen need an order between them.
+      for (const k of blocks) {
+        const xs = [];
+        const ys = [];
+        for (const x of [k.x0, k.x1])
+          for (const y of [k.y0, k.y1])
+            for (const z of [k.z0, k.z1]) {
+              const q = project([x, y, z], view);
+              xs.push(q.x);
+              ys.push(q.y);
+            }
+        k.rect = [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)];
+      }
+      const overlap = (a, b) =>
+        a.rect[0] < b.rect[2] &&
+        b.rect[0] < a.rect[2] &&
+        a.rect[1] < b.rect[3] &&
+        b.rect[1] < a.rect[3];
       const order = [];
       const state = new Map();
       const visit = (b) => {
         if (state.get(b)) return;
         state.set(b, 1);
-        for (const other of blocks) if (other !== b && behind(other, b)) visit(other);
+        for (const other of blocks)
+          if (other !== b && overlap(other, b) && behind(other, b)) visit(other);
         order.push(b);
       };
       blocks.forEach(visit);
@@ -256,6 +310,22 @@ window.TechouseModule3D = (() => {
             alpha: b.alpha,
             rgb: baseColour(f).map((v) => Math.round(v * light)),
           });
+          // Recessed panels: slightly darker insets drawn on their face.
+          if (b.panels && same(b.panels.n, f.n)) {
+            const z = f.n[2] < 0 ? b.z0 : b.z1;
+            for (const [x0, x1, y0, y1] of b.panels.rects)
+              polys.push({
+                pts: [
+                  [x0, y0, z],
+                  [x1, y0, z],
+                  [x1, y1, z],
+                  [x0, y1, z],
+                ].map(([x, py, pz]) => project([x, py + b.drop, pz], view)),
+                alpha: b.alpha,
+                rgb: baseColour(f).map((v) => Math.round(v * light * 0.95)),
+                inset: true,
+              });
+          }
         }
       ctx.lineJoin = 'round';
       for (const p of polys) {
@@ -265,8 +335,10 @@ window.TechouseModule3D = (() => {
         ctx.closePath();
         ctx.fillStyle = `rgb(${p.rgb.join(',')})`;
         ctx.fill();
-        ctx.strokeStyle = 'rgba(23,59,48,0.22)';
-        ctx.lineWidth = 1;
+        // Stroke in the fill colour so the joints between wall pieces disappear;
+        // recessed panels get a shadowed edge instead.
+        ctx.strokeStyle = p.inset ? 'rgba(60,60,56,0.45)' : ctx.fillStyle;
+        ctx.lineWidth = p.inset ? 1.25 : 1;
         ctx.stroke();
       }
       ctx.globalAlpha = 1;
