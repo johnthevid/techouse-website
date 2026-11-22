@@ -134,7 +134,13 @@ test("1.0.1 inquiry actions, annual estimate and visit lifecycle", async (t) => 
       .locator(".directory-card img")
       .first()
       .evaluate((img) => img.decode());
-    assert.equal(await page.locator(".footer-socials a").count(), 2);
+    assert.equal(await page.locator(".footer-socials a").count(), 3);
+    assert.equal(
+      await page
+        .locator('.footer-socials a[href*="linkedin.com/in/techouse-construction-corporation"]')
+        .count(),
+      1,
+    );
     for (const sector of ["residential", "commercial", "industrial"]) {
       await page.evaluate((sector) => {
         localStorage.setItem(
