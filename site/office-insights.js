@@ -350,7 +350,7 @@ window.TechouseInsights = (() => {
         )
         .join(
           '',
-        )}</div><div class="ix-toolbar-actions"><input type="search" class="search-input" data-inquiry-search aria-label="Search inquiries" placeholder="Search name, email, place or reference" value="${esc(search)}"><button type="button" class="button outline small" data-export-inquiries ${visible.length ? '' : 'disabled'}>Download CSV</button><button type="button" class="button outline small" data-refresh-inquiries>Refresh</button></div></div>${
+        )}</div><div class="ix-toolbar-actions"><input type="search" class="search-input" data-inquiry-search aria-label="Search inquiries" placeholder="Search name, email or place" value="${esc(search)}"><button type="button" class="button outline small" data-export-inquiries ${visible.length ? '' : 'disabled'}>Download CSV</button><button type="button" class="button outline small" data-refresh-inquiries>Refresh</button></div></div>${
         recordsError
           ? `<p class="ix-error" role="alert">${esc(recordsError)} <button type="button" class="text-link" data-refresh-inquiries>Try again</button></p>`
           : ''

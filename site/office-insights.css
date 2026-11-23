@@ -1197,3 +1197,12 @@ html[data-office-theme='dark'] body.office-page .office-footer-bar :is(p, span) 
 html[data-office-theme='dark'] body.office-page .office-footer-bar strong {
   color: #edf2ea;
 }
+
+@media (min-width: 1100px) {
+  #main .ix-toolbar-actions {
+    flex-wrap: nowrap;
+  }
+}
+#main .ix-toolbar-actions .button {
+  white-space: nowrap;
+}
