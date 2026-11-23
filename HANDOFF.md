@@ -1,5 +1,10 @@
 # Current handoff
 
+## Be a partner: floating button (branch `claude/busy-hopper-jnb9qg`, 23 Nov 2026, not merged, not deployed)
+
+- `#/partnership` gets a floating "Become a partner" link (`.partner-float`, `partner.js` `mountFloat`) styled as Back to top's twin (dark green, gold handshake). It appears once the cover's button scrolls away, hides while the closing section is on screen, and sits 58px above Back to top when that is visible (`body:has(> .back-to-top.is-visible)`). Removed on every other route. Hidden from keyboard and screen readers while invisible; reduced motion drops its transition.
+- Branch first fast-forwarded to `main` (a372fa1). Tests 43/43; checked at 1440 and 390.
+
 ## Latest: traffic & leads dashboard, stored inquiries, back office fixes (branch `claude/zen-fermat-g5352f`, merged into `main` 23 Nov 2026 at the user's request; not deployed)
 
 Merged with the partner program already on `main`. Conflicts in `app.js`, `index.html`, `HANDOFF.md` and `build-info.js` were resolved keeping both features; asset versions regenerated. Partner applications (Be a partner page) now also go to the server with `topic: partnership` (phone required, email optional) and appear in the Inquiries inbox labelled "Partner application", with a Partners filter; Traffic & leads counts them apart from project inquiries. The partner page says "sent" only when the server accepted the application; the static demo keeps its demo wording. `npm test` 43/43 after the merge.

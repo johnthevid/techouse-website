@@ -223,8 +223,40 @@ window.TechousePartner = (() => {
     }
   }
 
+  // Floating "Become a partner" button, beside Back to top. It shows once the cover's button has
+  // scrolled away and steps aside while the closing section's own button is on screen.
+  let floatObserver;
+  function mountFloat(path) {
+    floatObserver?.disconnect();
+    document.querySelector('.partner-float')?.remove();
+    if (path !== '/partnership') return;
+    const cover = document.querySelector('.partner-cover .button'),
+      close = document.querySelector('.partner-close');
+    if (!cover || !close) return;
+    const button = document.createElement('a');
+    button.className = 'partner-float';
+    button.href = applyLink;
+    button.innerHTML = `${icon('handshake')}<span>Become a partner</span>`;
+    button.tabIndex = -1;
+    button.setAttribute('aria-hidden', 'true');
+    document.body.append(button);
+    const onScreen = new Set();
+    floatObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) =>
+        entry.isIntersecting ? onScreen.add(entry.target) : onScreen.delete(entry.target),
+      );
+      const visible = onScreen.size === 0;
+      button.classList.toggle('is-visible', visible);
+      button.tabIndex = visible ? 0 : -1;
+      button.setAttribute('aria-hidden', String(!visible));
+    });
+    floatObserver.observe(cover);
+    floatObserver.observe(close);
+  }
+
   function mount(path) {
     mountPromos(path);
+    mountFloat(path);
     if (path === '/partnership/apply') mountApply();
     if (path !== '/partnership') return;
     mountCalc();
