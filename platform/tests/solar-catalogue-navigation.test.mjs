@@ -16,7 +16,7 @@ test('Solar equipment navigation, official imagery and responsive catalogue', as
   await page.route('**/*', async (route) => {
     const request = route.request();
     if (!request.url().startsWith(f.env.APP_ORIGIN)) return route.abort();
-    const response = await worker.fetch(new Request(request.url(), { method: request.method(), headers: await request.allHeaders() }), f.env);
+    const response = await worker.fetch(new Request(request.url(), { method: request.method(), headers: await request.allHeaders(), ...(request.postDataBuffer() ? { body: request.postDataBuffer() } : {}) }), f.env);
     await route.fulfill({ status: response.status, headers: Object.fromEntries(response.headers), body: Buffer.from(await response.arrayBuffer()) });
   });
   await page.goto(f.env.APP_ORIGIN + '/#/divisions/solar');

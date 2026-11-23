@@ -7,7 +7,8 @@
 - Preserve the approved banner hover and intro behavior unless the user requests a change.
 - Keep decorative icons hidden from assistive technology; label icon-only controls.
 - Respect reduced motion and maintain keyboard access.
-- Prototype inquiries/news remain browser-local. Do not imply live email, protected staff administration, or completed projects until implemented/approved.
+- On the hosted platform, inquiries and site-visit preferences are stored for staff (`platform/insights.mjs`); the static demo keeps them browser-local and must say so. No email alert is connected: do not imply one, or completed projects, until implemented/approved.
+- Visitor counting (`analytics.js`) is cookieless and skips staff, crawlers and draft previews. Do not add cookies, IP storage or third-party trackers without the user’s approval.
 - Format edited files with the existing Prettier configuration; do not reorder stylesheet/script layers casually.
 
 - The homepage intro text animation is user-approved. Do not change its typography interpolation, timing, easing, or choreography without an explicit user instruction to change the animation. Requested skip controls/progress may be edited independently.

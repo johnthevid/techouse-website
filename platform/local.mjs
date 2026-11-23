@@ -1,7 +1,7 @@
 /** Local adapter only. Production uses the Worker with D1; no local files are served outside site/. */
 import { DatabaseSync } from "node:sqlite";
 import { createServer } from "node:http";
-import { readFile, mkdir, chmod, writeFile, stat } from "node:fs/promises";
+import { readFile, readdir, mkdir, chmod, writeFile, stat } from "node:fs/promises";
 import { resolve, dirname, extname, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { randomBytes } from "node:crypto";
@@ -60,7 +60,9 @@ export async function createEnvironment(folder = resolve(here, ".data")) {
     );
   await chmod(keyPath, 0o600);
   const db = new DatabaseSync(resolve(folder, "techouse.sqlite"));
-  db.exec(await readFile(resolve(here, "migrations/0001.sql"), "utf8"));
+  // Every migration is additive and idempotent (CREATE ... IF NOT EXISTS), applied in name order.
+  for (const name of (await readdir(resolve(here, "migrations"))).filter((n) => n.endsWith(".sql")).sort())
+    db.exec(await readFile(resolve(here, "migrations", name), "utf8"));
   await chmod(resolve(folder, "techouse.sqlite"), 0o600);
   const site = resolve(here, "../site");
   const env = {

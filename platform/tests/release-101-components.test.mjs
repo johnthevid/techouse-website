@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 import { fixture } from "./helpers.mjs";
 import worker from "../worker.mjs";
+import { createHash } from "node:crypto";
 const require = createRequire(process.env.PLAYWRIGHT_MODULE || import.meta.url);
 const { chromium } = require("playwright");
 
@@ -23,6 +24,7 @@ test("1.0.1 component integration: calendar, storage and restored visits", async
       new Request(request.url(), {
         method: request.method(),
         headers: await request.allHeaders(),
+          ...(request.postDataBuffer() ? { body: request.postDataBuffer() } : {}),
       }),
       f.env,
     );
@@ -33,8 +35,16 @@ test("1.0.1 component integration: calendar, storage and restored visits", async
     });
   });
   await page.goto(f.env.APP_ORIGIN + "/#/inquiry");
+  // A sent inquiry: the server row and the visitor's copy share the id and visit token.
+  const token = "a1".repeat(16);
+  f.db
+    .prepare(
+      "INSERT INTO inquiries(id,created,updated,division,name,email,location,requirements,token) VALUES(?,?,?,?,?,?,?,?,?)",
+    )
+    .run("TH-AUDIT-1", Date.now(), Date.now(), "solar", "Audit", "audit@example.test", "Demo city", "Demo roof assessment request.", createHash("sha256").update(token).digest("hex"));
   const q = {
-    id: "AUDIT-INQUIRY",
+    id: "TH-AUDIT-1",
+    token,
     division: "solar",
     solarSector: "residential",
     location: "Demo city",
@@ -141,6 +151,7 @@ test("1.0.1 component integration: calendar, storage and restored visits", async
       await page.locator(".visit-card [name=time]").first().check();
       await page.locator(".visit-card [type=submit]").click();
       await page.waitForSelector(".saved-inquiry-current .ticket-visit");
+      assert.match(f.db.prepare("SELECT visit FROM inquiries WHERE id='TH-AUDIT-1'").get().visit, /"time":"09:00"/);
       assert.equal(
         await page.locator(".inquiry-expanded-row").isVisible(),
         true,
@@ -171,20 +182,15 @@ test("1.0.1 component integration: calendar, storage and restored visits", async
     },
   );
   await t.test(
-    "a storage failure keeps the request editable and reports no booking",
+    "a failed send keeps the request editable and reports it was not sent",
     async () => {
       await load();
       await openCalendar();
       await page.locator("[data-date]:enabled").first().click();
       await page.locator(".visit-card [name=time]").first().check();
-      await page.evaluate(() => {
-        const original = Storage.prototype.setItem;
-        Storage.prototype.setItem = function (key, value) {
-          if (key === "techouse-demo-site-visits-v1")
-            throw new DOMException("Test storage limit", "QuotaExceededError");
-          return original.call(this, key, value);
-        };
-      });
+      await page.route("**/api/inquiries/visit", (route) =>
+        route.fulfill({ status: 503, contentType: "application/json", body: "{}" }),
+      );
       await page.locator(".visit-card [type=submit]").click();
       await page.waitForFunction(
         () =>
@@ -193,7 +199,7 @@ test("1.0.1 component integration: calendar, storage and restored visits", async
       );
       assert.match(
         await page.locator("[data-error]").innerText(),
-        /Nothing has been booked/,
+        /could not send your preferred time/,
       );
       assert.equal(
         await page.locator(".visit-card [type=submit]").isEnabled(),

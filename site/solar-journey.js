@@ -207,7 +207,8 @@ window.TechouseSolar = (() => {
     const note = document.createElement('div');
     note.className = 'solar-prefill-note';
     note.textContent =
-      'Your starting point is here. We carried over your choices and estimate. Review or edit them, then add your contact details. Demo only: saving this form does not send an email.';
+      'Your starting point is here. We carried over your choices and estimate. Review or edit them, then add your contact details.' +
+      (window.TechousePlatformMode ? '' : ' Demo only: saving this form does not send an email.');
     form.prepend(note);
     document.querySelector('.page-hero h1').innerHTML =
       'Like the possibilities?<br>Let’s take a closer look.';

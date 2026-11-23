@@ -102,24 +102,44 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
   assert.equal(await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(222, 223, 223)');
   await page.locator('[data-theme-choice="light"]').click();
   assert.equal(await page.locator('.office-helper, .helper-tour').count(), 0);
+  // Inquiries come from the shared database for signed-in staff.
+  // This browser also keeps its own sent-request history, used later by the public inquiry flow.
   await page.evaluate(()=>localStorage.setItem('techouse.sample.inquiries.v1',JSON.stringify([{id:'TEST-INQ-1',name:'Test customer',email:'test@example.test',location:'Quezon City',division:'solar',requirements:'Test property inquiry',createdAt:new Date().toISOString()},{id:'TEST-INQ-2',name:'Reviewed customer',email:'reviewed@example.test',location:'Makati',division:'solar',requirements:'Test reviewed inquiry',createdAt:new Date().toISOString(),reviewedAt:new Date().toISOString()}])));
-  await page.reload(); await page.waitForSelector('.office-stats-four');
+  const insertInquiry = f.db.prepare("INSERT INTO inquiries(id,created,updated,seen,status,division,name,email,location,requirements) VALUES(?,?,?,?,?,?,?,?,?,?)");
+  insertInquiry.run('TH-TEST-1', Date.now(), Date.now(), null, 'new', 'solar', 'Test customer', 'test@example.test', 'Quezon City', 'Test property inquiry');
+  insertInquiry.run('TH-TEST-2', Date.now() - 1000, Date.now(), Date.now(), 'contacted', 'solar', 'Reviewed customer', 'reviewed@example.test', 'Makati', 'Test reviewed inquiry');
+  await page.reload(); await page.waitForSelector('.ix-latest-list');
   await page.locator('[data-theme-choice="dark"]').click();
-  assert.equal(await page.locator('.office-recent-inquiries .inquiry-card').first().evaluate(el=>getComputedStyle(el).backgroundColor), 'rgb(34, 49, 42)');
-  assert.equal(await page.locator('.inquiry-card [data-view-inquiry]').first().evaluate(el=>getComputedStyle(el).color), 'rgb(210, 229, 211)');
+  assert.equal(await page.locator('.ix-latest-list a').first().evaluate(el=>getComputedStyle(el).color), 'rgb(237, 242, 234)');
   await page.goto(f.env.APP_ORIGIN + '/office.html#/office/inquiries');
-  await page.waitForSelector('.inquiry-list .inquiry-card');
-  assert.equal(await page.locator('.inquiry-list .inquiry-card').first().evaluate(el=>getComputedStyle(el).backgroundColor), 'rgb(34, 49, 42)');
+  await page.waitForSelector('.ix-list .ix-row');
+  assert.equal(await page.locator('.ix-list-wrap').evaluate(el=>getComputedStyle(el).backgroundColor), 'rgb(34, 49, 42)');
   await page.locator('[data-theme-choice="light"]').click();
   await page.goto(f.env.APP_ORIGIN + '/office.html#/office');
-  await page.waitForSelector('.office-stats-four');
-  assert.equal(await page.locator('.office-stats-four > a strong').nth(0).textContent(),'2');
-  assert.equal(await page.locator('.office-stats-four > a strong').nth(1).textContent(),'1');
+  await page.waitForFunction(() => document.querySelector('[data-stat="awaiting"]')?.textContent === '1');
+  assert.equal(await page.locator('[data-stat="recent"]').textContent(),'2');
+  assert.match(await page.locator('.admin-tabs [data-tab="inquiries"] .tab-count').innerText(),/^1\s+not opened/);
   assert.equal(await page.locator('.office-three-tasks > article').count(),3);
-  await page.locator('[data-view-inquiry="TEST-INQ-1"]').click();
-  await page.waitForSelector('#modal[open]');
-  await page.locator('#modal [data-close-modal]').click();
-  assert.equal(await page.locator('.office-stats-four > a strong').nth(1).textContent(),'0');
+  await page.locator('.ix-latest-list a').first().click();
+  await page.waitForSelector('.ix-detail h2');
+  assert.equal(await page.locator('.ix-detail h2').textContent(),'Test customer');
+  await page.waitForFunction(() => !document.querySelector('.admin-tabs .tab-count'));
+  assert.ok(f.db.prepare("SELECT seen FROM inquiries WHERE id='TH-TEST-1'").get().seen);
+  await page.locator('[data-inquiry-status]').selectOption('qualified');
+  await page.waitForFunction(() => document.querySelector('.ix-save-state')?.textContent.includes('Qualified'));
+  assert.equal(f.db.prepare("SELECT status FROM inquiries WHERE id='TH-TEST-1'").get().status, 'qualified');
+  await page.locator('#ix-note-text').fill('Quote sent.');
+  await page.locator('[data-inquiry-note] button').click();
+  await page.waitForFunction(() => document.querySelector('.ix-save-state')?.textContent === 'Note saved.');
+  assert.equal(f.db.prepare("SELECT note FROM inquiries WHERE id='TH-TEST-1'").get().note, 'Quote sent.');
+  await page.locator('[data-inquiry-view="contacted"]').click();
+  assert.equal(await page.locator('.ix-list .ix-row').count(), 1);
+  await page.locator('[data-inquiry-view="all"]').click();
+  await page.locator('[data-inquiry-search]').fill('makati');
+  assert.equal(await page.locator('.ix-list .ix-row').count(), 1);
+  await page.goto(f.env.APP_ORIGIN + '/office.html#/office/traffic');
+  await page.waitForSelector('.ix-stats');
+  assert.equal(await page.locator('.ix-pages tbody tr').count(), 13);
 
   await page.setViewportSize({width:2560,height:1440});
   await page.goto(f.env.APP_ORIGIN+'/office.html#/office/posts');
@@ -356,7 +376,7 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
   for (const width of [390, 1299]) {
     await page.setViewportSize({width,height:844});
     for (const theme of ['light','dark','grey']) {
-      for (const section of ['office','office/posts','office/new','office/projects','office/customizer','office/inquiries']) {
+      for (const section of ['office','office/posts','office/new','office/projects','office/customizer','office/inquiries','office/traffic']) {
         await page.goto(f.env.APP_ORIGIN+'/office.html#/'+section);
         await page.waitForSelector('.admin-shell');
         await page.locator('[data-theme-choice="'+theme+'"]').click();

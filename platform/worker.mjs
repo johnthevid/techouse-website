@@ -2,6 +2,7 @@
  * Never place encryption keys, passwords, or MFA secrets in public assets or browser storage.
  */
 import { scrypt } from "node:crypto";
+import { insightsRoute, pruneInsights } from "./insights.mjs";
 const encoder = new TextEncoder();
 const json = (body, status = 200, headers = {}) =>
   new Response(JSON.stringify(body), {
@@ -722,6 +723,19 @@ async function route(request, env) {
     }
     fail(405, "Method not allowed.");
   }
+  const insight = await insightsRoute(request, env, path, {
+    query,
+    rate,
+    body,
+    fail,
+    json,
+    hash,
+    session,
+    csrf,
+    audit,
+    equal,
+  });
+  if (insight) return insight;
   if (path.startsWith("/api/")) fail(404, "Not found.");
   if (!["GET", "HEAD"].includes(request.method))
     fail(405, "Method not allowed.");
@@ -783,5 +797,6 @@ export default {
       "DELETE FROM audit WHERE time<?",
       now - 90 * 86400000,
     ).run();
+    await pruneInsights(env, query, now);
   },
 };

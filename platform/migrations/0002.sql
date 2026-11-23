@@ -1,0 +1,8 @@
+-- Visitor analytics and stored inquiries. Additive only: no existing table changes.
+-- Page views and events hold no IP address, cookie or name: `visitor` is a salted hash that changes every day.
+CREATE TABLE IF NOT EXISTS page_views (id INTEGER PRIMARY KEY AUTOINCREMENT, time INTEGER NOT NULL, day TEXT NOT NULL, path TEXT NOT NULL, visitor TEXT NOT NULL, entry INTEGER NOT NULL DEFAULT 0, channel TEXT NOT NULL DEFAULT 'Direct', referrer TEXT NOT NULL DEFAULT '', campaign TEXT NOT NULL DEFAULT '', device TEXT NOT NULL DEFAULT 'desktop', country TEXT NOT NULL DEFAULT '');
+CREATE INDEX IF NOT EXISTS page_views_time ON page_views(time);
+CREATE TABLE IF NOT EXISTS site_events (id INTEGER PRIMARY KEY AUTOINCREMENT, time INTEGER NOT NULL, day TEXT NOT NULL, name TEXT NOT NULL, path TEXT NOT NULL, visitor TEXT NOT NULL, detail TEXT NOT NULL DEFAULT '');
+CREATE INDEX IF NOT EXISTS site_events_time ON site_events(time);
+CREATE TABLE IF NOT EXISTS inquiries (id TEXT PRIMARY KEY, created INTEGER NOT NULL, updated INTEGER NOT NULL, seen INTEGER, status TEXT NOT NULL DEFAULT 'new', division TEXT NOT NULL, name TEXT NOT NULL, email TEXT NOT NULL, phone TEXT NOT NULL DEFAULT '', company TEXT NOT NULL DEFAULT '', location TEXT NOT NULL, capacity TEXT NOT NULL DEFAULT '', requirements TEXT NOT NULL, solar_sector TEXT NOT NULL DEFAULT '', solar_savings REAL, channel TEXT NOT NULL DEFAULT 'Direct', referrer TEXT NOT NULL DEFAULT '', campaign TEXT NOT NULL DEFAULT '', landing TEXT NOT NULL DEFAULT '', visitor TEXT NOT NULL DEFAULT '', note TEXT NOT NULL DEFAULT '', visit TEXT NOT NULL DEFAULT '', token TEXT NOT NULL DEFAULT '');
+CREATE INDEX IF NOT EXISTS inquiries_created ON inquiries(created);

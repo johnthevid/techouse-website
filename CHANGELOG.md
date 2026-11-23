@@ -2,6 +2,12 @@
 
 Recorded milestones for the Techouse website. Dates use the project's Asia/Manila calendar. These entries describe completed work; they are not retroactively created Git tags or GitHub Releases.
 
+## Unreleased — Traffic, leads and stored inquiries (branch `claude/zen-fermat-g5352f`)
+
+- Inquiries are stored on the server (D1, migration `0002.sql`) instead of only in the visitor's browser, with their source (search, social, paid, campaign tags, referring site and first page). Site-visit preferences are attached to the inquiry. Public copy says the request was sent; the static demo keeps its demo wording.
+- Back office: new Inquiries inbox (status, notes, contact buttons, source, CSV download, "not opened" count on the tab) and a Traffic & leads report (visitors, page views, inquiries, per-day chart, sources, campaigns with a tracked-link builder, funnel, actions, devices, page status with script errors and a file check). Overview shows visitors and inquiries for the last 7 days.
+- Fixed back office mismatches: inquiry counts came from the staff member's own browser, so real visitors' requests never appeared; the Projects card said only Solar was available; the projects page title said "Solar project stories"; deleting a post in the hosted office said "removed from this browser's sample"; dark-theme footer text was about 2:1 contrast.
+
 ## Unreleased — Solar Calculator
 
 - Phone equipment ranges (Solar panels, Inverters, Battery storage) become compact rows with a small photo and "View all models"; the open specifications section drops from 2,035px to 1,125px and the link no longer overlaps the image note. The Skyworth partner box takes a full hairline instead of a one-sided bar.

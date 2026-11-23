@@ -381,5 +381,7 @@ window.TechouseCatalogue = (() => {
       revealBanner();
     });
   });
-  return { page, showcase, revealBanner };
+  // The back office checks that every linked datasheet still loads.
+  const datasheets = () => [...new Set(products.map((p) => p.pdf).filter(Boolean))];
+  return { page, showcase, revealBanner, datasheets };
 })();

@@ -51,6 +51,8 @@ Corporate website and protected content-management workspace for Techouse, built
 - Invite-only account setup with password sign-in and authenticator-based MFA.
 - Recovery codes, account security controls, session expiry and sign-out.
 - Shared project and update editing with draft/published states.
+- Inquiries inbox: requests from the website form are stored in D1, with status (new, contacted, qualified, won, closed, spam), team notes, site-visit preference, source attribution and CSV download.
+- Traffic & leads report: cookieless visitor counts, sources and tracked campaigns, the visit-to-inquiry funnel, visitor actions (calls, emails, estimates, datasheets), devices and a page status table with script errors and a file check.
 - Basic supported website text and banner-image editing.
 - Search/filter tools, unsaved-change handling and stale-save conflict detection.
 - Light, dark and grey office themes.
@@ -83,8 +85,9 @@ Performance checks showed reduced rendering work in controlled samples. They do 
 
 - The preview uses **13 credited third-party reference projects: 4 residential, 6 commercial and 3 industrial**. They are presentation references, not verified Techouse achievements. Some project information is assumed for demonstration.
 - Solar calculations are planning illustrations, not quotations, engineering designs or guaranteed bill savings.
-- Inquiry submission remains a browser-local demonstration. It does not send an email or establish that Techouse received a request.
-- Site-visit scheduling is a demonstration; no live booking integration is connected.
+- On the hosted site, inquiries are stored for staff in the back office (Inquiries). No email alert is sent yet, so staff need to check the back office. The standalone static preview still saves demo inquiries in the browser.
+- Site-visit times are preferences attached to the inquiry; no staff calendar or booking confirmation is connected.
+- Visitor counts are cookieless: no IP address is stored, and a visitor is a salted hash that changes daily, so "visitors" means unique visitors per day. Staff, crawlers and draft previews are not counted.
 - Phone/Viber actions depend on the user's device, installed apps and number availability.
 - Team photos and completed leadership profiles are not supplied yet. The office image is a credited building interior reference.
 - No payment processing, ecommerce checkout, unrestricted site builder or completed offering/catalogue for every non-solar division is included.
@@ -218,7 +221,7 @@ From `platform/`:
 npm test
 ```
 
-The suite currently contains **14 test groups (19 checks, including component scenarios)**, covering account setup, password/MFA flows, sessions, request validation, content persistence and conflict handling, private office access, catalogue navigation, responsive browser behavior and cache policy. Browser tests require Chrome and the installed Playwright package.
+The suite currently contains **41 checks**, including analytics collection, stored inquiries and the inbox, covering account setup, password/MFA flows, sessions, request validation, content persistence and conflict handling, private office access, catalogue navigation, responsive browser behavior and cache policy. Browser tests require Chrome and the installed Playwright package.
 
 Recorded validation for the current website code:
 

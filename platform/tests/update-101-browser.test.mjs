@@ -45,7 +45,9 @@ test("1.0.1 inquiry actions, annual estimate and visit lifecycle", async (t) => 
       const response = await worker.fetch(
         new Request(request.url(), {
           method: request.method(),
-          headers: await request.allHeaders(),
+          // One address per viewport width keeps the inquiry rate limit realistic.
+          headers: { ...(await request.allHeaders()), "cf-connecting-ip": `198.51.100.${width % 250}` },
+          ...(request.postDataBuffer() ? { body: request.postDataBuffer() } : {}),
         }),
         f.env,
       );
@@ -63,12 +65,27 @@ test("1.0.1 inquiry actions, annual estimate and visit lifecycle", async (t) => 
         .count(),
       0,
     );
-    await page.evaluate(() => {
+    await page.evaluate(async () => {
+      // A real sent inquiry, so the visit preference can be attached on the server.
+      const response = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          division: "solar",
+          name: "Visit tester",
+          email: "visit@example.test",
+          location: "Demo city",
+          requirements: "Testing the site visit flow.",
+        }),
+      });
+      const sent = await response.json();
       const q = {
-        id: "TEST-VISIT",
-        createdAt: new Date().toISOString(),
+        id: sent.id,
+        token: sent.token,
+        createdAt: sent.createdAt,
         solarSavings: 3000,
       };
+      localStorage.setItem("techouse.sample.inquiries.v1", JSON.stringify([q]));
       window.TechouseVisits.setInquiry(q);
       document.querySelector("#inquiry-form-area").innerHTML =
         `<div class="success">${window.TechouseSolarExtras.confirmationMarkup(q.solarSavings, q.id)}</div>`;
@@ -302,7 +319,7 @@ test("1.0.1 inquiry actions, annual estimate and visit lifecycle", async (t) => 
       await page.waitForSelector("#inquiry-form");
       await page.locator("#inquiry-division").selectOption("construction");
       await page.locator("#inquiry-name").fill("Demo visitor");
-      await page.locator("#inquiry-email").fill("demo@example.com");
+      await page.locator("#inquiry-email").fill(`demo-${width}@example.com`);
       await page.locator("#inquiry-location").fill("Demo city");
       await page
         .locator("#inquiry-requirements")

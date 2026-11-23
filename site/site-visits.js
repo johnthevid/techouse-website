@@ -1,5 +1,5 @@
-/** Demo scheduling foundation. Replace the adapter with server availability/request endpoints at launch.
- * Preferred times are not reservations. No staff calendar is connected and no notification is sent.
+/** Site-visit preferences. On the hosted site the preference is attached to the sent inquiry so staff see it;
+ * in the static demo it stays in this browser. Preferred times are not reservations: no staff calendar is connected.
  */
 window.TechouseVisits = (() => {
   let currentInquiry = null;
@@ -47,6 +47,29 @@ window.TechouseVisits = (() => {
         throw Error('Your saved visit requests could not be read. Please try again.');
       }
       if (!Array.isArray(records)) throw Error('Your saved visit requests could not be read.');
+      if (window.TechousePlatformMode) {
+        let sent;
+        try {
+          sent = JSON.parse(localStorage.getItem('techouse.sample.inquiries.v1') || '[]').find(
+            (q) => q?.id === inquiryId,
+          );
+        } catch {}
+        if (!sent?.token)
+          throw Error(
+            'This inquiry was not sent online. Call or email the team to arrange a visit.',
+          );
+        const response = await fetch('/api/inquiries/visit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: inquiryId, token: sent.token, date, time }),
+        }).catch(() => null);
+        const value = await response?.json().catch(() => ({}));
+        if (!response?.ok)
+          throw Error(
+            value?.error ||
+              'We could not send your preferred time. Please try again, or call the team.',
+          );
+      }
       const existing = records.find((r) => r?.inquiryId === inquiryId && r.status === 'requested');
       const record = {
         id: existing?.id || crypto.randomUUID(),
@@ -55,7 +78,7 @@ window.TechouseVisits = (() => {
         time,
         timezone,
         status: 'requested',
-        demo: true,
+        demo: !window.TechousePlatformMode,
         createdAt: existing?.createdAt || new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -65,7 +88,9 @@ window.TechouseVisits = (() => {
       try {
         localStorage.setItem(key, JSON.stringify(next));
       } catch {
-        throw Error('This browser could not save your request. Nothing has been booked.');
+        // Hosted site: the team already has the preference; only this browser's copy is missing.
+        if (!window.TechousePlatformMode)
+          throw Error('This browser could not save your request. Nothing has been booked.');
       }
       return record;
     },
@@ -79,7 +104,7 @@ window.TechouseVisits = (() => {
     const card = document.createElement('section');
     card.className = 'visit-card';
     card.tabIndex = -1;
-    card.innerHTML = `<h3>Request a site visit</h3><p>Choose a day and time that suit you. The team will need to confirm your visit.</p><p class="solar-confirmation-note">Demo calendar · sample times · Philippine time (UTC+8). No live availability.</p><form><div class="visit-month"><button type="button" data-month="-1" aria-label="Previous month">←</button><strong aria-live="polite"></strong><button type="button" data-month="1" aria-label="Next month">→</button></div><div class="visit-calendar" role="group" aria-label="Preferred visit date"></div><fieldset><legend>Preferred time</legend><div class="visit-times">${slots.map((s) => `<label><input type="radio" name="time" value="${s}" required><span>${s}</span></label>`).join('')}</div></fieldset><p data-selected aria-live="polite">Select a future weekday, then a time.</p><p data-error role="alert"></p><div class="modal-actions"><button class="button" type="submit">Done · save visit request</button><button class="button outline" type="button" data-cancel-visit>Cancel</button></div></form>`;
+    card.innerHTML = `<h3>Request a site visit</h3><p>Choose a day and time that suit you. The team will need to confirm your visit.</p><p class="solar-confirmation-note">${window.TechousePlatformMode ? 'Philippine time (UTC+8). Choose a preferred time; the team confirms the final schedule.' : 'Demo calendar · sample times · Philippine time (UTC+8). No live availability.'}</p><form><div class="visit-month"><button type="button" data-month="-1" aria-label="Previous month">←</button><strong aria-live="polite"></strong><button type="button" data-month="1" aria-label="Next month">→</button></div><div class="visit-calendar" role="group" aria-label="Preferred visit date"></div><fieldset><legend>Preferred time</legend><div class="visit-times">${slots.map((s) => `<label><input type="radio" name="time" value="${s}" required><span>${s}</span></label>`).join('')}</div></fieldset><p data-selected aria-live="polite">Select a future weekday, then a time.</p><p data-error role="alert"></p><div class="modal-actions"><button class="button" type="submit">Done · save visit request</button><button class="button outline" type="button" data-cancel-visit>Cancel</button></div></form>`;
     // Keep the confirmation intact in the left column while the calendar opens beside it.
     let confirmation = host.querySelector('.visit-confirmation-column');
     if (!confirmation) {
@@ -267,15 +292,16 @@ window.TechouseVisits = (() => {
     if (!q) {
       const message = document.createElement('p');
       message.setAttribute('role', 'alert');
-      message.textContent =
-        'Your saved reference could not be loaded. Please close this preview and submit the demo again.';
+      message.textContent = window.TechousePlatformMode
+        ? 'Your reference could not be loaded in this browser. Call or email the team if you need it.'
+        : 'Your saved reference could not be loaded. Please close this preview and submit the demo again.';
       host.append(message);
       return;
     }
     const visit = currentVisit?.inquiryId === q.id ? currentVisit : null;
     host.classList.remove('has-visit-card');
     host.classList.add('ticket-only');
-    host.innerHTML = `${host.tagName === 'DIALOG' ? '<button type="button" class="modal-close" aria-label="Close request ticket">×</button>' : ''}<article class="request-ticket" tabindex="-1"><p class="ticket-reference">Reference <strong>${escape(q.id)}</strong></p><h2 id="${host.tagName === 'DIALOG' ? 'modal-title' : 'request-ticket-title'}">${escape(callbackTiming(q.createdAt))}</h2>${visit ? `<p class="ticket-visit"><strong>Preferred site visit</strong><br>${escape(visit.date)} · ${escape(visit.time)} Philippine time<br><small>Awaiting confirmation</small></p>` : ''}<p class="ticket-demo">Demo only — saved in this browser. No inquiry sent or call booked.</p><div class="modal-actions">${host.tagName === 'DIALOG' ? '<button type="button" class="button" data-stay>Close ticket</button>' : '<a class="button" href="#/divisions/solar">Back to solar</a>'}<a class="button outline" href="#/divisions/solar?section=projects">See how much others are saving ↗</a></div></article>`;
+    host.innerHTML = `${host.tagName === 'DIALOG' ? '<button type="button" class="modal-close" aria-label="Close request ticket">×</button>' : ''}<article class="request-ticket" tabindex="-1"><p class="ticket-reference">Reference <strong>${escape(q.id)}</strong></p><h2 id="${host.tagName === 'DIALOG' ? 'modal-title' : 'request-ticket-title'}">${escape(callbackTiming(q.createdAt))}</h2>${visit ? `<p class="ticket-visit"><strong>Preferred site visit</strong><br>${escape(visit.date)} · ${escape(visit.time)} Philippine time<br><small>Awaiting confirmation</small></p>` : ''}<p class="ticket-demo">${window.TechousePlatformMode ? (visit ? 'Sent to the Techouse team. Your visit time is a preference until the team confirms it.' : 'Sent to the Techouse team. Keep this reference if you call us.') : 'Demo only — saved in this browser. No inquiry sent or call booked.'}</p><div class="modal-actions">${host.tagName === 'DIALOG' ? '<button type="button" class="button" data-stay>Close ticket</button>' : '<a class="button" href="#/divisions/solar">Back to solar</a>'}<a class="button outline" href="#/divisions/solar?section=projects">See how much others are saving ↗</a></div></article>`;
     syncCompletedPage(q, host.querySelector('.request-ticket'));
     const ticket = host.querySelector('.request-ticket');
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches)
@@ -449,7 +475,9 @@ window.TechouseVisits = (() => {
         (button) => button.dataset.reviewInquiry === q.id,
       );
       if (card)
-        card.querySelector('.saved-card-status').textContent = 'Site visit requested · demo';
+        card.querySelector('.saved-card-status').textContent = window.TechousePlatformMode
+          ? 'Site visit requested'
+          : 'Site visit requested · demo';
       const note = document.createElement('section');
       note.className = 'ticket-visit';
       const date = new Date(currentVisit.date + 'T00:00:00Z');
@@ -461,7 +489,7 @@ window.TechouseVisits = (() => {
             timeZone: 'UTC',
           })
         : currentVisit.date;
-      note.innerHTML = `<h3>${escape(dateLabel)} <span>· ${escape(currentVisit.time)}</span></h3><p>Philippine time · preferred schedule</p><p class="visit-saved-note">Saved as a demo preference. No visit is booked or confirmed.</p>`;
+      note.innerHTML = `<h3>${escape(dateLabel)} <span>· ${escape(currentVisit.time)}</span></h3><p>Philippine time · preferred schedule</p><p class="visit-saved-note">${window.TechousePlatformMode ? 'Sent as your preferred time. The team will confirm the visit.' : 'Saved as a demo preference. No visit is booked or confirmed.'}</p>`;
       (host.querySelector('.inquiry-ticket-body') || host).append(note);
     },
     setInquiry(q) {

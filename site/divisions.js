@@ -513,6 +513,7 @@ window.TechouseDivisions = (() => {
           : 'Techouse equipment pricing.';
       // PRICE FIRST: the budget and the next step lead; everything that explains them is optional.
       out.innerHTML = `<div class="estimate-budget-highlight"><p class="estimate-setup"><span>Indicative budget</span><b data-scenario-title></b></p><h3 class="animated-price"></h3><a class="button" href="#/inquiry?division=solar&estimate=1" id="solar-estimate-inquiry">Like this starting point? Let’s talk ↗</a><details class="estimate-more"><summary>See savings, payback and system size</summary><p class="estimate-reason" data-scenario-reason></p><dl class="estimate-economics estimate-stats"><div><dt>Monthly savings</dt><dd></dd></div><div><dt>Payback</dt><dd></dd></div><div><dt>System size</dt><dd></dd></div></dl><div class="estimate-metrics"><p><strong></strong>Solar capacity</p><p><strong></strong>Indicative panel area</p><p><strong></strong>Generation / month</p></div><p class="estimate-economics-note">${tierNote} Includes panels, inverter, batteries where shown, mounting and installation. Final pricing follows a site review.</p></details></div>`;
+      window.TechouseAnalytics?.event('estimate');
       // Full-width comparison row below inputs and headline; outside the live region to keep announcements short.
       const scenarios = document.createElement('fieldset');
       scenarios.className = 'solar-scenarios';

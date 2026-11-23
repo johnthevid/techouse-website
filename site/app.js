@@ -400,7 +400,7 @@ function mountInquiryHistory(showCurrent = true) {
             timeZone: 'Asia/Manila',
           })
         : '';
-      return `<li><button class="saved-reference-button" type="button" data-review-inquiry="${esc(q.id)}" aria-controls="inquiry-expanded-details" aria-expanded="false" aria-pressed="false"><span class="saved-card-kicker">Inquiry ${String(saved.length - index).padStart(2, '0')}${dateLabel ? ' · ' + esc(dateLabel) : ''}</span><span class="saved-card-title">${esc(sector && q.division === 'solar' ? sector + ' solar' : getDivision(q.division)?.short || 'Project inquiry')}</span><span class="saved-card-location">${esc(q.location || 'Location not provided')}</span><span class="saved-card-status">${visit ? 'Site visit requested · demo' : 'Saved · demo'}</span><strong>${esc(q.id)}</strong><span class="saved-card-open">View inquiry ${arrow}</span></button></li>`;
+      return `<li><button class="saved-reference-button" type="button" data-review-inquiry="${esc(q.id)}" aria-controls="inquiry-expanded-details" aria-expanded="false" aria-pressed="false"><span class="saved-card-kicker">Inquiry ${String(saved.length - index).padStart(2, '0')}${dateLabel ? ' · ' + esc(dateLabel) : ''}</span><span class="saved-card-title">${esc(sector && q.division === 'solar' ? sector + ' solar' : getDivision(q.division)?.short || 'Project inquiry')}</span><span class="saved-card-location">${esc(q.location || 'Location not provided')}</span><span class="saved-card-status">${q.token ? (visit ? 'Sent · site visit requested' : 'Sent to Techouse') : visit ? 'Site visit requested · demo' : 'Saved · demo'}</span><strong>${esc(q.id)}</strong><span class="saved-card-open">View inquiry ${arrow}</span></button></li>`;
     })
     .join(
       '',
@@ -477,10 +477,14 @@ function showInquiryOverview() {
   window.history.replaceState(null, '', '#/inquiry' + (params.size ? '?' + params.toString() : ''));
   const hero = document.querySelector('.page-hero');
   hero.querySelector('.eyebrow')?.remove();
+  const sentOnline = inquiries.every((q) => q.token);
   hero.querySelector('h1').textContent =
-    inquiries.length === 1 ? 'You already have an inquiry.' : 'Your inquiries are saved.';
-  hero.querySelector('p').textContent =
-    'Pick up where you left off. Open a ticket to review your request or plan your next step. Demo only: saved in this browser, not sent to Techouse.';
+    inquiries.length === 1
+      ? sentOnline ? 'You have sent us an inquiry.' : 'You already have an inquiry.'
+      : sentOnline ? 'Your inquiries' : 'Your inquiries are saved.';
+  hero.querySelector('p').textContent = sentOnline
+    ? 'Pick up where you left off. Open a request to review it or plan your next step.'
+    : 'Pick up where you left off. Open a ticket to review your request or plan your next step. Demo only: saved in this browser, not sent to Techouse.';
   saved.querySelector('h2').tabIndex = -1;
 }
 
@@ -526,7 +530,7 @@ function showSavedInquiry(q) {
     industrial: 'Industrial',
   }[q.solarSector];
   const annual = Number(q.solarSavings) * 12;
-  area.innerHTML = `<div class="success saved-inquiry-current" tabindex="-1"><header class="inquiry-ticket-heading"><h2>${esc(getDivision(q.division)?.short || 'Project')} inquiry</h2><p class="ticket-reference">Reference <strong>${esc(q.id)}</strong></p></header><div class="inquiry-ticket-body"><p class="inquiry-save-status"><span aria-hidden="true">✓</span> Demo saved in this browser</p><p class="inquiry-delivery-note">No inquiry has been sent to Techouse.</p><dl class="inquiry-summary-facts"><div><dt>Project location</dt><dd>${esc(q.location || 'Not provided')}</dd></div>${sectorLabel ? `<div><dt>Installation type</dt><dd>${sectorLabel}</dd></div>` : ''}</dl>${solar && Number.isFinite(annual) && annual > 0 ? `<div class="inquiry-annual-savings"><span>Your potential annual savings</span><strong>${new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', maximumFractionDigits: 0 }).format(annual)}<small> / year</small></strong><p>Monthly estimate × 12. Subject to site and usage review.</p></div>` : ''}<details class="inquiry-request-details"><summary>Review your request</summary><p class="saved-inquiry-requirements">${esc(q.requirements)}</p></details>${solar ? `<div class="inquiry-next-step"><h3>Let’s take a closer look.</h3><p>A site visit helps check your roof and refine your estimate.</p><button class="button" type="button" data-request-visit data-inquiry-id="${esc(q.id)}">Request a site visit ${arrow}</button></div>` : ''}</div></div>`;
+  area.innerHTML = `<div class="success saved-inquiry-current" tabindex="-1"><header class="inquiry-ticket-heading"><h2>${esc(getDivision(q.division)?.short || 'Project')} inquiry</h2><p class="ticket-reference">Reference <strong>${esc(q.id)}</strong></p></header><div class="inquiry-ticket-body">${q.token ? '<p class="inquiry-save-status"><span aria-hidden="true">✓</span> Sent to the Techouse team</p><p class="inquiry-delivery-note">The team will contact you using the details you gave.</p>' : `<p class="inquiry-save-status"><span aria-hidden="true">✓</span> ${window.TechousePlatformMode ? 'Saved in this browser only' : 'Demo saved in this browser'}</p><p class="inquiry-delivery-note">${window.TechousePlatformMode ? 'This request was not sent online. Call or email the team to follow it up.' : 'No inquiry has been sent to Techouse.'}</p>`}<dl class="inquiry-summary-facts"><div><dt>Project location</dt><dd>${esc(q.location || 'Not provided')}</dd></div>${sectorLabel ? `<div><dt>Installation type</dt><dd>${sectorLabel}</dd></div>` : ''}</dl>${solar && Number.isFinite(annual) && annual > 0 ? `<div class="inquiry-annual-savings"><span>Your potential annual savings</span><strong>${new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', maximumFractionDigits: 0 }).format(annual)}<small> / year</small></strong><p>Monthly estimate × 12. Subject to site and usage review.</p></div>` : ''}<details class="inquiry-request-details"><summary>Review your request</summary><p class="saved-inquiry-requirements">${esc(q.requirements)}</p></details>${solar ? `<div class="inquiry-next-step"><h3>Let’s take a closer look.</h3><p>A site visit helps check your roof and refine your estimate.</p><button class="button" type="button" data-request-visit data-inquiry-id="${esc(q.id)}">Request a site visit ${arrow}</button></div>` : ''}</div></div>`;
   if (q.division === 'solar')
     window.TechouseVisits?.restoreSavedVisit(area.querySelector('.success'), q);
   if (q.division === 'solar') window.TechouseVisits?.renderProjectPreviews();
@@ -551,7 +555,7 @@ function showSavedInquiry(q) {
 }
 window.TechouseInquiry = { showSavedInquiry, showInquiryOverview };
 function inquiryPage(selected) {
-  return `${breadcrumb('Start a project')}<section class="container page-hero"><h1>Your next project<br>starts here.</h1><p>Tell us what you have in mind. Choose a division and share the details that matter.</p></section><div class="container contact-grid"><div class="form-card" id="inquiry-form-area"><h2>Tell us about your project.</h2><p>Fields marked * are required.</p><form id="inquiry-form"><div class="field-grid"><div class="field"><label for="inquiry-name">Full name *</label><input id="inquiry-name" name="name" autocomplete="name" required maxlength="100" placeholder="Your full name"></div><div class="field"><label for="inquiry-company">Company <small>(optional)</small></label><input id="inquiry-company" name="company" autocomplete="organization" maxlength="150" placeholder="Company or organization"></div><div class="field"><label for="inquiry-email">Email address *</label><input id="inquiry-email" name="email" type="email" autocomplete="email" required maxlength="200" placeholder="you@example.com"></div><div class="field"><label for="inquiry-phone">Mobile number <small>(optional)</small></label><input id="inquiry-phone" name="phone" type="tel" autocomplete="tel" maxlength="35" placeholder="+63"></div><div class="field"><label for="inquiry-division">Division *</label><select id="inquiry-division" name="division" required>${divisionOptions(getDivision(selected) ? selected : '')}</select></div><div class="field"><label for="inquiry-location">Project location *</label><input id="inquiry-location" name="location" required maxlength="200" placeholder="City / province"></div><div class="field full"><label for="inquiry-capacity">Size or required capacity <small>(optional)</small></label><input id="inquiry-capacity" name="capacity" maxlength="150" placeholder="e.g. 100 sq m, 10 kW, or number of units"></div><div class="field full"><label for="inquiry-requirements">Project requirements *</label><textarea id="inquiry-requirements" name="requirements" required minlength="10" maxlength="5000" placeholder="Tell us about your project, timeline, and any specific requirements."></textarea></div></div><p class="form-note">Demo only. This inquiry stays in your current browser and is not sent to Techouse. Use example details for the presentation.</p><div class="form-actions"><button class="button" type="submit">Save demo inquiry ${arrow}</button><small>No message will be sent.</small></div></form></div><aside class="contact-aside"><h3>Prefer a direct conversation?</h3><p>Call or email the team directly.</p><div class="contact-item"><span>Email</span><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a></div><div class="contact-item"><span>Phone</span><a href="tel:+639855626888">+63 985 562 6888</a></div><div class="contact-item"><span>Helpful to have ready</span><p>A project location, a short brief, and any available plans or site details.</p></div></aside></div>`;
+  return `${breadcrumb('Start a project')}<section class="container page-hero"><h1>Your next project<br>starts here.</h1><p>Tell us what you have in mind. Choose a division and share the details that matter.</p></section><div class="container contact-grid"><div class="form-card" id="inquiry-form-area"><h2>Tell us about your project.</h2><p>Fields marked * are required.</p><form id="inquiry-form"><div class="field-grid"><div class="field"><label for="inquiry-name">Full name *</label><input id="inquiry-name" name="name" autocomplete="name" required maxlength="100" placeholder="Your full name"></div><div class="field"><label for="inquiry-company">Company <small>(optional)</small></label><input id="inquiry-company" name="company" autocomplete="organization" maxlength="150" placeholder="Company or organization"></div><div class="field"><label for="inquiry-email">Email address *</label><input id="inquiry-email" name="email" type="email" autocomplete="email" required maxlength="200" placeholder="you@example.com"></div><div class="field"><label for="inquiry-phone">Mobile number <small>(optional)</small></label><input id="inquiry-phone" name="phone" type="tel" autocomplete="tel" maxlength="35" placeholder="+63"></div><div class="field"><label for="inquiry-division">Division *</label><select id="inquiry-division" name="division" required>${divisionOptions(getDivision(selected) ? selected : '')}</select></div><div class="field"><label for="inquiry-location">Project location *</label><input id="inquiry-location" name="location" required maxlength="200" placeholder="City / province"></div><div class="field full"><label for="inquiry-capacity">Size or required capacity <small>(optional)</small></label><input id="inquiry-capacity" name="capacity" maxlength="150" placeholder="e.g. 100 sq m, 10 kW, or number of units"></div><div class="field full"><label for="inquiry-requirements">Project requirements *</label><textarea id="inquiry-requirements" name="requirements" required minlength="10" maxlength="5000" placeholder="Tell us about your project, timeline, and any specific requirements."></textarea></div></div>${window.TechousePlatformMode ? `<div class="form-trap" aria-hidden="true"><label>Leave this field empty<input name="website" tabindex="-1" autocomplete="off"></label></div><p class="form-note">Your details go only to the Techouse team, who use them to reply to this request.</p><p class="form-error" role="alert" hidden></p><div class="form-actions"><button class="button" type="submit">Send inquiry ${arrow}</button></div>` : `<p class="form-note">Demo only. This inquiry stays in your current browser and is not sent to Techouse. Use example details for the presentation.</p><div class="form-actions"><button class="button" type="submit">Save demo inquiry ${arrow}</button><small>No message will be sent.</small></div>`}</form></div><aside class="contact-aside"><h3>Prefer a direct conversation?</h3><p>Call or email the team directly.</p><div class="contact-item"><span>Email</span><a href="mailto:techouse889@gmail.com">techouse889@gmail.com</a></div><div class="contact-item"><span>Phone</span><a href="tel:+639855626888">+63 985 562 6888</a></div><div class="contact-item"><span>Helpful to have ready</span><p>A project location, a short brief, and any available plans or site details.</p></div></aside></div>`;
 }
 function updatesPage() {
   const list = publishedPosts();
@@ -584,45 +588,40 @@ function adminTabs(active) {
   const items = [
     ['dashboard', 'Overview', '/office'],
     ['inquiries', 'Inquiries', '/office/inquiries'],
+    ['traffic', 'Traffic & leads', '/office/traffic'],
     ['projects', 'Projects', '/office/projects'],
     ['customizer', 'Website & company info', '/office/customizer'],
     ['posts', 'Updates', '/office/posts'],
   ];
-  return `<nav class="admin-tabs" aria-label="Back office sections">${items.map(([id, label, path]) => `<a href="#${path}" class="${active === id ? 'active' : ''}">${label}${id === 'inquiries' ? ` <span class="tab-count">${inquiries.length}</span>` : ''}</a>`).join('')}</nav>`;
+  return `<nav class="admin-tabs" aria-label="Back office sections">${items.map(([id, label, path]) => `<a href="#${path}" data-tab="${id}" class="${active === id ? 'active' : ''}"${active === id ? ' aria-current="page"' : ''}>${esc(label)}</a>`).join('')}</nav>`;
 }
 function postRow(p) {
   return `<div class="post-row"><div class="row-title"><strong>${esc(p.title)}</strong><small>${esc(category(p.division))}${p.sample ? ' · Example content' : ''}</small></div><span class="status ${p.status === 'draft' ? 'draft' : ''}">${p.status === 'published' ? 'Published' : 'Draft'}</span><span class="row-date">${dateText(p.updatedAt)}</span><div class="row-actions">${p.status === 'published' ? `<a href="#/updates/${encodeURIComponent(p.id)}" aria-label="View ${esc(p.title)}">View</a>` : ''}<a href="#/office/edit/${encodeURIComponent(p.id)}" aria-label="Edit ${esc(p.title)}">Edit</a><button class="danger" data-delete-post="${esc(p.id)}" aria-label="Delete ${esc(p.title)}">Delete</button></div></div>`;
 }
 function adminDashboard() {
   const projects = window.TechouseContent.snapshot().projects;
-  const unread = inquiries.filter((q) => !q.reviewedAt).length;
-  const recent = [...inquiries]
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 3);
+  const published = projects.filter((p) => p.status === 'published').length;
   const tasks = [
     [
       'Inquiries',
-      'Review requests and contact potential customers.',
+      'Read new requests, set where each one stands and download them as a spreadsheet.',
       '/office/inquiries',
       'info',
-      `${unread} awaiting review`,
+    ],
+    [
+      'Traffic & leads',
+      'See how many people visit, where they come from and which posts or ads bring inquiries.',
+      '/office/traffic',
+      'arrow_outward',
     ],
     [
       'Projects',
-      'Manage your division portfolios. Solar projects are available now; the other divisions are planned.',
+      `Add and publish project stories for all five divisions. ${published} published now.`,
       '/office/projects',
       'solar_power',
-      `${projects.filter((p) => p.status === 'published').length} published`,
-    ],
-    [
-      'Website & company info',
-      'Edit website wording, banner images and the company information visitors see.',
-      '/office/customizer',
-      'dashboard',
-      'Website text, banners and About pages',
     ],
   ];
-  return `<section class="container admin-shell office-dashboard">${adminTop('Overview', 'Choose a task or review your latest inquiries.')}${adminTabs('dashboard')}<div class="office-overview-stats office-stats-four"><a href="#/office/inquiries"><span>Total inquiries</span><strong>${inquiries.length}</strong></a><a href="#/office/inquiries"><span>Awaiting review</span><strong>${unread}</strong></a><a href="#/office/projects"><span>Published projects</span><strong>${projects.filter((p) => p.status === 'published').length}</strong></a><a href="#/office/posts"><span>Draft updates</span><strong>${posts.filter((p) => p.status === 'draft').length}</strong></a></div><div class="office-delivery-note">Email delivery is not connected yet. Inquiry counts currently cover requests saved in this browser.</div><div class="office-tool-grid office-three-tasks">${tasks.map(([title, description, path, icon, detail]) => `<article class="office-tool-card">${window.TechouseIcons.icon(icon)}<h2>${title}</h2><p>${description}</p><small>${detail}</small><div class="office-task-actions"><a class="button outline" href="#${path}">Open ${title.toLowerCase()} ↗</a></div></article>`).join('')}</div><section class="office-recent-inquiries"><div class="office-section-heading"><h2>Latest inquiries</h2><a class="text-link" href="#/office/inquiries">View all ↗</a></div>${recent.length ? recent.map(inquiryCard).join('') : '<p class="office-empty-note">No inquiries saved yet. New requests will appear here.</p>'}</section></section>`;
+  return `<section class="container admin-shell office-dashboard" id="office-overview-live">${adminTop('Overview', 'New requests and how the website is doing this week.')}${adminTabs('dashboard')}<div class="office-overview-stats office-stats-four"><a href="#/office/traffic"><span>Visitors, last 7 days</span><strong data-stat="visitors">…</strong><small data-stat="visitors-note"></small></a><a href="#/office/inquiries"><span>Inquiries, last 7 days</span><strong data-stat="recent">…</strong><small>Spam excluded</small></a><a href="#/office/inquiries"><span>Not opened yet</span><strong data-stat="awaiting">…</strong><small>Open to mark as seen</small></a><a href="#/office/projects"><span>Published projects</span><strong>${published}</strong><small>${posts.filter((p) => p.status === 'draft').length} draft updates</small></a></div><p class="office-delivery-note">${window.TechouseAdmin ? 'New inquiries appear here and in Inquiries. Email alerts are not connected yet, so check the back office each working day.' : 'Local workspace: inquiry counts cover demo requests saved in this browser.'}</p><section class="office-recent-inquiries"><div class="office-section-heading"><h2>Latest inquiries</h2><a class="text-link" href="#/office/inquiries">All inquiries ${arrow}</a></div><div class="ix-latest"></div></section><div class="office-tool-grid office-three-tasks">${tasks.map(([title, description, path, icon]) => `<article class="office-tool-card">${window.TechouseIcons.icon(icon)}<h2>${esc(title)}</h2><p>${description}</p><div class="office-task-actions"><a class="button outline" href="#${path}">Open ${esc(title.toLowerCase())} ${arrow}</a></div></article>`).join('')}</div></section>`;
 }
 function adminPosts() {
   return `<section class="container admin-shell">${adminTop('Website posts', 'Create a post, choose a division, and publish it to Updates. You can edit or remove it at any time.', `<a class="button" href="#/office/new">+ Create a post</a>`)}${adminTabs('posts')}<div class="admin-tools"><div class="filter-buttons" aria-label="Filter posts"><button class="active" data-post-filter="all" aria-pressed="true">All posts (${posts.length})</button><button data-post-filter="published" aria-pressed="false">Published (${publishedPosts().length})</button><button data-post-filter="draft" aria-pressed="false">Drafts (${posts.filter((p) => p.status === 'draft').length})</button></div><input class="search-input" id="post-search" type="search" placeholder="Search posts…" aria-label="Search posts"></div><div class="post-table"><div class="table-heading"><span>Post</span><span>Status</span><span>Updated</span><span style="text-align:right">Actions</span></div><div id="post-rows">${
@@ -648,11 +647,11 @@ function editorPage(id) {
   };
   return `<section class="container admin-shell"><a class="back-link" href="#/office/posts">← Back to posts</a><div style="height:24px"></div>${adminTop(p ? 'Edit website post' : 'Create a website post', 'Write in plain text, choose a cover, and save a draft or publish to the website.')}<form id="post-form" data-id="${esc(id || '')}"><div class="editor-layout"><div class="form-card"><div class="field"><label for="post-title">Post title *</label><input id="post-title" name="title" required maxlength="120" placeholder="Give your update a clear title" value="${esc(draft.title)}"></div><div class="field"><label for="post-summary">Short introduction *</label><textarea id="post-summary" name="summary" required maxlength="220" rows="3" placeholder="A short summary for the Updates page">${esc(draft.summary)}</textarea></div><div class="field"><label for="post-body">Post content *</label><textarea class="editor-body" id="post-body" name="body" required maxlength="12000" placeholder="Write your update here. Separate paragraphs with a blank line.">${esc(draft.body)}</textarea></div><div class="field"><label for="post-example">Content label</label><select id="post-example" name="sample"><option value="false" ${!draft.sample ? 'selected' : ''}>Regular post</option><option value="true" ${draft.sample ? 'selected' : ''}>Example / presentation content</option></select></div></div><aside class="editor-aside"><h3>Post settings</h3><div class="field"><label for="post-division">Division *</label><select id="post-division" name="division" required>${divisionOptions(draft.division, true)}</select></div><div class="field"><label for="post-cover">Cover image</label><select id="post-cover" name="cover">${covers.map((name, i) => `<option value="${name}" ${draft.cover === name ? 'selected' : ''}>${['Architecture', 'Solar panels', 'Construction site', 'Building facade'][i]} · illustrative</option>`).join('')}</select></div><img class="editor-cover" id="cover-preview" src="${coverURL(draft.cover)}" alt="Selected illustrative cover"><button class="button" type="submit" name="action" value="published">${p?.status === 'published' ? 'Update published post' : 'Publish post'} ${arrow}</button><button class="button outline" type="submit" name="action" value="draft">Save as draft</button><p>Published posts appear in the website’s Updates section. A draft stays in this back office.<br><br>${window.TechouseAdmin ? 'Saved changes publish to the shared website.' : 'Changes save in this browser.'}</p></aside></div></form></section>`;
 }
-function inquiryCard(q) {
-  return `<div class="inquiry-card" data-reviewed="${!!q.reviewedAt}" data-inquiry-search="${esc([q.name, q.email, q.location, q.company].join(' ').toLowerCase())}"><div class="post-meta"><span class="pill">${q.reviewedAt ? 'Reviewed' : 'New'}</span><span class="pill">${esc(category(q.division))}</span><span>${dateText(q.createdAt)}</span></div><h3>${esc(q.name)}</h3><p>${esc(q.location)}${q.company ? ' · ' + esc(q.company) : ''}</p><p>${esc(q.email)}</p><div class="row-actions"><button data-view-inquiry="${esc(q.id)}">View inquiry</button><button class="danger" data-delete-inquiry="${esc(q.id)}">Delete</button></div></div>`;
-}
 function adminInquiries() {
-  return `<section class="container admin-shell">${adminTop('Inquiries', 'Review requests and prepare your follow-up.')} ${adminTabs('inquiries')}<div class="office-delivery-note">Email delivery is not connected yet. These requests are saved in this browser.</div><div class="admin-tools"><div class="filter-buttons"><button class="active" data-inquiry-filter="all">All (${inquiries.length})</button><button data-inquiry-filter="new">Awaiting review (${inquiries.filter((q) => !q.reviewedAt).length})</button></div><input id="inquiry-search" class="search-input" type="search" aria-label="Search inquiries" placeholder="Search name, email or location…"></div><div class="inquiry-list">${inquiries.length ? [...inquiries].reverse().map(inquiryCard).join('') : '<div class="empty-state"><h3>No inquiries yet.</h3><p>Requests saved through the inquiry form will appear here.</p><a class="button small" href="#/inquiry">Open inquiry form ' + arrow + '</a></div>'}</div></section>`;
+  return `<section class="container admin-shell office-wide">${adminTop('Inquiries', 'Every request sent from the website. Open one to contact the person, set its status and keep notes for the team.')}${adminTabs('inquiries')}<div id="office-inquiries" class="ix"></div></section>`;
+}
+function adminTraffic() {
+  return `<section class="container admin-shell office-wide">${adminTop('Traffic & leads', 'How many people visit, where they come from, and which sources turn into inquiries. Counted without cookies; staff visits are left out.', window.TechouseInsights.rangeControls())}${adminTabs('traffic')}<div id="office-traffic" class="ix"></div></section>`;
 }
 function notFound() {
   return `<div class="container not-found"><h1>Let’s find your next step.</h1><p>This page or post is not available. Drafts appear only in the back office.</p><a class="button" href="#/">Return home ${arrow}</a></div>`;
@@ -741,7 +740,7 @@ function render() {
     title = 'Website posts · Back office';
     html = adminPosts();
   } else if (path === '/office/customizer') {
-    title = 'Website customizer';
+    title = 'Website & company info · Back office';
     html = window.TechouseContent.page(
       window.TechouseBanner.html(divisions, elevatorArt, arrow),
       about(),
@@ -749,7 +748,7 @@ function render() {
       adminTabs,
     );
   } else if (path === '/office/projects') {
-    title = 'Solar project stories';
+    title = 'Project stories · Back office';
     html = window.TechouseContent.projectsPage(adminTop, adminTabs);
   } else if (path === '/office/new') {
     title = 'Create a post · Back office';
@@ -760,6 +759,9 @@ function render() {
   } else if (path === '/office/inquiries') {
     title = 'Inquiries · Back office';
     html = adminInquiries();
+  } else if (path === '/office/traffic') {
+    title = 'Traffic & leads · Back office';
+    html = adminTraffic();
   } else {
     title = 'Page unavailable';
     html = notFound();
@@ -785,6 +787,7 @@ function render() {
   window.TechouseExperience?.mount();
   window.TechouseSolarExtras?.mount();
   window.TechouseOfficeUI?.mount();
+  if (path.startsWith('/office')) window.TechouseInsights?.mount(path, { posts, divisions });
   syncInquiryCta();
   if (
     path === '/inquiry' &&
@@ -826,52 +829,26 @@ function openModal(html) {
   modal.innerHTML = `<button class="modal-close" type="button" aria-label="Close dialog">×</button>${html}`;
   modal.showModal();
 }
-function confirmDelete(type, id) {
-  const data = type === 'post' ? posts : inquiries;
-  const item = data.find((x) => x.id === id);
+function confirmDelete(id) {
+  const item = posts.find((x) => x.id === id);
   if (!item) return;
+  const where = window.TechouseAdmin
+    ? 'It will be removed from the shared website content.'
+    : 'It will be removed from this browser’s sample.';
   openModal(
-    `<h2 id="modal-title">Delete ${type === 'post' ? 'this post' : 'this inquiry'}?</h2><p>${esc(type === 'post' ? item.title : item.name)} will be removed from this browser’s sample.${type === 'post' && item.status === 'published' ? ' It will also disappear from the website’s Updates section.' : ''}</p><div class="modal-actions"><button class="button outline" data-close-modal>Keep ${type}</button><button class="button" id="confirm-delete">Delete ${type}</button></div>`,
+    `<h2 id="modal-title">Delete this post?</h2><p>${esc(item.title)}: ${where}${item.status === 'published' ? ' It will also disappear from the website’s Updates section.' : ''}</p><div class="modal-actions"><button class="button outline" data-close-modal>Keep post</button><button class="button" id="confirm-delete">Delete post</button></div>`,
   );
   $('#confirm-delete').addEventListener(
     'click',
     async () => {
-      const next = data.filter((x) => x.id !== id);
-      if (!(await saveStore(type === 'post' ? postKey : inquiryKey, next))) return;
-      if (type === 'post') posts = next;
-      else inquiries = next;
+      const next = posts.filter((x) => x.id !== id);
+      if (!(await saveStore(postKey, next))) return;
+      posts = next;
       $('#modal').close();
       render();
-      showToast(type === 'post' ? 'Post deleted.' : 'Inquiry deleted.');
+      showToast('Post deleted.');
     },
     { once: true },
-  );
-}
-async function viewInquiry(id) {
-  const q = inquiries.find((x) => x.id === id);
-  if (!q) return;
-  if (!q.reviewedAt) {
-    const next = inquiries.map((item) =>
-      item.id === id ? { ...item, reviewedAt: new Date().toISOString() } : item,
-    );
-    if (await saveStore(inquiryKey, next)) {
-      inquiries = next;
-      render();
-    }
-  }
-  const fields = [
-    ['Reference', q.id],
-    ['Division', category(q.division)],
-    ['Name', q.name],
-    ['Company', q.company || 'Not provided'],
-    ['Email', q.email],
-    ['Mobile', q.phone || 'Not provided'],
-    ['Project location', q.location],
-    ['Size / capacity', q.capacity || 'Not provided'],
-    ['Requirements', q.requirements],
-  ];
-  openModal(
-    `<h2 id="modal-title">Project inquiry</h2><p>Saved in this browser · email delivery not connected.</p><dl class="inquiry-detail">${fields.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl><div class="modal-actions"><button class="button outline" data-close-modal>Close inquiry</button></div>`,
   );
 }
 // Ask before starting another request, without losing the estimate captured by the form handler.
@@ -889,7 +866,7 @@ function promptExistingInquiry(link, count) {
   dialog.id = 'repeat-inquiry-dialog';
   dialog.setAttribute('aria-labelledby', 'repeat-inquiry-title');
   dialog.setAttribute('aria-describedby', 'repeat-inquiry-description');
-  dialog.innerHTML = `<h2 id="repeat-inquiry-title">You already have ${count === 1 ? 'an inquiry' : count + ' inquiries'} saved.</h2><p id="repeat-inquiry-description">Would you like to start another request, or take a look at the ${count === 1 ? 'one you have' : 'ones you have'}?</p><p class="repeat-inquiry-demo">Demo requests are saved in this browser. They have not been sent to Techouse.</p><div class="repeat-inquiry-actions"><button class="button" type="button" data-existing-action="continue">Continue with a new inquiry ${arrow}</button><button class="button outline" type="button" data-existing-action="view">View my inquiries ${arrow}</button><button class="repeat-inquiry-cancel" type="button" data-existing-action="cancel" autofocus>Cancel · stay here</button></div>`;
+  dialog.innerHTML = `<h2 id="repeat-inquiry-title">You already have ${count === 1 ? 'an inquiry' : count + ' inquiries'} saved.</h2><p id="repeat-inquiry-description">Would you like to start another request, or take a look at the ${count === 1 ? 'one you have' : 'ones you have'}?</p><p class="repeat-inquiry-demo">${inquiries.every((q) => q.token) ? 'Your earlier requests have already reached the team.' : 'Demo requests are saved in this browser. They have not been sent to Techouse.'}</p><div class="repeat-inquiry-actions"><button class="button" type="button" data-existing-action="continue">Continue with a new inquiry ${arrow}</button><button class="button outline" type="button" data-existing-action="view">View my inquiries ${arrow}</button><button class="repeat-inquiry-cancel" type="button" data-existing-action="cancel" autofocus>Cancel · stay here</button></div>`;
   document.body.append(dialog);
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let leaving = false;
@@ -1005,17 +982,7 @@ document.addEventListener('click', (event) => {
   }
   const deletePost = event.target.closest('[data-delete-post]');
   if (deletePost) {
-    confirmDelete('post', deletePost.dataset.deletePost);
-    return;
-  }
-  const deleteInquiry = event.target.closest('[data-delete-inquiry]');
-  if (deleteInquiry) {
-    confirmDelete('inquiry', deleteInquiry.dataset.deleteInquiry);
-    return;
-  }
-  const view = event.target.closest('[data-view-inquiry]');
-  if (view) {
-    viewInquiry(view.dataset.viewInquiry);
+    confirmDelete(deletePost.dataset.deletePost);
     return;
   }
   if (event.target.closest('[data-close-modal],.modal-close')) {
@@ -1048,28 +1015,8 @@ document.addEventListener('click', (event) => {
       '<div class="empty-state"><p>No updates in this division yet.</p></div>';
   }
 });
-let inquiryFilter = 'all';
-function filterInquiries() {
-  const term = ($('#inquiry-search')?.value || '').trim().toLowerCase();
-  document.querySelectorAll('.inquiry-list .inquiry-card').forEach((card) => {
-    card.hidden = !(
-      card.dataset.inquirySearch.includes(term) &&
-      (inquiryFilter === 'all' || card.dataset.reviewed === 'false')
-    );
-  });
-}
-document.addEventListener('click', (event) => {
-  const button = event.target.closest('[data-inquiry-filter]');
-  if (!button) return;
-  inquiryFilter = button.dataset.inquiryFilter;
-  document
-    .querySelectorAll('[data-inquiry-filter]')
-    .forEach((b) => b.classList.toggle('active', b === button));
-  filterInquiries();
-});
 document.addEventListener('input', (event) => {
   if (event.target.id === 'post-search') filterPosts();
-  if (event.target.id === 'inquiry-search') filterInquiries();
 });
 document.addEventListener('change', (event) => {
   if (event.target.id === 'post-cover') $('#cover-preview').src = coverURL(event.target.value);
@@ -1133,6 +1080,8 @@ document.addEventListener('submit', async (event) => {
       return;
     }
     const solarSavings = data.division === 'solar' ? Number(form.dataset.solarSavings) : NaN;
+    const trap = data.website;
+    delete data.website;
     const q = {
       ...data,
       ...(data.division === 'solar' && form.dataset.solarSector
@@ -1142,6 +1091,44 @@ document.addEventListener('submit', async (event) => {
       id: uid('DEMO').toUpperCase(),
       createdAt: new Date().toISOString(),
     };
+    // Hosted site: the request goes to the shared database first; the visitor keeps a copy here.
+    if (window.TechousePlatformMode) {
+      const submit = form.querySelector('[type="submit"]'),
+        error = form.querySelector('.form-error');
+      submit.disabled = true;
+      error.hidden = true;
+      submit.dataset.label ||= submit.innerHTML;
+      submit.textContent = 'Sending…';
+      try {
+        const response = await fetch('/api/inquiries', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...q,
+            website: trap || '',
+            attribution: window.TechouseAnalytics?.attribution() || undefined,
+          }),
+        });
+        const value = await response.json().catch(() => ({}));
+        if (!response.ok)
+          throw Error(
+            value.error ||
+              'We could not send your inquiry. Please try again, or call or email the team.',
+          );
+        Object.assign(q, { id: value.id, createdAt: value.createdAt, token: value.token });
+      } catch (failure) {
+        error.textContent =
+          failure instanceof TypeError
+            ? 'We could not reach the server. Check your connection and try again, or call or email the team.'
+            : failure.message;
+        error.hidden = false;
+        error.scrollIntoView({ block: 'center', behavior: 'instant' });
+        return;
+      } finally {
+        submit.disabled = false;
+        submit.innerHTML = submit.dataset.label;
+      }
+    }
     const next = [...inquiries, q];
     if (!(await saveStore(inquiryKey, next))) return;
     inquiries = next;
@@ -1159,7 +1146,9 @@ document.addEventListener('submit', async (event) => {
     const origin = { x: button.left + button.width / 2, y: button.top + button.height / 2 };
     const showConfirmation = () => {
       $('#inquiry-form-area').innerHTML =
-        `<div class="success" tabindex="-1"><div class="success-icon" aria-hidden="true">✓</div><h2>Your demo inquiry is saved.</h2><p>Your request details are saved on this browser only.</p><p><strong>Demo reference</strong><br><code>${esc(q.id)}</code></p><p>No email was sent. Techouse has not received this inquiry.</p><p><a class="text-link" href="#/divisions">Continue exploring ${arrow}</a></p></div>`;
+        q.token
+          ? `<div class="success" tabindex="-1"><div class="success-icon" aria-hidden="true">✓</div><h2>Your inquiry has been sent.</h2><p>The Techouse team has your request and will contact you using the details you gave.</p><p><strong>Reference</strong><br><code>${esc(q.id)}</code></p><p>Keep this reference if you call us.</p><p><a class="text-link" href="#/divisions">Continue exploring ${arrow}</a></p></div>`
+          : `<div class="success" tabindex="-1"><div class="success-icon" aria-hidden="true">✓</div><h2>Your demo inquiry is saved.</h2><p>Your request details are saved on this browser only.</p><p><strong>Demo reference</strong><br><code>${esc(q.id)}</code></p><p>No email was sent. Techouse has not received this inquiry.</p><p><a class="text-link" href="#/divisions">Continue exploring ${arrow}</a></p></div>`;
       if (data.division === 'solar' && window.TechouseSolarExtras) {
         $('.success').innerHTML = window.TechouseSolarExtras.confirmationMarkup(
           q.solarSavings,
