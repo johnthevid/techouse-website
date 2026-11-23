@@ -223,8 +223,59 @@ window.TechousePartner = (() => {
     }
   }
 
+  // Floating "Become a partner" button, beside Back to top, on the partner page and the Solar page.
+  // It shows once the cover's button has scrolled away and steps aside while the page's own
+  // partner call to action (the closing section, or the Solar partner banner) is on screen.
+  let floatObserver;
+  const floatPages = {
+    '/partnership': {
+      href: applyLink,
+      label: 'Become a partner',
+      watch: ['.partner-cover .button', '.partner-close'],
+    },
+    // Solar visitors are mostly customers: open the partner page beside their solar research.
+    '/divisions/solar': {
+      href: '#/partnership',
+      label: 'Refer &amp; Earn',
+      newTab: true,
+      watch: ['.division-cover .button', '.partner-promo'],
+    },
+  };
+  function mountFloat(path) {
+    floatObserver?.disconnect();
+    document.querySelector('.partner-float')?.remove();
+    const setup = floatPages[path];
+    if (!setup) return;
+    const watched = setup.watch.map((selector) => document.querySelector(selector)).filter(Boolean);
+    if (!watched.length) return;
+    const button = document.createElement('a');
+    button.className = 'partner-float';
+    button.href = setup.href;
+    button.innerHTML = `${icon('handshake')}<span>${setup.label}</span>`;
+    if (setup.newTab) {
+      button.target = '_blank';
+      button.rel = 'noopener';
+      button.setAttribute('aria-label', 'Refer & Earn: partner program (opens in a new tab)');
+    }
+    button.tabIndex = -1;
+    button.setAttribute('aria-hidden', 'true');
+    document.body.append(button);
+    const onScreen = new Set();
+    floatObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) =>
+        entry.isIntersecting ? onScreen.add(entry.target) : onScreen.delete(entry.target),
+      );
+      const visible = onScreen.size === 0;
+      button.classList.toggle('is-visible', visible);
+      button.tabIndex = visible ? 0 : -1;
+      button.setAttribute('aria-hidden', String(!visible));
+    });
+    watched.forEach((element) => floatObserver.observe(element));
+  }
+
   function mount(path) {
     mountPromos(path);
+    mountFloat(path);
     if (path === '/partnership/apply') mountApply();
     if (path !== '/partnership') return;
     mountCalc();

@@ -692,6 +692,87 @@
   min-height: 44px;
 }
 
+/* Floating partner action: the Back to top button's twin, stacked above it. */
+.partner-float {
+  position: fixed;
+  right: 26px;
+  bottom: 26px;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 10px 17px;
+  background: #182e25;
+  color: #f3e3b8;
+  border: 1px solid #e6cf9980;
+  box-shadow: 0 4px 18px #0002;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition:
+    opacity 0.25s ease,
+    visibility 0.25s ease,
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    bottom 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.2s ease;
+}
+.partner-float .material-icon {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  color: #e6cf99;
+}
+.partner-float.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+}
+body:has(> .back-to-top.is-visible) > .partner-float {
+  bottom: 84px;
+}
+.partner-float:hover {
+  background: #304b3d;
+  color: #fff3d1;
+}
+.partner-float:focus-visible {
+  outline: 3px solid #b98626;
+  outline-offset: 4px;
+}
+@media (max-width: 600px) {
+  .partner-float {
+    right: 16px;
+    bottom: 16px;
+    padding: 10px 13px;
+  }
+  body:has(> .back-to-top.is-visible) > .partner-float {
+    bottom: 72px;
+  }
+}
+/* The Solar page hides Back to top below 1100px, so the button keeps the corner there. */
+@media (max-width: 1100px) {
+  body:has(.solar-streamlined) > .partner-float,
+  body:has(.solar-streamlined):has(> .back-to-top.is-visible) > .partner-float {
+    bottom: 26px;
+  }
+}
+@media (max-width: 600px) {
+  body:has(.solar-streamlined) > .partner-float,
+  body:has(.solar-streamlined):has(> .back-to-top.is-visible) > .partner-float {
+    bottom: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .partner-float {
+    transition: none;
+  }
+}
+
 /* Landing header: the partner program's entry point beside "Request a quote". */
 #header .banner-nav .partner-header-cta {
   display: inline-flex;
