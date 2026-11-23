@@ -49,6 +49,14 @@ The authenticator setup uses a private manual setup key: add a time-based accoun
 
 The CMS is deliberately basic. It currently edits project/post covers; project covers replace the gallery with that cover. Existing multi-image galleries remain in records until a cover is replaced. The older prototype's full customizer preview and gallery-management experience has not yet been ported to the secure CMS. Media are resized and persisted inside the content document for this base; the maximum content request is 5 MB. Migrate media to R2 before large content libraries. No customer contact data should be put into public CMS content.
 
+## Inquiry email verification on staging
+
+Email verification is gated by `INQUIRY_OTP_ENABLED=true`. With the feature enabled, the project inquiry form sends a six-digit code and requires verification before saving the browser-local demo. Project details still stay in the browser.
+
+Apply `migrations/0002.sql` to the staging D1 database before enabling the flag. Local SQLite applies it at startup. Configure `INQUIRY_OTP_FROM` with a Resend-verified sender and provision `RESEND_API_KEY` as a Worker secret. For local development, set the same names in the server process environment. Keep the API key outside source control. Production enablement requires approval of the sender and handling of customer email addresses.
+
+The staging defaults are a 10-minute code lifetime, one send per minute, up to five sends per hour per address, and up to five verification attempts per code. Additional request limits apply per IP. Successful verification consumes the code; a resend replaces the previous code. The database stores keyed digests for the address and code and the scheduled cleanup removes expired challenges while the feature is enabled.
+
 ## What remains before launch
 
 1. Create Client-owned Cloudflare services, approve costs and data handling, configure real domain/APP_ORIGIN, apply the schema, provision the production account and secret, and test in the actual Workers runtime.

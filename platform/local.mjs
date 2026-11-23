@@ -61,10 +61,14 @@ export async function createEnvironment(folder = resolve(here, ".data")) {
   await chmod(keyPath, 0o600);
   const db = new DatabaseSync(resolve(folder, "techouse.sqlite"));
   db.exec(await readFile(resolve(here, "migrations/0001.sql"), "utf8"));
+  db.exec(await readFile(resolve(here, "migrations/0002.sql"), "utf8"));
   await chmod(resolve(folder, "techouse.sqlite"), 0o600);
   const site = resolve(here, "../site");
   const env = {
     DB: d1(db),
+    INQUIRY_OTP_ENABLED: process.env.INQUIRY_OTP_ENABLED,
+    INQUIRY_OTP_FROM: process.env.INQUIRY_OTP_FROM,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
     AUTH_KEY: key,
     APP_ORIGIN: "http://127.0.0.1:8787",
     COOKIE_SECURE: "false",

@@ -1,7 +1,7 @@
 /** Cloudflare Worker: all publishing requires password + TOTP, an opaque session and CSRF.
  * Never place encryption keys, passwords, or MFA secrets in public assets or browser storage.
  */
-import { scrypt } from "node:crypto";
+import { createHmac, randomInt, scrypt } from "node:crypto";
 const encoder = new TextEncoder();
 const json = (body, status = 200, headers = {}) =>
   new Response(JSON.stringify(body), {
@@ -126,7 +126,7 @@ async function rate(env, id, max, seconds = 900) {
   if (record.count > max)
     fail(429, "Too many attempts. Please try again later.");
 }
-async function body(request) {
+async function body(request, maxBytes = 5_000_000) {
   if (!request.headers.get("content-type")?.startsWith("application/json"))
     fail(415, "Send JSON.");
   const reader = request.body?.getReader();
@@ -137,7 +137,7 @@ async function body(request) {
       const { done, value } = await reader.read();
       if (done) break;
       size += value.length;
-      if (size > 5_000_000) {
+      if (size > maxBytes) {
         await reader.cancel();
         fail(413, "Request too large.");
       }
@@ -407,6 +407,83 @@ async function getContent(env, published = false) {
       value[type] = value[type].filter((p) => p.status === "published");
   return { content: value, version: row?.version || 0 };
 }
+const inquiryOtpEnabled = (env) => env.INQUIRY_OTP_ENABLED === "true";
+
+function inquiryOtpDigest(env, purpose, value) {
+  return createHmac("sha256", unhex(env.AUTH_KEY))
+    .update(`inquiry-otp:${purpose}:${value}`)
+    .digest("hex");
+}
+
+async function inquiryOtp(request, env, send) {
+  if (!inquiryOtpEnabled(env) || !env.RESEND_API_KEY || !env.INQUIRY_OTP_FROM)
+    fail(503, "Email verification is temporarily unavailable.");
+  const ip = request.headers.get("cf-connecting-ip") || "local";
+  await rate(env, `inquiry-otp:${send ? "send" : "verify"}:${ip}`, send ? 10 : 60, 900);
+  const input = await body(request, 1024);
+  const email = typeof input.email === "string" ? input.email.trim().toLowerCase() : "";
+  if (email.length > 200 || !/^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9-]+(?:\.[a-z0-9-]+)+$/.test(email))
+    fail(400, "Enter a valid email address.");
+  const emailKey = inquiryOtpDigest(env, "email", email);
+
+  if (!send) {
+    if (typeof input.challenge !== "string" || !/^[a-f0-9]{32}$/.test(input.challenge) ||
+        typeof input.code !== "string" || !/^\d{6}$/.test(input.code))
+      fail(400, "Enter the six-digit code from your email.");
+    const digest = inquiryOtpDigest(env, "code", `${input.challenge}:${input.code}`);
+    const result = await query(
+      env,
+      `UPDATE inquiry_otp SET attempts=attempts+1,
+       consumed=CASE WHEN digest=? THEN 1 ELSE 0 END
+       WHERE email_key=? AND challenge=? AND expires>? AND attempts<5 AND consumed=0
+       RETURNING consumed`,
+      digest, emailKey, input.challenge, Date.now(),
+    ).first();
+    if (!result?.consumed)
+      fail(400, "The code is incorrect or unavailable. Check it or request a new code.");
+    return json({ verified: true });
+  }
+
+  await rate(env, `inquiry-otp:resend:${emailKey}`, 1, 60);
+  await rate(env, `inquiry-otp:hour:${emailKey}`, 5, 3600);
+  const challenge = random(16);
+  const code = String(randomInt(1_000_000)).padStart(6, "0");
+  const digest = inquiryOtpDigest(env, "code", `${challenge}:${code}`);
+  await query(
+    env,
+    `INSERT INTO inquiry_otp(email_key,challenge,digest,expires) VALUES(?,?,?,?)
+     ON CONFLICT(email_key) DO UPDATE SET challenge=excluded.challenge,
+     digest=excluded.digest, expires=excluded.expires, attempts=0, consumed=0`,
+    emailKey, challenge, digest, Date.now() + 10 * 60_000,
+  ).run();
+
+  let accepted = false;
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: env.INQUIRY_OTP_FROM,
+        to: [email],
+        subject: "Your Techouse verification code",
+        text: `Your Techouse verification code is ${code}. It expires in 10 minutes. If you did not request it, you can ignore this email.`,
+      }),
+      signal: AbortSignal.timeout(10_000),
+    });
+    accepted = response.ok;
+  } catch {
+    // Do not expose provider errors or configuration to the browser.
+  }
+  if (!accepted) {
+    await query(env, "DELETE FROM inquiry_otp WHERE email_key=? AND challenge=?", emailKey, challenge).run();
+    fail(502, "We could not send the code. Please try again in a minute.");
+  }
+  return json({ challenge }, 201);
+}
+
 async function route(request, env) {
   const url = new URL(request.url),
     path = url.pathname;
@@ -415,10 +492,14 @@ async function route(request, env) {
   if (request.method === "OPTIONS") return new Response(null, { status: 405 });
   if (path.startsWith("/api/") && !["GET", "HEAD"].includes(request.method))
     origin(request, env);
+  if (request.method === "POST" && path === "/api/inquiry/otp/send")
+    return inquiryOtp(request, env, true);
+  if (request.method === "POST" && path === "/api/inquiry/otp/verify")
+    return inquiryOtp(request, env, false);
   if (path === "/api/bootstrap.js" && request.method === "GET") {
     const { content } = await getContent(env, true);
     return new Response(
-      `window.TechouseBoot=${JSON.stringify(content).replace(/</g, "\\u003c")};`,
+      `window.TechouseBoot=${JSON.stringify(content).replace(/</g, "\\u003c")};window.TechouseInquiryOtp=${inquiryOtpEnabled(env)};`,
       { headers: { "Content-Type": "application/javascript" } },
     );
   }
@@ -767,6 +848,8 @@ export default {
     const now = Date.now();
     await query(env, "DELETE FROM sessions WHERE expires<?", now).run();
     await query(env, "DELETE FROM limits WHERE expires<?", now).run();
+    if (inquiryOtpEnabled(env))
+      await query(env, "DELETE FROM inquiry_otp WHERE expires<=?", now).run();
     await query(
       env,
       "DELETE FROM audit WHERE time<?",

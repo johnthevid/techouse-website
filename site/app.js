@@ -767,7 +767,10 @@ function render() {
   if (path === '/') window.TechouseBanner.mount(returningHome);
   window.TechouseDivisions.mount();
   window.TechouseSolar?.prefill();
-  if (path === '/inquiry') mountInquiryHistory();
+  if (path === '/inquiry') {
+    mountInquiryHistory();
+    mountInquiryEmailCheck(document.querySelector('#inquiry-form'));
+  }
   window.TechouseReadability?.mount();
   window.TechouseExperience?.mount();
   window.TechouseSolarExtras?.mount();
@@ -788,6 +791,117 @@ function render() {
   if (path.startsWith('/divisions/solar/projects/'))
     window.TechousePortfolio.openProject(path.split('/')[4] || '');
 }
+const inquiryEmailChecks = new WeakMap();
+
+function mountInquiryEmailCheck(form) {
+  if (!form || !window.TechouseInquiryOtp) return;
+  const email = form.elements.email;
+  const submit = form.querySelector('[type="submit"]');
+  const actions = submit.closest('.form-actions');
+  actions.querySelector('small').textContent = 'Only the verification code is emailed.';
+  form.querySelector('.form-note').textContent =
+    'Use an email you can access to receive your code. Your project details stay in this browser.';
+  email.insertAdjacentHTML('afterend', `
+    <div class="inquiry-email-check">
+      <div>
+        <button class="button outline" type="button" id="inquiry-send-code">Send email code</button>
+      </div>
+      <div id="inquiry-code-field" hidden>
+        <label for="inquiry-code">Email verification code</label>
+        <input id="inquiry-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" aria-describedby="inquiry-code-status">
+      </div>
+      <p id="inquiry-code-status" class="form-note" role="status">Request a six-digit code to verify this address.</p>
+    </div>`);
+  const send = form.querySelector('#inquiry-send-code');
+  const code = form.querySelector('#inquiry-code');
+  const field = form.querySelector('#inquiry-code-field');
+  const status = form.querySelector('#inquiry-code-status');
+  let challenge;
+  let busy = false;
+  let originalEmail = '';
+  const address = () => email.value.trim().toLowerCase();
+
+  function reset() {
+    challenge = undefined;
+    code.value = '';
+    field.hidden = true;
+    send.textContent = 'Send email code';
+  }
+
+  async function request(action, data) {
+    busy = true;
+    email.readOnly = true;
+    send.disabled = true;
+    submit.disabled = true;
+    try {
+      const response = await fetch('/api/inquiry/otp/' + action, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        status.textContent = response.status === 429
+          ? 'Too many attempts. Wait before trying again.'
+          : result.error;
+        return null;
+      }
+      return result;
+    } catch {
+      status.textContent = 'Email verification is temporarily unavailable. Try again.';
+      return null;
+    } finally {
+      busy = false;
+      email.readOnly = false;
+      send.disabled = false;
+      submit.disabled = false;
+    }
+  }
+
+  email.addEventListener('input', () => {
+    if (!challenge || address() === originalEmail) return;
+    reset();
+    status.textContent = 'Email address changed. Request a code for this address.';
+  });
+  send.addEventListener('click', async () => {
+    if (busy || !email.reportValidity()) return;
+    const recipient = address();
+    status.textContent = 'Sending verification code…';
+    const result = await request('send', { email: recipient });
+    if (!result?.challenge || !form.isConnected) return;
+    challenge = result.challenge;
+    originalEmail = recipient;
+    field.hidden = false;
+    code.value = '';
+    send.textContent = 'Resend email code';
+    status.textContent = 'Check your inbox. The code expires in 10 minutes. You can resend it after one minute.';
+    code.focus();
+  });
+
+  inquiryEmailChecks.set(form, async () => {
+    if (busy) return false;
+    if (!challenge || address() !== originalEmail) {
+      status.textContent = 'Request an email code before saving.';
+      send.focus();
+      return false;
+    }
+    if (!/^\d{6}$/.test(code.value.trim())) {
+      status.textContent = 'Enter the six-digit code from your email.';
+      code.focus();
+      return false;
+    }
+    status.textContent = 'Verifying email code…';
+    const result = await request('verify', { email: address(), challenge, code: code.value.trim() });
+    if (!result?.verified) {
+      code.focus();
+      return false;
+    }
+    reset();
+    status.textContent = 'Email verified. Request a new code if you need to save again.';
+    return true;
+  });
+}
+
 function decodeSegment(value = '') {
   try {
     return decodeURIComponent(value);
@@ -1119,6 +1233,8 @@ document.addEventListener('submit', async (event) => {
       showToast('Add your name, location, and at least 10 characters of project details.');
       return;
     }
+    const verifyEmail = inquiryEmailChecks.get(form);
+    if (verifyEmail && (!(await verifyEmail()) || !form.isConnected)) return;
     const solarSavings = data.division === 'solar' ? Number(form.dataset.solarSavings) : NaN;
     const q = {
       ...data,
@@ -1146,7 +1262,7 @@ document.addEventListener('submit', async (event) => {
     const origin = { x: button.left + button.width / 2, y: button.top + button.height / 2 };
     const showConfirmation = () => {
       $('#inquiry-form-area').innerHTML =
-        `<div class="success" tabindex="-1"><div class="success-icon" aria-hidden="true">✓</div><h2>Your demo inquiry is saved.</h2><p>Your request details are saved on this browser only.</p><p><strong>Demo reference</strong><br><code>${esc(q.id)}</code></p><p>No email was sent. Techouse has not received this inquiry.</p><p><a class="text-link" href="#/divisions">Continue exploring ${arrow}</a></p></div>`;
+        `<div class="success" tabindex="-1"><div class="success-icon" aria-hidden="true">✓</div><h2>Your demo inquiry is saved.</h2><p>Your request details are saved on this browser only.</p><p><strong>Demo reference</strong><br><code>${esc(q.id)}</code></p><p>Techouse has not received this inquiry.</p><p><a class="text-link" href="#/divisions">Continue exploring ${arrow}</a></p></div>`;
       if (data.division === 'solar' && window.TechouseSolarExtras) {
         $('.success').innerHTML = window.TechouseSolarExtras.confirmationMarkup(
           q.solarSavings,

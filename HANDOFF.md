@@ -1,5 +1,11 @@
 # Current handoff
 
+## Inquiry email OTP · 23 November 2026
+
+- Branch: `feature/inquiry-email-otp`, based on `develop`. Added the email-code flow to the project inquiry form, backed by D1/SQLite, with expiry, resend and attempt limits, and one-time consumption. The inquiry save remains browser-local.
+- Inquiry page: the send/resend action, code input and status now sit directly beneath the email address on desktop and phone.
+- Staging enablement needs the OTP migration, a verified Resend sender and a private provider key. Full test suite: 36 passed, including Chrome at desktop and phone widths. Provider requests were mocked. No deployment or remote migration was performed.
+
 ## Footer: build stamp and LinkedIn (applied to every branch)
 
 - Every footer shows branch · version (build) · last updated in Manila time, from `site/build-info.js`, written by `deployments/techouse-1.0/refresh-assets.mjs` (branch hidden on `main`). See WORKFLOW.md.
