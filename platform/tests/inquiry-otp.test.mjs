@@ -12,19 +12,18 @@ async function setup(t) {
   const { env } = fixtureData;
   Object.assign(env, {
     INQUIRY_OTP_ENABLED: "true",
-    INQUIRY_OTP_FROM: "Techouse <notifications@example.test>",
-    SES_REGION: "ap-southeast-1",
-    SES_ACCESS_KEY_ID: "test-id",
-    SES_SECRET_ACCESS_KEY: "test-secret",
+    INQUIRY_OTP_FROM: "notifications@example.test",
+    BREVO_API_KEY: "test-only",
   });
   const messages = [];
   let providerStatus = 201;
-  t.mock.method(globalThis, "fetch", async (request) => {
-    assert.equal(request.url, "https://email.ap-southeast-1.amazonaws.com/v2/email/outbound-emails");
-    assert.match(request.headers.get("authorization"), /ap-southeast-1\/ses\/aws4_request/);
-    const message = await request.json();
-    const code = message.Content.Simple.Body.Text.Data.match(/\b\d{6}\b/)[0];
-    messages.push({ code, email: message.Destination.ToAddresses[0] });
+  t.mock.method(globalThis, "fetch", async (url, options) => {
+    assert.equal(url, "https://api.brevo.com/v3/smtp/email");
+    assert.equal(options.headers["api-key"], "test-only");
+    const message = JSON.parse(options.body);
+    assert.deepEqual(message.sender, { name: "Techouse", email: "notifications@example.test" });
+    const code = message.textContent.match(/\b\d{6}\b/)[0];
+    messages.push({ code, email: message.to[0].email });
     return new Response(null, { status: providerStatus });
   });
   return { ...fixtureData, messages, setProviderStatus: (status) => { providerStatus = status; } };

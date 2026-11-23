@@ -4,7 +4,7 @@
 
 - Branch: `feature/inquiry-email-otp`, based on `develop`. Added the email-code flow to the project inquiry form, backed by D1/SQLite, with expiry, resend and attempt limits, and one-time consumption. The inquiry save remains browser-local.
 - Inquiry page: the send/resend action, code input and status now sit directly beneath the email address on desktop and phone.
-- Staging enablement needs the OTP migration, a region-verified Amazon SES sender and scoped IAM credentials. Full test suite: 36 passed, including Chrome at desktop and phone widths. Provider requests were mocked. No deployment or remote migration was performed.
+- Staging enablement needs the OTP migration, a verified Techouse sender in Brevo and a transactional API key. Full test suite: 36 passed, including Chrome at desktop and phone widths. Provider requests were mocked. No deployment or remote migration was performed.
 
 ## Footer: build stamp and LinkedIn (applied to every branch)
 
