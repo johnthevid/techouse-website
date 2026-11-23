@@ -1,6 +1,7 @@
 /** Cloudflare Worker: all publishing requires password + TOTP, an opaque session and CSRF.
  * Never place encryption keys, passwords, or MFA secrets in public assets or browser storage.
  */
+import { AwsClient } from "aws4fetch";
 import { createHmac, randomInt, scrypt } from "node:crypto";
 const encoder = new TextEncoder();
 const json = (body, status = 200, headers = {}) =>
@@ -416,7 +417,7 @@ function inquiryOtpDigest(env, purpose, value) {
 }
 
 async function inquiryOtp(request, env, send) {
-  if (!inquiryOtpEnabled(env) || !env.RESEND_API_KEY || !env.INQUIRY_OTP_FROM)
+  if (!inquiryOtpEnabled(env) || !env.SES_ACCESS_KEY_ID || !env.SES_SECRET_ACCESS_KEY || !/^[a-z]{2}-[a-z0-9-]+-\d+$/.test(env.SES_REGION || "") || !env.INQUIRY_OTP_FROM)
     fail(503, "Email verification is temporarily unavailable.");
   const ip = request.headers.get("cf-connecting-ip") || "local";
   await rate(env, `inquiry-otp:${send ? "send" : "verify"}:${ip}`, send ? 10 : 60, 900);
@@ -459,20 +460,27 @@ async function inquiryOtp(request, env, send) {
 
   let accepted = false;
   try {
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${env.RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: env.INQUIRY_OTP_FROM,
-        to: [email],
-        subject: "Your Techouse verification code",
-        text: `Your Techouse verification code is ${code}. It expires in 10 minutes. If you did not request it, you can ignore this email.`,
-      }),
-      signal: AbortSignal.timeout(10_000),
+    const client = new AwsClient({
+      accessKeyId: env.SES_ACCESS_KEY_ID,
+      secretAccessKey: env.SES_SECRET_ACCESS_KEY,
+      sessionToken: env.SES_SESSION_TOKEN,
+      service: "ses",
+      region: env.SES_REGION,
     });
+    const endpoint = `https://email.${env.SES_REGION}.amazonaws.com/v2/email/outbound-emails`;
+    const signed = await client.sign(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        FromEmailAddress: env.INQUIRY_OTP_FROM,
+        Destination: { ToAddresses: [email] },
+        Content: { Simple: {
+          Subject: { Data: "Your Techouse verification code" },
+          Body: { Text: { Data: `Your Techouse verification code is ${code}. It expires in 10 minutes. If you did not request it, you can ignore this email.` } },
+        } },
+      }),
+    });
+    const response = await fetch(signed, { signal: AbortSignal.timeout(10_000), redirect: "error" });
     accepted = response.ok;
   } catch {
     // Do not expose provider errors or configuration to the browser.

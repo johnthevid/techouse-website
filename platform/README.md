@@ -53,7 +53,7 @@ The CMS is deliberately basic. It currently edits project/post covers; project c
 
 Email verification is gated by `INQUIRY_OTP_ENABLED=true`. With the feature enabled, the project inquiry form sends a six-digit code and requires verification before saving the browser-local demo. Project details still stay in the browser.
 
-Apply `migrations/0002.sql` to the staging D1 database before enabling the flag. Local SQLite applies it at startup. Configure `INQUIRY_OTP_FROM` with a Resend-verified sender and provision `RESEND_API_KEY` as a Worker secret. For local development, set the same names in the server process environment. Keep the API key outside source control. Production enablement requires approval of the sender and handling of customer email addresses.
+Apply `migrations/0002.sql` to the staging D1 database before enabling the flag. Local SQLite applies it at startup. Set `SES_REGION` to the AWS region containing the verified SES sender identity and set `INQUIRY_OTP_FROM` to its sender address. Store `SES_ACCESS_KEY_ID` and `SES_SECRET_ACCESS_KEY` as Worker secrets using IAM API credentials scoped to `ses:SendEmail` for that identity. Temporary credentials also require `SES_SESSION_TOKEN`. In the SES sandbox, verify the test recipient in the same region. Request SES production access there before sending OTPs to customers. For local development, set the same names in the server process environment. Keep the API key outside source control. Production enablement requires approval of the sender and handling of customer email addresses.
 
 The staging defaults are a 10-minute code lifetime, one send per minute, up to five sends per hour per address, and up to five verification attempts per code. Additional request limits apply per IP. Successful verification consumes the code; a resend replaces the previous code. The database stores keyed digests for the address and code and the scheduled cleanup removes expired challenges while the feature is enabled.
 
@@ -92,7 +92,7 @@ npm install
 npm test
 ```
 
-Runtime has no npm dependencies. Playwright is a development dependency and the browser test uses an isolated headless Google Chrome installation (not the user's profile). With the bundled workspace runtime, set PLAYWRIGHT_MODULE to its Playwright package.json. Tests create temporary databases and do not use the real administrator or stored customer content.
+The Worker uses aws4fetch to sign SES API requests. Playwright is a development dependency and the browser test uses an isolated headless Google Chrome installation (not the user's profile). With the bundled workspace runtime, set PLAYWRIGHT_MODULE to its Playwright package.json. Tests create temporary databases and do not use the real administrator or stored customer content.
 
 Round 1: enrollment/publishing and unauthenticated access, CSRF, injection attempts.
 Round 2: persistence/version conflicts/recovery and MFA/recovery replay, session rotation, unsafe media/links and escaped bootstrap data.
