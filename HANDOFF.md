@@ -18,6 +18,17 @@ Task: improve the back end, add visitor counting and a traffic/leads dashboard w
 ## Main now includes the partner program (22 Nov 2026, not deployed)
 
 Merged `claude/busy-hopper-jnb9qg` (Be a partner page, application page, partner banners, Refer & Earn links, review fixes) into `main` at the user's request, after a code review whose six findings were fixed (partner applications kept out of project-inquiry history and the repeat-inquiry prompt, back-office labelling, swipe reset, build-stamp date guard, header CTA suppression, new `platform/tests/partner-program.test.mjs`). Conflicts with the `unslop` polish were resolved by keeping main's sentence-case footer and kicker-free About page and re-adding the partner links/promo; asset versions regenerated. Tests 36/36; public and back-office routes smoke-checked at 1440 and 390 with no errors or overflow.
+## Latest: division heroes, page layouts and back office on phones (branch `feature/division-heroes`, merged into `main` 23 Nov 2026 at the user's request; not deployed)
+
+- Heroes for Construction, Prefabrication, Elevators and Real estate development follow the approved Solar pattern: benefit headline, playful subline, icon button that scrolls to the page's first section. Copy lives in `HEROES` in `site/divisions.js`. Solar is untouched (markup verified identical).
+- Development copy invites a conversation only; it does not advertise services (the division data notes they are unconfirmed).
+- Layouts (revised after user review): the user rejected the editorial rows and asked for the earlier card layout, improved. Cards are back (`cards()` helper, `.division-cards` scoped styles so Solar's panel cards are untouched): icon tile and label, one bold heading, one short line, action with an arrow box. Body copy cut to one line per card or step. Steps show a large gold number, short title and one line. Prefabrication's four headline specs are larger. Project showcase sits mid-page; the brief closes each page; section menus include Projects and swipe on phones.
+- Motion (Impeccable animate, reviewed by its motion reviewer: ship): step rules draw left to right in order with text following (≈0.9 s, once per view); card grids below the fold rise in as a list; hover moves only the arrow box; nothing animates under reduced motion or for blocks already on screen at load. Code: `revealBlocks()` in `divisions.js`.
+- Stageshow skill is committed in `.claude/skills/stageshow` for this project; it is for faux product UI demos, not section motion.
+- Real estate development now has a section menu, a three-step "how it starts" section, projects and the closing brief, instead of repeating its tagline as a heading.
+- Back office on phones (`content-tools.css` end block, `office-ui.js`): tabs and filters swipe in one row; Projects shows the library first and opens the editor on Add or Edit with a Back to library button; 44px row actions; paging in one row; styled file picker. Desktop unchanged.
+- Checks: 35/35 tests, 0 page errors on 16 routes (desktop and phone), Impeccable detector found nothing in the changed code (its four warnings are older global styles).
+- Needs client review: the new hero and section copy.
 
 ## Main now includes `unslop` (22 Nov 2026, not deployed)
 

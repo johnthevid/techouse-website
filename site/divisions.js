@@ -13,40 +13,157 @@ window.TechouseDivisions = (() => {
   <article><div class="product-art brochure-art"><img src="assets/solar-catalogue/datasheet-2.jpg" alt="Skyworth SWR battery range brochure" loading="lazy"></div><h3>Battery storage</h3><p>Discuss backup priorities and storage options for a system designed around your needs.</p><a href="#/divisions/solar/products/batteries">Explore battery storage ↗</a></article></div><p class="catalogue-note">Skyworth product ranges · Select a category to explore models and datasheets.</p></section>
   <section class="project-showcase division-section" id="projects"><div class="section-heading"><h2>Energy, put to work.</h2><p>A home for our completed solar installations. Project photos, locations and system details will appear here as the portfolio is added.</p></div><div class="project-placeholder"><img src="assets/solar.jpg" alt="Illustrative solar rooftop, not a completed Techouse installation" loading="lazy"><div><span>Past projects / portfolio preview</span><h3>The next story<br>starts on a rooftop.</h3><p>Approved Techouse project stories coming soon.</p></div></div></section>
   <section class="estimator division-section" id="estimator"><div class="section-heading"><h2>What could solar<br>look like for you?</h2><p>Get a starting budget using editable sample assumptions. A site assessment and equipment selection will determine your final proposal.</p></div><form id="solar-estimator"><div class="estimate-inputs"><label class="solar-bill-field">Your monthly electricity bill<span class="solar-bill-input"><span aria-hidden="true">₱</span><input name="bill" type="number" inputmode="numeric" min="500" max="5000000" step="100" value="6000" required aria-describedby="solar-bill-note"></span><small id="solar-bill-note">Any recent bill is fine. Round numbers work.</small></label><div class="solar-questions"><p class="solar-question-count"><i aria-hidden="true"></i><i aria-hidden="true"></i><span aria-live="polite">Question 1 of 2</span></p><div class="solar-answer" data-answer="nightShare" hidden>${window.TechouseIcons.icon('check')}<span>Most use</span><b></b><button type="button" data-change="nightShare">Change<span class="visually-hidden"> when you use the most electricity</span></button></div><fieldset class="solar-tile-choices solar-usage-choices" data-question="nightShare"><legend>When do you use the most electricity?</legend><div><label><input type="radio" name="nightShare" value="25" required><span>${window.TechouseIcons.icon('light_mode')}<strong>Mostly daytime</strong><small>Shop hours, home office</small><em class="solar-suggest" hidden></em></span></label><label><input type="radio" name="nightShare" value="50" required><span>${window.TechouseIcons.icon('routine')}<strong>Day and night</strong><small>Spread through the day</small><em class="solar-suggest" hidden></em></span></label><label><input type="radio" name="nightShare" value="75" required><span>${window.TechouseIcons.icon('dark_mode')}<strong>Mostly at night</strong><small>Aircon and lights after dark</small><em class="solar-suggest" hidden></em></span></label></div></fieldset><div class="solar-answer" data-answer="offset" hidden>${window.TechouseIcons.icon('check')}<span>Solar covers</span><b></b><button type="button" data-change="offset">Change<span class="visually-hidden"> how much solar should cover</span></button></div><fieldset class="solar-tile-choices solar-coverage-choices" data-question="offset" hidden><legend>How much of your bill should solar take on?</legend><div><label><input type="radio" name="offset" value="50" required><span>${window.TechouseIcons.icon('power')}<strong>Just the essentials</strong><small>Lights, fans, fridge, Wi‑Fi</small><em class="solar-suggest" hidden></em></span></label><label><input type="radio" name="offset" value="80" required><span>${window.TechouseIcons.icon('electric_bolt')}<strong>Essentials and more</strong><small>Plus aircon and appliances</small><em class="solar-suggest">Suggested</em></span></label><label><input type="radio" name="offset" value="95" required><span>${window.TechouseIcons.icon('home')}<strong>Most of my bill</strong><small>Solar as your main power</small><em class="solar-suggest" hidden></em></span></label></div></fieldset></div><input type="hidden" name="sector" value="Residential"><details class="solar-fine-tune"><summary>Using <b data-rate-summary>₱16/kWh</b> · Fine-tune (optional)</summary><label>Electricity rate (₱ / kWh)<input name="rate" type="number" min="1" max="100" step="0.0001" value="16" required><small data-rate-note>Typical Meralco rate. Edit to match your bill.</small></label><label>Panel technology<select name="panel"><option value="topcon">620 W TOPCon</option><option value="bc">660 W back-contact (BC)</option></select></label></details></div><div class="estimate-result" aria-live="polite" aria-atomic="true" id="estimate-result"></div></form><p class="estimate-disclaimer">Planning illustration only, not a quotation or savings guarantee. Uses Techouse equipment pricing, 4.5 peak sun hours/day, 20% system losses and 30 days/month. Energy offset assumes generation is used on site; no export credits are assumed. Roof suitability, shading, permits, electrical upgrades, actual tariffs and battery sizing need assessment.</p></section>`;
-  function constructionContent() {
-    const icon = window.TechouseIcons.icon('arrow_outward');
-    const types = [
-      [
-        'Residential',
-        'A home for what comes next.',
-        'Tell us about the home you have in mind, the people it is for and your site.',
-        'home_work',
-      ],
-      [
-        'Commercial',
-        'A space for your business.',
-        'Share how the space needs to work for your customers, your team and your daily operations.',
-        'construction',
-      ],
-      [
-        'Industrial',
-        'Room for your operations.',
-        'Start with the intended use, site requirements and the way your facility needs to function.',
-        'factory',
-      ],
-    ];
-    return `<nav class="division-subnav construction-subnav" aria-label="Construction sections"><a href="#construction-start" data-scroll="construction-start">Your project</a><a href="#construction-methods" data-scroll="construction-methods">How we build</a><a href="#construction-process" data-scroll="construction-process">The next steps</a><a href="#construction-questions" data-scroll="construction-questions">Common questions</a></nav><div class="division-wrap construction-content"><section id="construction-start" class="division-section"><div class="section-heading"><h2>What are you<br>planning to build?</h2><p>Choose a starting point. Share your requirements so our team can review the scope with you.</p></div><div class="construction-project-types">${types.map(([name, heading, text, symbol]) => `<a class="construction-type" href="#/inquiry?division=construction&project=${name.toLowerCase()}"><div class="construction-type-top">${window.TechouseIcons.icon(symbol)}<span>${name}</span></div><h3>${heading}</h3><p>${text}</p><span class="construction-type-action">Discuss your project ${icon}</span></a>`).join('')}</div><p class="construction-scope-note">Project requirements, service coverage and delivery scope are confirmed with our team.</p></section><section id="construction-methods" class="division-section"><div class="section-heading"><h2>Two ways<br>we build.</h2><p>Both use steel moulds for consistent, solid concrete. The right one depends on your building.</p></div><div class="construction-project-types two-up"><a class="construction-type" href="#/divisions/prefabrication"><div class="construction-type-top">${window.TechouseIcons.icon('home_work')}<span>Precast modules</span></div><h3>Built in the factory.</h3><p>Room-sized concrete modules are cast in steel moulds, cured, then lifted into place. Fast and consistent for repeatable homes, classrooms and rentals up to three storeys.</p><span class="construction-type-action">Explore prefabrication ${icon}</span></a><a class="construction-type" href="#/inquiry?division=construction"><div class="construction-type-top">${window.TechouseIcons.icon('construction')}<span>Cast-in-place</span></div><h3>Poured on site.</h3><p>Steel moulds are set up on site and walls, partitions and floors are poured together, floor by floor. The same system works from a two-storey house up to about ten storeys.</p><span class="construction-type-action">Discuss your project ${icon}</span></a></div></section><section id="construction-process" class="division-section construction-process"><div class="section-heading"><h2>A clear brief.<br>A better starting point.</h2><p>From an early idea to an existing set of plans, start with what you already know.</p></div><ol><li><strong>Share your idea</strong><p>Tell us your location, intended use, approximate floor area and target schedule.</p></li><li><strong>Review the requirements</strong><p>Discuss your plans, site conditions and priorities with our team.</p></li><li><strong>Define the next step</strong><p>Agree on the proposed scope, responsibilities and requirements before proceeding.</p></li></ol></section><section class="construction-brief"><div><h2>Bring what you have.<br>We’ll start there.</h2><p>You don’t need every detail ready to start a conversation.</p></div><ul><li>Site location and approximate area</li><li>Building use and preferred spaces</li><li>Available drawings or reference images</li><li>Target timeline and budget range</li></ul><a class="button" href="#/inquiry?division=construction">Let’s start building ${icon}</a></section><section id="construction-questions" class="division-section construction-questions"><div class="section-heading"><h2>A few useful<br>starting questions.</h2></div><details><summary>Can I inquire without complete plans?</summary><p>Yes. Share your idea, location and any references you have. The information needed for the next stage can be discussed with the team.</p></details><details><summary>Can I get a construction price online?</summary><p>A useful proposal needs a defined scope and project details. Share your area, intended use and available plans so the team can review what is needed.</p></details><details><summary>What if I’m considering a prefabricated building?</summary><p>Explore our Prefabrication division, then discuss the approach that fits your plans.</p><a class="text-link" href="#/divisions/prefabrication">Explore prefabrication ${icon}</a></details></section></div>`;
-  }
-  // Shared pieces for the content-led division pages (Prefabrication, Elevators).
+  // Shared pieces for the content-led division pages (Construction, Prefabrication, Elevators, Development).
   const arrowIcon = () => window.TechouseIcons.icon('arrow_outward');
+  // Hero copy for every division except Solar, which keeps its approved hero in page().
+  const HEROES = {
+    construction: {
+      title: 'Big plans?<br>Let’s pour them.',
+      text: 'Homes, shops and whole facilities, built in precast modules or cast floor by floor. Bring the idea. We’ll bring the steel moulds.',
+      icon: 'construction',
+      action: 'Let’s start building',
+      target: 'construction-start',
+    },
+    prefabrication: {
+      title: 'Whole rooms,<br>cast in one piece.',
+      text: 'Why build brick by brick? Each module is a complete concrete room, made in a steel mould and stacked up to three storeys.',
+      icon: 'home_work',
+      action: 'See how it’s made',
+      target: 'prefab-made',
+    },
+    elevators: {
+      title: 'Going up?<br>Every floor, covered.',
+      text: 'Hitachi, EPSS and Shanghai Mitsubishi lifts, sourced direct, installed with care and kept running for the long ride.',
+      icon: 'elevator',
+      action: 'Find your lift',
+      target: 'elevator-brands',
+    },
+    development: {
+      title: 'Got land? Let’s see<br>what it could be.',
+      text: 'A lot, a plan or just a hunch. Tell us where it is and what you picture, and we’ll start the conversation there.',
+      icon: 'home_work',
+      action: 'Tell us about your property',
+      target: 'development-start',
+    },
+  };
+  const hero = (d, arrow) => {
+    const h = HEROES[d.id];
+    if (!h)
+      return `<h1>${d.short}.</h1><p>${d.tagline}</p><a class="button" href="#/inquiry?division=${d.id}">Let’s talk ${arrow}</a>`;
+    return `<h1>${h.title}</h1><p>${h.text}</p><a class="button" href="#${h.target}" data-scroll="${h.target}">${window.TechouseIcons.icon(h.icon)}${h.action}</a>`;
+  };
+  // Portfolio mounts into #projects wherever it sits (customizer.js), so each page places it as proof mid-page.
+  const projectsSection = () =>
+    '<section class="project-showcase division-section" id="projects"></section>';
+  // Card grids: icon and label, one bold heading, one short line, then the action.
+  const cards = (items, modifier = '') =>
+    `<div class="construction-project-types division-cards${modifier}" data-reveal-list>${items
+      .map(({ icon, label, title, text, href, action }) => {
+        const tag = href ? 'a' : 'article';
+        return `<${tag} class="construction-type"${href ? ` href="${href}"` : ''}><div class="construction-type-top"><span class="division-card-icon">${window.TechouseIcons.icon(icon)}</span><span>${label}</span></div><h3>${title}</h3><p>${text}</p>${href ? `<span class="construction-type-action">${action}<span class="division-card-go">${arrowIcon()}</span></span>` : ''}</${tag}>`;
+      })
+      .join('')}</div>`;
   const brief = (d, label) =>
     `<section class="construction-brief"><div><h2>Bring what you have.<br>We’ll start there.</h2><p>You don’t need every detail ready to start a conversation.</p></div><ul>${d.prompts.map((p) => `<li>${p}</li>`).join('')}</ul><a class="button" href="#/inquiry?division=${d.id}">${label} ${arrowIcon()}</a></section>`;
   const faq = (id, heading, items) =>
     `<section id="${id}" class="division-section construction-questions"><div class="section-heading"><h2>${heading}</h2></div>${items.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</section>`;
+  // Numbered steps: the gold rule above each step draws in order, so the sequence reads at a glance.
   const steps = (id, heading, intro, items) =>
-    `<section id="${id}" class="division-section construction-process"><div class="section-heading"><h2>${heading}</h2><p>${intro}</p></div><ol>${items.map(([t, p]) => `<li><strong>${t}</strong><p>${p}</p></li>`).join('')}</ol></section>`;
+    `<section id="${id}" class="division-section construction-process division-steps"><div class="section-heading"><h2>${heading}</h2><p>${intro}</p></div><ol data-reveal-steps>${items.map(([t, p], i) => `<li><span class="step-rule" aria-hidden="true"></span><span class="step-number" aria-hidden="true">0${i + 1}</span><strong>${t}</strong><p>${p}</p></li>`).join('')}</ol></section>`;
   const subnav = (label, links) =>
     `<nav class="division-subnav construction-subnav" aria-label="${label}">${links.map(([id, text]) => `<a href="#${id}" data-scroll="${id}">${text}</a>`).join('')}</nav>`;
+
+  function constructionContent(d) {
+    const types = [
+      [
+        'home_work',
+        'Residential',
+        'A home for what comes next.',
+        'Your home, your people, your site.',
+      ],
+      [
+        'construction',
+        'Commercial',
+        'A space for your business.',
+        'Built around your customers and your team.',
+      ],
+      ['factory', 'Industrial', 'Room for your operations.', 'Shaped by how your facility runs.'],
+    ];
+    return `${subnav('Construction sections', [
+      ['construction-start', 'Your project'],
+      ['construction-methods', 'How we build'],
+      ['projects', 'Projects'],
+      ['construction-process', 'Next steps'],
+      ['construction-questions', 'Questions'],
+    ])}<div class="division-wrap construction-content"><section id="construction-start" class="division-section"><div class="section-heading"><h2>What are you<br>planning to build?</h2><p>Pick a starting point. We’ll take it from there.</p></div>${cards(
+      types.map(([icon, label, title, text]) => ({
+        icon,
+        label,
+        title,
+        text,
+        href: `#/inquiry?division=construction&project=${label.toLowerCase()}`,
+        action: 'Discuss your project',
+      })),
+    )}<p class="construction-scope-note">Scope, coverage and timing are confirmed with our team.</p></section><section id="construction-methods" class="division-section"><div class="section-heading"><h2>Two ways<br>we build.</h2><p>Both use steel moulds. Your building decides which.</p></div>${cards(
+      [
+        {
+          icon: 'home_work',
+          label: 'Precast modules',
+          title: 'Built in the factory.',
+          text: 'Concrete rooms cast off site, then lifted in. Up to 3 storeys.',
+          href: '#/divisions/prefabrication',
+          action: 'Explore prefabrication',
+        },
+        {
+          icon: 'construction',
+          label: 'Cast-in-place',
+          title: 'Poured on site.',
+          text: 'Walls and floors cast floor by floor. Up to about 10 storeys.',
+          href: '#/inquiry?division=construction',
+          action: 'Discuss your project',
+        },
+      ],
+      ' two-up',
+    )}</section>${projectsSection()}${steps(
+      'construction-process',
+      'Three steps to<br>a clear brief.',
+      'Start with what you already know.',
+      [
+        ['Share your idea', 'Location, use, size and timing.'],
+        ['Review it together', 'Your plans, site and priorities, with our team.'],
+        ['Agree the next step', 'Scope and responsibilities, set before work starts.'],
+      ],
+    )}${faq('construction-questions', 'A few useful<br>starting questions.', [
+      [
+        'Can I inquire without complete plans?',
+        'Yes. Share your idea, location and any references you have. The information needed for the next stage can be discussed with the team.',
+      ],
+      [
+        'Can I get a construction price online?',
+        'A useful proposal needs a defined scope and project details. Share your area, intended use and available plans so the team can review what is needed.',
+      ],
+      [
+        'What if I’m considering a prefabricated building?',
+        `Explore our Prefabrication division, then discuss the approach that fits your plans.</p><p><a class="text-link" href="#/divisions/prefabrication">Explore prefabrication ${arrowIcon()}</a>`,
+      ],
+    ])}${brief(d, 'Let’s start building')}</div>`;
+  }
+
+  function developmentContent(d) {
+    return `${subnav('Real estate development sections', [
+      ['development-start', 'How it starts'],
+      ['projects', 'Projects'],
+    ])}<div class="division-wrap construction-content">${steps(
+      'development-start',
+      'Every big project<br>starts with a lot.',
+      'A plan, a parcel or a promising piece of land.',
+      [
+        ['Tell us about the property', 'Where it is, how big, and what you picture there.'],
+        ['Talk it through', 'We review it with you and work through the questions.'],
+        ['Agree the next step', 'Scope and responsibilities, settled before anything moves.'],
+      ],
+    )}${projectsSection()}${brief(d, 'Tell us about your property')}</div>`;
+  }
 
   function prefabricationContent(d) {
     const uses = [
@@ -54,28 +171,28 @@ window.TechouseDivisions = (() => {
         'home_work',
         'Homes',
         'Multi-storey homes.',
-        'Stack modules into two- or three-storey houses, with an open balcony on the upper level and sliding doors where you need them.',
+        'Two or three storeys, with balconies and sliding doors.',
       ],
       [
         'home',
         'Schools & dormitories',
-        'Classrooms and shared rooms.',
-        'A standard module gives about 23 m² of clear space for a classroom or dorm room, ready to repeat floor after floor.',
+        'Classrooms and dorm rooms.',
+        'About 23 m² of clear space, repeated floor after floor.',
       ],
       [
         'storefront',
         'Rentals & social housing',
         'Apartments and rentals.',
-        'One module is roughly one socialised-housing unit. Stack three storeys with stairs at the side and an open corridor along the canopies.',
+        'One module is roughly one housing unit.',
       ],
     ];
     const specs = [
       ['Module size', '7.2 × 3.6 × 3 m'],
       ['Floor area', 'About 23 m²'],
+      ['Stacking', 'Up to 3 storeys'],
+      ['Concrete strength', '3,000–5,000 PSI'],
       ['Walls', '15 cm'],
       ['Roof slab', '12 cm'],
-      ['Concrete strength', '3,000–5,000 PSI'],
-      ['Stacking', 'Up to 3 storeys'],
       ['Canopy', 'About 1 m per module'],
       ['Shared corridor', 'About 2.5 m between facing modules'],
     ];
@@ -83,66 +200,54 @@ window.TechouseDivisions = (() => {
       ['prefab-made', 'How it’s made'],
       ['prefab-specs', 'Specifications'],
       ['prefab-uses', 'Where it works'],
+      ['projects', 'Projects'],
       ['prefab-delivery', 'Delivery'],
     ])}<div class="division-wrap construction-content">${steps(
       'prefab-made',
       'Cast in steel.<br>Finished smooth.',
-      'Each module is a complete room, formed in one piece in a precision steel mould.',
+      'Every module is one complete room, made in one mould.',
       [
         [
           'Moulded in one piece',
-          'Walls, posts and the roof beam are formed together in a closed steel mould, so every module comes out the same.',
+          'Walls, posts and roof beam formed together, so every module matches.',
         ],
-        [
-          'Steam before the pour',
-          'The mould is steam-heated before the concrete goes in, driving out the air bubbles that leave pits and gaps. Modules come out smooth, with no plastering needed.',
-        ],
-        [
-          'Cured for strength',
-          'Modules are lifted out after 12 hours and cured for another 15 days, reaching 3,000 PSI in under ten days and 3,000 to 5,000 PSI depending on the mix.',
-        ],
+        ['Steam before the pour', 'Heated moulds drive out air bubbles. No pits, no plastering.'],
+        ['Cured for strength', 'Out of the mould in 12 hours, then cured for another 15 days.'],
       ],
-    )}<section id="prefab-specs" class="division-section"><div class="section-heading"><h2>The standard module.</h2><p>Sizes can be adjusted to suit your lot and layout.</p></div><figure class="module-3d" data-module-3d><figcaption><span>Standard module, drawn to scale. Drag to turn it.</span><button type="button" data-m3d-stack aria-pressed="false"><span>Stack to 3 storeys</span></button></figcaption></figure><dl class="division-specs">${specs.map(([t, v]) => `<div><dt>${t}</dt><dd>${v}</dd></div>`).join('')}</dl><p class="division-note">Walls can be thinner for single-storey buildings; three-storey buildings keep the full 15 cm. Lengths can be shortened, for example to 6 m, to work with lot setbacks.</p></section><section id="prefab-uses" class="division-section"><div class="section-heading"><h2>Where modules<br>work best.</h2><p>Repeatable rooms, built quickly and consistently.</p></div><div class="construction-project-types">${uses.map(([icon, name, heading, text]) => `<a class="construction-type" href="#/inquiry?division=prefabrication"><div class="construction-type-top">${window.TechouseIcons.icon(icon)}<span>${name}</span></div><h3>${heading}</h3><p>${text}</p><span class="construction-type-action">Discuss your project ${arrowIcon()}</span></a>`).join('')}</div></section>${faq(
-      'prefab-delivery',
-      'Getting modules<br>to your site.',
+    )}<section id="prefab-specs" class="division-section"><div class="section-heading"><h2>The standard module.</h2><p>Sizes can be adjusted to suit your lot and layout.</p></div><figure class="module-3d" data-module-3d><figcaption><span>Standard module, drawn to scale. Drag to turn it.</span><button type="button" data-m3d-stack aria-pressed="false"><span>Stack to 3 storeys</span></button></figcaption></figure><dl class="division-specs">${specs.map(([t, v], i) => `<div${i < 4 ? ' class="is-key"' : ''}><dt>${t}</dt><dd>${v}</dd></div>`).join('')}</dl><p class="division-note">Single-storey modules can use thinner walls. Lengths can shorten, for example to 6 m, to fit lot setbacks.</p></section><section id="prefab-uses" class="division-section"><div class="section-heading"><h2>Where modules<br>work best.</h2><p>Anywhere you need the same good room, again and again.</p></div>${cards(
+      uses.map(([icon, label, title, text]) => ({
+        icon,
+        label,
+        title,
+        text,
+        href: '#/inquiry?division=prefabrication',
+        action: 'Discuss your project',
+      })),
+    )}</section>${projectsSection()}${faq('prefab-delivery', 'Getting modules<br>to your site.', [
       [
-        [
-          'How are modules delivered?',
-          'Each module weighs about 25 tonnes, similar to a fully loaded 20-foot container. It travels by truck and is set in place by a large crane, so the site needs room for both.',
-        ],
-        [
-          'Why are modules 3.6 m wide?',
-          'That is the widest a module can travel safely on public roads. When modules are cast on site, wider units, such as 4 m, become possible.',
-        ],
-        [
-          'Can the plant come to our site?',
-          'For larger developments, generally around 100 units or more, the moulding plant can be set up on site. Modules are then cast where they are installed, without long-distance trucking.',
-        ],
-        [
-          'Is prefab right for a small project far away?',
-          'Trucking and crane costs grow quickly with distance, especially between islands. For a few units far from the plant, conventional construction may cost less. We’ll tell you honestly which suits your project.',
-        ],
+        'How are modules delivered?',
+        'Each module weighs about 25 tonnes, similar to a fully loaded 20-foot container. It travels by truck and is set in place by a large crane, so the site needs room for both.',
       ],
-    )}${brief(d, 'Let’s talk about your project')}</div>`;
+      [
+        'Why are modules 3.6 m wide?',
+        'That is the widest a module can travel safely on public roads. When modules are cast on site, wider units, such as 4 m, become possible.',
+      ],
+      [
+        'Can the plant come to our site?',
+        'For larger developments, generally around 100 units or more, the moulding plant can be set up on site. Modules are then cast where they are installed, without long-distance trucking.',
+      ],
+      [
+        'Is prefab right for a small project far away?',
+        'Trucking and crane costs grow quickly with distance, especially between islands. For a few units far from the plant, conventional construction may cost less. We’ll tell you honestly which suits your project.',
+      ],
+    ])}${brief(d, 'Let’s talk about your project')}</div>`;
   }
 
   function elevatorContent(d) {
     const brands = [
-      [
-        'Hitachi',
-        'Built in Hitachi’s China plants.',
-        'A long-trusted Japanese name. The Hitachi lifts we supply are made in China.',
-      ],
-      [
-        'EPSS',
-        'Elevators and escalators.',
-        'By Yida Express Elevator Co., Ltd., a manufacturer based in Huzhou, Zhejiang, China.',
-      ],
-      [
-        'Shanghai Mitsubishi',
-        'Mitsubishi, built in Shanghai.',
-        'The China-made Mitsubishi elevator line, widely installed across China.',
-      ],
+      ['Hitachi', 'Built in Hitachi’s China plants.', 'A trusted Japanese name, made in China.'],
+      ['EPSS', 'Elevators and escalators.', 'From Yida Express Elevator, Huzhou, China.'],
+      ['Shanghai Mitsubishi', 'Mitsubishi, built in Shanghai.', 'Widely installed across China.'],
     ];
     const types = [
       'Passenger lifts',
@@ -157,26 +262,26 @@ window.TechouseDivisions = (() => {
       ['elevator-brands', 'Our brands'],
       ['elevator-types', 'What we install'],
       ['elevator-service', 'Service'],
+      ['projects', 'Projects'],
       ['elevator-questions', 'Good to know'],
-    ])}<div class="division-wrap construction-content"><section id="elevator-brands" class="division-section"><div class="section-heading"><h2>Three brands.<br>Sourced direct.</h2><p>We buy direct from the manufacturers through our partners in China, without layers of resellers in between.</p></div><div class="construction-project-types">${brands.map(([name, heading, text]) => `<article class="construction-type"><div class="construction-type-top">${window.TechouseIcons.icon('elevator')}<span>${name}</span></div><h3>${heading}</h3><p>${text}</p></article>`).join('')}</div></section><section id="elevator-types" class="division-section"><div class="section-heading"><h2>Lifts for<br>every building.</h2><p>Available across our three brands, for new buildings and renovations.</p></div><ul class="division-type-list">${types.map((t) => `<li>${window.TechouseIcons.icon('check')}<span>${t}</span></li>`).join('')}</ul><p class="division-note">We don’t supply external construction hoists. On a building site they collect debris and are easily overloaded, which puts riders at risk.</p></section>${steps(
+    ])}<div class="division-wrap construction-content"><section id="elevator-brands" class="division-section"><div class="section-heading"><h2>Three brands.<br>Sourced direct.</h2><p>Straight from the manufacturers, with no resellers in between.</p></div>${cards(
+      brands.map(([label, title, text]) => ({ icon: 'elevator', label, title, text })),
+    )}</section><section id="elevator-types" class="division-section"><div class="section-heading"><h2>Lifts for<br>every building.</h2><p>Across all three brands, for new buildings and renovations.</p></div><ul class="division-type-list">${types.map((t) => `<li>${window.TechouseIcons.icon('check')}<span>${t}</span></li>`).join('')}</ul><p class="division-note">We don’t supply external construction hoists. On a building site they collect debris and are easily overloaded, which puts riders at risk.</p></section>${steps(
       'elevator-service',
       'Installed, maintained,<br>renewed.',
       'A lift is a long-term system. We look after it for its whole life.',
       [
-        [
-          'Installation',
-          'Supply and installation of new lifts and escalators for new buildings and renovations.',
-        ],
+        ['Installation', 'New lifts and escalators, for new builds and renovations.'],
         [
           'Regular maintenance',
-          'Visits every month or every other month: lubrication, tightening cables as they stretch, and replacing wear parts such as sheaves and door rollers before they fail.',
+          'Visits every month or two that replace wear parts before they fail.',
         ],
         [
           'Modernisation',
-          'After about 25 years, a lift is due for review. We replace what’s needed, such as the motor, cables and controller, and can refresh the car interior so it looks and feels new.',
+          'Around year 25: new motor, cables and controls, and a refreshed car interior.',
         ],
       ],
-    )}<p class="division-note division-note-wide">We service any major brand, not only the three we sell. Lifts built from unbranded parts can be difficult to repair, so we inspect first.</p>${faq(
+    )}<p class="division-note division-note-wide">We service any major brand, not only the three we sell. Lifts built from unbranded parts can be difficult to repair, so we inspect first.</p>${projectsSection()}${faq(
       'elevator-questions',
       'Good to know.',
       [
@@ -196,7 +301,7 @@ window.TechouseDivisions = (() => {
     )}${brief(d, 'Let’s talk about your building')}</div>`;
   }
   function page(d, divisions, art, arrow) {
-    return `<article class="division-experience"><section class="division-cover">${window.TechouseContent?.snapshot().images[d.id] ? `<img src="${window.TechouseContent.imageURL(window.TechouseContent.snapshot().images[d.id])}" alt="${d.alt || d.short}" fetchpriority="high">` : d.image ? `<img src="assets/${d.image}" alt="${d.alt}" fetchpriority="high">` : art}<div class="cover-shade"></div><div class="cover-copy"><a href="#/" class="back-divisions">← All divisions</a><h1>${d.id === 'solar' ? 'Turn sunlight into<br>everyday savings.' : d.id === 'construction' ? 'Build your<br>next chapter.' : d.short + '.'}</h1><p>${d.id === 'solar' ? 'Looking at your electricity bill differently? Explore what solar could mean for your property.' : d.tagline}</p><a class="button" href="${d.id === 'solar' ? '#solar-start' : '#/inquiry?division=' + d.id}" ${d.id === 'solar' ? 'data-scroll="solar-start"' : ''}>${d.id === 'solar' ? window.TechouseIcons.icon('solar_power') : d.id === 'construction' ? window.TechouseIcons.icon('construction') : ''}${d.id === 'solar' ? 'Let’s find your solar savings' : d.id === 'construction' ? 'Let’s start building' : 'Let’s talk'} ${['solar', 'construction'].includes(d.id) ? '' : arrow}</a></div></section>${d.id === 'solar' ? `<nav class="division-subnav" aria-label="Solar sections"><a href="#products" data-scroll="products">Products</a><a href="#projects" data-scroll="projects">Past projects</a><a href="#estimator" data-scroll="estimator">Cost estimator ↗</a></nav><div class="division-wrap">${solar}</div>` : d.id === 'construction' ? constructionContent() : d.id === 'prefabrication' ? prefabricationContent(d) : d.id === 'elevators' ? elevatorContent(d) : `<div class="division-wrap"><section class="division-section basic-division"><div><h2>${d.tagline}</h2><p>${d.description}</p><a class="text-link" href="#/inquiry?division=${d.id}">Start a conversation ${arrow}</a></div><div><span>Let’s start with the essentials</span><ul>${d.prompts.map((p, i) => `<li><small>0${i + 1}</small>${p}</li>`).join('')}</ul></div></section></div>`}${d.id === 'solar' ? '' : '<div class="division-wrap"><section class="project-showcase division-section" id="projects"></section></div>'}<section class="division-next"><h2>What else are you building?</h2><div>${divisions
+    return `<article class="division-experience"><section class="division-cover">${window.TechouseContent?.snapshot().images[d.id] ? `<img src="${window.TechouseContent.imageURL(window.TechouseContent.snapshot().images[d.id])}" alt="${d.alt || d.short}" fetchpriority="high">` : d.image ? `<img src="assets/${d.image}" alt="${d.alt}" fetchpriority="high">` : art}<div class="cover-shade"></div><div class="cover-copy"><a href="#/" class="back-divisions">← All divisions</a>${d.id === 'solar' ? `<h1>Turn sunlight into<br>everyday savings.</h1><p>Looking at your electricity bill differently? Explore what solar could mean for your property.</p><a class="button" href="#solar-start" data-scroll="solar-start">${window.TechouseIcons.icon('solar_power')}Let’s find your solar savings </a>` : hero(d, arrow)}</div></section>${d.id === 'solar' ? `<nav class="division-subnav" aria-label="Solar sections"><a href="#products" data-scroll="products">Products</a><a href="#projects" data-scroll="projects">Past projects</a><a href="#estimator" data-scroll="estimator">Cost estimator ↗</a></nav><div class="division-wrap">${solar}</div>` : d.id === 'construction' ? constructionContent(d) : d.id === 'prefabrication' ? prefabricationContent(d) : d.id === 'elevators' ? elevatorContent(d) : d.id === 'development' ? developmentContent(d) : `<div class="division-wrap"><section class="division-section basic-division"><div><h2>${d.tagline}</h2><p>${d.description}</p><a class="text-link" href="#/inquiry?division=${d.id}">Start a conversation ${arrow}</a></div><div><span>Let’s start with the essentials</span><ul>${d.prompts.map((p, i) => `<li><small>0${i + 1}</small>${p}</li>`).join('')}</ul></div></section></div>${projectsSection()}`}<section class="division-next"><h2>What else are you building?</h2><div>${divisions
       .filter((x) => x.id !== d.id)
       .map((x) => `<a href="#/divisions/${x.id}">${x.short} ${arrow}</a>`)
       .join(
@@ -303,8 +408,72 @@ window.TechouseDivisions = (() => {
     }
   }
   // ORDER MATTERS: build solar content first, then attach navigation and calculator handlers.
+  // Card lists rise in as a list; numbered steps draw their gold rule in order.
+  // Only blocks still below the fold wait for their entrance, so content never depends on script.
+  let revealObserver;
+  function revealBlocks() {
+    revealObserver?.disconnect();
+    const groups = document.querySelectorAll('[data-reveal-list],[data-reveal-steps]');
+    if (
+      !groups.length ||
+      !('IntersectionObserver' in window) ||
+      matchMedia('(prefers-reduced-motion: reduce)').matches
+    )
+      return;
+    const ease = 'cubic-bezier(0.16, 1, 0.3, 1)';
+    const play = (group) => {
+      const stepped = group.hasAttribute('data-reveal-steps');
+      [...group.children].forEach((item, i) => {
+        if (stepped) {
+          // The rule stays opaque while it draws; the step's words follow once it has led.
+          item
+            .querySelector('.step-rule')
+            ?.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], {
+              duration: 600,
+              delay: 60 + i * 160,
+              easing: ease,
+              fill: 'backwards',
+            });
+          [...item.children]
+            .filter((child) => !child.classList.contains('step-rule'))
+            .forEach((child) =>
+              child.animate([{ opacity: 0 }, { opacity: 1 }], {
+                duration: 400,
+                delay: 190 + i * 160,
+                easing: 'ease-out',
+                fill: 'backwards',
+              }),
+            );
+        } else {
+          item.animate(
+            [
+              { opacity: 0, transform: 'translateY(16px)' },
+              { opacity: 1, transform: 'none' },
+            ],
+            { duration: 700, delay: Math.min(i, 3) * 70, easing: ease, fill: 'backwards' },
+          );
+        }
+      });
+      group.classList.remove('reveal-wait');
+    };
+    revealObserver = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          revealObserver.unobserve(entry.target);
+          play(entry.target);
+        }),
+      { rootMargin: '0px 0px -12% 0px' },
+    );
+    groups.forEach((group) => {
+      if (group.getBoundingClientRect().top < innerHeight) return;
+      group.classList.add('reveal-wait');
+      revealObserver.observe(group);
+    });
+  }
   function mount() {
     window.TechouseSolar?.mount();
+    revealBlocks();
     document.querySelectorAll('[data-scroll]').forEach((a) =>
       a.addEventListener('click', (e) => {
         e.preventDefault();

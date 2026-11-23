@@ -2032,3 +2032,39 @@ html.contact-dialog-open { overflow: hidden; }
 #project-editor .content-field[hidden] {
   display: none;
 }
+
+/* Back office on phones: one-hand navigation, library first, comfortable tap targets. */
+.project-editor-back { display: none; }
+@media (max-width: 760px) {
+  body.office-page .admin-tabs,
+  body.office-page .office-sector-tabs,
+  body.office-page .office-status-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  body.office-page :is(.admin-tabs, .office-sector-tabs, .office-status-tabs)::-webkit-scrollbar { display: none; }
+  body.office-page :is(.admin-tabs a, .office-sector-tabs button, .office-status-tabs button) { flex: none; white-space: nowrap; }
+  body.office-page .admin-tabs { gap: 20px; margin-inline: -16px; padding-inline: 16px; }
+  body.office-page .office-sector-tabs { gap: 8px; }
+
+  /* Library first; the editor opens on Add or Edit. */
+  body.office-page .project-manager-layout:not(.editor-open) > #project-editor { display: none; }
+  body.office-page .project-manager-layout.editor-open > .project-manager-browser { display: none; }
+  body.office-page .project-manager-layout.editor-open > #project-editor { scroll-margin-top: 16px; }
+  body.office-page .project-editor-back { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin: -8px 0 8px; padding: 0; border: 0; background: none; color: inherit; font: inherit; font-weight: 600; cursor: pointer; grid-column: 1 / -1; justify-self: start; }
+  body.office-page .project-editor-back .material-icon { width: 20px; height: 20px; }
+  body.office-page .compact-project-editor { padding: 20px 16px; }
+
+  /* Row actions and paging sized for thumbs. */
+  body.office-page .managed-project-actions { gap: 20px; }
+  body.office-page .managed-project-actions button { min-height: 44px; padding: 0 2px; font-size: 14px; }
+  body.office-page .managed-project-pagination { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  body.office-page .managed-project-pagination .button { width: 100%; justify-content: center; min-height: 48px; }
+  body.office-page .managed-project-pagination .managed-page-status { grid-column: 1 / -1; grid-row: 1; text-align: center; }
+
+  /* Overview task cards: tighter, full-width actions. */
+  body.office-page .office-three-tasks > * { padding: 20px; }
+  body.office-page .office-task-actions .button { width: 100%; justify-content: space-between; }
+  body.office-page .office-section-heading h2 { font-size: 1.75rem; }
+
+  /* File inputs match the office buttons instead of the browser default. */
+  body.office-page input[type='file'] { width: 100%; font: inherit; font-size: 14px; }
+  body.office-page input[type='file']::file-selector-button { min-height: 44px; margin-right: 12px; padding: 0 16px; border: 0; background: #244d3d; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+}
