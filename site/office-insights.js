@@ -26,6 +26,9 @@ window.TechouseInsights = (() => {
     development: 'Real estate development',
     elevators: 'Elevator engineering',
   };
+  // Partner applications (Be a partner page) share the inbox with project inquiries.
+  const isPartner = (q) => q.topic === 'partnership';
+  const kind = (q) => (isPartner(q) ? 'Partner application' : divisionNames[q.division] || 'Project');
   const number = new Intl.NumberFormat('en-PH');
   const peso = new Intl.NumberFormat('en-PH', {
     style: 'currency',
@@ -238,7 +241,7 @@ window.TechouseInsights = (() => {
               .slice(0, 4)
               .map(
                 (q) =>
-                  `<li><a href="#/office/inquiries?id=${encodeURIComponent(q.id)}"><span class="ix-latest-name">${!q.seenAt ? '<span class="ix-unseen" aria-label="Not opened yet"></span>' : ''}${esc(q.name)}</span><span>${esc(divisionNames[q.division] || 'Project')} · ${esc(q.location)}</span><span class="ix-status" data-status="${q.status}">${statusName(q.status)}</span><time datetime="${esc(q.createdAt)}">${esc(ago(q.createdAt))}</time></a></li>`,
+                  `<li><a href="#/office/inquiries?id=${encodeURIComponent(q.id)}"><span class="ix-latest-name">${!q.seenAt ? '<span class="ix-unseen" aria-label="Not opened yet"></span>' : ''}${esc(q.name)}</span><span>${esc(kind(q))} · ${esc(q.location)}</span><span class="ix-status" data-status="${q.status}">${statusName(q.status)}</span><time datetime="${esc(q.createdAt)}">${esc(ago(q.createdAt))}</time></a></li>`,
               )
               .join('')}</ul>`
           : `<p class="ix-empty">No inquiries yet. Requests sent from the website’s Start a project form appear here.</p>`;
@@ -259,7 +262,9 @@ window.TechouseInsights = (() => {
         ? q.status !== 'spam'
         : filter === 'unseen'
           ? !q.seenAt && q.status !== 'spam'
-          : q.status === filter;
+          : filter === 'partners'
+            ? isPartner(q) && q.status !== 'spam'
+            : q.status === filter;
     const text = [q.name, q.email, q.phone, q.company, q.location, q.id, q.requirements]
       .join(' ')
       .toLowerCase();
@@ -270,7 +275,8 @@ window.TechouseInsights = (() => {
       ['Reference', 'id'],
       ['Received', 'createdAt'],
       ['Status', (q) => statusName(q.status)],
-      ['Division', (q) => divisionNames[q.division] || q.division],
+      ['Type', (q) => (isPartner(q) ? 'Partner application' : 'Project inquiry')],
+      ['Division', (q) => (isPartner(q) ? '' : divisionNames[q.division] || q.division)],
       ['Name', 'name'],
       ['Company', 'company'],
       ['Email', 'email'],
@@ -301,7 +307,7 @@ window.TechouseInsights = (() => {
     ].join('\r\n');
   }
   function row(q) {
-    return `<li><button type="button" class="ix-row" data-select-inquiry="${esc(q.id)}" aria-pressed="${q.id === selected}"><span class="ix-row-main"><strong>${!q.seenAt ? '<span class="ix-unseen" aria-label="Not opened yet"></span>' : ''}${esc(q.name)}</strong><span>${esc(q.company || q.email)}</span></span><span class="ix-row-project">${esc(divisionNames[q.division] || 'Project')}<span>${esc(q.location)}</span></span><span class="ix-row-source">${esc(q.channel)}${q.campaign ? `<span>${esc(q.campaign)}</span>` : ''}</span><time datetime="${esc(q.createdAt)}" title="${esc(dateTime.format(new Date(q.createdAt)))}">${esc(ago(q.createdAt))}</time><span class="ix-status" data-status="${q.status}">${statusName(q.status)}</span></button></li>`;
+    return `<li><button type="button" class="ix-row" data-select-inquiry="${esc(q.id)}" aria-pressed="${q.id === selected}"><span class="ix-row-main"><strong>${!q.seenAt ? '<span class="ix-unseen" aria-label="Not opened yet"></span>' : ''}${esc(q.name)}</strong><span>${esc(q.company || q.email || q.phone)}</span></span><span class="ix-row-project">${esc(kind(q))}<span>${esc(q.location)}</span></span><span class="ix-row-source">${esc(q.channel)}${q.campaign ? `<span>${esc(q.campaign)}</span>` : ''}</span><time datetime="${esc(q.createdAt)}" title="${esc(dateTime.format(new Date(q.createdAt)))}">${esc(ago(q.createdAt))}</time><span class="ix-status" data-status="${q.status}">${statusName(q.status)}</span></button></li>`;
   }
   function detail(q) {
     if (!q)
@@ -317,7 +323,7 @@ window.TechouseInsights = (() => {
       )
       .join(
         '',
-      )}</select></label></header><p class="ix-save-state" role="status" aria-live="polite"></p><div class="ix-contact">${q.email ? `<a class="button outline small" href="mailto:${esc(q.email)}?subject=${encodeURIComponent('Your Techouse inquiry ' + q.id)}">${icon('arrow_outward')} Email ${esc(q.email)}</a>` : ''}${q.phone ? `<a class="button outline small" href="tel:${esc(q.phone.replace(/[^+\d]/g, ''))}">${icon('call')} Call ${esc(q.phone)}</a>` : ''}</div><dl class="ix-facts">${fact('Division', esc(divisionNames[q.division] || q.division))}${fact('Company', esc(q.company))}${fact('Project location', esc(q.location))}${fact('Size or capacity', esc(q.capacity))}${fact('Solar property', esc(sector || ''))}${fact('Estimated savings', Number(q.solarSavings) > 0 ? `${esc(peso.format(q.solarSavings))} a month (website estimate)` : '')}${fact('Preferred site visit', q.visit ? `${esc(fullDate.format(new Date(q.visit.date + 'T12:00:00+08:00')))} · ${esc(q.visit.time)} Philippine time <small>Not yet confirmed</small>` : '')}</dl><section class="ix-brief"><h3>Project requirements</h3><p>${esc(q.requirements)}</p></section><section class="ix-source"><h3>How they found the website</h3><dl class="ix-facts">${fact('Source', esc(q.channel))}${fact('Campaign', esc(q.campaign))}${fact('Referring site', esc(q.referrer))}${fact('First page seen', esc(q.landing))}</dl>${!q.campaign && !q.referrer && q.channel === 'Direct' ? '<p class="ix-hint">Direct visits came from a typed address, a bookmark or an app that hides where links come from.</p>' : ''}</section><form class="ix-note" data-inquiry-note><label for="ix-note-text">Team notes <small>Only staff see these.</small></label><textarea id="ix-note-text" name="note" rows="4" maxlength="2000" placeholder="Calls made, quote sent, next step…">${esc(q.note)}</textarea><div><button class="button small" type="submit">Save note</button></div></form><footer class="ix-detail-foot">${
+      )}</select></label></header><p class="ix-save-state" role="status" aria-live="polite"></p><div class="ix-contact">${q.email ? `<a class="button outline small" href="mailto:${esc(q.email)}?subject=${encodeURIComponent('Your Techouse inquiry ' + q.id)}">${icon('arrow_outward')} Email ${esc(q.email)}</a>` : ''}${q.phone ? `<a class="button outline small" href="tel:${esc(q.phone.replace(/[^+\d]/g, ''))}">${icon('call')} Call ${esc(q.phone)}</a>` : ''}</div><dl class="ix-facts">${fact(isPartner(q) ? 'Type' : 'Division', esc(isPartner(q) ? 'Solar partner application' : divisionNames[q.division] || q.division))}${fact('Company', esc(q.company))}${fact('Project location', esc(q.location))}${fact('Size or capacity', esc(q.capacity))}${fact('Solar property', esc(sector || ''))}${fact('Estimated savings', Number(q.solarSavings) > 0 ? `${esc(peso.format(q.solarSavings))} a month (website estimate)` : '')}${fact('Preferred site visit', q.visit ? `${esc(fullDate.format(new Date(q.visit.date + 'T12:00:00+08:00')))} · ${esc(q.visit.time)} Philippine time <small>Not yet confirmed</small>` : '')}</dl><section class="ix-brief"><h3>${isPartner(q) ? 'Application' : 'Project requirements'}</h3><p>${esc(q.requirements)}</p></section><section class="ix-source"><h3>How they found the website</h3><dl class="ix-facts">${fact('Source', esc(q.channel))}${fact('Campaign', esc(q.campaign))}${fact('Referring site', esc(q.referrer))}${fact('First page seen', esc(q.landing))}</dl>${!q.campaign && !q.referrer && q.channel === 'Direct' ? '<p class="ix-hint">Direct visits came from a typed address, a bookmark or an app that hides where links come from.</p>' : ''}</section><form class="ix-note" data-inquiry-note><label for="ix-note-text">Team notes <small>Only staff see these.</small></label><textarea id="ix-note-text" name="note" rows="4" maxlength="2000" placeholder="Calls made, quote sent, next step…">${esc(q.note)}</textarea><div><button class="button small" type="submit">Save note</button></div></form><footer class="ix-detail-foot">${
       confirming
         ? `<p>Delete this inquiry permanently? This cannot be undone.</p><button type="button" class="button small ix-danger" data-confirm-delete-inquiry>Delete permanently</button><button type="button" class="button outline small" data-keep-inquiry>Keep inquiry</button>`
         : `<button type="button" class="text-link ix-danger-link" data-delete-stored-inquiry>Delete inquiry</button>`
@@ -342,6 +348,7 @@ window.TechouseInsights = (() => {
       root.innerHTML = `<div class="ix-toolbar"><div class="ix-filters" role="group" aria-label="Show inquiries">${[
         ['all', 'All', list.filter((q) => q.status !== 'spam').length],
         ['unseen', 'Not opened', list.filter((q) => !q.seenAt && q.status !== 'spam').length],
+        ['partners', 'Partners', list.filter((q) => isPartner(q) && q.status !== 'spam').length],
         ...statuses.map(([id, label]) => [id, label, counts[id]]),
       ]
         .map(
@@ -778,7 +785,7 @@ window.TechouseInsights = (() => {
       noTraffic
         ? '<div class="ix-notice"><h2>No visits counted yet</h2><p>Counting starts when this version is live on the hosted website. Visits from signed-in staff, search crawlers and draft previews are never counted.</p></div>'
         : ''
-    }<div class="ix-stats"><div><span>Visitors</span><strong>${number.format(t.visitors)}</strong>${delta(t.visitors, p.visitors, period)}</div><div><span>Page views</span><strong>${number.format(t.views)}</strong>${delta(t.views, p.views, period)}</div><div><span>Inquiries</span><strong>${number.format(t.inquiries)}</strong>${delta(t.inquiries, p.inquiries, period)}</div><div><span>Visitors who sent an inquiry</span><strong>${t.visitors ? pct(t.inquiries, t.visitors) : '—'}</strong><span class="ix-delta">${t.visitors ? `${number.format(t.inquiries)} of ${number.format(t.visitors)} visitors` : 'Needs visitors to calculate'}</span></div></div>${trendSection(d)}<div class="ix-grid">${panel(
+    }<div class="ix-stats"><div><span>Visitors</span><strong>${number.format(t.visitors)}</strong>${delta(t.visitors, p.visitors, period)}</div><div><span>Page views</span><strong>${number.format(t.views)}</strong>${delta(t.views, p.views, period)}</div><div><span>Project inquiries</span><strong>${number.format(t.inquiries)}</strong>${delta(t.inquiries, p.inquiries, period)}${t.partners ? `<span class="ix-delta">Plus ${number.format(t.partners)} partner ${t.partners === 1 ? 'application' : 'applications'}</span>` : ''}</div><div><span>Visitors who sent an inquiry</span><strong>${t.visitors ? pct(t.inquiries, t.visitors) : '—'}</strong><span class="ix-delta">${t.visitors ? `${number.format(t.inquiries)} of ${number.format(t.visitors)} visitors` : 'Needs visitors to calculate'}</span></div></div>${trendSection(d)}<div class="ix-grid">${panel(
       'Where visitors come from',
       'Visitors by the site or link that brought them, with the inquiries each source produced.',
       d.channels.length

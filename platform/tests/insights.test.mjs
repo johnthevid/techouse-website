@@ -118,7 +118,7 @@ test("the analytics summary joins traffic, sources and leads for the selected ra
   assert.equal(status, 200);
   assert.equal(value.days, 7);
   assert.equal(value.daily.length, 7);
-  assert.deepEqual(value.totals, { views: 4, visitors: 2, visits: 2, inquiries: 1 });
+  assert.deepEqual(value.totals, { views: 4, visitors: 2, visits: 2, inquiries: 1, partners: 0 });
   assert.equal(value.daily.at(-1).inquiries, 1);
   assert.deepEqual(value.channels.map((c) => [c.name, c.visitors, c.inquiries]), [["Search", 1, 0], ["Paid", 1, 1]]);
   assert.deepEqual(value.funnel.map((s) => s.visitors), [2, 1, 1, 1, 1]);
@@ -147,4 +147,17 @@ test("only the browser that sent an inquiry can attach a site-visit preference",
   const listed = (await f.request("/api/admin/inquiries")).value.inquiries[0];
   assert.deepEqual([listed.visit.date, listed.visit.time], [date, "11:00"]);
   assert.equal(listed.token, undefined);
+});
+
+test("partner applications are stored with a phone, kept out of project inquiry counts", async (t) => {
+  const f = await fixture(t);
+  const partner = { topic: "partnership", name: "Leo Cruz", phone: "+63 918 000 1111", location: "Batangas", requirements: "Partner application\nRole: Electrician or contractor" };
+  assert.equal((await f.request("/api/inquiries", "POST", { ...partner, phone: "" }, { headers: browser })).status, 400);
+  assert.equal((await f.request("/api/inquiries", "POST", partner, { headers: browser })).status, 201);
+  await f.request("/api/inquiries", "POST", inquiry, { headers: browser });
+  await f.login();
+  const list = (await f.request("/api/admin/inquiries")).value.inquiries;
+  assert.deepEqual(list.map((q) => q.topic).sort(), ["partnership", "project"]);
+  const { totals } = (await f.request("/api/admin/analytics?days=7")).value;
+  assert.deepEqual([totals.inquiries, totals.partners], [1, 1]);
 });

@@ -62,7 +62,7 @@ test('Compact touch homepage keeps one focused story and landscape calculator re
           .locator('.mh-menu-list > *')
           .allInnerTexts()
           .then((t) => t.map((x) => x.split('\n')[0].trim())),
-        ['Our divisions', 'About Techouse', 'News', 'Join us & be a partner'],
+        ['Our divisions', 'About Techouse', 'News', 'Be a partner'],
       );
       await page.keyboard.press('Escape');
       await page.locator('.mh-pill[data-index="0"]').click();

@@ -2,10 +2,11 @@
 
 Recorded milestones for the Techouse website. Dates use the project's Asia/Manila calendar. These entries describe completed work; they are not retroactively created Git tags or GitHub Releases.
 
-## Unreleased — Traffic, leads and stored inquiries (branch `claude/zen-fermat-g5352f`)
+## Unreleased — Traffic, leads and stored inquiries (merged into main 23 Nov 2026)
 
 - Inquiries are stored on the server (D1, migration `0002.sql`) instead of only in the visitor's browser, with their source (search, social, paid, campaign tags, referring site and first page). Site-visit preferences are attached to the inquiry. Public copy says the request was sent; the static demo keeps its demo wording.
 - Back office: new Inquiries inbox (status, notes, contact buttons, source, CSV download, "not opened" count on the tab) and a Traffic & leads report (visitors, page views, inquiries, per-day chart, sources, campaigns with a tracked-link builder, funnel, actions, devices, page status with script errors and a file check). Overview shows visitors and inquiries for the last 7 days.
+- Partner applications from the Be a partner page are stored on the server too and appear in the Inquiries inbox as "Partner application" (Partners filter); traffic stats count them apart from project inquiries.
 - Fixed back office mismatches: inquiry counts came from the staff member's own browser, so real visitors' requests never appeared; the Projects card said only Solar was available; the projects page title said "Solar project stories"; deleting a post in the hosted office said "removed from this browser's sample"; dark-theme footer text was about 2:1 contrast.
 
 ## Unreleased — Solar Calculator

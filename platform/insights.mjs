@@ -81,6 +81,7 @@ function inquiryRecord(row) {
     updatedAt: new Date(row.updated).toISOString(),
     seenAt: row.seen ? new Date(row.seen).toISOString() : null,
     status: row.status,
+    topic: row.topic || "project",
     division: row.division,
     name: row.name,
     email: row.email,
@@ -156,10 +157,12 @@ export async function insightsRoute(request, env, path, tools) {
       if (required && value.length < min) fail(400, "Please complete the required fields.");
       return value;
     };
+    // Partner applications (Be a partner page) share the inbox; they need a phone, email is optional.
+    const topic = input.topic === "partnership" ? "partnership" : "project";
     const record = {
-      division: field("division", 40, true),
+      division: topic === "partnership" ? "solar" : field("division", 40, true),
       name: field("name", 100, true),
-      email: field("email", 200, true),
+      email: field("email", 200, topic === "project"),
       phone: field("phone", 35),
       company: field("company", 150),
       location: field("location", 200, true),
@@ -167,10 +170,12 @@ export async function insightsRoute(request, env, path, tools) {
       requirements: field("requirements", 5000, true, 10),
     };
     if (!divisions.includes(record.division)) fail(400, "Choose a division.");
-    if (!emailPattern.test(record.email)) fail(400, "Enter a valid email address.");
+    if ((record.email || topic === "project") && !emailPattern.test(record.email))
+      fail(400, "Enter a valid email address.");
+    if (topic === "partnership" && !record.phone) fail(400, "Add a mobile number so the team can call you.");
     if (record.phone && !/^[+\d][\d\s()\-.]{5,34}$/.test(record.phone))
       fail(400, "Enter a valid mobile number, or leave it blank.");
-    await rate(env, "inquiry-email:" + record.email.toLowerCase(), 4, 3600);
+    await rate(env, "inquiry-contact:" + (record.email || record.phone).toLowerCase(), 4, 3600);
     const sector = ["residential", "commercial", "industrial"].includes(input.solarSector)
       ? input.solarSector
       : "";
@@ -193,10 +198,11 @@ export async function insightsRoute(request, env, path, tools) {
     const token = crypto.randomUUID().replaceAll("-", "");
     await query(
       env,
-      "INSERT INTO inquiries(id,created,updated,status,division,name,email,phone,company,location,capacity,requirements,solar_sector,solar_savings,channel,referrer,campaign,landing,visitor,token) VALUES(?,?,?,'new',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+      "INSERT INTO inquiries(id,created,updated,status,topic,division,name,email,phone,company,location,capacity,requirements,solar_sector,solar_savings,channel,referrer,campaign,landing,visitor,token) VALUES(?,?,?,'new',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
       id,
       now,
       now,
+      topic,
       record.division,
       record.name,
       record.email,
@@ -314,7 +320,7 @@ async function analytics(env, query, days) {
       end,
     );
     const leads = await one(
-      "SELECT COUNT(*) inquiries FROM inquiries WHERE created>=? AND created<? AND status<>'spam'",
+      "SELECT COALESCE(SUM(topic='project'),0) inquiries, COALESCE(SUM(topic='partnership'),0) partners FROM inquiries WHERE created>=? AND created<? AND status<>'spam'",
       start,
       end,
     );
@@ -323,6 +329,7 @@ async function analytics(env, query, days) {
       visitors: views.visitors || 0,
       visits: views.visits || 0,
       inquiries: leads.inquiries || 0,
+      partners: leads.partners || 0,
     };
   };
   const current = await totals(from, now + 1);
@@ -332,7 +339,7 @@ async function analytics(env, query, days) {
     from,
   );
   const leads = await all(
-    "SELECT created, division, channel, campaign, status FROM inquiries WHERE created>=? AND status<>'spam'",
+    "SELECT created, division, channel, campaign, status FROM inquiries WHERE created>=? AND status<>'spam' AND topic='project'",
     from,
   );
   const series = [];
