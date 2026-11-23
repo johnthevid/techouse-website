@@ -631,3 +631,54 @@
     transition: none;
   }
 }
+
+/* Phones: the two-step tracker becomes one compact row (marker and label side by side,
+   the connector filling the space between). Desktop and tablet keep the stacked markers. */
+@media (max-width: 600px) {
+  .solar-streamlined .solar-planning-pages > .discovery-progress,
+  .solar-planning-pages > .discovery-progress {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    padding: 6px 16px;
+  }
+  .solar-planning-pages > .discovery-progress button,
+  .solar-planning-pages > .discovery-progress button[aria-current='step'],
+  .solar-planning-pages > .discovery-progress button:hover:not([aria-current='step']) {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0;
+    text-align: left;
+  }
+  .solar-planning-pages > .discovery-progress button:not(:last-child)::after {
+    position: static;
+    flex: 1 1 auto;
+    min-width: 16px;
+    width: auto;
+    margin-left: 4px;
+  }
+  .solar-planning-pages > .discovery-progress .step-marker {
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+  }
+  .solar-planning-pages > .discovery-progress button[aria-current='step'] .step-marker {
+    box-shadow: 0 0 0 3px #e5dbc5;
+  }
+  .solar-planning-pages > .discovery-progress .step-label,
+  .solar-planning-pages .step-label {
+    font-size: 13px;
+    white-space: nowrap;
+  }
+}
+@media (max-width: 359px) {
+  .solar-planning-pages > .discovery-progress button:not(:last-child)::after {
+    display: none;
+  }
+  .solar-streamlined .solar-planning-pages > .discovery-progress,
+  .solar-planning-pages > .discovery-progress {
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+  }
+}
