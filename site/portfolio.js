@@ -27,8 +27,8 @@ window.TechousePortfolio = (() => {
       fact: 'System capacity',
       factHint: 'For example, 10.5 kWp',
       kicker: 'Project stories',
-      heading: 'Their rooftops went solar.<br>Look how much they’re saving.',
-      intro: 'Explore solar project examples and their potential monthly electricity savings.',
+      heading: 'They went solar.<br>Check their savings.',
+      intro: 'Example systems and their monthly savings.',
       noun: 'solar',
     },
     construction: {
@@ -151,7 +151,7 @@ window.TechousePortfolio = (() => {
       ? 'These are illustrative samples with placeholder photos; our own project stories will replace them.'
       : solar
         ? clientPreview
-          ? 'Compare system sizes, project details and estimated savings.'
+          ? ''
           : 'Projects include illustrative samples and credited references; savings are estimates, not verified customer results. Images do not represent completed Techouse installations.'
         : '';
     const heading = `<div class="section-heading"><h2>${kind.heading}</h2><p>${kind.intro}${note ? ' ' + note : ''}</p></div>`;

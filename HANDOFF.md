@@ -1,5 +1,12 @@
 # Current handoff
 
+## Latest: solar page polish (branch `fix/solar-mobile-steps`, 23 Nov 2026, not merged or deployed)
+
+- Phones only (≤600px, `mobile-refinement.css` end): the two-step planner tracker is one compact row (28px markers, label beside, connector between), 57px tall instead of 106px; under 360px the connector is hidden. Desktop and tablet unchanged (verified identical size).
+- Project examples heading: "They went solar. Check their savings." with subtext "Example systems and their monthly savings." The client-preview add-on sentence was removed; the public disclaimer (samples, estimated savings) is unchanged.
+- Solar partner banner: "Earn" label above the ₱25,000 figure, subtext under "Know someone going solar?" removed, button now "Refer and Earn 5%" (still links to the partner page).
+- Checks: 43/43 tests, no page errors on the solar page at desktop and phone.
+
 ## Be a partner: floating button (merged into `main` 23 Nov 2026, not deployed)
 
 - Shown only on `#/partnership` (links to the application) and `#/divisions/solar` (labelled "Refer & Earn", opens `#/partnership` in a new tab; hides while the Solar partner banner is on screen; keeps the corner below 1100px, where the Solar page hides Back to top).

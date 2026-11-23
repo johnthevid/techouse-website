@@ -584,6 +584,14 @@
   font-size: 14px;
   color: #b9c7bd;
 }
+/* "Earn" sits just above the figure, in the same gold, so the amount reads as a payout. */
+.partner-promo-figure .partner-promo-earn {
+  margin: 0 0 8px;
+  font-size: clamp(18px, 1.8vw, 24px);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #e6cf99;
+}
 .partner-promo-copy {
   grid-column: 2;
   grid-row: 1;
