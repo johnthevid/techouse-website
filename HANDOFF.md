@@ -2,6 +2,7 @@
 
 ## Be a partner: floating button (branch `claude/busy-hopper-jnb9qg`, 23 Nov 2026, not merged, not deployed)
 
+- Shown only on `#/partnership` (links to the application) and `#/divisions/solar` (links to `#/partnership`; hides while the Solar partner banner is on screen; keeps the corner below 1100px, where the Solar page hides Back to top).
 - `#/partnership` gets a floating "Become a partner" link (`.partner-float`, `partner.js` `mountFloat`) styled as Back to top's twin (dark green, gold handshake). It appears once the cover's button scrolls away, hides while the closing section is on screen, and sits 58px above Back to top when that is visible (`body:has(> .back-to-top.is-visible)`). Removed on every other route. Hidden from keyboard and screen readers while invisible; reduced motion drops its transition.
 - Branch first fast-forwarded to `main` (a372fa1). Tests 43/43; checked at 1440 and 390.
 

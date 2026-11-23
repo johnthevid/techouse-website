@@ -223,19 +223,24 @@ window.TechousePartner = (() => {
     }
   }
 
-  // Floating "Become a partner" button, beside Back to top. It shows once the cover's button has
-  // scrolled away and steps aside while the closing section's own button is on screen.
+  // Floating "Become a partner" button, beside Back to top, on the partner page and the Solar page.
+  // It shows once the cover's button has scrolled away and steps aside while the page's own
+  // partner call to action (the closing section, or the Solar partner banner) is on screen.
   let floatObserver;
+  const floatPages = {
+    '/partnership': { href: applyLink, watch: ['.partner-cover .button', '.partner-close'] },
+    '/divisions/solar': { href: '#/partnership', watch: ['.division-cover .button', '.partner-promo'] },
+  };
   function mountFloat(path) {
     floatObserver?.disconnect();
     document.querySelector('.partner-float')?.remove();
-    if (path !== '/partnership') return;
-    const cover = document.querySelector('.partner-cover .button'),
-      close = document.querySelector('.partner-close');
-    if (!cover || !close) return;
+    const setup = floatPages[path];
+    if (!setup) return;
+    const watched = setup.watch.map((selector) => document.querySelector(selector)).filter(Boolean);
+    if (!watched.length) return;
     const button = document.createElement('a');
     button.className = 'partner-float';
-    button.href = applyLink;
+    button.href = setup.href;
     button.innerHTML = `${icon('handshake')}<span>Become a partner</span>`;
     button.tabIndex = -1;
     button.setAttribute('aria-hidden', 'true');
@@ -250,8 +255,7 @@ window.TechousePartner = (() => {
       button.tabIndex = visible ? 0 : -1;
       button.setAttribute('aria-hidden', String(!visible));
     });
-    floatObserver.observe(cover);
-    floatObserver.observe(close);
+    watched.forEach((element) => floatObserver.observe(element));
   }
 
   function mount(path) {
