@@ -36,7 +36,8 @@ test('Homepage refinement preserves navigation, responsive layout and image reco
     await page.waitForSelector(width < 600 ? '[data-mobile-home]' : '.division-banner');
     if (width < 600) {
       assert.equal(await page.locator('.division-banners').isVisible(), false);
-      assert.equal(await page.locator('.mh-pill:not(.is-gone)').count(), 4);
+      assert.equal(await page.locator('.mh-pick button').count(), 5);
+      assert.equal(await page.locator('.mh-bar a').count(), 2);
       assert.equal(
         await page.locator('.mh-chapter.is-on .mh-title').innerText(),
         'Power your\n tomorrow.'.replace('\n ', '\n'),

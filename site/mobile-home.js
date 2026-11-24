@@ -1,8 +1,10 @@
 /**
- * Phone homepage (max-width 599px): one full-screen photo, the chosen division as a
- * chapter, the other four as a balanced 2 x 2 pill grid, and a menu in the header.
+ * Phone homepage (max-width 599px), client-chosen "Cinematic chapters" in light mode:
+ * a photo per division with its chapter (title, label, gold button) over it, a strip of
+ * round division selectors on paper below, and Call us / Get a quote fixed to the bottom
+ * of the screen for the whole homepage. The photo strip can be swiped between divisions.
  * Built from the rendered division banners, so CMS banner text and images carry over.
- * The approved intro is untouched: the chapter and pills follow its reveal phases in CSS.
+ * The approved intro is untouched: chapter and selectors follow its reveal phases in CSS.
  */
 'use strict';
 window.TechouseMobileHome = (() => {
@@ -42,22 +44,25 @@ window.TechouseMobileHome = (() => {
 
   function markup(items, arrow) {
     return `<div class="mh" data-mobile-home>
-      <div class="mh-photos" aria-hidden="true">${items.map((d, i) => (d.image ? `<img src="${esc(d.image)}" alt="" class="${i ? '' : 'is-on'}" ${i ? 'loading="lazy"' : 'fetchpriority="high"'} decoding="async">` : '<span></span>')).join('')}</div>
-      <div class="mh-blur mh-blur-near" aria-hidden="true"></div><div class="mh-blur mh-blur-far" aria-hidden="true"></div>
-      <div class="mh-tint" aria-hidden="true"></div><div class="mh-band" aria-hidden="true"></div><div class="mh-vignette" aria-hidden="true"></div>
+      <div class="mh-stage"><div class="mh-photos" aria-hidden="true">${items.map((d, i) => `<div class="mh-photo">${d.image ? `<img src="${esc(d.image)}" alt="" draggable="false" ${i ? '' : 'fetchpriority="high"'} decoding="async">` : ''}</div>`).join('')}</div><div class="mh-shade" aria-hidden="true"></div></div>
       <div class="mh-chapters" aria-live="polite">${items
         .map(
           (d, i) =>
             `<div class="mh-chapter ${i ? 'is-after' : 'is-on'}" ${i ? 'aria-hidden="true" inert' : ''}><h2 class="mh-title">${d.title}</h2><p class="mh-label">${d.icon}<span>${esc(d.label)}</span></p><a class="mh-cta" href="${esc(d.href)}">${esc(d.cta)} ${arrow}</a></div>`,
         )
         .join('')}</div>
-      <div class="mh-grid" role="group" aria-label="Choose a division">${items
+      <nav class="mh-pick" aria-label="Choose a division">${items
         .map(
           (d, i) =>
-            `<button type="button" class="mh-pill ${i ? '' : 'is-gone'}" data-index="${i}" ${i ? '' : 'tabindex="-1" aria-hidden="true"'} aria-label="Show ${esc(d.label)}">${d.icon}<span>${esc(SHORT[d.id] || d.label)}</span></button>`,
+            `<button type="button" data-index="${i}" aria-pressed="${!i}" aria-label="${esc(d.label)}"><span class="mh-ring">${d.icon}</span><span class="mh-pick-name">${esc(SHORT[d.id] || d.label)}</span></button>`,
         )
-        .join('')}</div>
+        .join('')}</nav>
     </div>`;
+  }
+
+  // Call us and Get a quote stay at the bottom of the screen on the whole phone homepage.
+  function barMarkup(arrow) {
+    return `<div class="mh-bar" data-mobile-home-bar><a class="mh-bar-call" href="tel:+639855626888">${window.TechouseIcons.icon('call')}Call us</a><a class="mh-bar-quote" href="#/inquiry">Get a quote ${arrow}</a></div>`;
   }
 
   function menuMarkup(arrow) {
@@ -81,105 +86,125 @@ window.TechouseMobileHome = (() => {
     if (items.length < 2) return;
     host.insertAdjacentHTML('beforeend', markup(items, arrow));
     const hero = host.querySelector('[data-mobile-home]');
-    const photos = [...hero.querySelectorAll('.mh-photos > *')];
+    const stage = hero.querySelector('.mh-stage');
+    const track = hero.querySelector('.mh-photos');
     const chapters = [...hero.querySelectorAll('.mh-chapter')];
-    const grid = hero.querySelector('.mh-grid');
-    const pills = [...grid.querySelectorAll('.mh-pill')];
+    const picks = [...hero.querySelectorAll('.mh-pick button')];
     const controller = new AbortController();
     const options = { signal: controller.signal };
+    const last = items.length - 1;
     let on = 0;
+    document.body.insertAdjacentHTML('beforeend', barMarkup(arrow));
+    const bar = document.querySelector('[data-mobile-home-bar]');
+    document.documentElement.classList.add('mh-has-bar');
 
-    // 2 x 2 grid. First layout pairs the longest with the shortest on the bottom row; after
-    // that a returning division takes the tapped pill's slot, so pills only glide sideways.
-    // Pills are placed absolutely at computed spots, so a move can never wrap into new rows.
-    const natural = new Map();
-    let slots = null;
-    const measure = () => {
-      grid.classList.add('is-measuring');
-      pills.forEach((p) => {
-        const w = p.offsetWidth;
-        if (w) natural.set(p, w);
-        else if (!natural.has(p)) natural.set(p, p.textContent.trim().length * 8 + 46);
-      });
-      grid.classList.remove('is-measuring');
+    const place = (offset = 0, instant = false) => {
+      track.classList.toggle('is-dragging', instant);
+      track.style.transform = `translate3d(calc(${-on * 100}% + ${offset}px), 0, 0)`;
     };
-    const arrange = (animate) => {
-      measure();
-      if (!slots || slots.some((p) => !p || p.classList.contains('is-gone'))) {
-        const [a, b, c, d] = pills
-          .filter((p) => !p.classList.contains('is-gone'))
-          .sort((x, y) => natural.get(y) - natural.get(x));
-        slots = [c, b, d, a];
-      }
-      const width = grid.clientWidth;
-      const gap = 8;
-      const rowHeight = 44;
-      grid.classList.toggle('is-instant', !animate || calm());
-      [
-        [0, 1],
-        [2, 3],
-      ].forEach(([l, r], row) => {
-        if (!slots[l] || !slots[r]) return;
-        if (natural.get(slots[l]) > natural.get(slots[r]))
-          [slots[l], slots[r]] = [slots[r], slots[l]];
-        const left = natural.get(slots[l]);
-        const right = natural.get(slots[r]);
-        const extra = Math.max(0, (width - gap - left - right) / 2);
-        const y = row * (rowHeight + gap);
-        Object.assign(slots[l].style, { left: '0px', top: `${y}px`, width: `${left + extra}px` });
-        Object.assign(slots[r].style, {
-          left: `${left + extra + gap}px`,
-          top: `${y}px`,
-          width: `${right + extra}px`,
-        });
-      });
-      if (!animate || calm()) requestAnimationFrame(() => grid.classList.remove('is-instant'));
-    };
-
     const show = (i) => {
-      if (i === on) return;
+      i = Math.max(0, Math.min(last, i));
+      const changed = i !== on;
       on = i;
+      place();
       chapters.forEach((c, k) => {
+        c.style.transform = '';
+        c.style.opacity = '';
+        if (!changed) return;
         c.className = `mh-chapter ${k === i ? 'is-on' : k < i ? 'is-before' : 'is-after'}`;
         c.toggleAttribute('inert', k !== i);
         c.setAttribute('aria-hidden', String(k !== i));
       });
-      photos.forEach((p, k) => p.classList.toggle('is-on', k === i));
-      const leaving = pills[i];
-      const returning = pills.find((p) => p.classList.contains('is-gone'));
-      if (slots && returning) slots[slots.indexOf(leaving)] = returning;
-      if (returning) returning.classList.add('is-instant-one', 'is-entering');
-      pills.forEach((p, k) => {
-        const gone = k === i;
-        p.classList.toggle('is-gone', gone);
-        p.tabIndex = gone ? -1 : 0;
-        p.setAttribute('aria-hidden', String(gone));
-      });
-      leaving.classList.add('is-leaving');
-      arrange(true);
-      if (returning)
-        requestAnimationFrame(() => {
-          returning.classList.remove('is-instant-one');
-          requestAnimationFrame(() => returning.classList.remove('is-entering'));
-        });
-      setTimeout(() => leaving.classList.remove('is-leaving'), calm() ? 0 : 260);
-      // Keep keyboard focus inside the grid when the focused pill leaves
-      if (document.activeElement === leaving)
-        (returning || pills.find((p) => !p.classList.contains('is-gone')))?.focus({
-          preventScroll: true,
-        });
+      picks.forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
     };
-    grid.addEventListener(
+    hero.querySelector('.mh-pick').addEventListener(
       'click',
       (event) => {
-        const pill = event.target.closest('.mh-pill');
-        if (pill && !pill.classList.contains('is-gone')) show(Number(pill.dataset.index));
+        const button = event.target.closest('button');
+        if (button) show(Number(button.dataset.index));
       },
       options,
     );
-    arrange(false);
-    addEventListener('resize', () => arrange(false), options);
-    document.fonts?.ready.then(() => arrange(false));
+
+    // Swipe: the photo strip follows the finger and settles on release; the chapter drifts
+    // with it and fades. Vertical drags still scroll the page (touch-action: pan-y).
+    let start = null;
+    let moved = false;
+    const width = () => stage.clientWidth || innerWidth;
+    stage.parentElement.addEventListener(
+      'pointerdown',
+      (event) => {
+        if (event.button > 0 || event.target.closest('.mh-pick')) return;
+        start = { x: event.clientX, y: event.clientY, t: performance.now(), id: event.pointerId };
+        moved = false;
+      },
+      options,
+    );
+    addEventListener(
+      'pointermove',
+      (event) => {
+        if (!start || event.pointerId !== start.id) return;
+        let dx = event.clientX - start.x;
+        const dy = event.clientY - start.y;
+        if (!moved) {
+          if (Math.abs(dx) < 8) return;
+          if (Math.abs(dy) > Math.abs(dx)) {
+            start = null;
+            return;
+          }
+          moved = true;
+        }
+        if ((on === 0 && dx > 0) || (on === last && dx < 0)) dx *= 0.35;
+        place(dx, true);
+        const share = Math.min(1, Math.abs(dx) / width());
+        const chapter = chapters[on];
+        chapter.style.transition = 'none';
+        chapter.style.transform = `translateX(${dx * 0.35}px)`;
+        chapter.style.opacity = String(1 - share * 1.4);
+      },
+      options,
+    );
+    const release = (event) => {
+      if (!start || (event && event.pointerId !== start.id)) return;
+      const dx = event ? event.clientX - start.x : 0;
+      const speed = dx / Math.max(1, performance.now() - start.t);
+      start = null;
+      const chapter = chapters[on];
+      chapter.style.transition = '';
+      if (!moved) return;
+      const step = width() * 0.2;
+      show(dx < -step || speed < -0.5 ? on + 1 : dx > step || speed > 0.5 ? on - 1 : on);
+    };
+    addEventListener('pointerup', release, options);
+    addEventListener('pointercancel', release, options);
+    // A drag must not also follow the chapter's link.
+    hero.addEventListener(
+      'click',
+      (event) => {
+        if (moved && event.target.closest('.mh-chapter')) {
+          event.preventDefault();
+          event.stopPropagation();
+          moved = false;
+        }
+      },
+      { capture: true, signal: controller.signal },
+    );
+    hero.addEventListener('dragstart', (event) => event.preventDefault(), options);
+    hero.addEventListener(
+      'keydown',
+      (event) => {
+        if (!event.target.closest('.mh-pick')) return;
+        const next =
+          event.key === 'ArrowRight' ? on + 1 : event.key === 'ArrowLeft' ? on - 1 : null;
+        if (next === null) return;
+        event.preventDefault();
+        show(next);
+        picks[on].focus();
+      },
+      options,
+    );
+    addEventListener('resize', () => place(), options);
+    place();
 
     // Menu: a button after the call icon; the bars turn into a close mark and a panel drops in.
     const actions = document.querySelector('#header .banner-nav-right');
@@ -262,8 +287,9 @@ window.TechouseMobileHome = (() => {
 
     teardown = () => {
       controller.abort();
-      document.documentElement.classList.remove('mh-menu-open');
+      document.documentElement.classList.remove('mh-menu-open', 'mh-has-bar');
       hero.remove();
+      bar?.remove();
       menuButton?.remove();
       menu?.remove();
       teardown = () => {};
