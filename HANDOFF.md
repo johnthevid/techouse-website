@@ -1,6 +1,6 @@
 # Current handoff
 
-## Latest: solar page polish (branch `fix/solar-mobile-steps`, 23 Nov 2026, not merged or deployed)
+## Latest: solar page polish (branch `fix/solar-mobile-steps`, merged into `main` 24 Nov 2026 at the user's request; not deployed)
 
 - Phones only (≤600px, `mobile-refinement.css` end): the two-step planner tracker is one compact row (28px markers, label beside, connector between), 57px tall instead of 106px; under 360px the connector is hidden. Desktop and tablet unchanged (verified identical size).
 - Project examples heading: "They went solar. Check their savings." with subtext "Example systems and their monthly savings." The client-preview add-on sentence was removed; the public disclaimer (samples, estimated savings) is unchanged.
