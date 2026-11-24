@@ -315,7 +315,6 @@ window.TechouseInsights = (() => {
   function site(pin) {
     if (!pin) return '';
     const P = window.TechousePropertyPin;
-    const key = window.TechouseContent?.snapshot().settings?.googleMapsKey;
     const coords = `${Number(pin.lat).toFixed(6)}, ${Number(pin.lng).toFixed(6)}`;
     const from =
       pin.source === 'gps'
@@ -324,10 +323,7 @@ window.TechouseInsights = (() => {
     const roof = pin.roof?.length
       ? `${pin.roof.length} corners · ≈ ${Math.round(pin.roofArea)} m² · about ${P ? P.panels(pin.roofArea) : '–'} panels at 620 W`
       : '';
-    const image =
-      key && P
-        ? `<a class="ix-site-map" href="${esc(P.mapsLink(pin.lat, pin.lng))}" target="_blank" rel="noopener"><img src="${esc(P.staticMap(pin, 640, 400))}" alt="Satellite view of the pinned property${roof ? ' with the roof outline' : ''}" width="640" height="400" loading="lazy"></a>`
-        : '';
+    const image = P ? '<div class="ix-site-map" data-site-preview></div>' : '';
     return `<section class="ix-site"><h3>Property</h3><div class="ix-site-body">${image}<div><dl class="ix-facts"><div><dt>Pin</dt><dd>${esc(coords)} <small>${esc(from)}</small></dd></div>${roof ? `<div><dt>Roof outline</dt><dd>${esc(roof)}</dd></div>` : ''}</dl><div class="ix-site-actions"><a class="button small" href="${esc(P ? P.mapsLink(pin.lat, pin.lng) : `https://www.google.com/maps/search/?api=1&query=${coords}`)}" target="_blank" rel="noopener">Open in Google Maps ${icon('arrow_outward')}</a><button type="button" class="button outline small" data-copy-coordinates="${esc(coords)}">Copy coordinates</button></div></div></div></section>`;
   }
   function detail(q) {
@@ -395,6 +391,9 @@ window.TechouseInsights = (() => {
               ? '<p class="ix-empty">No inquiries match this view. Try another status or clear the search.</p>'
               : `<div class="ix-empty ix-empty-first"><h3>No inquiries yet</h3><p>When someone sends the Start a project form, their request appears here with where they came from. Share a tracked link from Traffic &amp; leads to see which posts and ads bring them.</p><a class="button small" href="#/office/traffic">Open Traffic &amp; leads</a></div>`
       }</div><div class="ix-detail-wrap">${detail(current)}</div></div>`;
+      // Property map: Google static image when available, else the free satellite map.
+      const pinMap = root.querySelector('[data-site-preview]');
+      if (pinMap && current?.site) window.TechousePropertyPin?.preview(pinMap, current.site);
       if (searchHadFocus) {
         const input = root.querySelector('[data-inquiry-search]');
         input.focus();

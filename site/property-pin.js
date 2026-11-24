@@ -3,8 +3,9 @@
  * The visitor can pin the property from their phone's GPS ("I'm at the property") or on a Google
  * satellite map, then outline the roof by tapping its corners. The result travels with the inquiry
  * as { lat, lng, accuracy, source, roof: [[lat, lng], ...], roofArea } and is shown to the sales team
- * in the back office. Google Maps loads only when the map is opened, and only when the back office
- * holds a Google Maps API key; without one, the GPS option still works and links to Google Maps.
+ * in the back office. Maps load only when opened. Google Maps is used when the back office holds a
+ * key and Google answers; otherwise a free fallback takes over: Leaflet (self-hosted) with Esri World
+ * Imagery satellite tiles and OpenStreetMap Nominatim address search.
  */
 window.TechousePropertyPin = (() => {
   const PH = { south: 4, north: 21.5, west: 116, east: 127.5 };
@@ -78,8 +79,10 @@ window.TechousePropertyPin = (() => {
       // Google calls this when the key is rejected (wrong address, API not enabled, billing).
       window.gm_authFailure = () => {
         mapsFailed = true;
+        const mode = sheet?.open ? sheet.dataset.mode : null;
         closeSheet();
-        render('The map is not available right now. Use your location instead, or describe the address in the form.');
+        render();
+        if (mode) openSheet(mode);
       };
       const script = document.createElement('script');
       script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key())}&libraries=places,geometry&callback=${callback}&loading=async&v=weekly&region=PH&language=en`;
@@ -94,29 +97,102 @@ window.TechousePropertyPin = (() => {
     return mapsReady;
   }
 
+  // FREE FALLBACK: Leaflet with Esri World Imagery tiles, loaded on first use.
+  const ESRI = 'https://server.arcgisonline.com/ArcGIS/rest/services/';
+  const PIN_SVG =
+    '<svg viewBox="-16 -44 32 48" aria-hidden="true"><ellipse cx="0" cy="2" rx="7" ry="3" opacity=".3"/><path d="M0 0C-4-8-14-14-14-26a14 14 0 1 1 28 0C14-14 4-8 0 0Z"/><circle cx="0" cy="-26" r="5"/></svg>';
+  const OUTLINE = { color: '#f3d98f', weight: 3, fillColor: '#e7cd99', fillOpacity: 0.32 };
+  let leafletReady = null;
+  function loadLeaflet() {
+    if (window.L?.map) return Promise.resolve(window.L);
+    leafletReady ||= new Promise((resolve, reject) => {
+      const css = document.createElement('link');
+      css.rel = 'stylesheet';
+      css.href = 'vendor/leaflet/leaflet.css';
+      document.head.append(css);
+      const script = document.createElement('script');
+      script.src = 'vendor/leaflet/leaflet.js';
+      script.onload = () => resolve(window.L);
+      script.onerror = () => {
+        leafletReady = null;
+        reject(new Error('The backup map did not load'));
+      };
+      document.head.append(script);
+    });
+    return leafletReady;
+  }
+  function freeMap(L, element, { centre, zoom, labels = false, interactive = true }) {
+    const map = L.map(element, {
+      center: [centre.lat, centre.lng],
+      zoom,
+      maxZoom: 21,
+      zoomControl: interactive,
+      dragging: interactive,
+      scrollWheelZoom: interactive,
+      doubleClickZoom: interactive,
+      touchZoom: interactive,
+      keyboard: interactive,
+      boxZoom: false,
+    });
+    map.attributionControl.setPrefix(false);
+    L.tileLayer(`${ESRI}World_Imagery/MapServer/tile/{z}/{y}/{x}`, {
+      maxNativeZoom: 19,
+      maxZoom: 21,
+      attribution: 'Imagery © Esri, Maxar, Earthstar Geographics',
+    }).addTo(map);
+    if (labels)
+      L.tileLayer(`${ESRI}Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}`, {
+        maxNativeZoom: 19,
+        maxZoom: 21,
+      }).addTo(map);
+    return map;
+  }
+  const pinIcon = (L) =>
+    L.divIcon({ className: 'pin-marker', html: PIN_SVG, iconSize: [32, 48], iconAnchor: [16, 48] });
+  /** Which map to use now: Google while a key is set and Google has not failed, else the free one. */
+  const engine = () => (key() && !mapsFailed ? 'google' : 'free');
+
+  /** Draws a pin (and roof outline) preview into element: a Google static image or a small free map. */
+  async function preview(element, pin) {
+    if (!element) return;
+    const label = `Satellite view of the pinned property${pin.roof?.length ? ' with the roof outline' : ''}`;
+    if (engine() === 'google') {
+      element.innerHTML = `<img src="${esc(staticMap(pin, 640, 400))}" alt="${esc(label)}" width="640" height="400" loading="lazy">`;
+      return;
+    }
+    try {
+      const L = await loadLeaflet();
+      if (!element.isConnected) return;
+      element.setAttribute('role', 'img');
+      element.setAttribute('aria-label', label);
+      const map = freeMap(L, element, { centre: pin, zoom: 19, interactive: false });
+      if (pin.roof?.length) {
+        const shape = L.polygon(pin.roof, { ...OUTLINE, interactive: false }).addTo(map);
+        map.fitBounds(shape.getBounds(), { padding: [24, 24], maxZoom: 20 });
+      }
+      L.marker([pin.lat, pin.lng], { icon: pinIcon(L), interactive: false, keyboard: false }).addTo(map);
+    } catch {
+      element.outerHTML = `<a class="pin-preview pin-preview-link" href="${esc(mapsLink(pin.lat, pin.lng))}" target="_blank" rel="noopener">${icon('map')}<span>View the pin on Google Maps</span>${icon('arrow_outward')}</a>`;
+    }
+  }
+
   // CARD IN THE FORM
   function render(message = '') {
     if (!host) return;
-    const hasMap = !!key() && !mapsFailed;
     const note = message ? `<p class="pin-message" role="status">${esc(message)}</p>` : '';
     const privacy = '<p class="pin-privacy">Shared only with the Techouse solar team for your quote.</p>';
     if (!state) {
-      host.innerHTML = `<div class="pin-card"><div class="pin-head"><strong>${icon('pin_drop')}Pin your property <span class="pin-tag">Optional</span></strong><p>A pin on your roof lets our team check sun and space before we call you.</p></div><div class="pin-actions"><button type="button" class="pin-choice" data-pin-gps>${icon('my_location')}<span><b>I’m at the property</b><small>Use my phone’s location</small></span></button>${hasMap ? `<button type="button" class="pin-choice" data-pin-map>${icon('map')}<span><b>Find it on the map</b><small>Drop a pin on your roof</small></span></button>` : `<button type="button" class="pin-choice is-soon" disabled>${icon('map')}<span><b>Find it on the map <em class="pin-soon">Coming soon</em></b><small>Drop a pin on your roof</small></span></button>`}</div>${note}</div>${privacy}`;
+      host.innerHTML = `<div class="pin-card"><div class="pin-head"><strong>${icon('pin_drop')}Pin your property <span class="pin-tag">Optional</span></strong><p>A pin on your roof lets our team check sun and space before we call you.</p></div><div class="pin-actions"><button type="button" class="pin-choice" data-pin-gps>${icon('my_location')}<span><b>I’m at the property</b><small>Use my phone’s location</small></span></button><button type="button" class="pin-choice" data-pin-map>${icon('map')}<span><b>Find it on the map</b><small>Drop a pin on your roof</small></span></button></div>${note}</div>${privacy}`;
       return;
     }
     const where = `${fixed(state.lat)}, ${fixed(state.lng)}`;
     const accuracy =
       state.source === 'gps' && state.accuracy ? ` · ±${Math.round(state.accuracy)} m` : '';
-    const preview = hasMap
-      ? `<div class="pin-preview"><img src="${esc(staticMap(state))}" alt="Satellite view of the pinned property${state.roof?.length ? ' with the roof outline' : ''}" width="640" height="320" loading="lazy"></div>`
-      : `<a class="pin-preview pin-preview-link" href="${esc(mapsLink(state.lat, state.lng))}" target="_blank" rel="noopener">${icon('map')}<span>View the pin on Google Maps</span>${icon('arrow_outward')}</a>`;
     const roofRow = state.roof?.length
       ? `<div class="pin-status">${icon('check')}<span class="pin-status-text"><b>Roof outlined</b><span>≈ ${Math.round(state.roofArea)} m² · about ${panels(state.roofArea)} panels</span></span><button type="button" data-pin-outline>Edit</button></div>`
-      : hasMap
-        ? `<div class="pin-offer"><span class="pin-badge">${icon('polyline')}</span><div><strong>Outline your roof</strong><p>Optional. Tap the corners of your roof and your quote comes back faster and closer to final.</p><button type="button" class="pin-outline-button" data-pin-outline>Outline my roof ${icon('arrow_outward')}</button></div></div>`
-        : // PLACEHOLDER until a Google Maps key is saved in the back office: shows what is coming.
-          `<div class="pin-offer is-soon"><span class="pin-badge">${icon('polyline')}</span><div><strong>Outline your roof <em class="pin-soon">Coming soon</em></strong><p>Soon you can tap the corners of your roof on a satellite map for a quote closer to final.</p></div></div>`;
-    host.innerHTML = `<div class="pin-card">${preview}<div class="pin-status">${icon('check')}<span class="pin-status-text"><b>Pinned</b><span>${esc(where)}${accuracy}</span></span><button type="button" ${hasMap ? 'data-pin-map' : 'data-pin-gps'}>${hasMap ? 'Move pin' : 'Update'}</button></div>${roofRow}<div class="pin-remove"><button type="button" data-pin-remove>Remove pin</button></div>${note}</div>${privacy}`;
+      : `<div class="pin-offer"><span class="pin-badge">${icon('polyline')}</span><div><strong>Outline your roof</strong><p>Optional. Tap the corners of your roof and your quote comes back faster and closer to final.</p><button type="button" class="pin-outline-button" data-pin-outline>Outline my roof ${icon('arrow_outward')}</button></div></div>`;
+    host.innerHTML = `<div class="pin-card"><div class="pin-preview" data-pin-preview></div><div class="pin-status">${icon('check')}<span class="pin-status-text"><b>Pinned</b><span>${esc(where)}${accuracy}</span></span><button type="button" data-pin-map>Move pin</button></div>${roofRow}<div class="pin-remove"><button type="button" data-pin-remove>Remove pin</button></div>${note}</div>${privacy}`;
+    preview(host.querySelector('[data-pin-preview]'), state);
   }
 
   function useGps(button) {
@@ -144,7 +220,7 @@ window.TechousePropertyPin = (() => {
         };
         render(
           coords.accuracy > 100
-            ? `Your location is approximate (±${Math.round(coords.accuracy)} m). ${key() && !mapsFailed ? 'Move the pin onto your roof for a closer match.' : ''}`
+            ? `Your location is approximate (±${Math.round(coords.accuracy)} m). Move the pin onto your roof for a closer match.`
             : '',
         );
       },
@@ -185,6 +261,7 @@ window.TechousePropertyPin = (() => {
     sheet?.remove();
     sheet = document.createElement('dialog');
     sheet.className = `pin-sheet is-${mode}`;
+    sheet.dataset.mode = mode;
     sheet.setAttribute('aria-labelledby', 'pin-sheet-title');
     sheet.innerHTML = `<div class="pin-map" aria-label="Satellite map"></div>${mode === 'pin' ? `<div class="pin-centre" aria-hidden="true"><svg viewBox="-16 -44 32 48"><ellipse cx="0" cy="2" rx="7" ry="3" opacity=".3"/><path d="M0 0C-4-8-14-14-14-26a14 14 0 1 1 28 0C14-14 4-8 0 0Z"/><circle cx="0" cy="-26" r="5"/></svg></div>` : ''}<div class="pin-sheet-top"><div class="pin-sheet-title"><button type="button" class="pin-icon-button" data-pin-close aria-label="Close map">${icon('arrow_back')}</button><h2 id="pin-sheet-title">${mode === 'pin' ? 'Pin your roof' : 'Outline your roof'}</h2></div>${mode === 'pin' ? '<div class="pin-search" data-pin-search></div>' : '<p class="pin-sheet-hint">Tap each corner of the roof. Drag a corner to adjust it.</p>'}</div>${mode === 'outline' ? '<p class="pin-chip" role="status" aria-live="polite" data-pin-chip></p>' : `<button type="button" class="pin-fab" data-pin-here aria-label="Go to my location">${icon('my_location')}</button>`}<div class="pin-sheet-bottom">${mode === 'pin' ? `<p>Move the map until the pin sits on your roof</p><small data-pin-coords>Loading the map…</small><button type="button" class="pin-primary" data-pin-confirm disabled>Confirm pin ${icon('check')}</button>` : `<p class="pin-sheet-hint">Press Done when the outline matches your roof.</p><div class="pin-tools"><button type="button" class="pin-secondary" data-pin-undo>${icon('undo')}Undo</button><button type="button" class="pin-secondary" data-pin-clear>Clear</button><button type="button" class="pin-primary" data-pin-done disabled>Done ${icon('check')}</button></div>`}</div>`;
     document.body.append(sheet);
@@ -195,17 +272,36 @@ window.TechousePropertyPin = (() => {
     sheet.addEventListener('click', (e) => e.target.closest('[data-pin-close]') && closeSheet());
     sheet.showModal();
     if (!reduced()) sheet.animate([{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 240, easing: 'cubic-bezier(.22,1,.36,1)' });
-    let maps;
+    const { centre, zoom } = await startCentre();
+    if (engine() === 'google') {
+      try {
+        const maps = await loadMaps();
+        if (!sheet.open) return;
+        googleSheet(maps, mode, centre, zoom);
+        return;
+      } catch {
+        mapsFailed = true; // Google unavailable: use the free map from now on.
+      }
+    }
     try {
-      maps = await loadMaps();
+      const L = await loadLeaflet();
+      if (!sheet.open) return;
+      sheet.dataset.engine = 'free';
+      const map = freeMap(L, sheet.querySelector('.pin-map'), {
+        centre,
+        zoom: mode === 'outline' ? 20 : Math.min(zoom, 19),
+        labels: mode === 'pin',
+      });
+      if (mode === 'pin') freePinMode(L, map);
+      else freeOutlineMode(L, map);
     } catch {
       closeSheet();
-      mapsFailed = true;
       render('The map could not load. Use your location instead, or describe the address in the form.');
-      return;
     }
-    if (!sheet.open) return;
-    const { centre, zoom } = await startCentre();
+  }
+
+  function googleSheet(maps, mode, centre, zoom) {
+    sheet.dataset.engine = 'google';
     const map = new maps.Map(sheet.querySelector('.pin-map'), {
       center: centre,
       zoom: mode === 'outline' ? 20 : zoom,
@@ -263,18 +359,7 @@ window.TechousePropertyPin = (() => {
     );
     confirm.addEventListener('click', () => {
       const c = map.getCenter();
-      const moved = state && Math.hypot(c.lat() - state.lat, c.lng() - state.lng) > 0.0005;
-      state = {
-        lat: c.lat(),
-        lng: c.lng(),
-        accuracy: null,
-        source: 'map',
-        // A pin moved to another building no longer matches the outline drawn before.
-        roof: moved ? [] : state?.roof || [],
-        roofArea: moved ? null : state?.roofArea ?? null,
-      };
-      closeSheet();
-      render();
+      confirmPin(c.lat(), c.lng());
     });
     show();
   }
@@ -294,30 +379,138 @@ window.TechousePropertyPin = (() => {
     const chip = sheet.querySelector('[data-pin-chip]');
     const done = sheet.querySelector('[data-pin-done]');
     const corners = () => path.getArray().map((p) => [p.lat(), p.lng()]);
-    const update = () => {
-      const n = path.getLength();
-      const m2 = Math.round(area(corners()));
-      chip.innerHTML =
-        n === 0
-          ? `${icon('polyline')}<span>Tap the first corner of your roof</span>`
-          : n < 3
-            ? `${icon('polyline')}<span>${n} corner${n > 1 ? 's' : ''} · keep tapping around the roof</span>`
-            : `${icon('polyline')}<span>${n} corners · <b>≈ ${m2} m²</b> · room for about ${panels(m2)} panels</span>`;
-      done.disabled = n < 3;
-    };
+    const update = () => outlineStatus(chip, done, corners());
     ['insert_at', 'remove_at', 'set_at'].forEach((name) => maps.event.addListener(path, name, update));
     map.addListener('click', (e) => {
       if (path.getLength() < 24) path.push(e.latLng);
     });
     sheet.querySelector('[data-pin-undo]').addEventListener('click', () => path.getLength() && path.pop());
     sheet.querySelector('[data-pin-clear]').addEventListener('click', () => path.clear());
-    done.addEventListener('click', () => {
-      const roof = corners();
-      state = { ...state, roof, roofArea: area(roof) };
-      closeSheet();
-      render();
-    });
+    done.addEventListener('click', () => finishOutline(corners()));
     update();
+  }
+
+  // FREE MAP MODES: same chrome and behaviour as the Google ones.
+  function confirmPin(lat, lng) {
+    const moved = state && Math.hypot(lat - state.lat, lng - state.lng) > 0.0005;
+    state = {
+      lat,
+      lng,
+      accuracy: null,
+      source: 'map',
+      // A pin moved to another building no longer matches the outline drawn before.
+      roof: moved ? [] : state?.roof || [],
+      roofArea: moved ? null : (state?.roofArea ?? null),
+    };
+    closeSheet();
+    render();
+  }
+  function freePinMode(L, map) {
+    const coords = sheet.querySelector('[data-pin-coords]');
+    const confirm = sheet.querySelector('[data-pin-confirm]');
+    const show = () => {
+      const c = map.getCenter();
+      coords.textContent = `${fixed(c.lat, 5)}° N, ${fixed(c.lng, 5)}° E`;
+      confirm.disabled = !inPH(c.lat, c.lng);
+      if (confirm.disabled) coords.textContent += ' · outside the Philippines';
+    };
+    map.on('move', show);
+    // Address search: OpenStreetMap Nominatim, on submit only (its usage policy forbids
+    // search-as-you-type), limited to the Philippines.
+    const slot = sheet.querySelector('[data-pin-search]');
+    slot.innerHTML = `<form class="pin-free-search" role="search"><input type="search" name="q" placeholder="Search an address or place" aria-label="Search an address or place" autocomplete="off" maxlength="160"><button type="submit" class="pin-secondary">Search</button></form><ul class="pin-results" hidden></ul><small class="pin-search-credit">Search © OpenStreetMap contributors</small>`;
+    const results = slot.querySelector('.pin-results');
+    slot.querySelector('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const q = e.target.elements.q.value.trim();
+      if (q.length < 3) return;
+      results.hidden = false;
+      results.innerHTML = '<li class="pin-results-note">Searching…</li>';
+      try {
+        const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=ph&limit=5&accept-language=en&q=${encodeURIComponent(q)}`;
+        const found = await (await fetch(url, { referrerPolicy: 'strict-origin-when-cross-origin' })).json();
+        results.innerHTML = found.length
+          ? found
+              .map(
+                (place) =>
+                  `<li><button type="button" data-lat="${esc(place.lat)}" data-lng="${esc(place.lon)}">${esc(place.display_name)}</button></li>`,
+              )
+              .join('')
+          : '<li class="pin-results-note">No places found. Try a nearby landmark or the town name.</li>';
+      } catch {
+        results.innerHTML = '<li class="pin-results-note">Search is not available right now. Move the map by hand.</li>';
+      }
+    });
+    results.addEventListener('click', (e) => {
+      const pick = e.target.closest('[data-lat]');
+      if (!pick) return;
+      map.setView([Number(pick.dataset.lat), Number(pick.dataset.lng)], 18);
+      results.hidden = true;
+    });
+    sheet.querySelector('[data-pin-here]').addEventListener('click', () =>
+      navigator.geolocation?.getCurrentPosition(
+        ({ coords: c }) => map.setView([c.latitude, c.longitude], 20),
+        () => {},
+        { enableHighAccuracy: true, timeout: 15000 },
+      ),
+    );
+    confirm.addEventListener('click', () => {
+      const c = map.getCenter();
+      confirmPin(c.lat, c.lng);
+    });
+    show();
+  }
+  function freeOutlineMode(L, map) {
+    const shape = L.polygon([], { ...OUTLINE, interactive: false }).addTo(map);
+    const handles = [];
+    const chip = sheet.querySelector('[data-pin-chip]');
+    const done = sheet.querySelector('[data-pin-done]');
+    const corners = () => handles.map((h) => [h.getLatLng().lat, h.getLatLng().lng]);
+    const update = () => {
+      const points = corners();
+      shape.setLatLngs(points);
+      outlineStatus(chip, done, points);
+    };
+    const addCorner = (latlng) => {
+      if (handles.length >= 24) return;
+      const handle = L.marker(latlng, {
+        draggable: true,
+        keyboard: false,
+        icon: L.divIcon({ className: 'pin-vertex', iconSize: [20, 20] }),
+      }).addTo(map);
+      handle.on('drag', update);
+      handles.push(handle);
+      update();
+    };
+    (state.roof || []).forEach(([lat, lng]) => addCorner([lat, lng]));
+    map.on('click', (e) => addCorner(e.latlng));
+    sheet.querySelector('[data-pin-undo]').addEventListener('click', () => {
+      handles.pop()?.remove();
+      update();
+    });
+    sheet.querySelector('[data-pin-clear]').addEventListener('click', () => {
+      while (handles.length) handles.pop().remove();
+      update();
+    });
+    done.addEventListener('click', () => finishOutline(corners()));
+    if (handles.length >= 3) map.fitBounds(shape.getBounds(), { padding: [80, 80], maxZoom: 20 });
+    update();
+  }
+  function outlineStatus(chip, done, points) {
+    const n = points.length;
+    const m2 = Math.round(area(points));
+    chip.innerHTML =
+      n === 0
+        ? `${icon('polyline')}<span>Tap the first corner of your roof</span>`
+        : n < 3
+          ? `${icon('polyline')}<span>${n} corner${n > 1 ? 's' : ''} · keep tapping around the roof</span>`
+          : `${icon('polyline')}<span>${n} corners · <b>≈ ${m2} m²</b> · room for about ${panels(m2)} panels</span>`;
+    done.disabled = n < 3;
+  }
+  function finishOutline(roof) {
+    state = { ...state, roof, roofArea: area(roof) };
+    closeSheet();
+    render();
   }
 
   // MOUNT: one card under "Project location", shown only for solar inquiries.
@@ -360,5 +553,5 @@ window.TechousePropertyPin = (() => {
     };
   }
 
-  return { mount, value, staticMap, mapsLink, panels, area };
+  return { mount, value, preview, staticMap, mapsLink, panels, area };
 })();

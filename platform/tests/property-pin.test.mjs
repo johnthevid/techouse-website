@@ -217,3 +217,64 @@ test('property pin: pin on the map, outline the roof and send it with a solar in
   assert.equal(await page.locator('.ix-site img').count(), 1);
   assert.deepEqual(errors, []);
 });
+
+test('property pin: without Google the free satellite map pins, searches and outlines', async (t) => {
+  const f = await fixture(t);
+  const browser = await chromium.launch({ channel: 'chrome', headless: true });
+  t.after(() => browser.close());
+  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkqPRvBgADCwFQnUbV9QAAAABJRU5ErkJggg==', 'base64');
+  for (const scenario of ['no key', 'Google unavailable']) {
+    if (scenario === 'Google unavailable') {
+      await f.login();
+      const snapshot = await f.request('/api/admin/content');
+      const body = structuredClone(snapshot.value.content);
+      body.settings = { googleMapsKey: KEY };
+      assert.equal((await f.request('/api/admin/content', 'PUT', { content: body, version: snapshot.value.version })).status, 200);
+    }
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+    const page = await context.newPage();
+    const errors = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    const searches = [];
+    await page.route('**/*', async (route) => {
+      const req = route.request();
+      const url = new URL(req.url());
+      if (url.host === 'maps.googleapis.com') return route.abort(); // Google down or blocked
+      if (url.host === 'server.arcgisonline.com') return route.fulfill({ contentType: 'image/png', body: png });
+      if (url.host === 'nominatim.openstreetmap.org') {
+        searches.push(url);
+        return route.fulfill({ contentType: 'application/json', body: JSON.stringify([{ lat: '14.0720', lon: '120.6330', display_name: 'Nasugbu, Batangas, Calabarzon, Philippines' }]) });
+      }
+      if (!req.url().startsWith(f.env.APP_ORIGIN)) return route.abort();
+      const res = await worker.fetch(new Request(req.url(), { method: req.method(), headers: await req.allHeaders(), ...(req.postDataBuffer() ? { body: req.postDataBuffer() } : {}) }), f.env);
+      await route.fulfill({ status: res.status, headers: Object.fromEntries(res.headers), body: Buffer.from(await res.arrayBuffer()) });
+    });
+    await page.goto(f.env.APP_ORIGIN + '/#/inquiry?division=solar');
+    await page.waitForSelector('.property-pin [data-pin-map]');
+    await page.locator('[data-pin-map]').click();
+    await page.waitForSelector('.pin-sheet[open][data-engine="free"] .leaflet-container', { timeout: 30000 });
+    // Free address search (OpenStreetMap), limited to the Philippines.
+    await page.fill('.pin-free-search input', 'Nasugbu Batangas');
+    await page.locator('.pin-free-search button').click();
+    await page.locator('.pin-results button').first().click();
+    assert.equal(searches.at(-1).searchParams.get('countrycodes'), 'ph');
+    await page.waitForFunction(() => document.querySelector('[data-pin-coords]').textContent.startsWith('14.07200° N, 120.63300° E'));
+    await page.locator('[data-pin-confirm]').click();
+    await page.waitForSelector('.pin-sheet', { state: 'detached' });
+    assert.match(await page.locator('.pin-status').first().textContent(), /14\.0720, 120\.6330/);
+    await page.waitForSelector('[data-pin-preview].leaflet-container');
+    // Outline by tapping the map; the first three taps make a shape, Undo removes a corner.
+    await page.locator('[data-pin-outline]').click();
+    await page.waitForSelector('.pin-sheet[open][data-engine="free"] .leaflet-container');
+    const box = await page.locator('.pin-map').boundingBox();
+    const cx = box.x + box.width / 2, cy = box.y + box.height / 2;
+    for (const [dx, dy] of [[-60, -50], [60, -50], [60, 40], [-60, 40], [0, 0]]) await page.mouse.click(cx + dx, cy + dy);
+    await page.locator('[data-pin-undo]').click();
+    assert.match(await page.locator('[data-pin-chip]').textContent(), /4 corners · ≈ \d+ m²/);
+    await page.locator('[data-pin-done]').click();
+    await page.waitForSelector('.pin-sheet', { state: 'detached' });
+    assert.match(await page.locator('.property-pin').textContent(), /Roof outlined≈ \d+ m²/);
+    assert.deepEqual(errors, [], scenario);
+    await context.close();
+  }
+});
