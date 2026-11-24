@@ -1206,3 +1206,95 @@
   outline: 3px solid var(--ev-gold);
   outline-offset: 10px;
 }
+
+/* Compact "Every elevator, every service.": heading, tabs, slideshow and brands fit one laptop
+   screen. Counter and arrows share a row; the progress bar and type scale tighten. */
+#elevator-range .section-heading {
+  align-items: end;
+  margin-bottom: 24px;
+}
+#elevator-range .section-heading h2 {
+  font-size: clamp(32px, 3.2vw, 44px);
+}
+#elevator-range .section-heading p {
+  margin: 0;
+}
+#elevator-range .ev-tabs {
+  margin-bottom: 12px;
+}
+#elevator-range .ev-tabs [role='tab'] {
+  min-height: 44px;
+}
+#elevator-range .ev-slides {
+  min-height: 0;
+}
+#elevator-range .ev-slide-copy {
+  gap: 14px;
+  padding: 28px 36px;
+}
+.ev-slide-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+#elevator-range .ev-count strong {
+  font-size: clamp(48px, 4.4vw, 64px);
+}
+#elevator-range .ev-count span {
+  font-size: 20px;
+}
+#elevator-range .ev-dots button {
+  height: 24px;
+}
+#elevator-range .ev-slide-list h3 {
+  margin: 2px 0 10px;
+  font-size: clamp(26px, 2.4vw, 34px);
+}
+#elevator-range .ev-slide-list p {
+  font-size: 16px;
+  line-height: 1.55;
+}
+#elevator-range .ev-slide-list .ev-slide-meta {
+  margin-top: 10px;
+  font-size: 14px;
+}
+#elevator-range .ev-slide-action {
+  margin-top: 14px;
+}
+#elevator-range .ev-slide-art {
+  padding: 20px 28px;
+}
+#elevator-range .ev-visual-shaft .ev-drawing {
+  height: min(300px, 100%);
+}
+#elevator-range .ev-visual-plan .ev-drawing {
+  max-width: 320px;
+}
+#elevator-range > .ev-note {
+  margin-top: 12px;
+  font-size: 13px;
+}
+#elevator-range .ev-brands {
+  align-items: center;
+  margin-top: 24px;
+  padding-top: 22px;
+}
+#elevator-range .ev-brands-head h3 {
+  font-size: 22px;
+}
+#elevator-range .ev-brands-head p,
+#elevator-range .ev-brand p {
+  font-size: 14px;
+}
+#elevator-range .ev-brand-name {
+  margin-bottom: 4px;
+  font-size: 24px;
+}
+#elevator-range .ev-brand-logo {
+  height: 36px;
+  margin-bottom: 6px;
+}
+#elevator-range .ev-slide-art-photo {
+  padding: 0;
+}

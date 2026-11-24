@@ -516,7 +516,7 @@ window.TechouseElevators = (() => {
       )
       .join(
         '',
-      )}</div><div class="ev-slide-copy"><p class="ev-count"><strong data-slide-number>1</strong><span>/ ${n}</span></p><div class="ev-dots" role="group" aria-label="Choose a slide">${items
+      )}</div><div class="ev-slide-copy"><div class="ev-slide-top"><p class="ev-count"><strong data-slide-number>1</strong><span>/ ${n}</span></p><div class="ev-slide-nav"><button type="button" class="ev-prev" data-slide-prev aria-label="Previous">${icon('arrow_back')}</button><button type="button" class="ev-next" data-slide-next aria-label="Next">${icon('arrow_forward')}</button></div></div><div class="ev-dots" role="group" aria-label="Choose a slide">${items
       .map(
         (item, i) =>
           `<button type="button" data-slide-go="${i}" aria-label="${i + 1}: ${esc(item.name || item.title)}"${i ? '' : ' aria-current="true"'}><span></span></button>`,
@@ -528,7 +528,7 @@ window.TechouseElevators = (() => {
       )
       .join(
         '',
-      )}</ol><div class="ev-slide-nav"><button type="button" class="ev-prev" data-slide-prev aria-label="Previous">${icon('arrow_back')}</button><button type="button" class="ev-next" data-slide-next aria-label="Next">${icon('arrow_forward')}</button></div></div></div>`;
+      )}</ol></div></div>`;
   }
   function mountSlides(root) {
     if (root.dataset.mounted) return;
@@ -771,7 +771,7 @@ window.TechouseElevators = (() => {
     const brands = BRANDS.map((b) => `<div class="ev-brand">${logo(b)}<p>${b.text}</p></div>`).join(
       '',
     );
-    return `<section id="elevator-range" class="division-section ev-section"><div class="section-heading"><h2>Every elevator,<br>every service.</h2><p>The elevators we install, and how we look after them for their whole life, whoever installed them.</p></div><div class="ev-tabs" role="tablist" aria-label="Elevators and services">${tabs}</div><div class="ev-tabpanels"><div class="ev-tabpanel" role="tabpanel" id="ev-panel-types" aria-labelledby="ev-tab-types">${types}</div><div class="ev-tabpanel" role="tabpanel" id="ev-panel-services" aria-labelledby="ev-tab-services" hidden>${services}</div></div><p class="ev-note">We don’t supply external construction hoists. On a building site they collect debris and are easily overloaded, which puts riders at risk.</p><div id="elevator-brands" class="ev-brands"><div class="ev-brands-head"><h3>Three brands, sourced direct.</h3><p>Straight from the manufacturers, with no resellers in between. We also service any major brand.</p></div><div class="ev-brand-list">${brands}</div></div></section>`;
+    return `<section id="elevator-range" class="division-section ev-section"><div class="section-heading"><h2>Every elevator, every service.</h2><p>The elevators we install, and how we look after them for their whole life, whoever installed them.</p></div><div class="ev-tabs" role="tablist" aria-label="Elevators and services">${tabs}</div><div class="ev-tabpanels"><div class="ev-tabpanel" role="tabpanel" id="ev-panel-types" aria-labelledby="ev-tab-types">${types}</div><div class="ev-tabpanel" role="tabpanel" id="ev-panel-services" aria-labelledby="ev-tab-services" hidden>${services}</div></div><p class="ev-note">We don’t supply external construction hoists. On a building site they collect debris and are easily overloaded, which puts riders at risk.</p><div id="elevator-brands" class="ev-brands"><div class="ev-brands-head"><h3>Three brands, sourced direct.</h3><p>Straight from the manufacturers, with no resellers in between. We also service any major brand.</p></div><div class="ev-brand-list">${brands}</div></div></section>`;
   }
 
   // The page body below the cover. subnav and projectsSection come from divisions.js.

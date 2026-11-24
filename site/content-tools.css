@@ -1933,15 +1933,13 @@ html[data-office-theme="dark"] body.office-page #header .office-signout:hover { 
 .about-people-panel [hidden] { display: none; }
 .about-people-panel h3 { font-size: 20px; line-height: 1.3; margin: 20px 0 8px; }
 .about-people-panel .about-profile-pending { font-size: 12px; color: #6b7864; margin-bottom: 0; }
-.about-leader { display: grid; grid-template-columns: 100px minmax(0,1fr); gap: 24px; padding-block: 16px; }
-.about-leader-portrait { min-height: 140px; background: #d7e0ce; display: grid; place-items: center; color: #496047; }
-.about-leader-portrait svg { width: 36px; height: 36px; }
+.about-leader { padding-block: 16px; }
 .about-leader h3 { margin-top: 10px; }
 .about-people-panel address { font-style: normal; font-size: 15px; line-height: 1.7; }
 .about-map-preview { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 24px; background: #d7e0ce; margin: 20px 0; }
 .about-map-preview > span { font-size: 13px; color: #586950; }
 .about-map-preview .button { margin-top: 6px; }
-@media(max-width:750px) { .about-company .about-people-panel { padding: 24px; } .about-people-tabs { gap: 20px; } .about-leader { grid-template-columns: 80px minmax(0,1fr); gap: 16px; } }
+@media(max-width:750px) { .about-company .about-people-panel { padding: 24px; } .about-people-tabs { gap: 20px; } }
 #project-detail-dialog { transform-origin: center; }
 #project-detail-dialog::backdrop { animation: project-backdrop-in 420ms ease-out both; }
 #project-detail-dialog.project-closing::backdrop { animation: project-backdrop-out 400ms ease-in both; }
@@ -1977,11 +1975,7 @@ html.overlay-page-scroll::-webkit-scrollbar { display: none; width: 0; }
 .page-scroll-thumb[hidden] { display: none; }
 .page-scroll-thumb:hover { background: rgb(126 139 129 / 95%); }
 .about-office-visuals { margin: 20px 0; }
-.about-office-visuals iframe { display: block; width: 100%; height: 260px; border: 1px solid #c5d0bd; background: #d7e0ce; }
-.about-office-visuals figure { margin: 16px 0; }
-.about-office-visuals img { width: 100%; height: 210px; object-fit: cover; object-position: center 55%; display: block; }
-.about-office-visuals figcaption { font-size: 11px; line-height: 1.6; color: #65735d; margin-top: 8px; }
-.about-office-visuals figcaption a { text-decoration: underline; }
+.about-office-visuals iframe { display: block; width: 100%; height: 320px; margin-bottom: 14px; border: 1px solid #c5d0bd; background: #d7e0ce; }
 html.contact-dialog-open { overflow: hidden; }
 #contact-options-dialog { overscroll-behavior: contain; }
 .compact-project-editor .project-editor-section-heading { grid-column: 1/-1; font-size: 17px; margin: 12px 0 0; padding-top: 20px; border-top: 1px solid var(--line); }

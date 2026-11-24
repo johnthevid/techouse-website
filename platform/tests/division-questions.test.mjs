@@ -196,7 +196,7 @@ test('elevator page: types and services share one tabbed section, brands close i
   const { page, errors } = await open(t, f);
   await page.goto(f.env.APP_ORIGIN + '/#/divisions/elevators');
   await page.waitForSelector('#elevator-range');
-  assert.match(await page.locator('#elevator-range h2').textContent(), /Every elevator,every service\./);
+  assert.match(await page.locator('#elevator-range h2').textContent(), /Every elevator,\s*every service\./);
   const typesTab = page.locator('#ev-tab-types');
   const servicesTab = page.locator('#ev-tab-services');
   assert.equal(await typesTab.getAttribute('aria-selected'), 'true');

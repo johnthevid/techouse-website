@@ -1,5 +1,20 @@
 # Current handoff
 
+## Latest: shorter elevator section, page spacing, About tabs (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; not merged, not deployed)
+
+- **"Every elevator, every service."** went from 1,372px to 897px tall, so its heading, tabs, slideshow and brands row fit one 1440×900 screen below the section menu.
+  - One-line heading; the counter and the arrows share a row; slimmer progress bar.
+  - Smaller slide type, a smaller shaft drawing, a compact brands row and a smaller note.
+  - Uploaded photos fill their panel edge to edge.
+- **Section spacing on Construction, Prefabrication and Elevators** (`division-content.css` end):
+  - 64px section padding (was 90px), 56px for the first section, 40px on phones.
+  - A hairline divider between every section (previously only some had one).
+  - Headings 32px above their content (was 45px); closing brief bottom margin 64px (was 96px).
+- **About page:**
+  - Leadership tab: the portrait placeholder is removed (text only; "Leadership profile to follow.").
+  - Office tab: shows only the Google map (now 320px tall) and the links. The interior photo is removed there but still used on the partner page, so the asset and its credit stay. README updated.
+- **Checks:** `npm test` 51/51. One run had a timing flake in `update-101-browser`, which passed alone and on the rerun.
+
 ## Latest: uniform slideshow height, back-office elevator photo picker, snappy back office, round Back to top (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; not merged, not deployed)
 
 - **Elevators page:** "Every elevator, every service." keeps one height across every slide and both tabs.
