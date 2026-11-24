@@ -512,7 +512,7 @@ window.TechouseElevators = (() => {
     return `<div class="ev-slides${flip ? ' ev-slides-flip' : ''}" role="region" aria-roledescription="carousel" aria-label="${label}" data-ev-slides="${id}"><div class="ev-slide-visual ${visualClass}">${items
       .map(
         (item, i) =>
-          `<div class="ev-slide-art" data-slide-art="${i}"${i ? ' hidden' : ''}>${item.visual}</div>`,
+          `<div class="ev-slide-art${item.photo ? ' ev-slide-art-photo' : ''}" data-slide-art="${i}"${i ? ' hidden' : ''}>${item.visual}</div>`,
       )
       .join(
         '',
@@ -611,41 +611,48 @@ window.TechouseElevators = (() => {
   // ---- Content ---------------------------------------------------------------------------------
   const TYPES = [
     {
+      type: 'passenger',
       title: 'Passenger',
       text: 'Offices, condominiums and malls. Sized for the number of people riding at the busiest hour.',
       meta: 'Typical car 1.35 × 1.4 m · 800 kg · 10 people',
       visual: plan('passenger'),
     },
     {
+      type: 'home',
       title: 'Home',
       text: 'A compact elevator for a house, quiet enough for every day, with room for a wheelchair.',
       meta: 'Typical car 1.0 × 1.25 m',
       visual: plan('home'),
     },
     {
+      type: 'bed',
       title: 'Hospital bed',
       text: 'A deep car that fits a bed, the patient and the staff beside them.',
       meta: 'Typical car 1.4 × 2.4 m · 1,600 kg',
       visual: plan('bed'),
     },
     {
+      type: 'cargo',
       title: 'Cargo',
       text: 'Built for weight: pallets, trolleys and stock, with tougher floors and wider doors.',
       meta: 'Typical car 1.5 × 2.7 m · 2,000 kg or more',
       visual: plan('cargo'),
     },
     {
+      type: 'panoramic',
       title: 'Panoramic',
       text: 'Glass walls that turn the ride into a view, for lobbies, atriums and building facades.',
       meta: 'Typical car 1.1 × 1.4 m · 630 kg',
       visual: plan('panoramic'),
     },
     {
+      type: 'escalator',
       title: 'Escalators',
       text: 'Keep crowds moving between floors in malls, stations and airports.',
       visual: plan('escalator'),
     },
     {
+      type: 'walkway',
       title: 'Moving walkways',
       text: 'Flat or gently sloped, for long walks and trolleys in terminals and supermarkets.',
       visual: plan('walkway'),
@@ -699,60 +706,112 @@ window.TechouseElevators = (() => {
       action: start('parts', 'Request a part'),
     },
   ];
-  const brand = (name) =>
-    `<div class="ev-brand-art" role="img" aria-label="${esc(name)}"><span class="ev-brand-name">${name}</span></div>`;
   const BRANDS = [
     {
-      title: 'A trusted Japanese name.',
-      text: 'Hitachi elevators, built in Hitachi’s plants in China.',
+      id: 'hitachi',
       name: 'Hitachi',
-      visual: brand('Hitachi'),
+      text: 'A trusted Japanese name, built in Hitachi’s plants in China.',
     },
     {
-      title: 'Elevators and escalators.',
-      text: 'EPSS, from Yida Express Elevator in Huzhou, China.',
+      id: 'epss',
       name: 'EPSS',
-      visual: brand('EPSS'),
+      text: 'Elevators and escalators from Yida Express Elevator in Huzhou, China.',
     },
     {
-      title: 'Widely installed across China.',
-      text: 'Shanghai Mitsubishi elevators, built in Shanghai.',
+      id: 'mitsubishi',
       name: 'Shanghai Mitsubishi',
-      visual: brand('Shanghai Mitsubishi'),
+      text: 'Mitsubishi elevators built in Shanghai and widely installed across China.',
     },
   ];
+
+  // A type shows the photo staff uploaded (Website customizer > Elevator photos), else its drawing.
+  const withPhotos = (types) =>
+    types.map((item) => {
+      const src = window.TechouseContent?.snapshot().images['elevator-' + item.type];
+      return src
+        ? {
+            ...item,
+            photo: true,
+            visual: `<img class="ev-slide-photo" src="${esc(window.TechouseContent.imageURL(src))}" alt="${esc(item.title)} elevator" loading="lazy">`,
+          }
+        : item;
+    });
+  // A brand shows the logo staff uploaded (supplied by the manufacturer), else its name.
+  const logo = (b) => {
+    const src = window.TechouseContent?.snapshot().images['brand-' + b.id];
+    return src
+      ? `<img class="ev-brand-logo" src="${esc(window.TechouseContent.imageURL(src))}" alt="${esc(b.name)}" loading="lazy">`
+      : `<strong class="ev-brand-name">${b.name}</strong>`;
+  };
+  // Elevator types and services share one section: one slideshow frame, two tabs. Brands close it.
+  const TABS = [
+    ['types', 'Elevators we install'],
+    ['services', 'How we help'],
+  ];
+  function range() {
+    const tabs = TABS.map(
+      ([id, label], i) =>
+        `<button type="button" role="tab" id="ev-tab-${id}" aria-controls="ev-panel-${id}" aria-selected="${!i}"${i ? ' tabindex="-1"' : ''}>${label}</button>`,
+    ).join('');
+    const types = slideshow({
+      id: 'types',
+      label: `Elevator types, ${TYPES.length} slides`,
+      items: withPhotos(TYPES),
+      visualClass: 'ev-visual-plan',
+    });
+    const services = slideshow({
+      id: 'services',
+      label: `Elevator services, ${SERVICES.length} slides`,
+      items: SERVICES,
+      flip: true,
+      visualClass: 'ev-visual-shaft',
+    });
+    const brands = BRANDS.map((b) => `<div class="ev-brand">${logo(b)}<p>${b.text}</p></div>`).join(
+      '',
+    );
+    return `<section id="elevator-range" class="division-section ev-section"><div class="section-heading"><h2>Every elevator,<br>every service.</h2><p>The elevators we install, and how we look after them for their whole life, whoever installed them.</p></div><div class="ev-tabs" role="tablist" aria-label="Elevators and services">${tabs}</div><div class="ev-tabpanel" role="tabpanel" id="ev-panel-types" aria-labelledby="ev-tab-types">${types}<p class="ev-note">We don’t supply external construction hoists. On a building site they collect debris and are easily overloaded, which puts riders at risk.</p></div><div class="ev-tabpanel" role="tabpanel" id="ev-panel-services" aria-labelledby="ev-tab-services" hidden>${services}</div><div id="elevator-brands" class="ev-brands"><div class="ev-brands-head"><h3>Three brands, sourced direct.</h3><p>Straight from the manufacturers, with no resellers in between. We also service any major brand.</p></div><div class="ev-brand-list">${brands}</div></div></section>`;
+  }
 
   // The page body below the cover. subnav and projectsSection come from divisions.js.
   function content({ subnav, projectsSection }) {
     return `${subnav('Elevator sections', [
       ['elevator-start', 'Get started'],
-      ['elevator-types', 'Elevator types'],
-      ['elevator-service', 'Services'],
+      ['elevator-range', 'Elevators and services'],
       ['elevator-brands', 'Brands'],
       ['projects', 'Projects'],
-    ])}<div class="division-wrap ev-page">${planner()}<section id="elevator-types" class="division-section ev-section"><div class="section-heading"><h2>Elevators for<br>every building.</h2><p>From a family home to a hospital, across all three brands, for new buildings and renovations.</p></div>${slideshow(
-      {
-        id: 'types',
-        label: `Elevator types, ${TYPES.length} slides`,
-        items: TYPES,
-        visualClass: 'ev-visual-plan',
-      },
-    )}<p class="ev-note">We don’t supply external construction hoists. On a building site they collect debris and are easily overloaded, which puts riders at risk.</p></section><section id="elevator-service" class="division-section ev-section"><div class="section-heading"><h2>Installed, maintained,<br>renewed.</h2><p>An elevator is a long-term system. We look after it for its whole life, whoever installed it.</p></div>${slideshow(
-      {
-        id: 'services',
-        label: `Elevator services, ${SERVICES.length} slides`,
-        items: SERVICES,
-        flip: true,
-        visualClass: 'ev-visual-shaft',
-      },
-    )}</section><section id="elevator-brands" class="division-section ev-section"><div class="section-heading"><h2>Three brands.<br>Sourced direct.</h2><p>Straight from the manufacturers, with no resellers in between. We service any major brand.</p></div>${slideshow(
-      {
-        id: 'brands',
-        label: `Elevator brands, ${BRANDS.length} slides`,
-        items: BRANDS,
-        visualClass: 'ev-visual-brand',
-      },
-    )}</section>${projectsSection()}</div>`;
+    ])}<div class="division-wrap ev-page">${planner()}${range()}${projectsSection()}</div>`;
+  }
+
+  function mountTabs(root) {
+    if (!root || root.dataset.mounted) return;
+    root.dataset.mounted = '1';
+    const tabs = [...root.querySelectorAll('[role="tab"]')];
+    const select = (tab, focus = false) => {
+      tabs.forEach((t) => {
+        const on = t === tab;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+      });
+      if (focus) tab.focus();
+    };
+    root.addEventListener('click', (event) => {
+      const tab = event.target.closest('[role="tab"]');
+      if (tab) select(tab);
+    });
+    root.addEventListener('keydown', (event) => {
+      const index = tabs.indexOf(document.activeElement);
+      if (index < 0 || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+      event.preventDefault();
+      const next =
+        event.key === 'Home'
+          ? 0
+          : event.key === 'End'
+            ? tabs.length - 1
+            : (index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+      select(tabs[next], true);
+    });
+    root.select = (id) => select(root.querySelector(`#ev-tab-${id}`));
   }
 
   function mount() {
@@ -760,6 +819,7 @@ window.TechouseElevators = (() => {
     if (!root) return;
     mountPlanner(root);
     document.querySelectorAll('[data-ev-slides]').forEach(mountSlides);
+    mountTabs(document.querySelector('.ev-tabs'));
     // "Plan a new elevator" and the other service slides open the planner on that service.
     document.querySelector('.ev-page')?.addEventListener('click', (event) => {
       const button = event.target.closest('[data-start-service]');

@@ -923,28 +923,117 @@
   outline: 2px solid #b99258;
   outline-offset: 3px;
 }
+/* Elevators and services: one section, two tabs over one slideshow frame. */
+.ev-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--ev-rule);
+}
+.ev-tabs [role='tab'] {
+  position: relative;
+  min-height: 48px;
+  padding: 0 22px;
+  border: 0;
+  background: none;
+  color: var(--ev-muted);
+  font: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ev-tabs [role='tab']::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 3px;
+  background: var(--ev-gold);
+  transform: scaleX(0);
+  transition: transform 0.3s var(--ev-ease);
+}
+.ev-tabs [role='tab'][aria-selected='true'] {
+  color: var(--ink);
+}
+.ev-tabs [role='tab'][aria-selected='true']::after {
+  transform: scaleX(1);
+}
+.ev-tabs [role='tab']:hover {
+  color: var(--ink);
+}
+.ev-tabs [role='tab']:focus-visible {
+  outline: 2px solid #b99258;
+  outline-offset: -2px;
+}
+.ev-tabpanel[hidden] {
+  display: none;
+}
+/* Uploaded photos fill the slide's visual panel. */
+.ev-slide-art-photo {
+  padding: 0;
+}
+.ev-slide-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* Brands close the section: three names in a row. */
+.ev-brands {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 2fr);
+  gap: 24px 56px;
+  margin-top: 56px;
+  padding-top: 36px;
+  border-top: 1px solid var(--ev-rule);
+}
+.ev-brands-head h3 {
+  margin: 0 0 8px;
+  font-family: var(--display);
+  font-size: clamp(22px, 2vw, 28px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+.ev-brands-head p {
+  margin: 0;
+  color: var(--ev-muted);
+  line-height: 1.55;
+}
+.ev-brand-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+}
+.ev-brand-name {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--display);
+  font-size: clamp(24px, 2.2vw, 32px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+.ev-brand-logo {
+  display: block;
+  width: auto;
+  max-width: 200px;
+  height: 48px;
+  margin-bottom: 12px;
+  object-fit: contain;
+  object-position: left center;
+}
+.ev-brand p {
+  margin: 0;
+  color: var(--ev-muted);
+  font-size: 15px;
+  line-height: 1.55;
+}
 .ev-note {
   max-width: 720px;
   margin: 22px 0 0;
   color: var(--ev-muted);
   font-size: 15px;
   line-height: 1.6;
-}
-/* Brands: the name itself is the picture. */
-.ev-brand-art {
-  display: grid;
-  gap: 14px;
-  justify-items: start;
-  width: 100%;
-}
-.ev-brand-name {
-  color: #fff;
-  font-family: var(--display);
-  font-size: clamp(44px, 5.4vw, 84px);
-  font-weight: 600;
-  letter-spacing: -0.04em;
-  line-height: 0.98;
-  text-wrap: balance;
 }
 
 /* ---- Small screens -------------------------------------------------------------------------- */
@@ -963,6 +1052,16 @@
   }
 }
 @media (max-width: 900px) {
+  .ev-brands,
+  .ev-brand-list {
+    grid-template-columns: 1fr;
+  }
+  .ev-brands {
+    gap: 20px;
+  }
+  .ev-brand-list {
+    gap: 18px;
+  }
   .ev-slides,
   .ev-slides-flip {
     grid-template-columns: 1fr;
@@ -984,6 +1083,11 @@
   }
 }
 @media (max-width: 600px) {
+  .ev-tabs [role='tab'] {
+    flex: 1;
+    padding: 0 8px;
+    font-size: 15px;
+  }
   .ev-plan > .ev-progress {
     padding: 20px 8px 18px;
   }
@@ -1059,6 +1163,7 @@
   .ev-service-go svg,
   .ev-choices span,
   .ev-dots span,
+  .ev-tabs [role='tab']::after,
   .ev-tip-text {
     transition: none;
   }

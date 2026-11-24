@@ -75,6 +75,22 @@ window.TechouseContent = (() => {
     ['about', '.content-columns > div:first-child p:nth-of-type(2)', 'Company paragraph 2'],
   ];
   const divisions = ['solar', 'construction', 'prefabrication', 'development', 'elevators'];
+  // One photo per elevator type for the Elevators page slideshow (saved under images).
+  const elevatorTypes = [
+    ['passenger', 'Passenger'],
+    ['home', 'Home'],
+    ['bed', 'Hospital bed'],
+    ['cargo', 'Cargo'],
+    ['panoramic', 'Panoramic'],
+    ['escalator', 'Escalators'],
+    ['walkway', 'Moving walkways'],
+  ];
+  // Brand logos for the Elevators page; PNG keeps a transparent background.
+  const brandLogos = [
+    ['hitachi', 'Hitachi'],
+    ['epss', 'EPSS'],
+    ['mitsubishi', 'Shanghai Mitsubishi'],
+  ];
   for (const id of divisions)
     for (const [sel, label] of [
       ['h2', 'heading'],
@@ -221,6 +237,12 @@ window.TechouseContent = (() => {
         filter: () => false,
       },
       {
+        id: 'elevator-photos',
+        title: 'Elevator photos and logos',
+        note: 'Your own photos for the elevator types on the Elevators page (landscape works best; without one, the page shows a drawing), and the brand logos supplied by each manufacturer (PNG with a transparent background works best; without one, the brand name shows).',
+        filter: () => false,
+      },
+      {
         id: 'images',
         title: 'Banner images',
         note: 'Upload JPEG, PNG or WebP. Images are resized for the prototype.',
@@ -242,18 +264,30 @@ window.TechouseContent = (() => {
               ? rateFields()
               : group.id === 'division-pages'
                 ? pageFields()
-                : group.id === 'images'
-                  ? `<div class="image-editor-grid">${divisions.map((id) => `<div class="content-field"><label for="banner-upload-${id}">${id.charAt(0).toUpperCase() + id.slice(1)}</label><img class="upload-preview" src="${imageURL(data.images[id] || 'assets/' + defaultImages[id])}" data-default-image="${escape('assets/' + defaultImages[id])}" alt="${id} banner preview"><input id="banner-upload-${id}" type="file" accept="image/jpeg,image/png,image/webp" data-banner-upload="${id}"><label class="restore-image"><input type="checkbox" name="remove-${id}"> Use original image</label></div>`).join('')}</div>`
-                  : fields
-                      .filter(group.filter)
-                      .map(([page, selector, label]) => {
-                        const original = (
-                          roots[page].querySelector(selector)?.textContent || ''
-                        ).trim();
-                        const index = fields.findIndex((f) => f[1] === selector);
-                        return `<div class="content-field"><div class="customizer-field-heading"><label for="custom-text-${index}">${escape(label)}</label><button type="button" data-reset-field="${escape(selector)}" aria-label="Restore default for ${escape(label)}">Restore default</button></div><textarea id="custom-text-${index}" name="${escape(selector)}" rows="${label.includes('paragraph') || label.includes('description') ? 4 : 2}" maxlength="2000" data-default="${escape(original)}">${escape(data.text[selector] ?? original)}</textarea></div>`;
-                      })
-                      .join('')
+                : group.id === 'elevator-photos'
+                  ? `<div class="image-editor-grid">${elevatorTypes
+                      .map(
+                        ([type, label]) =>
+                          `<div class="content-field"><label for="banner-upload-elevator-${type}">${label}</label><img class="upload-preview" src="${imageURL(data.images['elevator-' + type] || 'assets/placeholders/elevators.svg')}" data-default-image="assets/placeholders/elevators.svg" alt="${label} elevator photo preview"><input id="banner-upload-elevator-${type}" type="file" accept="image/jpeg,image/png,image/webp" data-banner-upload="elevator-${type}" data-max-size="1000"><label class="restore-image"><input type="checkbox" name="remove-elevator-${type}"> No photo (show the drawing)</label></div>`,
+                      )
+                      .join('')}${brandLogos
+                      .map(
+                        ([brand, label]) =>
+                          `<div class="content-field"><label for="banner-upload-brand-${brand}">${label} logo</label><img class="upload-preview upload-preview-logo" src="${imageURL(data.images['brand-' + brand] || 'assets/placeholders/elevators.svg')}" data-default-image="assets/placeholders/elevators.svg" alt="${label} logo preview"><input id="banner-upload-brand-${brand}" type="file" accept="image/png,image/webp,image/jpeg" data-banner-upload="brand-${brand}" data-max-size="600" data-format="png"><label class="restore-image"><input type="checkbox" name="remove-brand-${brand}"> No logo (show the name)</label></div>`,
+                      )
+                      .join('')}</div>`
+                  : group.id === 'images'
+                    ? `<div class="image-editor-grid">${divisions.map((id) => `<div class="content-field"><label for="banner-upload-${id}">${id.charAt(0).toUpperCase() + id.slice(1)}</label><img class="upload-preview" src="${imageURL(data.images[id] || 'assets/' + defaultImages[id])}" data-default-image="${escape('assets/' + defaultImages[id])}" alt="${id} banner preview"><input id="banner-upload-${id}" type="file" accept="image/jpeg,image/png,image/webp" data-banner-upload="${id}"><label class="restore-image"><input type="checkbox" name="remove-${id}"> Use original image</label></div>`).join('')}</div>`
+                    : fields
+                        .filter(group.filter)
+                        .map(([page, selector, label]) => {
+                          const original = (
+                            roots[page].querySelector(selector)?.textContent || ''
+                          ).trim();
+                          const index = fields.findIndex((f) => f[1] === selector);
+                          return `<div class="content-field"><div class="customizer-field-heading"><label for="custom-text-${index}">${escape(label)}</label><button type="button" data-reset-field="${escape(selector)}" aria-label="Restore default for ${escape(label)}">Restore default</button></div><textarea id="custom-text-${index}" name="${escape(selector)}" rows="${label.includes('paragraph') || label.includes('description') ? 4 : 2}" maxlength="2000" data-default="${escape(original)}">${escape(data.text[selector] ?? original)}</textarea></div>`;
+                        })
+                        .join('')
           }</section>`,
       )
       .join(
@@ -332,18 +366,18 @@ window.TechouseContent = (() => {
     if (select) syncProjectDivision(select.form);
   });
   // Resize uploads before storage; only decoded raster images are accepted.
-  async function upload(file) {
+  async function upload(file, maxSize = 1440, format = 'jpeg') {
     if (!file || !['image/jpeg', 'image/png', 'image/webp'].includes(file.type))
       throw Error('Choose a JPEG, PNG or WebP image.');
     if (file.size > 15 * 1024 * 1024) throw Error('Choose an image smaller than 15 MB.');
     const bitmap = await createImageBitmap(file);
-    const scale = Math.min(1, 1440 / Math.max(bitmap.width, bitmap.height));
+    const scale = Math.min(1, maxSize / Math.max(bitmap.width, bitmap.height));
     const canvas = document.createElement('canvas');
     canvas.width = Math.round(bitmap.width * scale);
     canvas.height = Math.round(bitmap.height * scale);
     canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
     bitmap.close();
-    return canvas.toDataURL('image/jpeg', 0.78);
+    return format === 'png' ? canvas.toDataURL('image/png') : canvas.toDataURL('image/jpeg', 0.78);
   }
   document.addEventListener('input', (event) => {
     const form = event.target.closest('#website-customizer');
@@ -418,7 +452,11 @@ window.TechouseContent = (() => {
         window.TechouseOfficeUI.projectPhotos(form).length + input.files.length > 3
       )
         throw Error('Each project can have up to 3 images. Remove a photo before adding more.');
-      const images = await Promise.all([...input.files].map(upload));
+      // Elevator photos are smaller, so seven of them keep the saved content light.
+      const maxSize = Number(input.dataset.maxSize) || 1440;
+      const images = await Promise.all(
+        [...input.files].map((file) => upload(file, maxSize, input.dataset.format)),
+      );
       const image = images[0];
       if (input.hasAttribute('data-banner-upload')) {
         input.dataset.image = image;
@@ -466,7 +504,11 @@ window.TechouseContent = (() => {
       next.settings.closedDivisions = divisions.filter(
         (id) => !form.elements.namedItem('open-' + id).checked,
       );
-      for (const id of divisions) {
+      for (const id of [
+        ...divisions,
+        ...elevatorTypes.map(([type]) => 'elevator-' + type),
+        ...brandLogos.map(([brand]) => 'brand-' + brand),
+      ]) {
         const input = form.querySelector(`[data-banner-upload="${id}"]`);
         if (form.elements.namedItem('remove-' + id).checked) delete next.images[id];
         else if (input.dataset.image) next.images[id] = input.dataset.image;

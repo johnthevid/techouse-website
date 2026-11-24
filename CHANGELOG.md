@@ -2,6 +2,11 @@
 
 Recorded milestones for the Techouse website. Dates use the project's Asia/Manila calendar. These entries describe completed work; they are not retroactively created Git tags or GitHub Releases.
 
+## Unreleased — Elevators: own photos, merged section, brand logos (24 Nov 2026)
+
+- Elevator types and services share one section ("Every elevator, every service.") with two tabs over one slideshow; brands close it as a row.
+- Staff upload a photo per elevator type and each brand's logo in the back office (Website customizer, Elevator photos and logos); drawings and names show until they do.
+
 ## Unreleased — Elevators form: Simple and Detailed (24 Nov 2026)
 
 - Each elevator service opens in Simple mode (two or three plain questions); Detailed shows every question. Answers carry over when switching.

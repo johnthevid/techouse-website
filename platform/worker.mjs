@@ -253,6 +253,11 @@ const retiredSelectors = new Set([
     [".banner-hook", ".banner-description"].map((sel) => `[data-banner="${id}"] ${sel}`),
   ),
 ]);
+const elevatorPhotos = [
+  ...["passenger", "home", "bed", "cargo", "panoramic", "escalator", "walkway"].map((id) => "elevator-" + id),
+  // Brand logos staff upload for the Elevators page (supplied by the manufacturers).
+  ...["hitachi", "epss", "mitsubishi"].map((id) => "brand-" + id),
+];
 function text(value, limit = 5000) {
   if (typeof value !== "string" || value.length > limit)
     fail(400, "Invalid or oversized text.");
@@ -296,7 +301,8 @@ export function validateContent(input) {
     content.text[key] = text(value);
   }
   for (const [key, value] of Object.entries(input.images || {})) {
-    if (!divisions.includes(key)) fail(400, "Unknown banner.");
+    // Division banners, plus one photo per elevator type on the Elevators page.
+    if (!divisions.includes(key) && !elevatorPhotos.includes(key)) fail(400, "Unknown banner.");
     content.images[key] = image(value);
   }
   // Solar Calculator settings: the default electricity rate staff update from Meralco's advisory.

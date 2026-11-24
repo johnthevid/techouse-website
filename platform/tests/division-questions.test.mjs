@@ -191,24 +191,74 @@ test('elevator planner: two steps, a layout per service, answers carried to the 
   assert.deepEqual(errors, []);
 });
 
-test('elevator page: slideshows move by buttons, dots and keys', async (t) => {
+test('elevator page: types and services share one tabbed section, brands close it', async (t) => {
   const f = await fixture(t);
   const { page, errors } = await open(t, f);
   await page.goto(f.env.APP_ORIGIN + '/#/divisions/elevators');
-  for (const [id, count] of [['types', 7], ['services', 4], ['brands', 3]]) {
+  await page.waitForSelector('#elevator-range');
+  assert.match(await page.locator('#elevator-range h2').textContent(), /Every elevator,every service\./);
+  const typesTab = page.locator('#ev-tab-types');
+  const servicesTab = page.locator('#ev-tab-services');
+  assert.equal(await typesTab.getAttribute('aria-selected'), 'true');
+  assert.equal(await page.locator('#ev-panel-services').isVisible(), false);
+  for (const [tab, id, count] of [[typesTab, 'types', 7], [servicesTab, 'services', 4]]) {
+    await tab.click();
     const show = page.locator(`[data-ev-slides="${id}"]`);
+    assert.equal(await show.isVisible(), true);
     assert.equal(await show.locator('[data-slide]').count(), count);
     await show.locator('[data-slide-next]').click();
     assert.equal(await show.locator('[data-slide-number]').textContent(), '2');
     await show.locator(`[data-slide-go="${count - 1}"]`).click();
-    assert.equal(await show.locator('[data-slide]:not([hidden]) h3').count(), 1);
     await show.locator('[data-slide-next]').click();
     assert.equal(await show.locator('[data-slide-number]').textContent(), '1');
   }
+  // Arrow keys move between the tabs.
+  await servicesTab.focus();
+  await page.keyboard.press('ArrowLeft');
+  assert.equal(await typesTab.getAttribute('aria-selected'), 'true');
+  // Without uploaded photos, each type shows its drawing.
+  assert.equal(await page.locator('[data-ev-slides="types"] .ev-slide-photo').count(), 0);
+  // Brands sit at the bottom of the section.
+  assert.deepEqual(
+    await page.locator('#elevator-range .ev-brand-name').allTextContents(),
+    ['Hitachi', 'EPSS', 'Shanghai Mitsubishi'],
+  );
   // A service slide opens the planner on that service.
+  await servicesTab.click();
   await page.locator('[data-ev-slides="services"] [data-slide-go="3"]').click();
   await page.locator('[data-start-service="parts"]').click();
   assert.equal(await page.locator('[data-ev-form="parts"]').isVisible(), true);
+  assert.deepEqual(errors, []);
+});
+
+test('elevator photos: staff upload one per type and it replaces the drawing', async (t) => {
+  const f = await fixture(t);
+  await f.login();
+  const png =
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+  const snapshot = await f.request('/api/admin/content');
+  const body = structuredClone(snapshot.value.content);
+  body.images = { ...body.images, 'elevator-castle': png };
+  assert.equal((await f.request('/api/admin/content', 'PUT', { content: body, version: snapshot.value.version })).status, 400);
+  body.images = { ...snapshot.value.content.images, 'elevator-bed': png, 'brand-epss': png };
+  assert.equal((await f.request('/api/admin/content', 'PUT', { content: body, version: snapshot.value.version })).status, 200);
+  const { page, errors, context } = await open(t, f);
+  await page.goto(f.env.APP_ORIGIN + '/#/divisions/elevators');
+  await page.waitForSelector('[data-ev-slides="types"]');
+  const photo = page.locator('[data-ev-slides="types"] [data-slide-art="2"] img.ev-slide-photo');
+  assert.equal(await photo.count(), 1);
+  assert.equal(await photo.getAttribute('alt'), 'Hospital bed elevator');
+  assert.equal(await page.locator('[data-ev-slides="types"] [data-slide-art="0"] svg').count(), 1);
+  // An uploaded brand logo replaces the name; the others keep their names.
+  assert.equal(await page.locator('#elevator-brands img.ev-brand-logo[alt="EPSS"]').count(), 1);
+  assert.deepEqual(await page.locator('#elevator-brands .ev-brand-name').allTextContents(), ['Hitachi', 'Shanghai Mitsubishi']);
+  // The back office offers an upload for each elevator type.
+  const [name, value] = f.getCookie().split('=');
+  await context.addCookies([{ name, value, url: f.env.APP_ORIGIN }]);
+  await page.goto(f.env.APP_ORIGIN + '/office.html#/office/customizer');
+  await page.locator('[data-customizer-section="elevator-photos"]').click();
+  assert.equal(await page.locator('#customizer-elevator-photos [data-banner-upload^="elevator-"]').count(), 7);
+  assert.equal(await page.locator('#customizer-elevator-photos [data-banner-upload^="brand-"][data-format="png"]').count(), 3);
   assert.deepEqual(errors, []);
 });
 

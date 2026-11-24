@@ -1,5 +1,19 @@
 # Current handoff
 
+## Latest: Elevators page, own photos, merged section and brand logos (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; not merged, not deployed)
+
+- **One section for elevators and services** (`#elevator-range`):
+  - Heading "Every elevator, every service." with the line "The elevators we install, and how we look after them for their whole life, whoever installed them." It replaces "Installed, maintained, renewed."
+  - Two tabs, "Elevators we install" and "How we help", over one slideshow frame (arrow keys move between tabs).
+  - Brands close the section as a row of three, replacing the brands slideshow.
+  - Section menu: Get started · Elevators and services · Brands · Projects.
+- **Own photos and logos, editable in the back office:** Website customizer has a new "Elevator photos and logos" section.
+  - Seven uploads, one per elevator type, resized to 1,000px JPEG. A type shows its photo, or its drawing until one is uploaded.
+  - Three logo uploads, resized to 600px PNG so transparency is kept. A brand shows its logo, or its name until one is uploaded.
+  - Both are stored in the content `images` map under the keys `elevator-<type>` and `brand-<id>`, which `worker.mjs` allows.
+- Use only logos supplied or approved by each manufacturer. Saved content is capped at 5 MB per save, so keep photos reasonable.
+- **Checks:** `npm test` 51/51 (new tests for the tabbed section, photo and logo uploads, and back-office fields). Impeccable detector: no findings.
+
 ## Latest: Elevators form, Simple and Detailed modes (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; not merged, not deployed)
 
 Done with the Impeccable skill (layout pass, existing look kept), after the client worried the elevator form could put people off sending an inquiry.

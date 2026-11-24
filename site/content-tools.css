@@ -2095,3 +2095,10 @@ html.contact-dialog-open { overflow: hidden; }
 .division-page-toggle small {
   opacity: 0.75;
 }
+
+/* Website customizer > Elevator photos and logos: logos are previewed whole on a light ground. */
+.upload-preview.upload-preview-logo {
+  object-fit: contain;
+  padding: 16px;
+  background: #f4f2ea;
+}
