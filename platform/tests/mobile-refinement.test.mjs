@@ -37,24 +37,47 @@ test('Compact touch homepage keeps one focused story and landscape calculator re
       });
     });
     await page.goto(f.env.APP_ORIGIN + '/');
-    // Phones (under 600px): one chapter, a 2 x 2 pill grid and a menu
+    // Phones (under 600px): one chapter over a swipeable photo strip, five round selectors,
+    // Call us and Get a quote fixed at the bottom, and a menu
     const phone = width < 600;
     if (phone) {
       await page.waitForSelector('[data-mobile-home]');
-      const pills = page.locator('.mh-pill:not(.is-gone)');
-      assert.equal(await pills.count(), 4);
-      const tops = await pills.evaluateAll(
+      const picks = page.locator('.mh-pick button');
+      assert.equal(await picks.count(), 5);
+      const tops = await picks.evaluateAll(
         (els) => new Set(els.map((el) => Math.round(el.getBoundingClientRect().top))).size,
       );
-      assert.equal(tops, 2);
-      await page.locator('.mh-pill[data-index="1"]').click();
+      assert.equal(tops, 1);
+      assert.equal(await page.locator('#header .header-call').isVisible(), false);
+      assert.deepEqual(
+        await page
+          .locator('.mh-bar a')
+          .evaluateAll((els) => els.map((el) => [el.textContent.trim(), el.getAttribute('href')])),
+        [
+          ['Call us', 'tel:+639855626888'],
+          ['Get a quote', '#/inquiry'],
+        ],
+      );
+      await picks.nth(1).click();
       await page.waitForFunction(() =>
         document.querySelectorAll('.mh-chapter')[1].classList.contains('is-on'),
       );
-      assert.equal(
-        await page.locator('.mh-pill[data-index="1"]').getAttribute('aria-hidden'),
-        'true',
+      assert.equal(await picks.nth(1).getAttribute('aria-pressed'), 'true');
+      // Swiping the photo left moves to the next division
+      await page.waitForFunction(
+        () => !document.querySelector('.division-landing').classList.contains('intro-playing'),
       );
+      const stage = await page.locator('.mh-stage').boundingBox();
+      const y = stage.y + stage.height * 0.45;
+      await page.mouse.move(stage.x + stage.width - 40, y);
+      await page.mouse.down();
+      for (let x = stage.x + stage.width - 40; x > stage.x + 40; x -= 30)
+        await page.mouse.move(x, y);
+      await page.mouse.up();
+      await page.waitForFunction(() =>
+        document.querySelectorAll('.mh-chapter')[2].classList.contains('is-on'),
+      );
+      assert.equal(await picks.nth(2).getAttribute('aria-pressed'), 'true');
       await page.locator('.mh-menu-button').click();
       assert.equal(await page.locator('.mh-menu-button').getAttribute('aria-expanded'), 'true');
       assert.deepEqual(
@@ -65,7 +88,7 @@ test('Compact touch homepage keeps one focused story and landscape calculator re
         ['Our divisions', 'About Techouse', 'News', 'Be a partner'],
       );
       await page.keyboard.press('Escape');
-      await page.locator('.mh-pill[data-index="0"]').click();
+      await page.locator('.mh-pick button[data-index="0"]').click();
       await page.waitForFunction(() =>
         document.querySelectorAll('.mh-chapter')[0].classList.contains('is-on'),
       );

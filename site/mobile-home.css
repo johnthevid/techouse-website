@@ -1,7 +1,9 @@
-/* Phone homepage (max-width 599px). Tablet and desktop layouts are unchanged.
-   Tuned values from the approved mock-up: blur 10%, vignette 80%, shade 115%,
-   photo brightness 135%. Built by mobile-home.js inside .division-landing. */
+/* Phone homepage (max-width 599px), the client's chosen "Cinematic chapters" in light mode:
+   photo and chapter on top, round division selectors on paper, Call us / Get a quote fixed at
+   the bottom for the whole homepage. Tablet and desktop are unchanged.
+   Built by mobile-home.js inside .division-landing. */
 .mh,
+.mh-bar,
 .mh-menu,
 .mh-menu-button {
   display: none;
@@ -12,23 +14,28 @@
     --mh-ease: cubic-bezier(0.22, 0.7, 0.2, 1);
     --mh-ink: #12221e;
     --mh-green: #173b30;
+    --mh-paper: #f7f6ef;
+    --mh-paper-line: #dfe2d8;
+    --mh-gold-light: #d4af68;
     --mh-gold-sheen: linear-gradient(120deg, #b89657 0%, #e6cf8e 48%, #c7a35c 100%);
-    --mh-band-top: 200px;
-    --mh-grid-h: 96px;
-    --mh-bottom: calc(14px + env(safe-area-inset-bottom));
-    --mh-band-bottom: calc(var(--mh-bottom) + var(--mh-grid-h) + 12px);
+    --mh-pick-h: 108px;
+    --mh-bar-h: calc(72px + env(safe-area-inset-bottom));
   }
   /* The header sits over the photo; it already scrolls away with the page */
   .landing #header {
     background: transparent;
   }
+  /* Call us lives in the fixed bar on phones, so the header keeps the logo and the menu */
+  .landing #header .header-call {
+    display: none;
+  }
   .landing .division-landing {
     position: relative;
     height: 100svh;
-    min-height: 600px;
+    min-height: 640px;
     padding: 0;
     overflow: hidden;
-    background: #10231d;
+    background: var(--mh-paper);
   }
   .landing .division-banners,
   .landing .compact-banner-scene {
@@ -43,6 +50,7 @@
     width: auto;
     margin: 0;
     padding: 0;
+    pointer-events: none;
   }
   /* The old floating scroll cue belongs to the banners; phones scroll naturally */
   .landing .division-landing .banner-scroll-cue {
@@ -60,90 +68,49 @@
     position: absolute;
     inset: 0;
     color: #fff;
+    touch-action: pan-y;
   }
-  .mh-photos,
-  .mh-photos > * {
+  /* Photo strip: one photo per division side by side; swiping or a selector slides it */
+  .mh-stage {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--mh-pick-h) + var(--mh-bar-h));
+    overflow: hidden;
+    background: #10231d;
   }
-  .mh-photos > * {
+  .mh-photos {
+    display: flex;
+    height: 100%;
+    transition: transform 620ms var(--mh-ease);
+    will-change: transform;
+  }
+  .mh-photos.is-dragging {
+    transition: none;
+  }
+  .mh-photo {
+    flex: 0 0 100%;
+    height: 100%;
+  }
+  .mh-photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0;
-    filter: brightness(1.35);
-    transition: opacity 650ms ease;
+    -webkit-user-drag: none;
+    user-select: none;
   }
-  .mh-photos > .is-on {
-    opacity: 1;
-  }
-  /* Sharp behind the chapter, easing into a light blur above and below it */
-  .mh-blur,
-  .mh-tint {
+  .mh-shade {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    -webkit-mask-image: var(--mh-mask);
-    mask-image: var(--mh-mask);
-  }
-  .mh-blur-near {
-    -webkit-backdrop-filter: blur(1.2px);
-    backdrop-filter: blur(1.2px);
-    --mh-mask: linear-gradient(
-      180deg,
-      #000 calc(var(--mh-band-top) - 64px),
-      transparent calc(var(--mh-band-top) - 10px),
-      transparent calc(100% - var(--mh-band-bottom) + 30px),
-      #000 calc(100% - var(--mh-band-bottom) + 76px)
-    );
-  }
-  .mh-blur-far {
-    -webkit-backdrop-filter: blur(3.2px);
-    backdrop-filter: blur(3.2px);
-    --mh-mask: linear-gradient(
-      180deg,
-      #000 calc(var(--mh-band-top) - 196px),
-      transparent calc(var(--mh-band-top) - 110px),
-      transparent calc(100% - var(--mh-band-bottom) + 76px),
-      #000 calc(100% - var(--mh-band-bottom) + 226px)
-    );
-  }
-  .mh-tint {
-    background: rgba(7, 24, 20, 0.46);
-    --mh-mask: linear-gradient(
-      180deg,
-      #000 calc(var(--mh-band-top) - 30px),
-      transparent calc(var(--mh-band-top) + 10px),
-      transparent calc(100% - var(--mh-band-bottom) - 40px),
-      #000 calc(100% - var(--mh-band-bottom) + 60px)
-    );
-  }
-  .mh-band {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: var(--mh-band-top);
-    bottom: calc(var(--mh-band-bottom) - 80px);
     background: linear-gradient(
       180deg,
-      rgba(7, 24, 20, 0) 20%,
-      rgba(7, 24, 20, 0.72) calc(100% - 80px),
-      rgba(7, 24, 20, 0) 100%
+      rgba(8, 24, 20, 0.72) 0%,
+      rgba(8, 24, 20, 0.4) 34%,
+      rgba(8, 24, 20, 0.24) 52%,
+      rgba(8, 24, 20, 0.88) 100%
     );
-    pointer-events: none;
-  }
-  .mh-vignette {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background:
-      linear-gradient(
-        180deg,
-        rgba(4, 14, 12, 0.66) 0%,
-        rgba(4, 14, 12, 0.4) 120px,
-        rgba(4, 14, 12, 0) 235px
-      ),
-      radial-gradient(130% 80% at 50% 55%, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.26) 100%);
   }
 
   /* Chapters: all mounted; the old one sinks away as the new one rises in */
@@ -152,7 +119,7 @@
     z-index: 3;
     left: 20px;
     right: 20px;
-    bottom: calc(var(--mh-band-bottom) + 14px);
+    bottom: calc(var(--mh-pick-h) + var(--mh-bar-h) + 28px);
   }
   .mh-chapter {
     position: absolute;
@@ -222,104 +189,154 @@
     height: 18px;
   }
   .mh-cta:focus-visible,
-  .mh-pill:focus-visible,
   .mh-menu a:focus-visible,
   .mh-menu-button:focus-visible {
     outline: 2px solid #e6cf8e;
     outline-offset: 3px;
   }
 
-  /* 2 x 2 pill grid: absolutely placed by script, rows always fill the width */
-  .mh-grid {
+  /* Round division selectors on paper, five across */
+  .mh-pick {
     position: absolute;
     z-index: 3;
-    left: 20px;
-    right: 20px;
-    bottom: var(--mh-bottom);
-    height: var(--mh-grid-h);
+    left: 0;
+    right: 0;
+    bottom: var(--mh-bar-h);
+    height: var(--mh-pick-h);
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    padding: 14px 4px 0;
+    background: var(--mh-paper);
+    border-top: 1px solid var(--mh-paper-line);
   }
-  .mh-pill {
-    position: absolute;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  .mh-pick button {
+    display: grid;
+    justify-items: center;
+    align-content: start;
     gap: 8px;
-    height: 44px;
-    padding: 0 16px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.55);
-    background: rgba(255, 255, 255, 0.08);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    color: #fff;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #66746e;
     font:
-      500 15px/1 'DM Sans',
+      500 13px/18px 'DM Sans',
       Arial,
       sans-serif;
     white-space: nowrap;
     cursor: pointer;
-    transition:
-      left 520ms var(--mh-ease) 60ms,
-      top 520ms var(--mh-ease) 60ms,
-      width 520ms var(--mh-ease) 60ms,
-      opacity 300ms ease 160ms,
-      transform 420ms var(--mh-ease) 160ms,
-      background-color 200ms ease,
-      border-color 200ms ease;
+    transition: color 300ms ease;
   }
-  .mh-pill svg {
-    width: 18px;
-    height: 18px;
+  .mh-ring {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid #c8cec4;
+    border-radius: 50%;
+    color: var(--mh-green);
+    transition:
+      background-color 320ms ease,
+      border-color 320ms ease,
+      color 320ms ease;
+  }
+  .mh-ring svg {
+    width: 22px;
+    height: 22px;
+  }
+  .mh-pick button[aria-pressed='true'] {
+    color: var(--mh-ink);
+    font-weight: 600;
+  }
+  .mh-pick button[aria-pressed='true'] .mh-ring {
+    background: var(--mh-gold-light);
+    border-color: var(--mh-gold-light);
+    color: var(--mh-ink);
+  }
+  .mh-pick button:focus-visible {
+    outline: none;
+  }
+  .mh-pick button:focus-visible .mh-ring {
+    outline: 2px solid var(--mh-green);
+    outline-offset: 3px;
+  }
+
+  /* Call us and Get a quote: fixed to the bottom for the whole phone homepage */
+  .landing .mh-bar {
+    display: grid;
+    grid-template-columns: 0.72fr 1fr;
+    gap: 10px;
+    position: fixed;
+    z-index: 25;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--mh-bar-h);
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: var(--mh-paper);
+    border-top: 1px solid var(--mh-paper-line);
+    transition:
+      opacity 550ms var(--mh-ease),
+      transform 550ms var(--mh-ease);
+  }
+  .mh-bar a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .mh-bar svg {
+    width: 20px;
+    height: 20px;
     flex: none;
   }
-  .mh-pill:active {
-    background: rgba(255, 255, 255, 0.24);
+  .mh-bar-call {
+    border: 1.5px solid var(--mh-green);
+    color: var(--mh-green);
   }
-  .mh-pill.is-gone {
-    opacity: 0;
-    pointer-events: none;
-    transform: scale(0.94);
+  .mh-bar-quote {
+    background: var(--mh-green);
+    color: #fff;
   }
-  .mh-pill.is-gone:not(.is-leaving) {
-    visibility: hidden;
+  .mh-bar a:focus-visible {
+    outline: 2px solid var(--mh-gold-light);
+    outline-offset: 2px;
   }
-  .mh-pill.is-leaving {
-    transition:
-      opacity 180ms ease,
-      transform 220ms ease;
+  /* Room under the page for the bar */
+  html.mh-has-bar .landing #footer,
+  html.mh-has-bar body.landing #footer {
+    padding-bottom: calc(var(--mh-bar-h) + 16px);
   }
-  .mh-pill.is-entering {
-    opacity: 0;
-    transform: scale(0.94);
-  }
-  .mh-grid.is-instant .mh-pill,
-  .mh-pill.is-instant-one {
-    transition: none !important;
-  }
-  .mh-grid.is-measuring {
-    display: flex;
-    visibility: hidden;
-  }
-  .mh-grid.is-measuring .mh-pill {
-    position: static;
-    width: auto !important;
+  /* The homepage is short and the bar is always in reach, so Back to top would only cover content */
+  html.mh-has-bar body.landing .back-to-top {
+    display: none;
   }
 
   /* Follow the approved intro: hidden while it plays, revealed with the divisions */
   .division-landing.intro-playing .mh-chapters,
-  .division-landing.intro-playing .mh-grid,
+  .division-landing.intro-playing .mh-pick,
   .division-landing[data-reveal-phase='headline'] .mh-chapters,
-  .division-landing[data-reveal-phase='headline'] .mh-grid {
+  .division-landing[data-reveal-phase='headline'] .mh-pick {
     opacity: 0;
     transform: translateY(20px);
   }
+  body:has(.division-landing.intro-playing) .mh-bar,
+  body:has(.division-landing[data-reveal-phase='headline']) .mh-bar {
+    opacity: 0;
+    transform: translateY(100%);
+    pointer-events: none;
+  }
   .mh-chapters,
-  .mh-grid {
+  .mh-pick {
     transition:
       opacity 550ms cubic-bezier(0.22, 0.7, 0.2, 1),
       transform 550ms cubic-bezier(0.22, 0.7, 0.2, 1);
   }
-  .mh-grid {
+  .mh-pick {
     transition-delay: 85ms;
   }
 
@@ -501,6 +518,7 @@
 
 @media (max-width: 599px) and (prefers-reduced-motion: reduce) {
   .mh *,
+  .mh-bar,
   .mh-menu,
   .mh-menu * {
     transition: none !important;

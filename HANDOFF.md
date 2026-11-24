@@ -11,6 +11,13 @@
 - To go live: (1) Google Cloud: billing on; enable Maps JavaScript API, Places API (New), Maps Static API; create a browser key restricted to the site's addresses and those three APIs; paste it in the back office. (2) Apply migration 0003 to the production D1 database separately from the code deploy (user approval required).
 - Tests: `platform/tests/property-pin.test.mjs` (server validation, end-to-end with a stand-in Google Maps script, back-office view). Full suite 45/45.
 - Merged to main 24 Nov 2026; not deployed; migration 0003 not applied to production.
+## Latest: phone homepage, client's chosen option (branch `feature/mobile-home-chapters`, merged into `main` 24 Nov 2026 at the user's request; not deployed)
+
+Client picked Option 1 "Cinematic chapters" (light mode) from the mobile proposal, with Option 2's swipe added.
+- `site/mobile-home.js`, `site/mobile-home.css` (phones under 600px only; tablet and desktop unchanged): division photo with its chapter (title, label, gold button) over it; a photo strip that follows a horizontal swipe and settles on release (rubber-band at the ends, vertical drags still scroll); five round selectors on paper below, kept in step with the swipe; arrow keys work on the selectors.
+- Call us (tel) and Get a quote (#/inquiry) are fixed to the bottom of the screen on the whole phone homepage (hero, About section, footer); hidden while the approved intro plays; removed when leaving the homepage. Footer has bottom room for it; Back to top is hidden on the phone homepage (it covered the About button).
+- No "01 / 05" counter. Header call icon hidden on the phone homepage (Call us is in the bar); the menu button stays because it is the only phone route to Divisions, News and the partner page (the proposal showed "About us" there instead).
+- The approved intro animation is untouched. The old 2 x 2 pill grid and its layout code are removed. Tests updated (`mobile-refinement`, `homepage-refinement`) including a swipe test. 43/43 pass.
 
 ## Latest: solar page polish (branch `fix/solar-mobile-steps`, merged into `main` 24 Nov 2026 at the user's request; not deployed)
 
