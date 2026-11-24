@@ -586,3 +586,9 @@
   outline: 3px solid #e5bf78;
   outline-offset: 6px;
 }
+#main .px-pane-edit .ix-detail-empty .button {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 18px;
+}

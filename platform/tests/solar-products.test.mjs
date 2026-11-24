@@ -119,14 +119,24 @@ test("staff edit a product in the back office and visitors see it on the equipme
   await page.locator('[name="status"]').selectOption("draft");
   await page.locator(".px-actions [type=submit]").click();
   await page.waitForFunction(() => document.querySelector(".ix-save-state")?.textContent.includes("as a draft"));
-  // New product.
+  // New product, from the Add product tab: its draft survives a trip to Edit product.
+  await page.locator('.px-panel-tabs [data-panel="add"]').click();
+  assert.equal(await page.locator('.px-panel-tabs [data-panel="add"]').getAttribute("aria-selected"), "true");
+  await page.locator('[name="title"]').fill("Kept while switching");
+  await page.locator('.px-panel-tabs [data-panel="edit"]').click();
+  await page.locator('.px-panel-tabs [data-panel="add"]').click();
+  assert.equal(await page.locator('[name="title"]').inputValue(), "Kept while switching");
+  await page.locator("[data-cancel-product]").click();
+  assert.equal(await page.locator('[name="title"]').inputValue(), "");
   await page.locator('[data-new-product="batteries"]').click();
+  assert.equal(await page.locator('[name="category"]').inputValue(), "batteries");
   await page.locator('[name="title"]').fill("Test Cabinet 300");
   assert.equal(await page.locator('[name="status"]').inputValue(), "draft", "new products start hidden");
   await page.locator('[name="status"]').selectOption("published");
   await page.locator('[name="pdfMode"][value="none"]').check();
   await page.locator(".px-actions [type=submit]").click();
   await page.waitForFunction(() => document.querySelector(".ix-save-state")?.textContent.startsWith("Added"));
+  assert.equal(await page.locator('.px-panel-tabs [data-panel="edit"]').getAttribute("aria-selected"), "true", "a new product opens in Edit product");
   const stored = JSON.parse(f.db.prepare("SELECT body FROM content WHERE id=1").get().body).products;
   assert.equal(stored.length, 12);
   assert.equal(stored[0].pdf, "https://example.com/new.pdf");

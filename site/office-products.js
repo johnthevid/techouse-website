@@ -20,6 +20,9 @@ window.TechouseProducts = (() => {
     saving = false,
     message = '',
     panel = 'edit',
+    // Add product and Edit product keep separate drafts, so switching tabs never loses work.
+    formPanel = 'edit',
+    stash = { add: null, edit: null },
     previewCategory = 'panels',
     previewSize = 'desktop',
     frame = null,
@@ -53,6 +56,33 @@ window.TechouseProducts = (() => {
     dirty = false;
     confirming = false;
     message = '';
+  }
+  const anyDirty = () => dirty || !!stash.add?.dirty || !!stash.edit?.dirty;
+  // Switch the right-hand panel: 'add', 'edit' or 'page'. Page preview shows the last form's draft.
+  function setPanel(next, category) {
+    if ((next === 'add' || next === 'edit') && next !== formPanel) {
+      stash[formPanel] = { draft, dirty, message, confirming };
+      const kept = stash[next];
+      stash[next] = null;
+      if (kept) ({ draft, dirty, message, confirming } = kept);
+      else {
+        const product = next === 'edit' ? list.find((p) => p.id === selected) : null;
+        draft =
+          next === 'add'
+            ? blank(category || (filter === 'all' ? previewCategory : filter))
+            : product
+              ? structuredClone(product)
+              : null;
+        dirty = false;
+        message = '';
+        confirming = false;
+      }
+      formPanel = next;
+    }
+    if (next === 'add' && category && !dirty) draft = blank(category);
+    if (next === 'add' && !draft) draft = blank(category || previewCategory);
+    panel = next;
+    if (draft) previewCategory = draft.category;
   }
   // Resize an upload in the browser. WebP keeps the transparent backgrounds of product cut-outs.
   async function resize(file) {
@@ -145,7 +175,7 @@ window.TechouseProducts = (() => {
   }
   function editorView() {
     if (!draft)
-      return `<div class="ix-detail-empty"><h2>Choose a product</h2><p>Select a product to edit its name, specifications, image and datasheet, or add a new one. Changes appear on the solar equipment pages once saved and published.</p></div>`;
+      return `<div class="ix-detail-empty"><h2>Choose a product</h2><p>Select a product in the list to edit its name, specifications, image and datasheet. To create one, open Add product. Changes appear on the solar equipment pages once saved and published.</p><button type="button" class="button outline small" data-panel="add">${icon('add')} Add product</button></div>`;
     const p = draft;
     const exists = list.some((item) => item.id === p.id);
     return `<form class="px-editor" data-product-form novalidate><button type="button" class="ix-back text-link" data-close-product>${icon('arrow_back')} All products</button><header class="px-editor-head"><h2 tabindex="-1" id="px-editor-title">${exists ? 'Edit product' : 'New product'}</h2><p role="status" aria-live="polite" class="ix-save-state">${esc(message || (dirty ? 'Unsaved changes' : ''))}</p></header><div class="px-columns"><div class="px-fields"><div class="px-two"><label class="px-field">Category<select name="category">${categories()
@@ -162,7 +192,7 @@ window.TechouseProducts = (() => {
       )
       .join(
         '',
-      )}</ol>${p.specs.length < 8 ? `<button type="button" class="text-link" data-add-spec>${icon('add')} Add a line</button>` : ''}</fieldset>${imageField(p)}${datasheetField(p)}</div><aside class="px-preview" aria-label="Preview"><h3>Preview</h3><p>How the card appears on the ${esc(catalogue().labels[p.category].toLowerCase())} page.</p><div class="catalogue-page catalogue-refined px-preview-frame" data-preview inert><div class="catalogue-products">${catalogue().card(clean(p))}</div></div>${p.status === 'draft' ? '<p class="px-preview-note">Draft: visitors will not see this product.</p>' : ''}</aside></div><footer class="px-actions"><button type="submit" class="button" ${saving ? 'disabled' : ''}>${saving ? 'Saving…' : exists ? 'Save product' : 'Add product'}</button><button type="button" class="button outline" data-cancel-product ${dirty ? '' : 'disabled'}>Discard changes</button>${
+      )}</ol>${p.specs.length < 8 ? `<button type="button" class="text-link" data-add-spec>${icon('add')} Add a line</button>` : ''}</fieldset>${imageField(p)}${datasheetField(p)}</div><aside class="px-preview" aria-label="Preview"><h3>Preview</h3><p>How the card appears on the ${esc(catalogue().labels[p.category].toLowerCase())} page.</p><div class="catalogue-page catalogue-refined px-preview-frame" data-preview inert><div class="catalogue-products">${catalogue().card({ ...clean(p), title: p.title.trim() || 'Product name' })}</div></div>${p.status === 'draft' ? '<p class="px-preview-note">Draft: visitors will not see this product.</p>' : ''}</aside></div><footer class="px-actions"><button type="submit" class="button" ${saving ? 'disabled' : ''}>${saving ? 'Saving…' : exists ? 'Save product' : 'Add product'}</button><button type="button" class="button outline" data-cancel-product ${dirty ? '' : 'disabled'}>Discard changes</button>${
       exists
         ? confirming
           ? `<span class="px-confirm"><span>Delete “${esc(p.title)}” from the catalogue?</span><button type="button" class="button small ix-danger" data-confirm-delete-product>Delete</button><button type="button" class="button outline small" data-keep-product>Keep</button></span>`
@@ -284,23 +314,25 @@ window.TechouseProducts = (() => {
     if (hashId && list.some((p) => p.id === hashId)) select(hashId);
     else if (selected && !list.some((p) => p.id === selected)) select(null);
     // The layout and the preview frame are built once; draw() refreshes the list and the editor.
-    root.innerHTML = `<p class="ix-hint px-builtin">The website shows the built-in Skyworth catalogue. Your first save copies it here, so every product becomes editable.</p><div class="px-layout"><div class="px-list-wrap"></div><div class="px-editor-wrap"><div class="px-panel-tabs" role="tablist" aria-label="Product panel"><button type="button" role="tab" id="px-tab-edit" aria-controls="px-pane-edit" data-panel="edit">Edit product</button><button type="button" role="tab" id="px-tab-page" aria-controls="px-pane-page" data-panel="page">Page preview</button></div><div class="px-pane-edit" id="px-pane-edit" role="tabpanel" aria-labelledby="px-tab-edit"></div><div class="px-pane-page" id="px-pane-page" role="tabpanel" aria-labelledby="px-tab-page">${pagePane()}</div></div></div>`;
+    root.innerHTML = `<p class="ix-hint px-builtin">The website shows the built-in Skyworth catalogue. Your first save copies it here, so every product becomes editable.</p><div class="px-layout"><div class="px-list-wrap"></div><div class="px-editor-wrap"><div class="px-panel-tabs" role="tablist" aria-label="Product panel"><button type="button" role="tab" id="px-tab-add" aria-controls="px-pane-edit" data-panel="add">Add product</button><button type="button" role="tab" id="px-tab-edit" aria-controls="px-pane-edit" data-panel="edit">Edit product</button><button type="button" role="tab" id="px-tab-page" aria-controls="px-pane-page" data-panel="page">Page preview</button></div><div class="px-pane-edit" id="px-pane-edit" role="tabpanel"></div><div class="px-pane-page" id="px-pane-page" role="tabpanel" aria-labelledby="px-tab-page">${pagePane()}</div></div></div>`;
     frame = root.querySelector('.px-page-viewport iframe');
     frameReady = false;
     new ResizeObserver(() => fitFrame(root)).observe(root.querySelector('.px-page-viewport'));
     function draw(focus) {
       if (!root.isConnected) return;
       const scroll = root.querySelector('.px-list-wrap')?.scrollTop;
-      root.classList.toggle('has-selection', !!draft);
+      root.classList.toggle('has-selection', !!draft || panel !== 'edit');
       root.querySelector('.px-builtin').hidden = saved();
       root.querySelector('.px-list-wrap').innerHTML = listView();
       root.querySelector('.px-pane-edit').innerHTML = editorView();
-      for (const tab of root.querySelectorAll('[data-panel]')) {
+      for (const tab of root.querySelectorAll('.px-panel-tabs [data-panel]')) {
         const active = tab.dataset.panel === panel;
         tab.setAttribute('aria-selected', String(active));
         tab.tabIndex = active ? 0 : -1;
       }
-      root.querySelector('.px-pane-edit').hidden = panel !== 'edit';
+      const formPane = root.querySelector('.px-pane-edit');
+      formPane.hidden = panel === 'page';
+      formPane.setAttribute('aria-labelledby', panel === 'add' ? 'px-tab-add' : 'px-tab-edit');
       root.querySelector('.px-pane-page').hidden = panel !== 'page';
       syncPagePane(root);
       if (scroll) root.querySelector('.px-list-wrap').scrollTop = scroll;
@@ -331,7 +363,10 @@ window.TechouseProducts = (() => {
     function refreshPreview(form) {
       sendPreview();
       const frame = form.querySelector('.px-preview-frame .catalogue-products');
-      frame.innerHTML = catalogue().card(clean(draft));
+      frame.innerHTML = catalogue().card({
+        ...clean(draft),
+        title: draft.title.trim() || 'Product name',
+      });
       form.querySelector('.ix-save-state').textContent = dirty ? 'Unsaved changes' : '';
       form.querySelector('[data-cancel-product]').disabled = !dirty;
     }
@@ -350,12 +385,15 @@ window.TechouseProducts = (() => {
       }
     }
     const leaveDraft = () => !dirty || confirm('Discard the unsaved changes to this product?');
+    const focusTab = () => root.querySelector(`.px-panel-tabs [data-panel="${panel}"]`)?.focus();
     root.onclick = async (event) => {
       const tab = event.target.closest('[data-panel]');
       if (tab) {
-        panel = tab.dataset.panel;
+        setPanel(tab.dataset.panel);
         draw();
-        return root.querySelector(`[data-panel="${panel}"]`).focus();
+        return tab.closest('.px-panel-tabs')
+          ? focusTab()
+          : root.querySelector('[name="title"]')?.focus();
       }
       const previewCat = event.target.closest('[data-preview-category]');
       if (previewCat) {
@@ -374,27 +412,26 @@ window.TechouseProducts = (() => {
       }
       const pick = event.target.closest('[data-pick-product]');
       if (pick) {
-        if (pick.dataset.pickProduct === selected || !leaveDraft()) return;
+        setPanel('edit');
+        if (pick.dataset.pickProduct === selected && draft) return draw();
+        if (!leaveDraft()) return draw();
         select(pick.dataset.pickProduct);
         history.replaceState(null, '', '#/office/products?id=' + encodeURIComponent(selected));
         return draw('#px-editor-title');
       }
       const add = event.target.closest('[data-new-product]');
       if (add) {
-        if (!leaveDraft()) return;
-        const category = add.dataset.newProduct || (filter === 'all' ? 'panels' : filter);
-        panel = 'edit';
-        previewCategory = category;
-        selected = null;
-        draft = blank(category);
-        dirty = false;
-        confirming = false;
-        message = '';
-        history.replaceState(null, '', '#/office/products');
+        setPanel('add', add.dataset.newProduct || (filter === 'all' ? 'panels' : filter));
         draw('[name="title"]');
         return;
       }
       if (event.target.closest('[data-close-product]')) {
+        if (panel === 'add') {
+          setPanel('edit');
+          select(null);
+          history.replaceState(null, '', '#/office/products');
+          return draw();
+        }
         if (!leaveDraft()) return;
         const id = selected;
         select(null);
@@ -454,9 +491,12 @@ window.TechouseProducts = (() => {
         return draw();
       }
       if (event.target.closest('[data-cancel-product]')) {
-        if (draft.isNew) select(null);
-        else select(selected);
-        return draw();
+        if (panel === 'add') {
+          draft = blank(draft.category);
+          dirty = false;
+          message = '';
+        } else select(selected);
+        return draw('[name="title"]');
       }
       if (event.target.closest('[data-delete-product]')) {
         confirming = true;
@@ -485,16 +525,22 @@ window.TechouseProducts = (() => {
         return draw();
       }
     };
-    // Tabs: Left and Right arrows move between Edit product and Page preview.
+    // Tabs: Left and Right arrows move between Add product, Edit product and Page preview.
     root.onkeydown = (event) => {
-      const tab = event.target.closest('[data-panel]');
+      const tab = event.target.closest('.px-panel-tabs [data-panel]');
       if (!tab || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
       event.preventDefault();
-      panel = panel === 'edit' ? 'page' : 'edit';
-      if (event.key === 'Home') panel = 'edit';
-      if (event.key === 'End') panel = 'page';
+      const order = ['add', 'edit', 'page'];
+      const at = order.indexOf(panel);
+      const next =
+        event.key === 'Home'
+          ? 'add'
+          : event.key === 'End'
+            ? 'page'
+            : order[(at + (event.key === 'ArrowRight' ? 1 : 2)) % 3];
+      setPanel(next);
       draw();
-      root.querySelector(`[data-panel="${panel}"]`).focus();
+      focusTab();
     };
     root.oninput = (event) => {
       const form = event.target.closest('[data-product-form]');
@@ -576,21 +622,23 @@ window.TechouseProducts = (() => {
       );
       if (ok) {
         const note = message;
+        // A new product moves to Edit product; Add product starts a fresh form next time.
+        if (panel === 'add') {
+          dirty = false;
+          setPanel('edit');
+          stash.add = null;
+        }
         select(product.id);
         message = note;
         history.replaceState(null, '', '#/office/products?id=' + encodeURIComponent(product.id));
       }
       draw('.ix-save-state');
     };
-    // The page header's Add product button sits outside the editor area.
-    document
-      .querySelector('.admin-top [data-new-product]')
-      ?.addEventListener('click', (event) => root.onclick(event));
     draw();
   }
   // Leaving the page with unsaved product edits asks first, like the other editors.
   window.addEventListener('beforeunload', (event) => {
-    if (dirty && document.querySelector('[data-product-form]')) {
+    if (anyDirty() && document.querySelector('#office-products')) {
       event.preventDefault();
       event.returnValue = '';
     }
@@ -598,9 +646,10 @@ window.TechouseProducts = (() => {
   window.addEventListener(
     'hashchange',
     (event) => {
-      if (!dirty || !document.querySelector('[data-product-form]')) return;
-      if (confirm('Discard the unsaved changes to this product?')) {
+      if (!anyDirty() || !document.querySelector('#office-products')) return;
+      if (confirm('Discard the unsaved product changes?')) {
         dirty = false;
+        stash = { add: null, edit: null };
         return;
       }
       event.stopImmediatePropagation();

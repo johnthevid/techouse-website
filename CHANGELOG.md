@@ -5,6 +5,7 @@ Recorded milestones for the Techouse website. Dates use the project's Asia/Manil
 ## Unreleased — Solar products editor
 
 - Back office tab "Solar products": edit, reorder, draft, add and delete the Skyworth catalogue (names, capacity, specifications, image upload or bundled image, datasheet file or link) with a live preview. Saved into the content record; the built-in catalogue remains the default until the first save.
+- Right panel tabs: Add product, Edit product and Page preview; each form keeps its own unsaved draft.
 - Page preview tab beside Edit product: the real category page with unsaved edits, at computer or phone width.
 - Fix: back office theme buttons now work in the local workspace and the static demo, not only on the signed-in office page.
 - The public catalogue now escapes product text and handles missing images, datasheets and empty categories. Content saves over 1.9 MB are refused before they hit the database row limit.
