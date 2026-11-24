@@ -650,6 +650,21 @@ window.TechouseContent = (() => {
     page,
     projectsPage,
     snapshot: () => structuredClone(data),
+    // Back office → Solar products saves the whole catalogue list through the same content save.
+    // Throws with a readable message so the editor can show it inline.
+    async saveProducts(products) {
+      const next = { ...structuredClone(data), products };
+      if (window.TechouseAdmin) {
+        data = await window.TechousePlatform.saveContent(next);
+        return;
+      }
+      try {
+        localStorage.setItem(key, JSON.stringify(next));
+      } catch {
+        throw Error('This browser could not save the catalogue. Try smaller images.');
+      }
+      data = next;
+    },
     customizationSnapshot: () => structuredClone({ text: data.text, images: data.images }),
     previewFrame,
     startPreview,

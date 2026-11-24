@@ -2,6 +2,11 @@
 
 Recorded milestones for the Techouse website. Dates use the project's Asia/Manila calendar. These entries describe completed work; they are not retroactively created Git tags or GitHub Releases.
 
+## Unreleased — Solar products editor
+
+- Back office tab "Solar products": edit, reorder, draft, add and delete the Skyworth catalogue (names, capacity, specifications, image upload or bundled image, datasheet file or link) with a live preview. Saved into the content record; the built-in catalogue remains the default until the first save.
+- The public catalogue now escapes product text and handles missing images, datasheets and empty categories. Content saves over 1.9 MB are refused before they hit the database row limit.
+
 ## Unreleased — Traffic, leads and stored inquiries (merged into main 23 Nov 2026)
 
 - Inquiries are stored on the server (D1, migration `0002.sql`) instead of only in the visitor's browser, with their source (search, social, paid, campaign tags, referring site and first page). Site-visit preferences are attached to the inquiry. Public copy says the request was sent; the static demo keeps its demo wording.

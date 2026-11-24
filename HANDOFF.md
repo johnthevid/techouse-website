@@ -1,5 +1,16 @@
 # Current handoff
 
+## Latest: Solar products editor in the back office (branch `claude/zen-fermat-g5352f`, 25 Nov 2026; not merged, not deployed)
+
+- New back office tab **Solar products** (`#/office/products`, `site/office-products.js`, `site/office-products.css`): list grouped by Solar panels / Inverters / Battery storage with published and draft counts, up/down reordering within a category (saves immediately), and an editor with category, status (new products start as drafts), name, power/capacity, short description, up to eight "Technical details" lines, image (pick a bundled product image or upload one: resized to 900 px WebP, transparency kept), "What the image shows" note, image source link, and datasheet (bundled PDF, an https link, or none). A live preview uses the public card markup. Delete has an inline confirm; unsaved edits ask before leaving.
+- Storage: `content.products` in the shared content record, saved through the normal content save (`TechouseContent.saveProducts`). If `products` is absent the site shows the built-in catalogue (`catalogue.js` `builtIn`), so nothing changes for visitors until staff save. No database migration.
+- Server (`platform/products.mjs`, used by `worker.mjs`): validates category, status, lengths, specs (8 max), image (bundled asset or data image, 700 KB max), datasheet (`assets/…pdf` without `..`, or https), image source (https). Drafts are removed from the public bootstrap. New guard: a content save over 1.9 MB is refused with a clear message (D1 row limit about 2 MB); this also protects project photos.
+- Public (`catalogue.js`): reads saved published products, escapes every field (the old template inserted raw strings), hides missing images/datasheets/specs cleanly, and shows "Models are being updated" for an empty category. The back office Page status file check now covers on-site datasheets only.
+- Not done: uploading new datasheet PDFs (most are 2–23 MB, too large for D1; needs an R2 bucket); the solar calculator's equipment and pricing model is separate and not editable here.
+- Checks: `npm test` 47/47 (new `platform/tests/solar-products.test.mjs`: validation, drafts hidden, size guard, browser edit → public page). Screenshots at 1440 px light/dark and 390 px; no page errors.
+- Deployment: not deployed; no database step needed for this feature.
+
+
 ## Latest: header Call us shrinks to its icon on tablets (branch `fix/header-call-icon`, merged into `main` 24 Nov 2026 at the user's request; not deployed)
 
 - Homepage header at 600–899px (`mobile-refinement.css` end): Call us shows only its phone icon (44 × 44, aria-label unchanged) so Call us, Refer & Earn and Request a quote fit. Fixes the iPad mini portrait overflow (Request a quote was cut off by 14px). Phones already showed the icon; 900px and wider keep the text; other pages' headers fit and are unchanged (checked 744–1280px).

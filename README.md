@@ -52,6 +52,7 @@ Corporate website and protected content-management workspace for Techouse, built
 - Recovery codes, account security controls, session expiry and sign-out.
 - Shared project and update editing with draft/published states.
 - Inquiries inbox: requests from the website form are stored in D1, with status (new, contacted, qualified, won, closed, spam), team notes, site-visit preference, source attribution and CSV download.
+- Solar products editor: Skyworth panels, inverters and batteries with images, specifications, datasheets, order and draft status.
 - Traffic & leads report: cookieless visitor counts, sources and tracked campaigns, the visit-to-inquiry funnel, visitor actions (calls, emails, estimates, datasheets), devices and a page status table with script errors and a file check.
 - Basic supported website text and banner-image editing.
 - Search/filter tools, unsaved-change handling and stale-save conflict detection.

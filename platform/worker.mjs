@@ -2,6 +2,7 @@
  * Never place encryption keys, passwords, or MFA secrets in public assets or browser storage.
  */
 import { scrypt } from "node:crypto";
+import { validateProducts } from "./products.mjs";
 import { insightsRoute, pruneInsights } from "./insights.mjs";
 const encoder = new TextEncoder();
 const json = (body, status = 200, headers = {}) =>
@@ -414,6 +415,7 @@ export function validateContent(input) {
       return row;
     });
   }
+  if (input.products !== undefined) content.products = validateProducts(input.products, { text, image, fail });
   return content;
 }
 async function getContent(env, published = false) {
@@ -422,8 +424,8 @@ async function getContent(env, published = false) {
     ? JSON.parse(row.body)
     : { text: {}, images: {}, projects: [], posts: [], portfolioVersion: 2 };
   if (published)
-    for (const type of ["posts", "projects"])
-      value[type] = value[type].filter((p) => p.status === "published");
+    for (const type of ["posts", "projects", "products"])
+      if (Array.isArray(value[type])) value[type] = value[type].filter((p) => p.status === "published");
   return { content: value, version: row?.version || 0 };
 }
 async function route(request, env) {
@@ -717,6 +719,9 @@ async function route(request, env) {
       csrf(request, s);
       const input = await body(request);
       const value = validateContent(input.content);
+      // D1 stores the whole record in one row (about 2 MB at most); refuse before the database does.
+      if (new TextEncoder().encode(JSON.stringify(value)).length > 1_900_000)
+        fail(413, "The website content is too large to save. Remove or replace some uploaded images, then try again.");
       const result = await query(
         env,
         "UPDATE content SET body=?,version=version+1 WHERE id=1 AND version=?",

@@ -1,10 +1,10 @@
 /**
  * Solar catalogue data and category templates.
- * Add product records to products; keep manufacturer specifications and PDF asset paths verified.
+ * Staff edit products in Back office → Solar products (content.products). Until the first save,
+ * the built-in records below are shown; they are also the back office's starting list.
  */
 window.TechouseCatalogue = (() => {
-  // EDITABLE PRODUCT RECORDS: category, display copy, specifications, image, and datasheet paths.
-  const products = [
+  const builtIn = [
     {
       category: 'panels',
       title: 'QM210RTHCD Series',
@@ -188,10 +188,41 @@ window.TechouseCatalogue = (() => {
       pdf: 'assets/Solar Documents/Skyworth Materials/Batteries/EN_C&I PV & Battery-202604.pdf',
     },
   ];
+  builtIn.forEach((p, i) => Object.assign(p, { id: `builtin-${i + 1}`, status: 'published' }));
+  const esc = (v = '') =>
+    String(v).replace(
+      /[&<>"']/g,
+      (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c],
+    );
+  // Saved catalogue when staff have saved one, otherwise the built-in records. Drafts never show.
+  const all = () => {
+    const saved = window.TechouseContent?.snapshot().products;
+    return Array.isArray(saved) ? saved : builtIn;
+  };
+  let products = [];
+  const published = () => (products = all().filter((p) => p.status !== 'draft'));
+  const imageURL = (src) =>
+    /^(data:image\/(jpeg|png|webp);base64,|assets\/)/.test(src || '') ? src : '';
+  const pdfURL = (pdf) =>
+    /^https:\/\//.test(pdf || '') ? pdf : /^assets\//.test(pdf || '') ? encodeURI(pdf) : '';
+  // One catalogue card; the back office uses the same markup for its live preview.
+  function card(p) {
+    const icon = window.TechouseIcons.icon('arrow_outward');
+    const image = imageURL(p.image);
+    const pdf = pdfURL(p.pdf);
+    const specs = (p.specs || []).filter(Boolean);
+    return `<article class="catalogue-product">
+        <figure class="catalogue-product-figure"><div class="catalogue-image">${image ? `<img src="${esc(image)}" alt="${esc(p.websiteModel ? `Skyworth ${p.websiteModel} product-family illustration` : p.title)}" loading="lazy">` : ''}</div></figure>
+        <div class="catalogue-copy"><h2>${esc(p.title)}</h2>${p.subtitle ? `<span class="catalogue-product-kicker">${esc(p.subtitle)}</span>` : ''}${p.capacity ? `<strong class="catalogue-capacity">${esc(p.capacity)}</strong>` : ''}
+        ${specs.length || p.websiteModel ? `<details class="model-specifications"><summary>Technical details</summary>${p.websiteModel ? `<p class="catalogue-image-reference">Website image: ${esc(p.websiteModel)} · related product family</p>` : ''}<ul>${specs.map((spec) => `<li>${esc(spec)}</li>`).join('')}</ul></details>` : ''}
+        <div class="catalogue-actions">${pdf ? `<a class="button small" href="${esc(pdf)}" target="_blank" rel="noopener">View datasheet ${icon}</a>` : ''}<a class="text-link" href="#/inquiry?division=solar">Enquire ${icon}</a></div></div>
+      </article>`;
+  }
   const labels = { panels: 'Solar panels', inverters: 'Inverters', batteries: 'Battery storage' };
   function page(category) {
     if (!labels[category])
       return '<section class="container page-hero"><h1>Product category unavailable.</h1><a href="#/divisions/solar">Return to Solar</a></section>';
+    published();
     const selected = products.filter((p) => p.category === category);
     const introductions = {
       panels:
@@ -214,16 +245,10 @@ window.TechouseCatalogue = (() => {
             `<a href="#/divisions/solar/products/${id}" ${id === category ? 'aria-current="page"' : ''}>${label}<span class="catalogue-tab-count" aria-label="${products.filter((product) => product.category === id).length} items">${products.filter((product) => product.category === id).length}</span></a>`,
         )
         .join('')}</nav>
-      <div class="catalogue-products">${selected
-        .map(
-          (p, index) => `<article class="catalogue-product">
-        <figure class="catalogue-product-figure"><div class="catalogue-image"><img src="${p.image}" alt="Skyworth ${p.websiteModel} product-family illustration" loading="lazy"></div></figure>
-        <div class="catalogue-copy"><h2>${p.title}</h2><span class="catalogue-product-kicker">${p.subtitle}</span><strong class="catalogue-capacity">${p.capacity}</strong>
-        <details class="model-specifications"><summary>Technical details</summary><p class="catalogue-image-reference">Website image: ${p.websiteModel} · related product family</p><ul>${p.specs.map((spec) => `<li>${spec}</li>`).join('')}</ul></details>
-        <div class="catalogue-actions"><a class="button small" href="${encodeURI(p.pdf)}" target="_blank" rel="noopener">View datasheet ${icon}</a><a class="text-link" href="#/inquiry?division=solar">Enquire ${icon}</a></div></div>
-      </article>`,
-        )
-        .join('')}</div>
+      <div class="catalogue-products">${
+        selected.map(card).join('') ||
+        `<div class="catalogue-empty"><h2>Models are being updated.</h2><p>Our solar team can recommend ${labels[category].toLowerCase()} for your property in the meantime.</p><a class="text-link" href="#/inquiry?division=solar">Talk to our solar team ${icon}</a></div>`
+      }</div>
       <div class="catalogue-footnote"><p>Specifications follow the linked manufacturer datasheets. Website images illustrate related Skyworth product families; the image model is named in Technical details and may differ from the listed range.</p><p>Our team can confirm exact equipment, compatibility and availability for your project.</p></div>
       <section class="catalogue-partnership" aria-label="Techouse and Skyworth partnership"><div class="catalogue-partner-identity"><span>TECHOUSE × SKYWORTH</span><strong>Skyworth</strong><small>Direct solar partner</small></div><div class="catalogue-partner-message"><h2>Skyworth equipment.<br>Your project, with Techouse.</h2><p>Talk to our solar team about panels, inverters and battery storage suited to your property.</p><a class="text-link" href="#/inquiry?division=solar">Talk to our solar team ${icon}</a></div></section>
       <a class="back-divisions" href="#/divisions/solar">← Back to Solar energy</a>
@@ -264,7 +289,7 @@ window.TechouseCatalogue = (() => {
   // Keep the banner stable; let the product area fit each category’s natural height.
   function revealBanner() {
     finishSlide();
-    const catalogue = document.querySelector('.catalogue-page');
+    const catalogue = document.querySelector('.catalogue-page:not([data-preview])');
     if (!catalogue) return;
     const container = catalogue.querySelector('.container');
     const measure = document.createElement('div');
@@ -312,7 +337,7 @@ window.TechouseCatalogue = (() => {
     event.preventDefault();
     if (link.hasAttribute('aria-current')) return;
     finishSlide();
-    const catalogue = document.querySelector('.catalogue-page');
+    const catalogue = document.querySelector('.catalogue-page:not([data-preview])');
     const current = catalogue.dataset.category;
     const next = link.getAttribute('href').split('/').pop();
     const direction = categoryOrder.indexOf(next) > categoryOrder.indexOf(current) ? 1 : -1;
@@ -375,13 +400,31 @@ window.TechouseCatalogue = (() => {
     Promise.all(animations.map((animation) => animation.finished.catch(() => {}))).then(finish);
   });
   window.addEventListener('resize', () => {
-    if (resizeFrame || !document.querySelector('.catalogue-page')) return;
+    if (resizeFrame || !document.querySelector('.catalogue-page:not([data-preview])')) return;
     resizeFrame = requestAnimationFrame(() => {
       resizeFrame = 0;
       revealBanner();
     });
   });
   // The back office checks that every linked datasheet still loads.
-  const datasheets = () => [...new Set(products.map((p) => p.pdf).filter(Boolean))];
-  return { page, showcase, revealBanner, datasheets };
+  const datasheets = () => [
+    ...new Set(
+      published()
+        .map((p) => p.pdf)
+        .filter((pdf) => /^assets\//.test(pdf || '')),
+    ),
+  ];
+  // Every datasheet bundled with the site, for the back office's datasheet picker.
+  const bundledDatasheets = () => [...new Set(builtIn.map((p) => p.pdf))];
+  return {
+    page,
+    showcase,
+    revealBanner,
+    datasheets,
+    card,
+    labels,
+    all,
+    bundledDatasheets,
+    builtIn: () => structuredClone(builtIn),
+  };
 })();

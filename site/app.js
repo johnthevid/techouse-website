@@ -636,6 +636,7 @@ function adminTabs(active) {
     ['inquiries', 'Inquiries', '/office/inquiries'],
     ['traffic', 'Traffic & leads', '/office/traffic'],
     ['projects', 'Projects', '/office/projects'],
+    ['products', 'Solar products', '/office/products'],
     ['customizer', 'Website & company info', '/office/customizer'],
     ['posts', 'Updates', '/office/posts'],
   ];
@@ -695,6 +696,9 @@ function editorPage(id) {
 }
 function adminInquiries() {
   return `<section class="container admin-shell office-wide">${adminTop('Inquiries', 'Every request sent from the website. Open one to contact the person, set its status and keep notes for the team.')}${adminTabs('inquiries')}<div id="office-inquiries" class="ix"></div></section>`;
+}
+function adminProducts() {
+  return `<section class="container admin-shell office-wide">${adminTop('Solar products', 'The Skyworth panels, inverters and batteries on the solar equipment pages. Edit details, swap images and datasheets, set the order, or keep a product as a draft.', '<button type="button" class="button" data-new-product>+ Add product</button>')}${adminTabs('products')}<div id="office-products" class="ix"></div></section>`;
 }
 function adminTraffic() {
   return `<section class="container admin-shell office-wide">${adminTop('Traffic & leads', 'How many people visit, where they come from, and which sources turn into inquiries. Counted without cookies; staff visits are left out.', window.TechouseInsights.rangeControls())}${adminTabs('traffic')}<div id="office-traffic" class="ix"></div></section>`;
@@ -820,6 +824,9 @@ function render() {
   } else if (path === '/office/inquiries') {
     title = 'Inquiries · Back office';
     html = adminInquiries();
+  } else if (path === '/office/products') {
+    title = 'Solar products · Back office';
+    html = adminProducts();
   } else if (path === '/office/traffic') {
     title = 'Traffic & leads · Back office';
     html = adminTraffic();
@@ -852,6 +859,7 @@ function render() {
   window.TechouseOfficeUI?.mount();
   window.TechousePartner.mount(path);
   if (path.startsWith('/office')) window.TechouseInsights?.mount(path, { posts, divisions });
+  if (path === '/office/products') window.TechouseProducts?.mount();
   syncInquiryCta();
   if (
     path === '/inquiry' &&
