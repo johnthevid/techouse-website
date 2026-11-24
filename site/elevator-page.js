@@ -27,7 +27,7 @@ window.TechouseElevators = (() => {
     doors: 'Landing doors',
     buffers: 'Buffers',
   };
-  function shaft({ room = 'with', on = [], labels = false, title = '', crop = false } = {}) {
+  function shaft({ room = 'with', on = [], labels = false, title = '' } = {}) {
     const lit = (part) => (on.includes(part) ? ' is-on' : '');
     const top = room === 'with' ? 95 : 138; // sheave centre
     const floors = [200, 280, 360, 440];
@@ -63,7 +63,7 @@ window.TechouseElevators = (() => {
         .join('');
     };
     const tags = labels ? place('right') + place('left') : '';
-    return `<svg class="ev-drawing ev-shaft" viewBox="${crop ? '70 44 160 260' : labels ? '-170 40 610 430' : '0 0 300 470'}" role="img" aria-label="${esc(title || (room === 'with' ? 'Elevator with a machine room above the shaft' : 'Machine-room-less elevator with the machine inside the shaft'))}"><g class="ev-d-base"><path d="M20 440H280"/><path d="M40 120V440M260 120V440M40 120H260"/>${floors
+    return `<svg class="ev-drawing ev-shaft" viewBox="${labels ? '-170 40 610 430' : '0 0 300 470'}" role="img" aria-label="${esc(title || (room === 'with' ? 'Elevator with a machine room above the shaft' : 'Machine-room-less elevator with the machine inside the shaft'))}"><g class="ev-d-base"><path d="M20 440H280"/><path d="M40 120V440M260 120V440M40 120H260"/>${floors
       .slice(0, 3)
       .map((y) => `<path d="M40 ${y}H110M190 ${y}H260"/>`)
       .join(
@@ -158,10 +158,7 @@ window.TechouseElevators = (() => {
     capacity: ['How big should it be?'],
     item: ['What’s the biggest thing it has to fit?'],
     doors: ['How many entrances does the car need?'],
-    machineRoom: [
-      'Machine room or machine-room-less?',
-      'A machine-room-less elevator needs no room on the roof; a machine room makes servicing roomier.',
-    ],
+    machineRoom: ['Machine room or machine-room-less?'],
     shaft: ['Where is the shaft at?'],
     timeline: ['When do you need it?'],
     condition: ['How is it running right now?'],
@@ -210,6 +207,26 @@ window.TechouseElevators = (() => {
       ],
     },
   };
+  // Simple mode: two or three plain questions per service. Detailed adds the rest in the same
+  // ledger; answers carry over both ways because both modes share one form.
+  const SIMPLE = {
+    install: ['building', 'floors', 'item'],
+    maintenance: ['condition', 'brand'],
+    modernisation: ['issues', 'age'],
+    parts: ['part', 'stopped'],
+  };
+  const SIMPLE_TITLES = {
+    floors: 'How many floors?',
+    item: 'What will it carry?',
+    condition: 'Is it working right now?',
+    issues: 'What’s bothering you?',
+    stopped: 'Is the elevator stopped because of it?',
+  };
+  // The carry question in Simple mode offers only the everyday answers.
+  const SIMPLE_ITEMS = ['none', 'wheelchair', 'bed', 'goods'];
+  const INTRO = {
+    simple: 'Just the basics, in plain words. Switch to Detailed if you know the specifications.',
+  };
   const compact = new Set([
     'brand',
     'age',
@@ -226,26 +243,17 @@ window.TechouseElevators = (() => {
     const C = D().CHOICES;
     const multi = D().LISTS.includes(key);
     const kind =
-      key === 'building'
-        ? 'icons'
-        : compact.has(key) || (key === 'machineRoom' && service !== 'install')
-          ? 'chips'
-          : 'tiles';
-    // Machine room choices carry the shaft drawing on a new installation.
-    const drawn = key === 'machineRoom' && service === 'install';
-    return `<div class="ev-choices ev-${drawn ? 'drawn' : kind}${key === 'condition' ? ' ev-condition' : ''}">${C[
-      key
-    ]
+      key === 'building' ? 'icons' : compact.has(key) || key === 'machineRoom' ? 'chips' : 'tiles';
+    return `<div class="ev-choices ev-${kind}${key === 'condition' ? ' ev-condition' : ''}">${C[key]
       .map(([value, title, extra]) => {
         const help =
           kind === 'tiles' && extra && key !== 'building' ? `<small>${esc(extra)}</small>` : '';
-        const art = drawn
-          ? value === 'unsure'
-            ? `<span class="ev-choice-art ev-choice-art-pair" aria-hidden="true">${shaft({ room: 'with', crop: true })}${shaft({ room: 'without', crop: true })}</span>`
-            : `<span class="ev-choice-art" aria-hidden="true">${shaft({ room: value, on: ['machine', 'controller', 'ropes'], title, crop: true })}</span>`
-          : '';
         const lead = key === 'building' ? icon(extra, 'ev-choice-icon') : '';
-        return `<label data-value="${value}"><input type="${multi ? 'checkbox' : 'radio'}" name="${key}" value="${value}"><span>${art}${lead}<strong>${esc(title)}</strong>${help}</span></label>`;
+        const detailedOnly =
+          key === 'item' && service === 'install' && !SIMPLE_ITEMS.includes(value)
+            ? ' data-detailed'
+            : '';
+        return `<label data-value="${value}"${detailedOnly}><input type="${multi ? 'checkbox' : 'radio'}" name="${key}" value="${value}"><span>${lead}<strong>${esc(title)}</strong>${help}</span></label>`;
       })
       .join('')}</div>`;
   }
@@ -254,26 +262,52 @@ window.TechouseElevators = (() => {
     floors: ['How many floors does it serve?', 'Count the ground floor and any basements.'],
     machineRoom: ['Does it have a machine room?'],
   };
+  // One ledger row per question: the question on the left, the answer on the right.
   function field(key, service, scope) {
     const [title, hint] = service !== 'install' && EXISTING[key] ? EXISTING[key] : QUESTIONS[key];
+    const simple = SIMPLE[service].includes(key);
+    const simpleTitle =
+      simple && SIMPLE_TITLES[key] && SIMPLE_TITLES[key] !== title ? SIMPLE_TITLES[key] : '';
+    const words = simpleTitle
+      ? `<span class="ev-t-simple">${simpleTitle}</span><span class="ev-t-detailed">${title}</span>`
+      : title;
     const id = `ev-${scope}-${key}`;
+    // "What is a machine room?" opens on hover, focus or tap.
+    const tip =
+      key === 'machineRoom'
+        ? `<span class="ev-tip"><button type="button" class="ev-tip-button" aria-describedby="${id}-tip" aria-expanded="false" aria-label="What is a machine room?">${icon('info')}</button><span class="ev-tip-text" role="tooltip" id="${id}-tip">A machine room is a small room, usually on the roof above the elevator shaft, that holds the motor and the control cabinet. A machine-room-less elevator fits a compact motor inside the shaft, so no rooftop room is needed.</span></span>`
+        : '';
     const hintHtml = hint ? `<p class="ev-q-hint" id="${id}-hint">${hint}</p>` : '';
+    const described = hint ? ` aria-describedby="${id}-hint"` : '';
+    const row = (kind, question, answer, group = false) =>
+      `<div class="ev-row ev-row-${kind}" data-q="${key}"${simple ? '' : ' data-detailed'}${group ? ` role="group" aria-labelledby="${id}-q"` : ''}><div class="ev-row-q">${question}${hintHtml}</div><div class="ev-row-a">${answer}</div></div>`;
     if (key in D().NUMBERS) {
       const [min, max] = D().NUMBERS[key];
-      return `<div class="ev-q ev-q-number" data-q="${key}"><label class="ev-q-title" for="${id}">${title}</label>${hintHtml}<div class="ev-stepper"><button type="button" data-step="-1" aria-label="Fewer">${icon('remove')}</button><input id="${id}" name="${key}" type="number" inputmode="numeric" min="${min}" max="${max}" placeholder="—"${hint ? ` aria-describedby="${id}-hint"` : ''}><button type="button" data-step="1" aria-label="More">${icon('add')}</button></div></div>`;
+      return row(
+        'number',
+        `<label class="ev-q-title" for="${id}">${words}</label>`,
+        `<div class="ev-stepper"><button type="button" data-step="-1" aria-label="Fewer">${icon('remove')}</button><input id="${id}" name="${key}" type="number" inputmode="numeric" min="${min}" max="${max}" placeholder="—"${described}><button type="button" data-step="1" aria-label="More">${icon('add')}</button></div>`,
+      );
     }
     if (key in D().TEXTS)
-      return `<div class="ev-q ev-q-text" data-q="${key}"><label class="ev-q-title" for="${id}">${title}</label>${hintHtml}<input id="${id}" name="${key}" maxlength="${D().TEXTS[key]}" autocomplete="off"${hint ? ` aria-describedby="${id}-hint"` : ''}></div>`;
-    return `<fieldset class="ev-q" data-q="${key}"><legend class="ev-q-title">${title}</legend>${hintHtml}${choices(key, service)}</fieldset>`;
+      return row(
+        'text',
+        `<label class="ev-q-title" for="${id}">${words}</label>`,
+        `<input id="${id}" name="${key}" maxlength="${D().TEXTS[key]}" autocomplete="off"${described}>`,
+      );
+    return row(
+      'choice',
+      `<p class="ev-q-title" id="${id}-q">${words}${tip}</p>`,
+      choices(key, service),
+      true,
+    );
   }
   function serviceForm(service) {
     const layout = LAYOUTS[service];
-    const groups = layout.groups
-      .map(
-        ([heading, keys]) =>
-          `<div class="ev-group" data-group="${heading || 'lead'}"><div class="ev-group-fields">${keys.map((k) => field(k, service, service)).join('')}</div></div>`,
-      )
-      .join('');
+    const groupList = layout.groups.map(
+      ([heading, keys]) =>
+        `<div class="ev-group" data-group="${heading || 'lead'}"><div class="ev-group-fields">${keys.map((k) => field(k, service, service)).join('')}</div></div>`,
+    );
     const urgent =
       service === 'maintenance'
         ? `<p class="ev-urgent" data-urgent hidden>${icon('call')}<span>Stopped with someone inside, or a safety risk? <a href="${TEL}">Call ${PHONE}</a> now rather than waiting for a reply.</span></p>`
@@ -282,7 +316,7 @@ window.TechouseElevators = (() => {
       service === 'parts'
         ? `<div class="ev-promise"><strong>Hard-to-find parts, in as little as 7 days.</strong><p>Control boards, door operators, buttons and small electrical parts for any brand, including elevators we didn’t install. Timing depends on the part.</p></div>`
         : '';
-    return `<form class="ev-form ev-form-${service}" data-ev-form="${service}" novalidate hidden><p class="ev-form-intro">${layout.intro}</p>${promise}${groups}${urgent}</form>`;
+    return `<form class="ev-form ev-form-${service}" data-ev-form="${service}" novalidate hidden><p class="ev-form-intro"><span class="ev-t-simple">${INTRO.simple}</span><span class="ev-t-detailed">${layout.intro}</span></p>${promise}${groupList[0]}${urgent}${groupList.slice(1).join('')}</form>`;
   }
   const serviceTiles = () =>
     `<div class="ev-services">${D()
@@ -292,7 +326,7 @@ window.TechouseElevators = (() => {
       )
       .join('')}</div>`;
   const planner = () =>
-    `<section id="elevator-start" class="division-section ev-planner"><div class="section-heading"><h2>Tell us about<br>your elevator.</h2><p>Two steps: choose a service, then describe your elevator. Skip anything you’re unsure of.</p></div><div class="ev-plan" data-ev-plan data-step="1"><div class="ev-progress" role="group" aria-label="Elevator planner steps">${[
+    `<section id="elevator-start" class="division-section ev-planner"><div class="section-heading"><h2>Tell us about<br>your elevator.</h2><p>Two steps: choose a service, then describe your elevator. Skip anything you’re unsure of.</p></div><div class="ev-plan" data-ev-plan data-step="1" data-mode="simple"><div class="ev-progress" role="group" aria-label="Elevator planner steps">${[
       'Service',
       'Your elevator',
     ]
@@ -302,7 +336,7 @@ window.TechouseElevators = (() => {
       )
       .join(
         '',
-      )}</div><div class="ev-step" data-step-panel="1"><h3 class="ev-step-title">What can we help with?</h3>${serviceTiles()}</div><div class="ev-step ev-step-2" data-step-panel="2" hidden><div class="ev-step-main"><div class="ev-step-head"><h3 class="ev-step-title" data-service-title tabindex="-1"></h3><button type="button" class="text-link" data-go-step="1">${icon('arrow_back')} Change service</button></div>${Object.keys(
+      )}</div><div class="ev-step" data-step-panel="1"><h3 class="ev-step-title">What can we help with?</h3>${serviceTiles()}</div><div class="ev-step ev-step-2" data-step-panel="2" hidden><div class="ev-step-main"><div class="ev-step-head"><div class="ev-step-name"><h3 class="ev-step-title" data-service-title tabindex="-1"></h3><button type="button" class="text-link" data-go-step="1">${icon('arrow_back')} Change service</button></div><div class="ev-mode" role="group" aria-label="How much detail"><button type="button" data-mode="simple" aria-pressed="true">Simple</button><button type="button" data-mode="detailed" aria-pressed="false">Detailed</button></div></div>${Object.keys(
       LAYOUTS,
     )
       .map(serviceForm)
@@ -348,6 +382,22 @@ window.TechouseElevators = (() => {
     const title = root.querySelector('[data-service-title]');
     let service = '';
     const current = () => (service ? readForm(forms[service]) : null);
+    // Simple or Detailed, remembered for this visit. Answers stay put when switching.
+    const MODE_KEY = 'techouse-elevator-mode';
+    const setMode = (mode) => {
+      root.dataset.mode = mode;
+      root
+        .querySelectorAll('[data-mode]')
+        .forEach(
+          (b) => b !== root && b.setAttribute('aria-pressed', String(b.dataset.mode === mode)),
+        );
+      try {
+        sessionStorage.setItem(MODE_KEY, mode);
+      } catch {}
+    };
+    try {
+      if (sessionStorage.getItem(MODE_KEY) === 'detailed') setMode('detailed');
+    } catch {}
     const update = () => {
       const plan = current();
       if (!plan) return;
@@ -402,6 +452,14 @@ window.TechouseElevators = (() => {
       go(2, focus);
     };
     root.addEventListener('click', (event) => {
+      const tipButton = event.target.closest('.ev-tip-button');
+      if (tipButton) {
+        const open = tipButton.getAttribute('aria-expanded') !== 'true';
+        tipButton.setAttribute('aria-expanded', String(open));
+        return tipButton.parentElement.classList.toggle('is-open', open);
+      }
+      const modeButton = event.target.closest('.ev-mode [data-mode]');
+      if (modeButton) return setMode(modeButton.dataset.mode);
       const tile = event.target.closest('.ev-service');
       if (tile) return choose(tile.dataset.service);
       const stepButton = event.target.closest('[data-go-step]');
@@ -423,6 +481,18 @@ window.TechouseElevators = (() => {
       }
     });
     root.addEventListener('change', update);
+    // Escape closes the tooltip, including one shown by hover or focus.
+    root.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      root.querySelectorAll('.ev-tip').forEach((tip) => {
+        tip.classList.remove('is-open');
+        tip.classList.add('is-dismissed');
+        tip.querySelector('.ev-tip-button').setAttribute('aria-expanded', 'false');
+      });
+    });
+    root.addEventListener('pointerover', (event) => {
+      event.target.closest('.ev-tip')?.classList.remove('is-dismissed');
+    });
     root.addEventListener('input', (event) => {
       if (event.target.matches('input[type="number"], input:not([type])')) update();
     });

@@ -71,6 +71,7 @@ window.TechouseInquiryDetails = (() => {
       ['stretcher', 'A stretcher'],
       ['bed', 'A hospital bed'],
       ['furniture', 'Furniture or appliances'],
+      ['goods', 'Goods'],
       ['pallet', 'Pallets or trolleys'],
       ['vehicle', 'A car'],
       ['other', 'Something else'],

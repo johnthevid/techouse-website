@@ -1,5 +1,20 @@
 # Current handoff
 
+## Latest: Elevators form, Simple and Detailed modes (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; not merged, not deployed)
+
+Done with the Impeccable skill (layout pass, existing look kept), after the client worried the elevator form could put people off sending an inquiry.
+- **Toggle:** every service's step 2 has a Simple / Detailed switch in the form's top bar (`.ev-mode`). Simple is the default and the choice is remembered for the visit.
+- **Simple mode asks only these questions:**
+  - New installation: building type, how many floors, what it will carry (people, a wheelchair, a hospital bed, goods).
+  - Maintenance and repair: is it working right now, which brand.
+  - Modernisation and replacement: what's bothering you, how old is it.
+  - Parts: which part, is the elevator stopped because of it.
+- **Detailed mode** shows every question. Both modes are one form, so answers carry over when switching.
+- **Layout:** questions are now ledger rows, with the question (and hint) on the left and the answer on the right. Faint rules divide rows and a firmer rule divides Detailed groups. On phones each row stacks. The "call now" note sits right under "Is it working right now?".
+- **Machine room:** the drawings are removed (user request). The answers are plain chips, and an info button beside the question opens "What is a machine room?" on hover, focus or tap. Escape closes it.
+- **New answer:** item `goods` ("Goods"), added in `inquiry-details.js` and `platform/insights.mjs`.
+- **Checks:** `npm test` 50/50 (the planner test now covers Simple to Detailed, answers carrying over, and the tooltip). Impeccable layout detector: no findings. All four services checked in both modes at 1440; install also checked at 390.
+
 ## Latest: Elevators page rebuild and homepage news ticker (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; work in progress, not merged, not deployed)
 
 Built with the Impeccable skill, as an extension of the existing look.

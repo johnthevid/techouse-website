@@ -233,14 +233,21 @@
 .ev-step-head {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 8px 24px;
+  gap: 16px 24px;
+  padding-bottom: 20px;
+}
+.ev-step-name {
+  display: grid;
+  justify-items: start;
+  gap: 4px;
 }
 .ev-step-head .ev-step-title {
-  margin-bottom: 6px;
+  margin: 0;
 }
 .ev-step-head .text-link {
+  padding: 0;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -254,49 +261,164 @@
   width: 18px;
   height: 18px;
 }
+/* Simple / Detailed switch: a square segmented control. */
+.ev-mode {
+  display: inline-flex;
+  border: 1px solid var(--ev-green);
+}
+.ev-mode button {
+  min-width: 104px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  background: transparent;
+  color: var(--ev-green);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+.ev-mode button + button {
+  border-left: 1px solid var(--ev-green);
+}
+.ev-mode button[aria-pressed='true'] {
+  background: var(--ev-green);
+  color: #fff;
+}
+.ev-mode button:not([aria-pressed='true']):hover {
+  background: #eef2ee;
+}
+.ev-mode button:focus-visible {
+  outline: 3px solid #a85d2c;
+  outline-offset: 2px;
+}
+.ev-plan[data-mode='simple'] [data-detailed],
+.ev-plan[data-mode='simple'] .ev-t-detailed,
+.ev-plan[data-mode='detailed'] .ev-t-simple {
+  display: none;
+}
 .ev-form[hidden] {
   display: none;
 }
 .ev-form-intro {
-  margin: 0 0 28px;
+  margin: 0 0 24px;
   color: var(--ev-muted);
   font-size: 17px;
 }
-.ev-group + .ev-group {
-  margin-top: 36px;
-  padding-top: 28px;
-  border-top: 1px solid #dde1d6;
+
+/* The ledger: one row per question, the question left and the answer right. Faint rules divide
+   rows; Detailed groups add space between them. Simple mode reads as one short run of rows. */
+.ev-form {
+  border-bottom: 1px solid #e3e6dd;
 }
-.ev-group-fields {
+/* Detailed groups: a firmer rule and more air between them. */
+.ev-plan[data-mode='detailed'] .ev-group + .ev-group {
+  margin-top: 24px;
+  border-top: 1px solid #b9c3b8;
+}
+.ev-plan[data-mode='detailed'] .ev-group + .ev-group .ev-row:first-child {
+  border-top: 0;
+}
+.ev-plan[data-mode='simple'] .ev-group:not(:has(.ev-row:not([data-detailed]))) {
+  display: none;
+}
+.ev-row {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 30px 32px;
+  grid-template-columns: minmax(0, 13.5rem) minmax(0, 1fr);
+  gap: 10px 32px;
+  align-items: start;
+  padding: 22px 0;
+  border-top: 1px solid #e3e6dd;
 }
-.ev-group-fields > .ev-q:has(.ev-tiles, .ev-icons, .ev-drawn, .ev-condition),
-.ev-group-fields > .ev-q[data-q='part'],
-.ev-group-fields > .ev-q[data-q='issues'],
-.ev-group-fields > .ev-q[data-q='item'] {
-  grid-column: 1 / -1;
+.ev-row-q {
+  padding-top: 9px;
 }
-.ev-q {
+.ev-row-a {
   min-width: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
 }
 .ev-q-title {
   display: block;
-  margin: 0 0 12px;
-  padding: 0;
-  font-size: 17px;
+  margin: 0;
+  color: var(--ink);
+  font-size: 16px;
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.4;
+  text-wrap: balance;
 }
 .ev-q-hint {
-  margin: -6px 0 12px;
+  margin: 6px 0 0;
   color: var(--ev-muted);
   font-size: 14px;
   line-height: 1.5;
+}
+.ev-plan[data-mode='simple'] .ev-q-title {
+  font-size: 18px;
+}
+
+/* "What is a machine room?" tooltip beside the question. */
+.ev-tip {
+  position: relative;
+  display: inline-block;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+.ev-tip-button {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin: -6px 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ev-gold-ink);
+  cursor: help;
+}
+.ev-tip-button svg {
+  width: 20px;
+  height: 20px;
+}
+.ev-tip-button:focus-visible {
+  outline: 3px solid #a85d2c;
+  outline-offset: 0;
+}
+.ev-tip-text {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 8px);
+  left: -120px;
+  width: min(300px, 80vw);
+  padding: 14px 16px;
+  background: var(--ev-green-deep);
+  color: #eef3ef;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.55;
+  box-shadow: 0 10px 28px rgb(20 43 34 / 0.22);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition:
+    opacity 0.18s,
+    transform 0.18s var(--ev-ease),
+    visibility 0s 0.18s;
+}
+.ev-tip:hover .ev-tip-text,
+.ev-tip:focus-within .ev-tip-text,
+.ev-tip.is-open .ev-tip-text {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 0.18s,
+    transform 0.18s var(--ev-ease);
+}
+.ev-tip.is-dismissed .ev-tip-text {
+  opacity: 0;
+  visibility: hidden;
 }
 
 /* Choices: tiles (with help text), icon tiles, chips, and drawn tiles */
@@ -305,10 +427,9 @@
   gap: 8px;
 }
 .ev-tiles {
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
 }
 .ev-icons,
-.ev-drawn,
 .ev-condition {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -363,20 +484,6 @@
   margin-bottom: 8px;
   color: var(--ev-gold-ink);
 }
-.ev-choice-art {
-  display: grid;
-  place-items: center;
-  height: 150px;
-  margin: -14px -16px 12px;
-  border-bottom: 1px solid var(--ev-rule);
-  background: #f4f2ea;
-  --d-base: #9aaa9f;
-  --d-on: var(--ev-gold-ink);
-}
-.ev-choice-art svg {
-  width: auto;
-  height: 138px;
-}
 .ev-choices label:hover span {
   border-color: var(--ev-green);
 }
@@ -391,12 +498,6 @@
 .ev-choices input:checked + span .ev-choice-icon {
   color: var(--ev-gold-soft);
 }
-.ev-choices input:checked + span .ev-choice-art {
-  border-color: #ffffff2e;
-  background: var(--ev-green-deep);
-  --d-base: #6f877a;
-  --d-on: var(--ev-gold-soft);
-}
 .ev-choices input:focus-visible + span {
   outline: 3px solid #a85d2c;
   outline-offset: 3px;
@@ -409,7 +510,8 @@
 .ev-urgent {
   display: flex;
   gap: 12px;
-  margin: 28px 0 0;
+  margin: 0 0 22px;
+  margin-top: 0;
   padding: 16px 18px;
   border: 1px solid #d8a99b;
   background: #f8ebe6;
@@ -431,7 +533,7 @@
   display: none;
 }
 .ev-promise {
-  margin: 0 0 32px;
+  margin: 0 0 24px;
   padding: 20px 22px;
   border: 1px solid #e0cf9f;
   background: #f6efdc;
@@ -483,7 +585,7 @@
   margin: 0;
   -webkit-appearance: none;
 }
-.ev-q-text input {
+.ev-row-text input {
   width: 100%;
   min-height: 50px;
   padding: 12px 14px;
@@ -493,13 +595,13 @@
   font: inherit;
   caret-color: var(--ev-gold-ink);
 }
-.ev-q[data-q='part'] input {
+.ev-row[data-q='part'] input {
   min-height: 58px;
   font-size: 19px;
 }
 .ev-stepper button:focus-visible,
 .ev-stepper input:focus-visible,
-.ev-q-text input:focus-visible {
+.ev-row-text input:focus-visible {
   outline: 3px solid #a85d2c;
   outline-offset: 2px;
 }
@@ -633,21 +735,6 @@
 .ev-d-tag text {
   fill: var(--d-on, var(--ev-gold-soft));
   font-size: 15px;
-}
-/* One fixed frame for every drawn tile, so the three labels line up. */
-.ev-drawn .ev-choice-art {
-  box-sizing: border-box;
-  height: 152px;
-  min-height: 0;
-  overflow: hidden;
-}
-.ev-choice-art-pair {
-  grid-auto-flow: column;
-  gap: 4px;
-  opacity: 0.55;
-}
-.ev-choice-art-pair svg {
-  height: 120px;
 }
 
 /* ---- Slideshows ----------------------------------------------------------------------------- */
@@ -905,7 +992,6 @@
   }
   .ev-services,
   .ev-icons,
-  .ev-drawn,
   .ev-condition {
     grid-template-columns: 1fr;
   }
@@ -924,14 +1010,19 @@
     height: auto;
     border-top: 0;
   }
-  .ev-group-fields {
+  .ev-row {
     grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 18px 0;
   }
-  .ev-choice-art {
-    height: 120px;
+  .ev-row-q {
+    padding-top: 0;
   }
-  .ev-choice-art svg {
-    height: 110px;
+  .ev-step-head .ev-mode {
+    width: 100%;
+  }
+  .ev-mode button {
+    flex: 1;
   }
   .ev-slide-visual,
   .ev-slides-flip .ev-slide-visual {
@@ -967,7 +1058,8 @@
   .ev-service-go,
   .ev-service-go svg,
   .ev-choices span,
-  .ev-dots span {
+  .ev-dots span,
+  .ev-tip-text {
     transition: none;
   }
 }

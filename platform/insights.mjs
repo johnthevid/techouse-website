@@ -132,7 +132,7 @@ const elevatorDetails = {
   building: ["residential", "commercial", "industrial"],
   elevatorType: ["passenger", "home", "bed", "cargo", "panoramic", "unsure"],
   capacity: ["450", "630", "800", "1000", "1600", "2000", "unsure"],
-  item: ["none", "wheelchair", "stretcher", "bed", "furniture", "pallet", "vehicle", "other"],
+  item: ["none", "wheelchair", "stretcher", "bed", "furniture", "goods", "pallet", "vehicle", "other"],
   doors: ["1", "2-opposite", "2-adjacent", "unsure"],
   machineRoom: ["with", "without", "unsure"],
   shaft: ["plans", "building", "ready", "none"],

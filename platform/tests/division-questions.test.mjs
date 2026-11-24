@@ -88,7 +88,28 @@ test('elevator planner: two steps, a layout per service, answers carried to the 
   assert.equal(await page.locator('.ev-progress [data-go-step="2"]').isDisabled(), true);
   assert.equal(await page.locator('[data-step-panel="2"]').isVisible(), false);
 
-  // Each service has its own layout. Parts: the 7-day promise and text fields.
+  // Each service opens in Simple mode: two or three plain questions.
+  await page.locator('.ev-service[data-service="install"]').click();
+  const visibleRows = () => page.locator('[data-ev-form="install"] .ev-row:visible').count();
+  assert.equal(await visibleRows(), 3);
+  assert.equal(await page.locator('[data-ev-form="install"] [data-q="floors"] label').innerText(), 'How many floors?');
+  // Detailed adds the rest in the same ledger; an answer given in Simple stays.
+  await page.locator('[data-ev-form="install"] label[data-value="residential"]').click();
+  await page.locator('.ev-mode [data-mode="detailed"]').click();
+  assert.equal(await visibleRows(), 9);
+  assert.equal(await page.locator('[data-ev-form="install"] input[value="residential"]').isChecked(), true);
+  // "What is a machine room?" explains itself on tap.
+  const tip = page.locator('[data-ev-form="install"] [data-q="machineRoom"] .ev-tip');
+  assert.equal(await tip.locator('.ev-tip-text').isVisible(), false);
+  await tip.locator('.ev-tip-button').click();
+  assert.equal(await tip.locator('.ev-tip-text').isVisible(), true);
+  assert.match(await tip.locator('.ev-tip-text').textContent(), /room, usually on the roof/);
+  await page.keyboard.press('Escape');
+  await page.mouse.move(0, 0);
+  assert.equal(await tip.locator('.ev-tip-text').isVisible(), false);
+  await page.locator('[data-step-panel="2"] [data-go-step="1"]').click();
+
+  // Parts: the 7-day promise and text fields.
   await page.locator('.ev-service[data-service="parts"]').click();
   assert.equal(await page.locator('[data-ev-form="parts"]').isVisible(), true);
   assert.match(await page.locator('[data-ev-form="parts"] .ev-promise').textContent(), /as little as 7 days/);
