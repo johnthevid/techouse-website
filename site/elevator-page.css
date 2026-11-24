@@ -966,8 +966,31 @@
   outline: 2px solid #b99258;
   outline-offset: -2px;
 }
-.ev-tabpanel[hidden] {
-  display: none;
+/* Uniform height: both tab panels, every slide's text and every visual share one grid cell,
+   so the frame takes the tallest content and never jumps between slides or tabs. Hidden
+   layers keep their space but are invisible and out of reach. */
+.ev-tabpanels {
+  display: grid;
+}
+.ev-tabpanel {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+}
+.ev-tabpanel > .ev-slides {
+  flex: 1;
+}
+.ev-tabpanel[hidden],
+#elevator-range .ev-slide-list > li[hidden],
+#elevator-range .ev-slide-art[hidden] {
+  display: grid;
+  visibility: hidden;
+}
+#elevator-range .ev-slide-list {
+  display: grid;
+}
+#elevator-range .ev-slide-list > li {
+  grid-area: 1 / 1;
 }
 /* Uploaded photos fill the slide's visual panel. */
 .ev-slide-art-photo {
@@ -1081,6 +1104,13 @@
   .ev-visual-shaft .ev-drawing {
     height: 300px;
   }
+  #elevator-range .ev-slide-visual {
+    height: 300px;
+    min-height: 0;
+  }
+  #elevator-range .ev-slide-art .ev-drawing {
+    max-height: 100%;
+  }
 }
 @media (max-width: 600px) {
   .ev-tabs [role='tab'] {
@@ -1140,6 +1170,9 @@
     width: 100%;
     height: auto;
   }
+  #elevator-range .ev-slide-visual {
+    height: 260px;
+  }
   .ev-d-tag text {
     font-size: 22px;
   }
@@ -1167,4 +1200,9 @@
   .ev-tip-text {
     transition: none;
   }
+}
+/* Back-office preview: the brand being edited is marked. */
+.ev-brand.is-previewed {
+  outline: 3px solid var(--ev-gold);
+  outline-offset: 10px;
 }

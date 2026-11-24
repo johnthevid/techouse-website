@@ -579,6 +579,7 @@ window.TechouseElevators = (() => {
         });
       }
       index = next;
+      root.current = index;
       number.textContent = String(index + 1);
       dots.forEach((dot, i) => {
         dot.classList.toggle('done', i < index);
@@ -586,6 +587,7 @@ window.TechouseElevators = (() => {
         else dot.removeAttribute('aria-current');
       });
     };
+    root.show = show;
     root.querySelector('[data-slide-next]').addEventListener('click', () => show(index + 1));
     root.querySelector('[data-slide-prev]').addEventListener('click', () => show(index - 1));
     dots.forEach((dot) => dot.addEventListener('click', () => show(+dot.dataset.slideGo)));
@@ -769,7 +771,7 @@ window.TechouseElevators = (() => {
     const brands = BRANDS.map((b) => `<div class="ev-brand">${logo(b)}<p>${b.text}</p></div>`).join(
       '',
     );
-    return `<section id="elevator-range" class="division-section ev-section"><div class="section-heading"><h2>Every elevator,<br>every service.</h2><p>The elevators we install, and how we look after them for their whole life, whoever installed them.</p></div><div class="ev-tabs" role="tablist" aria-label="Elevators and services">${tabs}</div><div class="ev-tabpanel" role="tabpanel" id="ev-panel-types" aria-labelledby="ev-tab-types">${types}<p class="ev-note">We don’t supply external construction hoists. On a building site they collect debris and are easily overloaded, which puts riders at risk.</p></div><div class="ev-tabpanel" role="tabpanel" id="ev-panel-services" aria-labelledby="ev-tab-services" hidden>${services}</div><div id="elevator-brands" class="ev-brands"><div class="ev-brands-head"><h3>Three brands, sourced direct.</h3><p>Straight from the manufacturers, with no resellers in between. We also service any major brand.</p></div><div class="ev-brand-list">${brands}</div></div></section>`;
+    return `<section id="elevator-range" class="division-section ev-section"><div class="section-heading"><h2>Every elevator,<br>every service.</h2><p>The elevators we install, and how we look after them for their whole life, whoever installed them.</p></div><div class="ev-tabs" role="tablist" aria-label="Elevators and services">${tabs}</div><div class="ev-tabpanels"><div class="ev-tabpanel" role="tabpanel" id="ev-panel-types" aria-labelledby="ev-tab-types">${types}</div><div class="ev-tabpanel" role="tabpanel" id="ev-panel-services" aria-labelledby="ev-tab-services" hidden>${services}</div></div><p class="ev-note">We don’t supply external construction hoists. On a building site they collect debris and are easily overloaded, which puts riders at risk.</p><div id="elevator-brands" class="ev-brands"><div class="ev-brands-head"><h3>Three brands, sourced direct.</h3><p>Straight from the manufacturers, with no resellers in between. We also service any major brand.</p></div><div class="ev-brand-list">${brands}</div></div></section>`;
   }
 
   // The page body below the cover. subnav and projectsSection come from divisions.js.
@@ -832,5 +834,30 @@ window.TechouseElevators = (() => {
       );
   }
 
-  return { content, mount, shaft, plan };
+  // Back-office preview: show the elevator type's slide, or the brands row, for the slot being edited.
+  function focus(key = '') {
+    const range = document.querySelector('#elevator-range');
+    if (!range) return;
+    if (key.startsWith('elevator-')) {
+      document.querySelector('.ev-tabs')?.select?.('types');
+      const index = TYPES.findIndex((t) => 'elevator-' + t.type === key);
+      document.querySelector('[data-ev-slides="types"]')?.show?.(index);
+      window.scrollTo({
+        top: range.getBoundingClientRect().top + scrollY - 70,
+        behavior: 'instant',
+      });
+    } else if (key.startsWith('brand-')) {
+      const brands = document.querySelector('#elevator-brands');
+      window.scrollTo({
+        top: brands.getBoundingClientRect().top + scrollY - 260,
+        behavior: 'instant',
+      });
+      const id = key.slice(6);
+      document.querySelectorAll('.ev-brand').forEach((el, i) => {
+        el.classList.toggle('is-previewed', BRANDS[i].id === id);
+      });
+    }
+  }
+
+  return { content, mount, focus, shaft, plan };
 })();

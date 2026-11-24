@@ -259,6 +259,15 @@ test('elevator photos: staff upload one per type and it replaces the drawing', a
   await page.locator('[data-customizer-section="elevator-photos"]').click();
   assert.equal(await page.locator('#customizer-elevator-photos [data-banner-upload^="elevator-"]').count(), 7);
   assert.equal(await page.locator('#customizer-elevator-photos [data-banner-upload^="brand-"][data-format="png"]').count(), 3);
+  // The picker shows each slot's status and opens one editor at a time.
+  assert.match(await page.locator('[data-photo-select="elevator-bed"]').textContent(), /Your photo/);
+  assert.match(await page.locator('[data-photo-select="elevator-home"]').textContent(), /Drawing shown/);
+  await page.locator('[data-photo-select="brand-hitachi"]').click();
+  assert.equal(await page.locator('[data-photo-editor="brand-hitachi"]').isVisible(), true);
+  assert.equal(await page.locator('[data-photo-editor="elevator-passenger"]').isVisible(), false);
+  assert.match(await page.locator('.preview-panel-heading h3').textContent(), /Elevators page — Hitachi/);
+  // The back office has no transition animations.
+  assert.equal(await page.locator('.photo-pick').first().evaluate((el) => getComputedStyle(el).transitionDuration), '0s');
   assert.deepEqual(errors, []);
 });
 

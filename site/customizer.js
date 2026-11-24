@@ -164,6 +164,37 @@ window.TechouseContent = (() => {
       select.parentElement.after(label);
     }
   }
+  // Elevator photos and logos: a picker of every slot (thumbnail, name, status) and one editor
+  // card for the selected slot. office-ui.js wires selection and the live preview.
+  function photoPicker() {
+    const slot = (key, label, kind) => {
+      const empty =
+        kind === 'logo' ? 'assets/placeholders/no-logo.svg' : 'assets/placeholders/no-photo.svg';
+      const src = data.images[key] ? imageURL(data.images[key]) : empty;
+      return { key, label, kind, empty, src, set: Boolean(data.images[key]) };
+    };
+    const slots = [
+      ...elevatorTypes.map(([type, label]) => slot('elevator-' + type, label, 'photo')),
+      ...brandLogos.map(([brand, label]) => slot('brand-' + brand, label, 'logo')),
+    ];
+    const status = (s) =>
+      s.set
+        ? s.kind === 'logo'
+          ? 'Your logo'
+          : 'Your photo'
+        : s.kind === 'logo'
+          ? 'Name shown'
+          : 'Drawing shown';
+    const row = (s, i) =>
+      `<button type="button" class="photo-pick" data-photo-select="${s.key}" aria-pressed="${!i}"><img src="${escape(s.src)}" alt="" data-photo-thumb class="${s.kind === 'logo' ? 'is-logo' : ''}"><span><strong>${s.label}</strong><small data-photo-status>${status(s)}</small></span></button>`;
+    const list = (kind, heading) =>
+      `<div class="photo-picker-group"><h3>${heading}</h3><div class="photo-picker-list">${slots
+        .map((s, i) => (s.kind === kind ? row(s, i) : ''))
+        .join('')}</div></div>`;
+    const editor = (s, i) =>
+      `<div class="content-field photo-editor${s.kind === 'logo' ? ' photo-editor-logo' : ''}" data-photo-editor="${s.key}"${i ? ' hidden' : ''}><label for="banner-upload-${s.key}">${s.label} ${s.kind === 'logo' ? 'logo' : 'elevator photo'}</label><img class="upload-preview${s.kind === 'logo' ? ' upload-preview-logo' : ''}" src="${escape(s.src)}" data-default-image="${s.empty}" alt="${s.label} ${s.kind} preview"><input id="banner-upload-${s.key}" type="file" accept="${s.kind === 'logo' ? 'image/png,image/webp,image/jpeg' : 'image/jpeg,image/png,image/webp'}" data-banner-upload="${s.key}" data-max-size="${s.kind === 'logo' ? 600 : 1000}"${s.kind === 'logo' ? ' data-format="png"' : ''}><small class="photo-editor-hint">${s.kind === 'logo' ? 'Use the logo file the manufacturer supplied. PNG with a transparent background works best.' : 'A landscape photo of this kind of elevator, ideally one of your own installations.'}</small><label class="restore-image"><input type="checkbox" name="remove-${s.key}"> ${s.kind === 'logo' ? 'Remove logo (show the name)' : 'Remove photo (show the drawing)'}</label></div>`;
+    return `<div class="photo-picker" data-photo-picker>${list('photo', 'Elevator types')}${list('logo', 'Brand logos')}<div class="photo-picker-editor">${slots.map(editor).join('')}</div></div>`;
+  }
   // Division pages staff have closed for now. The division stays on the homepage, in menus and in
   // inquiries; only its page is replaced by a short "coming soon" note. Until staff save this
   // setting, Real estate development starts closed (client decision, 24 Nov 2026).
@@ -239,7 +270,7 @@ window.TechouseContent = (() => {
       {
         id: 'elevator-photos',
         title: 'Elevator photos and logos',
-        note: 'Your own photos for the elevator types on the Elevators page (landscape works best; without one, the page shows a drawing), and the brand logos supplied by each manufacturer (PNG with a transparent background works best; without one, the brand name shows).',
+        note: 'Photos for the elevator types and the brand logos on the Elevators page. Choose one to change it; the preview shows it in place.',
         filter: () => false,
       },
       {
@@ -265,17 +296,7 @@ window.TechouseContent = (() => {
               : group.id === 'division-pages'
                 ? pageFields()
                 : group.id === 'elevator-photos'
-                  ? `<div class="image-editor-grid">${elevatorTypes
-                      .map(
-                        ([type, label]) =>
-                          `<div class="content-field"><label for="banner-upload-elevator-${type}">${label}</label><img class="upload-preview" src="${imageURL(data.images['elevator-' + type] || 'assets/placeholders/elevators.svg')}" data-default-image="assets/placeholders/elevators.svg" alt="${label} elevator photo preview"><input id="banner-upload-elevator-${type}" type="file" accept="image/jpeg,image/png,image/webp" data-banner-upload="elevator-${type}" data-max-size="1000"><label class="restore-image"><input type="checkbox" name="remove-elevator-${type}"> No photo (show the drawing)</label></div>`,
-                      )
-                      .join('')}${brandLogos
-                      .map(
-                        ([brand, label]) =>
-                          `<div class="content-field"><label for="banner-upload-brand-${brand}">${label} logo</label><img class="upload-preview upload-preview-logo" src="${imageURL(data.images['brand-' + brand] || 'assets/placeholders/elevators.svg')}" data-default-image="assets/placeholders/elevators.svg" alt="${label} logo preview"><input id="banner-upload-brand-${brand}" type="file" accept="image/png,image/webp,image/jpeg" data-banner-upload="brand-${brand}" data-max-size="600" data-format="png"><label class="restore-image"><input type="checkbox" name="remove-brand-${brand}"> No logo (show the name)</label></div>`,
-                      )
-                      .join('')}</div>`
+                  ? photoPicker()
                   : group.id === 'images'
                     ? `<div class="image-editor-grid">${divisions.map((id) => `<div class="content-field"><label for="banner-upload-${id}">${id.charAt(0).toUpperCase() + id.slice(1)}</label><img class="upload-preview" src="${imageURL(data.images[id] || 'assets/' + defaultImages[id])}" data-default-image="${escape('assets/' + defaultImages[id])}" alt="${id} banner preview"><input id="banner-upload-${id}" type="file" accept="image/jpeg,image/png,image/webp" data-banner-upload="${id}"><label class="restore-image"><input type="checkbox" name="remove-${id}"> Use original image</label></div>`).join('')}</div>`
                     : fields
@@ -633,7 +654,7 @@ window.TechouseContent = (() => {
       form.dataset.image = project.image;
       document.querySelector('#project-image-preview').src = imageURL(project.image);
     }
-    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    form.scrollIntoView({ behavior: 'instant', block: 'start' });
   });
   const previewFrame =
     new URLSearchParams(location.search).has('office-preview') && window.parent !== window;
@@ -670,11 +691,23 @@ window.TechouseContent = (() => {
       );
       data.images = Object.fromEntries(
         Object.entries(draft.images).filter(
-          ([key, value]) => divisions.includes(key) && typeof value === 'string',
+          ([key, value]) =>
+            (divisions.includes(key) || /^(elevator|brand)-[a-z]+$/.test(key)) &&
+            typeof value === 'string',
         ),
       );
       const view = event.data.view || 'opening';
       const url = new URL(location.href);
+      // Elevator photos and logos preview on the Elevators page, at the slot being edited.
+      if (view === 'elevator-photos') {
+        url.hash = '/divisions/elevators';
+        history.replaceState(null, '', url.href);
+        renderPage();
+        window.TechouseElevators?.focus(event.data.photo);
+        previousView = view;
+        document.documentElement.dataset.previewRevision = String(latestRevision);
+        return;
+      }
       url.hash = view === 'about' ? '/about' : '/';
       history.replaceState(null, '', url.href);
       window.techouseIntroStarted = !(event.data.animate && view === 'opening');

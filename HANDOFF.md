@@ -1,5 +1,21 @@
 # Current handoff
 
+## Latest: uniform slideshow height, back-office elevator photo picker, snappy back office, round Back to top (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; not merged, not deployed)
+
+- **Elevators page:** "Every elevator, every service." keeps one height across every slide and both tabs.
+  - Slide text, visuals and the two tab panels share one grid cell, and hidden layers keep their space.
+  - Phones use a fixed visual height.
+  - The construction-hoist note now sits below the frame.
+- **Back office, Website customizer → "Elevator photos and logos"** (Impeccable, Operate mode). It replaces ten identical upload cards:
+  - **Picker:** every slot is listed with a thumbnail, its name and a status: "Your photo" / "Drawing shown" for types, "Your logo" / "Name shown" for brands.
+  - **Editor:** one card for the selected slot, with a large preview, a file picker, a hint and a remove option.
+  - **Placeholders:** empty slots use the new `assets/placeholders/no-photo.svg` and `no-logo.svg`.
+  - **Live preview:** opens the Elevators page at the selected type's slide, or the brands row with that brand outlined (`TechouseElevators.focus`), instead of the homepage banners.
+  - **Change tracking:** unsaved-change counts and "Review changes" include these slots.
+- **Back office motion off:** no transition or entrance animations (CSS rule on `body.office-page`; the project editor and sign-in fade-ins and the smooth scrolls are removed). The live preview still shows the website's own motion.
+- **Homepage Back to top:** on the banner page it is now a round, arrow-only button. "Back to top" appears beside it on hover or keyboard focus, and its accessible name is unchanged. Other pages keep the labelled button.
+- **Checks:** `npm test` 51/51 (the photo test now covers picker status, selection, the preview heading and no transitions).
+
 ## Latest: Elevators page, own photos, merged section and brand logos (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; not merged, not deployed)
 
 - **One section for elevators and services** (`#elevator-range`):
