@@ -1,5 +1,8 @@
-if (location.pathname === '/office.html') {
-  // A personal workspace preference; public pages and preview frames keep their own colors.
+// The office opens at /office.html when signed in, and at #/office in the local workspace and the
+// static demo. Theme styles only apply to body.office-page, so public pages keep their colors;
+// the back office's preview frames are skipped.
+if (!/[?&](office-preview|products-preview)\b/.test(location.search)) {
+  // A personal workspace preference.
   (() => {
     const allowed = ['light', 'dark', 'grey'];
     let theme = 'light';

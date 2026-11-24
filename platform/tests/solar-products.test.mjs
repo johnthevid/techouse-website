@@ -98,6 +98,15 @@ test("staff edit a product in the back office and visitors see it on the equipme
   await page.locator('[name="title"]').fill("QM210RTHCD Series <i>Pro</i>");
   await page.locator('[name="capacity"]').fill("625–645 W");
   assert.match(await page.locator(".px-preview-frame h2").innerText(), /<i>Pro<\/i>/);
+  // Page preview: the real category page in a frame, with the unsaved name, outlined.
+  await page.locator('[data-panel="page"]').click();
+  assert.equal(await page.locator('[data-panel="page"]').getAttribute("aria-selected"), "true");
+  const preview = page.frameLocator(".px-page-viewport iframe");
+  await preview.locator(".catalogue-product.is-previewed h2").waitFor();
+  assert.equal(await preview.locator(".catalogue-product.is-previewed h2").innerText(), "QM210RTHCD Series <i>Pro</i>");
+  await page.locator('[data-preview-category="inverters"]').click();
+  await preview.locator('.catalogue-page[data-category="inverters"]').waitFor();
+  await page.locator('[data-panel="edit"]').click();
   await page.locator('[name="pdfMode"][value="link"]').check();
   await page.locator('[name="pdfLink"]').fill("https://example.com/new.pdf");
   await page.locator(".px-actions [type=submit]").click();

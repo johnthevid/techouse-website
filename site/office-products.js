@@ -18,7 +18,13 @@ window.TechouseProducts = (() => {
     filter = 'all',
     confirming = false,
     saving = false,
-    message = '';
+    message = '',
+    panel = 'edit',
+    previewCategory = 'panels',
+    previewSize = 'desktop',
+    frame = null,
+    frameReady = false,
+    previewTimer = 0;
 
   const saved = () => Array.isArray(window.TechouseContent.snapshot().products);
   function reload() {
@@ -42,6 +48,7 @@ window.TechouseProducts = (() => {
     const product = list.find((p) => p.id === id);
     selected = product ? id : null;
     draft = product ? structuredClone(product) : null;
+    if (draft) previewCategory = draft.category;
     if (draft && !draft.specs?.length) draft.specs = [''];
     dirty = false;
     confirming = false;
@@ -168,6 +175,106 @@ window.TechouseProducts = (() => {
     return { ...rest, specs: rest.specs.map((s) => s.trim()).filter(Boolean) };
   }
 
+  // ---------- Page preview ----------
+  // The public category page in a frame, fed the unsaved list (the edited product merged in).
+  function previewProducts() {
+    if (!draft) return list.map(clean);
+    const edited = clean(draft);
+    return list.some((p) => p.id === edited.id)
+      ? list.map((p) => (p.id === edited.id ? edited : clean(p)))
+      : [...list.map(clean), edited];
+  }
+  function previewURL() {
+    const url = new URL(location.href);
+    if (url.pathname.endsWith('/office.html'))
+      url.pathname = url.pathname.replace(/office\.html$/, '');
+    url.search = '?products-preview=1';
+    url.hash = '/divisions/solar/products/' + previewCategory;
+    return url.href;
+  }
+  function sendPreview() {
+    clearTimeout(previewTimer);
+    if (!frame?.isConnected || !frameReady || panel !== 'page') return;
+    previewTimer = setTimeout(() => {
+      frame.contentWindow?.postMessage(
+        {
+          type: 'techouse-products-preview',
+          products: previewProducts(),
+          category: previewCategory,
+          focus: draft && draft.category === previewCategory ? draft.id : '',
+        },
+        location.origin,
+      );
+    }, 120);
+  }
+  window.addEventListener('message', (event) => {
+    if (
+      frame &&
+      event.source === frame.contentWindow &&
+      event.origin === location.origin &&
+      event.data?.type === 'techouse-products-preview-ready'
+    ) {
+      frameReady = true;
+      sendPreview();
+    }
+  });
+  function pagePane() {
+    return `<div class="px-page-tools"><div class="ix-filters" role="group" aria-label="Category to preview">${categories()
+      .map(
+        ([id, label]) =>
+          `<button type="button" data-preview-category="${id}" aria-pressed="false">${esc(label)}</button>`,
+      )
+      .join('')}</div><div class="ix-filters" role="group" aria-label="Screen size">${[
+      ['desktop', 'Computer'],
+      ['phone', 'Phone'],
+    ]
+      .map(
+        ([id, label]) =>
+          `<button type="button" data-preview-size="${id}" aria-pressed="false">${label}</button>`,
+      )
+      .join(
+        '',
+      )}</div></div><p class="px-page-note" role="status" aria-live="polite"></p><div class="px-page-viewport"><iframe title="Preview of the product page"></iframe></div>`;
+  }
+  function fitFrame(root) {
+    const viewport = root.querySelector('.px-page-viewport');
+    if (!viewport || !frame) return;
+    const width = previewSize === 'phone' ? 390 : 1440;
+    const scale = Math.min(1, viewport.clientWidth / width);
+    const height = viewport.clientHeight;
+    frame.style.width = width + 'px';
+    frame.style.height = Math.round(height / scale) + 'px';
+    frame.style.transform = `scale(${scale})`;
+    frame.style.left = Math.max(0, (viewport.clientWidth - width * scale) / 2) + 'px';
+  }
+  function syncPagePane(root) {
+    const pane = root.querySelector('.px-pane-page');
+    pane
+      .querySelectorAll('[data-preview-category]')
+      .forEach((b) =>
+        b.setAttribute('aria-pressed', String(b.dataset.previewCategory === previewCategory)),
+      );
+    pane
+      .querySelectorAll('[data-preview-size]')
+      .forEach((b) =>
+        b.setAttribute('aria-pressed', String(b.dataset.previewSize === previewSize)),
+      );
+    const note = pane.querySelector('.px-page-note');
+    note.textContent = !draft
+      ? 'The published catalogue, as visitors see it. Links on the page are switched off.'
+      : draft.category !== previewCategory
+        ? `“${draft.title || 'This product'}” is in ${catalogue().labels[draft.category]}. Choose that category to see it.`
+        : draft.status === 'draft'
+          ? `“${draft.title || 'This product'}” is a draft, so it is not on the page. Set Status to Published to preview it there.`
+          : `Includes your unsaved changes to “${draft.title || 'this product'}”, outlined on the page.`;
+    if (panel === 'page' && !frame.getAttribute('src')) {
+      frameReady = false;
+      frame.src = previewURL();
+    }
+    fitFrame(root);
+    sendPreview();
+  }
+
   // ---------- Mount ----------
   function mount() {
     const root = document.querySelector('#office-products');
@@ -176,15 +283,26 @@ window.TechouseProducts = (() => {
     const hashId = new URLSearchParams(location.hash.split('?')[1] || '').get('id');
     if (hashId && list.some((p) => p.id === hashId)) select(hashId);
     else if (selected && !list.some((p) => p.id === selected)) select(null);
+    // The layout and the preview frame are built once; draw() refreshes the list and the editor.
+    root.innerHTML = `<p class="ix-hint px-builtin">The website shows the built-in Skyworth catalogue. Your first save copies it here, so every product becomes editable.</p><div class="px-layout"><div class="px-list-wrap"></div><div class="px-editor-wrap"><div class="px-panel-tabs" role="tablist" aria-label="Product panel"><button type="button" role="tab" id="px-tab-edit" aria-controls="px-pane-edit" data-panel="edit">Edit product</button><button type="button" role="tab" id="px-tab-page" aria-controls="px-pane-page" data-panel="page">Page preview</button></div><div class="px-pane-edit" id="px-pane-edit" role="tabpanel" aria-labelledby="px-tab-edit"></div><div class="px-pane-page" id="px-pane-page" role="tabpanel" aria-labelledby="px-tab-page">${pagePane()}</div></div></div>`;
+    frame = root.querySelector('.px-page-viewport iframe');
+    frameReady = false;
+    new ResizeObserver(() => fitFrame(root)).observe(root.querySelector('.px-page-viewport'));
     function draw(focus) {
       if (!root.isConnected) return;
       const scroll = root.querySelector('.px-list-wrap')?.scrollTop;
       root.classList.toggle('has-selection', !!draft);
-      root.innerHTML = `${
-        saved()
-          ? ''
-          : '<p class="ix-hint px-builtin">The website shows the built-in Skyworth catalogue. Your first save copies it here, so every product becomes editable.</p>'
-      }<div class="px-layout"><div class="px-list-wrap">${listView()}</div><div class="px-editor-wrap">${editorView()}</div></div>`;
+      root.querySelector('.px-builtin').hidden = saved();
+      root.querySelector('.px-list-wrap').innerHTML = listView();
+      root.querySelector('.px-pane-edit').innerHTML = editorView();
+      for (const tab of root.querySelectorAll('[data-panel]')) {
+        const active = tab.dataset.panel === panel;
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+      }
+      root.querySelector('.px-pane-edit').hidden = panel !== 'edit';
+      root.querySelector('.px-pane-page').hidden = panel !== 'page';
+      syncPagePane(root);
       if (scroll) root.querySelector('.px-list-wrap').scrollTop = scroll;
       if (focus)
         root
@@ -211,6 +329,7 @@ window.TechouseProducts = (() => {
             : (f.pdfSite?.value ?? catalogue().bundledDatasheets()[0]);
     }
     function refreshPreview(form) {
+      sendPreview();
       const frame = form.querySelector('.px-preview-frame .catalogue-products');
       frame.innerHTML = catalogue().card(clean(draft));
       form.querySelector('.ix-save-state').textContent = dirty ? 'Unsaved changes' : '';
@@ -232,6 +351,22 @@ window.TechouseProducts = (() => {
     }
     const leaveDraft = () => !dirty || confirm('Discard the unsaved changes to this product?');
     root.onclick = async (event) => {
+      const tab = event.target.closest('[data-panel]');
+      if (tab) {
+        panel = tab.dataset.panel;
+        draw();
+        return root.querySelector(`[data-panel="${panel}"]`).focus();
+      }
+      const previewCat = event.target.closest('[data-preview-category]');
+      if (previewCat) {
+        previewCategory = previewCat.dataset.previewCategory;
+        return syncPagePane(root);
+      }
+      const size = event.target.closest('[data-preview-size]');
+      if (size) {
+        previewSize = size.dataset.previewSize;
+        return syncPagePane(root);
+      }
       const view = event.target.closest('[data-product-view]');
       if (view) {
         filter = view.dataset.productView;
@@ -248,6 +383,8 @@ window.TechouseProducts = (() => {
       if (add) {
         if (!leaveDraft()) return;
         const category = add.dataset.newProduct || (filter === 'all' ? 'panels' : filter);
+        panel = 'edit';
+        previewCategory = category;
         selected = null;
         draft = blank(category);
         dirty = false;
@@ -348,6 +485,17 @@ window.TechouseProducts = (() => {
         return draw();
       }
     };
+    // Tabs: Left and Right arrows move between Edit product and Page preview.
+    root.onkeydown = (event) => {
+      const tab = event.target.closest('[data-panel]');
+      if (!tab || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+      event.preventDefault();
+      panel = panel === 'edit' ? 'page' : 'edit';
+      if (event.key === 'Home') panel = 'edit';
+      if (event.key === 'End') panel = 'page';
+      draw();
+      root.querySelector(`[data-panel="${panel}"]`).focus();
+    };
     root.oninput = (event) => {
       const form = event.target.closest('[data-product-form]');
       if (!form || event.target.matches('[type=file]')) return;
@@ -361,6 +509,7 @@ window.TechouseProducts = (() => {
       if (!form) return;
       if (event.target.matches('[name="pdfMode"], [name="category"], [name="status"]')) {
         readForm(form);
+        if (event.target.name === 'category') previewCategory = draft.category;
         if (
           event.target.name === 'pdfMode' &&
           event.target.value === 'site' &&

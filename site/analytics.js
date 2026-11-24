@@ -7,6 +7,7 @@ window.TechouseAnalytics = (() => {
     window.TechousePlatformMode &&
     !window.TechouseAdmin &&
     !new URLSearchParams(location.search).has('office-preview') &&
+    !new URLSearchParams(location.search).has('products-preview') &&
     location.pathname !== '/office.html';
   const visitKey = 'techouse.visit.v1';
   let lastPath = '',

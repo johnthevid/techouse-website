@@ -196,9 +196,16 @@ window.TechouseCatalogue = (() => {
     );
   // Saved catalogue when staff have saved one, otherwise the built-in records. Drafts never show.
   const all = () => {
+    if (previewList) return previewList;
     const saved = window.TechouseContent?.snapshot().products;
     return Array.isArray(saved) ? saved : builtIn;
   };
+  // Back office → Solar products → Page preview loads this page in a frame (?products-preview)
+  // and sends the unsaved product list, so staff see the page before saving.
+  const productsPreview =
+    new URLSearchParams(location.search).has('products-preview') && window.parent !== window;
+  let previewList = null,
+    previewFocus = '';
   let products = [];
   const published = () => (products = all().filter((p) => p.status !== 'draft'));
   const imageURL = (src) =>
@@ -211,7 +218,7 @@ window.TechouseCatalogue = (() => {
     const image = imageURL(p.image);
     const pdf = pdfURL(p.pdf);
     const specs = (p.specs || []).filter(Boolean);
-    return `<article class="catalogue-product">
+    return `<article class="catalogue-product" data-product-id="${esc(p.id || '')}">
         <figure class="catalogue-product-figure"><div class="catalogue-image">${image ? `<img src="${esc(image)}" alt="${esc(p.websiteModel ? `Skyworth ${p.websiteModel} product-family illustration` : p.title)}" loading="lazy">` : ''}</div></figure>
         <div class="catalogue-copy"><h2>${esc(p.title)}</h2>${p.subtitle ? `<span class="catalogue-product-kicker">${esc(p.subtitle)}</span>` : ''}${p.capacity ? `<strong class="catalogue-capacity">${esc(p.capacity)}</strong>` : ''}
         ${specs.length || p.websiteModel ? `<details class="model-specifications"><summary>Technical details</summary>${p.websiteModel ? `<p class="catalogue-image-reference">Website image: ${esc(p.websiteModel)} · related product family</p>` : ''}<ul>${specs.map((spec) => `<li>${esc(spec)}</li>`).join('')}</ul></details>` : ''}
@@ -406,6 +413,45 @@ window.TechouseCatalogue = (() => {
       revealBanner();
     });
   });
+  if (productsPreview) {
+    // Stay on the preview page: links elsewhere do nothing; the category tabs still work.
+    document.addEventListener(
+      'click',
+      (event) => {
+        const link = event.target.closest('a[href]');
+        if (!link || link.closest('.catalogue-tabs')) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      },
+      true,
+    );
+    window.addEventListener('message', (event) => {
+      const data = event.data;
+      if (
+        event.source !== window.parent ||
+        event.origin !== location.origin ||
+        data?.type !== 'techouse-products-preview' ||
+        !Array.isArray(data.products) ||
+        !labels[data.category]
+      )
+        return;
+      previewList = data.products.filter((p) => p && typeof p === 'object' && labels[p.category]);
+      const target = '#/divisions/solar/products/' + data.category;
+      const moved = location.hash !== target;
+      const refocus = moved || data.focus !== previewFocus;
+      previewFocus = data.focus || '';
+      const y = scrollY;
+      if (moved) history.replaceState(null, '', target);
+      window.render?.();
+      const card = previewFocus
+        ? document.querySelector(`[data-product-id="${CSS.escape(previewFocus)}"]`)
+        : null;
+      card?.classList.add('is-previewed');
+      if (refocus && card) card.scrollIntoView({ block: 'center', behavior: 'instant' });
+      else window.scrollTo({ top: y, behavior: 'instant' });
+    });
+    window.parent.postMessage({ type: 'techouse-products-preview-ready' }, location.origin);
+  }
   // The back office checks that every linked datasheet still loads.
   const datasheets = () => [
     ...new Set(
