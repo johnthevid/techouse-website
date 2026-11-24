@@ -1,5 +1,10 @@
 # Current handoff
 
+## Latest: portrait tablets always get the banded design (branch `fix/tablet-portrait-any-input`, 24 Nov 2026, not merged or deployed)
+
+- The client's portrait tablet design (five horizontal bands under the question, tap or click to open) only applied to touch screens, so a portrait browser window or an iPad with a trackpad still showed the old compact banners. `tablet-home.js` (TABLET query) and `tablet-home.css` now also apply to any portrait screen 600–1199px wide, whatever the input.
+- Unchanged: laptops/desktops in landscape (hover banners), touch tablets in landscape (columns), phones (phone homepage). Checked at 820 × 1180 and 1024 × 1366 with a mouse, touch portrait, touch landscape, 1280 × 800 desktop and 390 phone. 45/45 tests.
+
 ## Latest: header Call us shrinks to its icon on tablets (branch `fix/header-call-icon`, merged into `main` 24 Nov 2026 at the user's request; not deployed)
 
 - Homepage header at 600–899px (`mobile-refinement.css` end): Call us shows only its phone icon (44 × 44, aria-label unchanged) so Call us, Refer & Earn and Request a quote fit. Fixes the iPad mini portrait overflow (Request a quote was cut off by 14px). Phones already showed the icon; 900px and wider keep the text; other pages' headers fit and are unchanged (checked 744–1280px).
