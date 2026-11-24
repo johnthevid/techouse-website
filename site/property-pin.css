@@ -100,6 +100,7 @@
   object-fit: cover;
 }
 .pin-preview-link {
+  font-size: 14px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -418,4 +419,33 @@
   .pin-choice {
     transition: none;
   }
+}
+
+/* Placeholder state until a Google Maps key is saved: visible, clearly not available yet. */
+.pin-soon {
+  display: inline-block;
+  white-space: nowrap;
+  margin-left: 6px;
+  padding: 1px 6px;
+  background: #e6e9e1;
+  color: #4f5c53;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 500;
+  vertical-align: 1px;
+}
+.pin-choice.is-soon {
+  border-style: dashed;
+  background: #f7f7f2;
+  color: #596752;
+  cursor: default;
+}
+.pin-offer.is-soon .pin-badge {
+  color: #8a938d;
+}
+.pin-offer.is-soon strong {
+  color: #4f5c53;
+}
+.pin-offer.is-soon p {
+  margin-bottom: 0;
 }

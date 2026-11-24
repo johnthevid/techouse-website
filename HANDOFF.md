@@ -1,16 +1,16 @@
 # Current handoff
 
-## Latest: solar inquiry property pin and roof outline (branch `feature/solar-property-pin`, 24 Nov 2026)
+## Latest: solar inquiry property pin and roof outline (main, 24 Nov 2026)
 
 - Customer (`site/property-pin.js`, `property-pin.css`, mounted from `app.js` on `/inquiry`, solar division only): optional card under Project location. "I'm at the property" uses GPS (accuracy kept; warns above 100 m). "Find it on the map" opens a full-screen dialog: Google satellite (hybrid) map, pin fixed at the centre, Places (New) autocomplete limited to PH, go-to-my-location, Confirm. "Outline my roof": tap corners on a satellite map (editable Polygon, max 24), Undo/Clear/Done, live area and panel estimate (area × 0.6 ÷ 2.7 m²). The map starts at the typed town (from `assets/data/ph-places.json`) or Manila. Moving the pin elsewhere clears the outline. Preview uses the Maps Static API.
-- Without a Google Maps key: only the GPS option shows, and the pinned state links to Google Maps instead of a preview. If Google rejects the key (`gm_authFailure`) or the script fails, the map options hide and a note explains.
+- Without a Google Maps key (current state): GPS pinning works; "Find it on the map" and "Outline your roof" show as disabled "Coming soon" placeholders, and the pinned state links to Google Maps instead of a preview. Saving the key in the back office switches the map features on with no code change. If Google rejects the key (`gm_authFailure`) or the script fails, the map options hide and a note explains.
 - Server (`platform/insights.mjs`): `parseSite` accepts `{lat, lng, accuracy, source, roof}` on solar project inquiries only; PH bounds, corners within ~2 km of the pin, 3–24 corners; roof area recomputed (`roofArea`). Stored in `inquiry_sites` (`platform/migrations/0003.sql`, CREATE TABLE IF NOT EXISTS, no existing table changes). Admin list, update and delete include or remove the pin.
 - Back office (`office-insights.js/.css`): Property section with static satellite image, pin and source, roof outline and area, Open in Google Maps, Copy coordinates; CSV columns "Property pin" and "Roof area (m²)".
 - Settings: `googleMapsKey` (format `AIza` + 35) in Website customizer → Solar calculator; validated in `worker.mjs`.
 - CSP (`worker.mjs`): adds Google's documented Maps JavaScript API sources (script/img/connect on *.googleapis.com, *.gstatic.com, *.google.com, *.ggpht.com, *.googleusercontent.com; worker-src blob:). Not yet verified against live Google Maps: no key in this environment. Check the browser console after adding the key.
 - To go live: (1) Google Cloud: billing on; enable Maps JavaScript API, Places API (New), Maps Static API; create a browser key restricted to the site's addresses and those three APIs; paste it in the back office. (2) Apply migration 0003 to the production D1 database separately from the code deploy (user approval required).
 - Tests: `platform/tests/property-pin.test.mjs` (server validation, end-to-end with a stand-in Google Maps script, back-office view). Full suite 45/45.
-- Not merged to main; not deployed.
+- Merged to main 24 Nov 2026; not deployed; migration 0003 not applied to production.
 
 ## Latest: solar page polish (branch `fix/solar-mobile-steps`, merged into `main` 24 Nov 2026 at the user's request; not deployed)
 

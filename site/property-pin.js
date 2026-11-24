@@ -101,7 +101,7 @@ window.TechousePropertyPin = (() => {
     const note = message ? `<p class="pin-message" role="status">${esc(message)}</p>` : '';
     const privacy = '<p class="pin-privacy">Shared only with the Techouse solar team for your quote.</p>';
     if (!state) {
-      host.innerHTML = `<div class="pin-card"><div class="pin-head"><strong>${icon('pin_drop')}Pin your property <span class="pin-tag">Optional</span></strong><p>A pin on your roof lets our team check sun and space before we call you.</p></div><div class="pin-actions"><button type="button" class="pin-choice" data-pin-gps>${icon('my_location')}<span><b>I’m at the property</b><small>Use my phone’s location</small></span></button>${hasMap ? `<button type="button" class="pin-choice" data-pin-map>${icon('map')}<span><b>Find it on the map</b><small>Drop a pin on your roof</small></span></button>` : ''}</div>${note}</div>${privacy}`;
+      host.innerHTML = `<div class="pin-card"><div class="pin-head"><strong>${icon('pin_drop')}Pin your property <span class="pin-tag">Optional</span></strong><p>A pin on your roof lets our team check sun and space before we call you.</p></div><div class="pin-actions"><button type="button" class="pin-choice" data-pin-gps>${icon('my_location')}<span><b>I’m at the property</b><small>Use my phone’s location</small></span></button>${hasMap ? `<button type="button" class="pin-choice" data-pin-map>${icon('map')}<span><b>Find it on the map</b><small>Drop a pin on your roof</small></span></button>` : `<button type="button" class="pin-choice is-soon" disabled>${icon('map')}<span><b>Find it on the map <em class="pin-soon">Coming soon</em></b><small>Drop a pin on your roof</small></span></button>`}</div>${note}</div>${privacy}`;
       return;
     }
     const where = `${fixed(state.lat)}, ${fixed(state.lng)}`;
@@ -114,7 +114,8 @@ window.TechousePropertyPin = (() => {
       ? `<div class="pin-status">${icon('check')}<span class="pin-status-text"><b>Roof outlined</b><span>≈ ${Math.round(state.roofArea)} m² · about ${panels(state.roofArea)} panels</span></span><button type="button" data-pin-outline>Edit</button></div>`
       : hasMap
         ? `<div class="pin-offer"><span class="pin-badge">${icon('polyline')}</span><div><strong>Outline your roof</strong><p>Optional. Tap the corners of your roof and your quote comes back faster and closer to final.</p><button type="button" class="pin-outline-button" data-pin-outline>Outline my roof ${icon('arrow_outward')}</button></div></div>`
-        : '';
+        : // PLACEHOLDER until a Google Maps key is saved in the back office: shows what is coming.
+          `<div class="pin-offer is-soon"><span class="pin-badge">${icon('polyline')}</span><div><strong>Outline your roof <em class="pin-soon">Coming soon</em></strong><p>Soon you can tap the corners of your roof on a satellite map for a quote closer to final.</p></div></div>`;
     host.innerHTML = `<div class="pin-card">${preview}<div class="pin-status">${icon('check')}<span class="pin-status-text"><b>Pinned</b><span>${esc(where)}${accuracy}</span></span><button type="button" ${hasMap ? 'data-pin-map' : 'data-pin-gps'}>${hasMap ? 'Move pin' : 'Update'}</button></div>${roofRow}<div class="pin-remove"><button type="button" data-pin-remove>Remove pin</button></div>${note}</div>${privacy}`;
   }
 
