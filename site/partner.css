@@ -563,27 +563,6 @@
   min-height: 340px;
   object-fit: cover;
 }
-.partner-promo-figure {
-  grid-column: 1;
-  grid-row: 1;
-  padding-left: clamp(28px, 4vw, 56px);
-}
-.partner-promo-figure strong {
-  display: block;
-  font-family: var(--display);
-  font-size: clamp(56px, 6.4vw, 104px);
-  font-weight: 500;
-  letter-spacing: -0.045em;
-  line-height: 0.9;
-  color: #e6cf99;
-  font-variant-numeric: tabular-nums;
-}
-.partner-promo-figure span {
-  display: block;
-  margin-top: 14px;
-  font-size: 14px;
-  color: #b9c7bd;
-}
 .partner-promo-copy {
   grid-column: 2;
   grid-row: 1;
@@ -1185,7 +1164,6 @@ body.partner-apply-page {
     min-height: 0;
     height: 200px;
   }
-  .partner-promo-figure,
   .partner-promo-copy {
     grid-row: 2;
   }
@@ -1331,13 +1309,6 @@ body.partner-apply-page {
   .partner-promo > img {
     height: 170px;
   }
-  .partner-promo-figure {
-    grid-row: 2;
-    padding: 28px 24px 0;
-  }
-  .partner-promo-figure strong {
-    font-size: 64px;
-  }
   .partner-promo-copy {
     grid-column: 1;
     grid-row: 3;
@@ -1390,5 +1361,90 @@ body.partner-apply-page {
   .partner-fine summary .material-icon,
   .partner-questions summary .material-icon {
     transition: none;
+  }
+}
+
+/* Solar page banner: question, payout, terms and action read top to bottom on the left;
+   a neighbourhood photo fills the right. On phones the photo steps aside for the offer. */
+.partner-promo.partner-promo-figure-led {
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+}
+.partner-promo-figure-led > img {
+  grid-column: 2;
+  grid-row: 1;
+  object-position: center 45%;
+}
+.partner-promo-figure-led .partner-promo-copy {
+  grid-column: 1;
+  grid-row: 1;
+  padding: clamp(36px, 4.5vw, 56px) 0 clamp(36px, 4.5vw, 56px) clamp(28px, 4vw, 56px);
+}
+.partner-promo-figure-led h2 {
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.partner-promo.partner-promo-figure-led .partner-promo-amount {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 16px;
+  max-width: none;
+  margin: 28px 0 0;
+}
+.partner-promo-amount span {
+  font-size: clamp(20px, 2vw, 28px);
+  font-weight: 500;
+  color: #e6cf99;
+}
+.partner-promo-amount strong {
+  font-family: var(--display);
+  font-size: clamp(56px, 6vw, 96px);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 0.9;
+  color: #e6cf99;
+  font-variant-numeric: tabular-nums;
+}
+.partner-promo.partner-promo-figure-led .partner-promo-terms {
+  max-width: 42ch;
+  margin: 16px 0 28px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: #cfd9d1;
+}
+@media (max-width: 900px) {
+  .partner-promo.partner-promo-figure-led {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  }
+  .partner-promo-figure-led > img {
+    grid-column: 2;
+    grid-row: 1;
+    height: 100%;
+    min-height: 0;
+  }
+  .partner-promo-figure-led .partner-promo-copy {
+    grid-row: 1;
+    padding: 36px 0 36px clamp(24px, 4vw, 40px);
+  }
+}
+@media (max-width: 600px) {
+  .partner-promo.partner-promo-figure-led {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .partner-promo-figure-led > img {
+    display: none;
+  }
+  .partner-promo-figure-led .partner-promo-copy {
+    padding: 32px 24px;
+  }
+  .partner-promo.partner-promo-figure-led .partner-promo-amount {
+    margin-top: 20px;
+  }
+  .partner-promo-amount strong {
+    font-size: 60px;
+  }
+  .partner-promo.partner-promo-figure-led .partner-promo-terms {
+    margin-bottom: 24px;
   }
 }
