@@ -4,7 +4,7 @@
 
 - Phones only (≤600px, `mobile-refinement.css` end): the two-step planner tracker is one compact row (28px markers, label beside, connector between), 57px tall instead of 106px; under 360px the connector is hidden. Desktop and tablet unchanged (verified identical size).
 - Project examples heading: "They went solar. Check their savings." with subtext "Example systems and their monthly savings." The client-preview add-on sentence was removed; the public disclaimer (samples, estimated savings) is unchanged.
-- Solar partner banner: "Earn" label above the ₱25,000 figure, subtext under "Know someone going solar?" removed, button now "Refer and Earn 5%" (still links to the partner page).
+- Solar partner banner, reworked after an Impeccable critique (22/32; saved in `.impeccable/critique/`): question first, then "You earn ₱25,000" on one line, then "Example: 5% of a ₱500,000 system, paid within 7 days of the final payment", then a sentence-case "Refer someone" button with a forward arrow (links to the partner page, whose hero reads "Refer solar. Earn 5%."). Two columns with a neighbourhood photo (`solar-story/neighborhood.jpg`) instead of a rooftop that repeated the project cards; the photo is hidden on phones so the offer comes first (379px tall instead of 496px). Fixed the heading touching the button. Unused `.partner-promo-figure` styles removed; the About partner banner is unchanged (verified).
 - Checks: 43/43 tests, no page errors on the solar page at desktop and phone.
 
 ## Be a partner: floating button (merged into `main` 23 Nov 2026, not deployed)
