@@ -109,6 +109,12 @@
     top: calc(-1 * var(--tp-top));
     height: calc(100% + var(--tp-top));
   }
+  /* ...and so does its tap area: tapping beside "What are you building next?" opens Solar.
+     The header stays on top, so its logo and buttons keep working. */
+  .tp-panel:first-child > .tp-hit {
+    top: calc(-1 * var(--tp-top));
+    height: calc(100% + var(--tp-top));
+  }
   .tp-top {
     position: absolute;
     z-index: 1;
@@ -317,7 +323,8 @@
     border-left: 0;
   }
   .tp-panel:first-child > img,
-  .tp-panel:first-child > .tp-shade {
+  .tp-panel:first-child > .tp-shade,
+  .tp-panel:first-child > .tp-hit {
     top: 0;
     height: 100%;
   }

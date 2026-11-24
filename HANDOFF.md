@@ -3,6 +3,7 @@
 ## Latest: portrait tablets always get the banded design (branch `fix/tablet-portrait-any-input`, 24 Nov 2026, not merged or deployed)
 
 - The client's portrait tablet design (five horizontal bands under the question, tap or click to open) only applied to touch screens, so a portrait browser window or an iPad with a trackpad still showed the old compact banners. `tablet-home.js` (TABLET query) and `tablet-home.css` now also apply to any portrait screen 600–1199px wide, whatever the input.
+- Portrait: the Solar band's tap area now runs up behind "What are you building next?" (as its photo already did), so tapping or clicking near the question opens Solar; the header stays on top and its buttons keep working. Landscape unchanged.
 - Unchanged: laptops/desktops in landscape (hover banners), touch tablets in landscape (columns), phones (phone homepage). Checked at 820 × 1180 and 1024 × 1366 with a mouse, touch portrait, touch landscape, 1280 × 800 desktop and 390 phone. 45/45 tests.
 
 ## Latest: header Call us shrinks to its icon on tablets (branch `fix/header-call-icon`, merged into `main` 24 Nov 2026 at the user's request; not deployed)
