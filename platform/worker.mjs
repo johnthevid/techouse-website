@@ -3,6 +3,7 @@
  */
 import { scrypt } from "node:crypto";
 import { insightsRoute, pruneInsights } from "./insights.mjs";
+import { verifyRoute } from "./verify.mjs";
 const encoder = new TextEncoder();
 const json = (body, status = 200, headers = {}) =>
   new Response(JSON.stringify(body), {
@@ -743,6 +744,8 @@ async function route(request, env) {
     equal,
   });
   if (insight) return insight;
+  const verified = await verifyRoute(request, env, path, { query, rate, body, fail, json, hash, equal });
+  if (verified) return verified;
   if (path.startsWith("/api/")) fail(404, "Not found.");
   if (!["GET", "HEAD"].includes(request.method))
     fail(405, "Method not allowed.");

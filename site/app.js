@@ -1165,11 +1165,16 @@ document.addEventListener('submit', async (event) => {
       submit.dataset.label ||= submit.innerHTML;
       submit.textContent = 'Sending…';
       try {
+        // Verify the customer by a 6-digit code (SMS, falling back to email). If no code can be
+        // sent, the inquiry still goes through and staff see it as not verified.
+        const check = trap ? { skipped: true } : await window.TechouseVerify?.confirm(form, { phone: data.phone, email: data.email });
+        if (check === null) return; // closed the code dialog: keep the form as it is
         const response = await fetch('/api/inquiries', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             ...q,
+            ...(check?.token ? { verification: check.token } : {}),
             website: trap || '',
             attribution: window.TechouseAnalytics?.attribution() || undefined,
           }),

@@ -2,6 +2,8 @@
  * Privacy: no cookies, no IP addresses. A visitor is a salted hash of the day, network address
  * and browser, so the same person counts once a day and cannot be followed across days.
  */
+import { channels as verifyChannels, useVerification } from "./verify.mjs";
+
 const DAY = 86400000;
 const MANILA = 8 * 3600000;
 export const divisions = ["solar", "construction", "prefabrication", "development", "elevators"];
@@ -284,6 +286,8 @@ export async function insightsRoute(request, env, path, tools) {
       await visitorOf(request, env, hash, now),
       await hash(token),
     ).run();
+    // A verified code (SMS or email) links to this inquiry; without one it is stored as not verified.
+    if (input.verification) await useVerification(env, tools, input.verification, id, record.phone, record.email);
     if (site)
       await query(
         env,
@@ -338,8 +342,19 @@ export async function insightsRoute(request, env, path, tools) {
       const { results: rows } = await query(env, "SELECT * FROM inquiry_sites").all();
       for (const row of rows) sites.set(row.inquiry_id, siteRecord(row));
     } catch {}
+    // Verification: the channel a customer confirmed with, or "none" when verification was on.
+    const verified = new Map();
+    try {
+      const { results: rows } = await query(env, "SELECT inquiry_id, channel FROM verifications WHERE inquiry_id IS NOT NULL").all();
+      for (const row of rows) verified.set(row.inquiry_id, row.channel);
+    } catch {}
+    const checking = verifyChannels(env).on;
     return json({
-      inquiries: results.map((row) => ({ ...inquiryRecord(row), site: sites.get(row.id) || null })),
+      inquiries: results.map((row) => ({
+        ...inquiryRecord(row),
+        site: sites.get(row.id) || null,
+        verified: verified.get(row.id) || (checking && (row.topic || "project") === "project" ? "none" : null),
+      })),
     });
   }
 

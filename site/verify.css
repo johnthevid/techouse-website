@@ -1,0 +1,100 @@
+/* Inquiry verification code dialog. Square corners; one field, one action. */
+.verify-dialog {
+  width: min(440px, calc(100vw - 32px));
+  padding: 0;
+  border: 1px solid #c9d1c4;
+  background: #fbfaf5;
+  color: #182522;
+  box-shadow: 0 24px 60px rgb(24 37 34 / 0.3);
+}
+.verify-dialog::backdrop {
+  background: rgb(24 37 34 / 0.5);
+}
+.verify-form {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  padding: 28px 24px 24px;
+}
+.verify-form h2 {
+  margin: 0 40px 4px 0;
+  font: 600 22px/1.25 var(--display);
+  color: #1c352a;
+}
+.verify-form > p {
+  margin: 0 0 8px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #4f5c53;
+}
+.verify-form > p b {
+  color: #182522;
+  font-weight: 600;
+}
+.verify-form label {
+  font-size: 14px;
+  font-weight: 600;
+}
+.verify-form input {
+  height: 56px;
+  padding: 0 16px;
+  border: 1px solid #a7b4aa;
+  background: #fff;
+  font-size: 26px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.3em;
+}
+.verify-form input:focus {
+  outline: none;
+  border-color: #1c352a;
+  box-shadow: 0 0 0 3px rgb(28 53 42 / 0.15);
+}
+.verify-error {
+  margin: 0;
+  font-size: 13px;
+  color: #a63b2a;
+}
+.verify-error[hidden] {
+  display: none;
+}
+.verify-submit {
+  justify-content: center;
+  margin-top: 8px;
+}
+.verify-again {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-top: 4px;
+  font-size: 13px;
+  color: #596752;
+}
+.verify-again [hidden] {
+  display: none;
+}
+.verify-again .text-link {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+.verify-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: none;
+  color: #1c352a;
+  cursor: pointer;
+}
+.verify-close .material-icon {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
