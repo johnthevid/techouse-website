@@ -1,5 +1,20 @@
 # Current handoff
 
+## Latest: About page as a story, homepage header alignment (branch `claude/solar-elevator-config-14em1m`, 25 Nov 2026; not merged, not deployed)
+
+- **About page** (`about()` in `site/app.js`, new `site/about-story.css` loaded last), done with Impeccable. It inherits the existing look, and the user chose "chapters along a timeline". The page now reads in order:
+  1. The opening hero.
+  2. The prologue "One company. Five ways to move forward." (heading left, paragraphs right).
+  3. "From elevators to rooftops.": four numbered chapters down a gold timeline, each with copy, division links and a photo: It started with elevators / Then, new ways to build / Then, the sun / Five divisions today. The last chapter ends in the five division links, which replace "Start with your next step".
+  4. "Practical, honest, built to last." as a two-column ruled list (no cards).
+  5. The people and office panel.
+  6. The partner banner, then "Have a project in mind?".
+- **Chapter photos** reuse each division's banner, including banners staff replace in the back office.
+- **Motion:** the timeline draws itself on scroll where the browser supports scroll-driven animation; none with reduced motion.
+- **Back-office editing:** the five Detailed About fields still map one-to-one (`.page-hero h1/p`, `.content-columns h2` and its two paragraphs), checked in the browser.
+- **Homepage header:** the logo PNG's transparent left margin and its low wordmark made the logo look misaligned. `banner.css` now shifts the artwork (`translate: -5.57% -7.67%`, measured from the 2172×724 file). The visible logo now starts at the headline's left edge (x=72 at 1440), and the TECHOUSE wordmark is centred with the header buttons (y=56). Headline, buttons and the intro are untouched.
+- **Checks:** `npm test` 51/51; Impeccable detector: no findings. Captured at 1440 and 390.
+
 ## Latest: shorter elevator section, page spacing, About tabs (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; not merged, not deployed)
 
 - **"Every elevator, every service."** went from 1,372px to 897px tall, so its heading, tabs, slideshow and brands row fit one 1440×900 screen below the section menu.

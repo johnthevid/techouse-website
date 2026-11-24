@@ -1022,3 +1022,12 @@ body.landing > .back-to-top:focus-visible > span:last-child {
     transition: none;
   }
 }
+
+/* Homepage header alignment: the logo PNG has a transparent margin on its left and its TECHOUSE
+   wordmark sits below the image's centre (under the house icon). Shift the artwork so its left edge
+   lines up with the headline and the wordmark's centre lines up with the header actions.
+   Measured from the 2172 × 724 artwork: left margin 121 (5.57%), wordmark centre 55.5 below the
+   image centre (7.67%). The independent translate property leaves any intro transforms untouched. */
+.banner-nav .banner-company-link .brand-logo {
+  translate: -5.57% -7.67%;
+}

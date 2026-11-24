@@ -366,8 +366,59 @@ function divisionPage(id) {
   const d = getDivision(id);
   return d ? window.TechouseDivisions.page(d, divisions, elevatorArt, arrow) : notFound();
 }
+// ABOUT: the Techouse story, told in order. Prologue (editable in the back office), four chapters
+// down a timeline, what we hold to, the people and office, then the next step. Chapter photos reuse
+// each division's banner (including staff replacements) so the story matches the homepage.
 function about() {
-  return `${breadcrumb('About Techouse')}<section class="container page-hero about-introduction"><h1>New ways to build.<br>More ways forward.</h1><p>Techouse brings construction technologies and solar energy solutions to the Philippines—connecting your plans with possibilities for the spaces you build and the energy you use.</p></section><div class="container content-columns about-company"><div><h2>One company.<br>Five ways to move forward.</h2><p>Techouse Technology Construction Corp brings together construction, solar energy, prefabricated buildings, real estate development and elevator engineering. Each division offers a different starting point for your project.</p><p>Whether you’re exploring rooftop solar, planning a building or considering a new use for your property, start with what you want to achieve. Explore the relevant division, share your requirements, and discuss the next step with our team.</p><a class="text-link" href="#/divisions">Find your division ${arrow}</a></div>${window.TechouseAbout.panel()}</div><section class="container about-story"><div class="section-heading"><h2>From elevators<br>to rooftops.</h2><p>Techouse grew one practical step at a time, adding each division when we could stand behind it.</p></div><ol><li><strong>Where we started</strong><p>Before solar, Techouse offered two things: construction technology and elevators, supplied and serviced through manufacturers in China.</p></li><li><strong>New ways to build</strong><p>We brought steel-mould building to the Philippines: precast concrete modules cast in steel moulds, and cast-in-place construction poured on site.</p></li><li><strong>Solar energy</strong><p>With Skyworth panels, inverters and batteries, we added solar for homes and businesses, sized to how each property really uses power.</p></li><li><strong>Five divisions today</strong><p>Construction, prefabrication, solar, real estate development and elevator engineering: one team for the whole project.</p></li></ol></section><section class="container about-values"><div class="section-heading"><h2>Practical, honest,<br>built to last.</h2></div><div><article><h3>Direct from the source</h3><p>We buy from manufacturers through our partners in China, so our prices don’t carry layers of resellers.</p></article><article><h3>Built to be maintained</h3><p>Nothing lasts without care. We plan maintenance from day one, whether it’s an elevator, a solar system or a building.</p></article><article><h3>Honest numbers</h3><p>We size solar on realistic sun hours and efficiency, not best-case figures, and we’ll tell you when a project isn’t worth it.</p></article><article><h3>Made for local conditions</h3><p>We plan around Philippine realities: 220-volt three-phase supply, road and crane limits, lot setbacks and island logistics.</p></article></div></section><div class="container">${window.TechousePartner.promo('about')}</div><section class="container about-pathways"><div class="section-heading"><h2>Start with your next step.</h2></div><div>${divisions.map((d) => `<a href="#/divisions/${d.id}"><span>${d.number}</span><strong>${esc(d.short)}</strong>${arrow}</a>`).join('')}</div></section>${cta('Have a project in mind?', 'Tell us what you’re planning. We’ll help you find the right conversation to start.')}`;
+  const photo = (id) => {
+    const d = getDivision(id);
+    const saved = window.TechouseContent?.snapshot().images[id];
+    const src = saved ? window.TechouseContent.imageURL(saved) : 'assets/' + d.image;
+    return `<figure class="about-chapter-photo"><img src="${esc(src)}" alt="${esc(d.alt || d.short)}" loading="lazy"></figure>`;
+  };
+  const chapters = [
+    [
+      'It started with elevators.',
+      'Before solar, Techouse offered two things: construction technology and elevators, supplied and serviced through manufacturers in China.',
+      [['elevators', 'Elevator engineering']],
+      photo('elevators'),
+    ],
+    [
+      'Then, new ways to build.',
+      'We brought steel-mould building to the Philippines: precast concrete modules cast in steel moulds, and cast-in-place construction poured on site.',
+      [
+        ['construction', 'Construction'],
+        ['prefabrication', 'Prefabricated buildings'],
+      ],
+      photo('prefabrication'),
+    ],
+    [
+      'Then, the sun.',
+      'With Skyworth panels, inverters and batteries, we added solar for homes and businesses, sized to how each property really uses power.',
+      [['solar', 'Solar energy']],
+      photo('solar'),
+    ],
+    [
+      'Five divisions today.',
+      'Construction, prefabrication, solar, real estate development and elevator engineering: one team for the whole project. Start with the one that fits.',
+      [],
+      `<nav class="about-chapter-divisions" aria-label="Our divisions">${divisions
+        .map((d) => `<a href="#/divisions/${d.id}"><strong>${esc(d.short)}</strong>${arrow}</a>`)
+        .join('')}</nav>`,
+    ],
+  ];
+  const beliefs = [
+    ['Direct from the source', 'We buy from manufacturers through our partners in China, so our prices don’t carry layers of resellers.'],
+    ['Built to be maintained', 'Nothing lasts without care. We plan maintenance from day one, whether it’s a lift, a solar system or a building.'],
+    ['Honest numbers', 'We size solar on realistic sun hours and efficiency, not best-case figures, and we’ll tell you when a project isn’t worth it.'],
+    ['Made for local conditions', 'We plan around Philippine realities: 220-volt three-phase supply, road and crane limits, lot setbacks and island logistics.'],
+  ];
+  return `${breadcrumb('About Techouse')}<section class="container page-hero about-introduction"><h1>New ways to build.<br>More ways forward.</h1><p>Techouse brings construction technologies and solar energy solutions to the Philippines—connecting your plans with possibilities for the spaces you build and the energy you use.</p></section><div class="container content-columns about-prologue"><div><h2>One company.<br>Five ways to move forward.</h2><p>Techouse Technology Construction Corp brings together construction, solar energy, prefabricated buildings, real estate development and elevator engineering. Each division offers a different starting point for your project.</p><p>Whether you’re exploring rooftop solar, planning a building or considering a new use for your property, start with what you want to achieve. Explore the relevant division, share your requirements, and discuss the next step with our team.</p></div></div><section class="container about-chapters" aria-labelledby="about-chapters-title"><div class="section-heading"><h2 id="about-chapters-title">From elevators<br>to rooftops.</h2><p>Techouse grew one practical step at a time, adding each division when we could stand behind it.</p></div><ol class="about-timeline">${chapters
+    .map(
+      ([title, text, links, aside], i) =>
+        `<li class="about-chapter"><span class="about-chapter-mark" aria-hidden="true">${i + 1}</span><div class="about-chapter-copy"><h3>${title}</h3><p>${text}</p>${links.map(([id, label]) => `<a class="text-link" href="#/divisions/${id}">${label} ${arrow}</a>`).join('')}</div>${aside}</li>`,
+    )
+    .join('')}</ol></section><section class="container about-beliefs" aria-labelledby="about-beliefs-title"><div class="section-heading"><h2 id="about-beliefs-title">Practical, honest,<br>built to last.</h2><p>What we hold to on every project, whatever the division.</p></div><dl>${beliefs.map(([t, d]) => `<div><dt>${t}</dt><dd>${d}</dd></div>`).join('')}</dl></section><section class="container about-meet">${window.TechouseAbout.panel()}</section><div class="container">${window.TechousePartner.promo('about')}</div>${cta('Have a project in mind?', 'Tell us what you’re planning. We’ll help you find the right conversation to start.')}`;
 }
 
 // Returning visitors can review browser-local requests without accidentally creating duplicates.

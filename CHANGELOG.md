@@ -2,6 +2,11 @@
 
 Recorded milestones for the Techouse website. Dates use the project's Asia/Manila calendar. These entries describe completed work; they are not retroactively created Git tags or GitHub Releases.
 
+## Unreleased — About page story and header alignment (25 Nov 2026)
+
+- About page retold in order: opening, prologue, four timeline chapters ending in the five divisions, what we hold to, the people and office, then the next step.
+- Homepage header: the logo's visible edge lines up with the headline and its wordmark with the header buttons.
+
 ## Unreleased — Elevators: own photos, merged section, brand logos (24 Nov 2026)
 
 - Elevator types and services share one section ("Every elevator, every service.") with two tabs over one slideshow; brands close it as a row.
