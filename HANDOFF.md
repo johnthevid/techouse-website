@@ -1,5 +1,22 @@
 # Current handoff
 
+## Latest: Solar step 1 fits one screen, division calls to action, narrow-screen section menu (branch `claude/solar-elevator-config-14em1m`, 25 Nov 2026; not merged, not deployed)
+
+- **Solar planner step 1** (new `site/solar-step-one.css`, loaded last; Impeccable layout pass): heading to the bottom of the form went from 930px to 634px at 1440, and from 889px to 697px at 390, so it all fits one screen under the section bar.
+  - The step tracker is one row: marker and label side by side, with the connector in the gap.
+  - The three property types sit side by side, icon above label, with the check in the corner.
+  - Tighter form padding and legend; the photo follows the form's height.
+  - Nothing in the flow changed.
+- **Division calls to action** (`divisions.js` `CTA`, `app.js` header label): Construction "Let’s start building", Prefabrication "Let’s start forming", Elevators "Let’s start elevating".
+  - Shown in the main header, replacing "Start a project".
+  - Also shown in metallic gold at the right of the sticky section bar, once the header button has scrolled away.
+  - Both open `#/inquiry?division=<id>`.
+  - The bar button is excluded from the header-button suppression check (`syncInquiryCta`).
+- **Section menu at 900px and under** (Construction, Prefabrication, Elevators, Real estate development):
+  - A three-line button names the section in view and opens the section links as a drop-down list (current one highlighted, page dimmed). It closes on a link, Escape or an outside tap, mirroring Solar's phone menu.
+  - Wide screens are unchanged (the links wrapper uses `display: contents`).
+- **Checks:** `npm test` 53/53 (new test for the calls to action and the menu). `update-101-browser` flaked once under load and passed alone. Impeccable detector: no findings.
+
 ## Latest: Solar products editor in the back office (branch `claude/zen-fermat-g5352f`, merged into `main` 25 Nov 2026 at the user's request; not deployed)
 
 Merged with main's elevator, About and portrait-tablet work; conflicts in `customizer.js`, `index.html`, HANDOFF and CHANGELOG resolved keeping both sides; asset versions regenerated; `npm test` 53/53 on the merged code.

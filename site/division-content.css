@@ -483,3 +483,184 @@ article.construction-type:hover {
     margin-bottom: 24px;
   }
 }
+
+/* Construction, Prefabrication, Elevators: the division's own call to action at the right of the
+   sticky section bar, in the site's metallic gold. It appears once the header's button has scrolled
+   away; on phones it stays pinned at the right while the links scroll beneath it. */
+.construction-subnav:has(.division-subnav-cta) {
+  align-items: center;
+}
+.construction-subnav .division-subnav-cta {
+  position: sticky;
+  right: 0;
+  flex: none;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border: 1px solid #e6c46c;
+  background: linear-gradient(115deg, #b98626 0%, #e6bf5c 21%, #fff0ad 41%, #dbad45 60%, #f5d77e 79%, #bd8a2c 100%);
+  background-size: 180% 100%;
+  color: #211b0d;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: inset 0 1px 0 #fff6cdb3, inset 0 -1px 0 #8c601c66;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1),
+    visibility 0s 0.3s,
+    background-position 0.65s ease;
+}
+.construction-subnav.has-cta .division-subnav-cta {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}
+.construction-subnav .division-subnav-cta:hover,
+.construction-subnav .division-subnav-cta:focus-visible {
+  background-position: 100% 50%;
+  color: #211b0d;
+}
+.construction-subnav .division-subnav-cta:focus-visible {
+  outline: 3px solid #a85d2c;
+  outline-offset: 3px;
+}
+.construction-subnav .division-subnav-cta svg {
+  width: 16px;
+  height: 16px;
+}
+@media (max-width: 900px) {
+  .construction-subnav .division-subnav-cta {
+    padding: 8px 12px;
+    font-size: 12px;
+    box-shadow:
+      -16px 0 14px -6px #e9e5d9,
+      inset 0 1px 0 #fff6cdb3,
+      inset 0 -1px 0 #8c601c66;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .construction-subnav .division-subnav-cta {
+    transition: none;
+  }
+}
+
+/* Section menu. Wide screens: the links sit in the bar as before. 900px and under: a three-line
+   button naming the section in view opens the links as a drop-down list, like Solar's phone menu. */
+.division-subnav-toggle {
+  display: none;
+}
+.construction-subnav .division-subnav-links {
+  display: contents;
+}
+@media (max-width: 900px) {
+  .construction-subnav {
+    position: sticky;
+    overflow: visible;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    min-height: 56px;
+    padding: 4px var(--site-gutter, 16px) 4px 6px;
+  }
+  .division-subnav-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 10px;
+    border: 0;
+    background: none;
+    color: #182522;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .division-subnav-toggle svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+  }
+  .division-subnav-toggle:focus-visible {
+    outline: 3px solid #a85d2c;
+    outline-offset: -3px;
+  }
+  .construction-subnav .division-subnav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    padding: 6px 0;
+    border-top: 1px solid #c9d1c4;
+    border-bottom: 1px solid #c9d1c4;
+    background: #fff;
+    box-shadow:
+      0 12px 24px rgb(24 37 34 / 0.16),
+      0 0 0 100vmax rgb(24 37 34 / 0.28);
+    clip-path: inset(0 0 -100vmax 0);
+    font-size: 15px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition:
+      opacity 120ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      transform 120ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      visibility 0s linear 120ms;
+  }
+  .construction-subnav.is-menu-open .division-subnav-links {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-duration: 200ms, 200ms, 0s;
+    transition-delay: 0s;
+  }
+  .construction-subnav.is-menu-open {
+    background: #fff;
+  }
+  .construction-subnav .division-subnav-links a {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 20px 0 48px;
+    border-top: 1px solid #e6e9e1;
+    color: #182522;
+  }
+  .construction-subnav .division-subnav-links a:first-child {
+    border-top: 0;
+  }
+  .construction-subnav .division-subnav-links a[aria-current] {
+    background: #eef1e8;
+    font-weight: 600;
+    color: #1c352a;
+  }
+  .construction-subnav .division-subnav-links a:active {
+    background: #e2e8dc;
+  }
+  .construction-subnav .division-subnav-cta {
+    position: static;
+    margin-left: auto;
+    box-shadow:
+      inset 0 1px 0 #fff6cdb3,
+      inset 0 -1px 0 #8c601c66;
+  }
+}
+@media (max-width: 900px) and (prefers-reduced-motion: reduce) {
+  .construction-subnav .division-subnav-links {
+    transform: none;
+    transition: none;
+  }
+}
+.construction-subnav .division-subnav-links a:focus-visible {
+  outline: 2px solid #b99258;
+  outline-offset: -2px;
+}

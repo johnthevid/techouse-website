@@ -1,0 +1,110 @@
+/* Solar planner, step 1 ("Your first step to lower electricity bills."): compressed so the heading,
+ * the step tracker and the whole form fit one screen under the section bar. The structure stays;
+ * vertical air goes. The tracker becomes one row, the three property types sit side by side with the
+ * icon above the label, and the photo follows the form's height. Loaded last. */
+
+#solar-start > .section-heading {
+  margin-bottom: 24px;
+}
+#solar-start > .section-heading h2 {
+  font-size: clamp(34px, 3.4vw, 50px);
+  line-height: 1.04;
+}
+
+/* Step tracker: marker and label side by side, the connector running through the gap. */
+@media (min-width: 601px) {
+  #solar-start .solar-planning-pages > .discovery-progress {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: center;
+    column-gap: 72px;
+    padding: 14px 24px;
+  }
+  #solar-start .solar-planning-pages > .discovery-progress button,
+  #solar-start .solar-planning-pages > .discovery-progress button[aria-current='step'],
+  #solar-start .solar-planning-pages > .discovery-progress button:hover:not([aria-current='step']) {
+    flex-direction: row;
+    gap: 10px;
+    padding: 0;
+  }
+  #solar-start .solar-planning-pages > .discovery-progress button:not(:last-child)::after {
+    top: 50%;
+    left: calc(100% + 12px);
+    width: 48px;
+  }
+  #solar-start .solar-planning-pages > .discovery-progress .step-marker {
+    width: 34px;
+    height: 34px;
+    font-size: 14px;
+  }
+  #solar-start .solar-planning-pages > .discovery-progress button[aria-current='step'] .step-marker {
+    box-shadow: 0 0 0 3px #e5dbc5;
+  }
+}
+
+/* The form: tighter padding and legend. */
+#solar-start .solar-planning-pages[data-step='1'] #solar-discovery {
+  padding: 28px 32px;
+}
+#solar-start .solar-planning-pages[data-step='1'] legend {
+  margin-bottom: 14px;
+  font-size: clamp(20px, 1.6vw, 24px);
+}
+/* Property types side by side: icon above the label, the check in the corner. */
+#solar-start .solar-planning-pages[data-step='1'] .solar-choices {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+#solar-start .solar-planning-pages[data-step='1'] .solar-choices span {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 10px;
+  min-height: 96px;
+  padding: 16px;
+  font-size: 16px;
+}
+#solar-start .solar-planning-pages[data-step='1'] .solar-choices input:checked + span::after {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  margin: 0;
+}
+#solar-start .solar-planning-pages[data-step='1'] .solar-location {
+  margin-top: 22px;
+  gap: 8px;
+}
+#solar-start .solar-planning-pages[data-step='1'] #location-suggestions-note {
+  font-size: 13px;
+  line-height: 1.45;
+}
+#solar-start .solar-planning-pages[data-step='1'] .discovery-controls {
+  margin-top: 20px;
+  padding-top: 0;
+}
+/* The photo follows the form instead of forcing the stage taller. */
+#solar-start .solar-planning-pages[data-step='1'] .discovery-stage > .discovery-visual {
+  min-height: 0;
+}
+
+@media (max-width: 600px) {
+  #solar-start > .section-heading {
+    margin-bottom: 18px;
+  }
+  #solar-start .solar-planning-pages[data-step='1'] #solar-discovery {
+    padding: 20px 16px;
+  }
+  #solar-start .solar-planning-pages[data-step='1'] .solar-choices {
+    gap: 8px;
+  }
+  #solar-start .solar-planning-pages[data-step='1'] .solar-choices span {
+    min-height: 80px;
+    padding: 12px;
+    gap: 8px;
+    font-size: 14px;
+  }
+  #solar-start .solar-planning-pages[data-step='1'] .solar-choices input:checked + span::after {
+    top: 8px;
+    right: 10px;
+  }
+}

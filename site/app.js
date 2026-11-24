@@ -262,7 +262,7 @@ function syncInquiryCta() {
   if (!headerCta || document.body.classList.contains('office-page')) return;
   const candidates = [
     ...document.querySelectorAll(
-      '#main a.button[href*="/inquiry"], #main a.button[href*="/partnership/apply"], #footer a[href*="/inquiry"]',
+      '#main a.button[href*="/inquiry"]:not(.division-subnav-cta), #main a.button[href*="/partnership/apply"], #footer a[href*="/inquiry"]',
     ),
   ];
   const visible = new Set();
@@ -302,7 +302,11 @@ function renderHeader(path) {
     : divisionId
       ? '#/inquiry?division=' + divisionId
       : '#/inquiry';
-  const inquiryLabel = partnerPage ? 'Become a partner' : solarPage ? 'Request a quote' : 'Start a project';
+  const inquiryLabel = partnerPage
+    ? 'Become a partner'
+    : solarPage
+      ? 'Request a quote'
+      : window.TechouseDivisions?.CTA?.[divisionId] || 'Start a project';
   $('#header').innerHTML =
     `<div class="container nav"><a href="#/" aria-label="Techouse home">${brand}</a><nav class="nav-links" id="site-nav" aria-label="Main navigation"><a class="${path.startsWith('/division') ? 'active' : ''}" href="#/divisions">Our divisions</a><a class="${path === '/about' ? 'active' : ''}" href="#/about">About Techouse</a><a class="${path === '/updates' ? 'active' : ''}" href="#/updates">News</a><a class="${partnerSection ? 'active' : ''}" href="#/partnership">Be a partner</a>${partnerSection ? '' : `<a class="mobile-inquiry" href="${inquiryLink}">${inquiryLabel} ${arrow}</a>`}</nav><div class="nav-actions">${partnerSection ? '' : `<a class="header-call" href="tel:+639855626888" aria-label="Call Techouse at +63 985 562 6888">${window.TechouseIcons.icon('call')}<span>Call us</span></a>`}<a class="button small" href="${inquiryLink}">${inquiryLabel} ${arrow}</a><button class="menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">${window.TechouseIcons.icon('menu')}</button></div></div>`;
 }
