@@ -75,6 +75,22 @@ window.TechouseContent = (() => {
     ['about', '.content-columns > div:first-child p:nth-of-type(2)', 'Company paragraph 2'],
   ];
   const divisions = ['solar', 'construction', 'prefabrication', 'development', 'elevators'];
+  // One photo per elevator type for the Elevators page slideshow (saved under images).
+  const elevatorTypes = [
+    ['passenger', 'Passenger'],
+    ['home', 'Home'],
+    ['bed', 'Hospital bed'],
+    ['cargo', 'Cargo'],
+    ['panoramic', 'Panoramic'],
+    ['escalator', 'Escalators'],
+    ['walkway', 'Moving walkways'],
+  ];
+  // Brand logos for the Elevators page; PNG keeps a transparent background.
+  const brandLogos = [
+    ['hitachi', 'Hitachi'],
+    ['epss', 'EPSS'],
+    ['mitsubishi', 'Shanghai Mitsubishi'],
+  ];
   for (const id of divisions)
     for (const [sel, label] of [
       ['h2', 'heading'],
@@ -148,6 +164,57 @@ window.TechouseContent = (() => {
       select.parentElement.after(label);
     }
   }
+  // Elevator photos and logos: a picker of every slot (thumbnail, name, status) and one editor
+  // card for the selected slot. office-ui.js wires selection and the live preview.
+  function photoPicker() {
+    const slot = (key, label, kind) => {
+      const empty =
+        kind === 'logo' ? 'assets/placeholders/no-logo.svg' : 'assets/placeholders/no-photo.svg';
+      const src = data.images[key] ? imageURL(data.images[key]) : empty;
+      return { key, label, kind, empty, src, set: Boolean(data.images[key]) };
+    };
+    const slots = [
+      ...elevatorTypes.map(([type, label]) => slot('elevator-' + type, label, 'photo')),
+      ...brandLogos.map(([brand, label]) => slot('brand-' + brand, label, 'logo')),
+    ];
+    const status = (s) =>
+      s.set
+        ? s.kind === 'logo'
+          ? 'Your logo'
+          : 'Your photo'
+        : s.kind === 'logo'
+          ? 'Name shown'
+          : 'Drawing shown';
+    const row = (s, i) =>
+      `<button type="button" class="photo-pick" data-photo-select="${s.key}" aria-pressed="${!i}"><img src="${escape(s.src)}" alt="" data-photo-thumb class="${s.kind === 'logo' ? 'is-logo' : ''}"><span><strong>${s.label}</strong><small data-photo-status>${status(s)}</small></span></button>`;
+    const list = (kind, heading) =>
+      `<div class="photo-picker-group"><h3>${heading}</h3><div class="photo-picker-list">${slots
+        .map((s, i) => (s.kind === kind ? row(s, i) : ''))
+        .join('')}</div></div>`;
+    const editor = (s, i) =>
+      `<div class="content-field photo-editor${s.kind === 'logo' ? ' photo-editor-logo' : ''}" data-photo-editor="${s.key}"${i ? ' hidden' : ''}><label for="banner-upload-${s.key}">${s.label} ${s.kind === 'logo' ? 'logo' : 'elevator photo'}</label><img class="upload-preview${s.kind === 'logo' ? ' upload-preview-logo' : ''}" src="${escape(s.src)}" data-default-image="${s.empty}" alt="${s.label} ${s.kind} preview"><input id="banner-upload-${s.key}" type="file" accept="${s.kind === 'logo' ? 'image/png,image/webp,image/jpeg' : 'image/jpeg,image/png,image/webp'}" data-banner-upload="${s.key}" data-max-size="${s.kind === 'logo' ? 600 : 1000}"${s.kind === 'logo' ? ' data-format="png"' : ''}><small class="photo-editor-hint">${s.kind === 'logo' ? 'Use the logo file the manufacturer supplied. PNG with a transparent background works best.' : 'A landscape photo of this kind of elevator, ideally one of your own installations.'}</small><label class="restore-image"><input type="checkbox" name="remove-${s.key}"> ${s.kind === 'logo' ? 'Remove logo (show the name)' : 'Remove photo (show the drawing)'}</label></div>`;
+    return `<div class="photo-picker" data-photo-picker>${list('photo', 'Elevator types')}${list('logo', 'Brand logos')}<div class="photo-picker-editor">${slots.map(editor).join('')}</div></div>`;
+  }
+  // Division pages staff have closed for now. The division stays on the homepage, in menus and in
+  // inquiries; only its page is replaced by a short "coming soon" note. Until staff save this
+  // setting, Real estate development starts closed (client decision, 24 Nov 2026).
+  const DEFAULT_CLOSED = ['development'];
+  const closedDivisions = () =>
+    Array.isArray(data.settings.closedDivisions) ? data.settings.closedDivisions : DEFAULT_CLOSED;
+  const divisionNames = {
+    solar: 'Solar energy',
+    construction: 'Construction',
+    prefabrication: 'Prefabricated buildings',
+    development: 'Real estate development',
+    elevators: 'Elevator engineering',
+  };
+  const pageFields = () =>
+    `<div class="division-page-toggles">${divisions
+      .map(
+        (id) =>
+          `<label class="division-page-toggle"><input type="checkbox" name="open-${id}" data-default-checked="${!DEFAULT_CLOSED.includes(id)}" ${closedDivisions().includes(id) ? '' : 'checked'}><span><strong>${divisionNames[id]}</strong><small data-open-label>${closedDivisions().includes(id) ? 'Closed · visitors see “Coming soon”' : 'Open to visitors'}</small></span></label>`,
+      )
+      .join('')}</div>`;
   // Default rate comes from the calculator model; saved settings override it on the public site.
   const defaultRate = () => window.TechouseSolarCalculator?.DEFAULTS.rate ?? 16;
   function rateFields() {
@@ -195,6 +262,18 @@ window.TechouseContent = (() => {
         filter: () => false,
       },
       {
+        id: 'division-pages',
+        title: 'Division pages',
+        note: 'Choose which division pages visitors can open. A closed division keeps its homepage panel, photo and menu links, but its page shows “Coming soon” with a way to send an inquiry.',
+        filter: () => false,
+      },
+      {
+        id: 'elevator-photos',
+        title: 'Elevator photos and logos',
+        note: 'Photos for the elevator types and the brand logos on the Elevators page. Choose one to change it; the preview shows it in place.',
+        filter: () => false,
+      },
+      {
         id: 'images',
         title: 'Banner images',
         note: 'Upload JPEG, PNG or WebP. Images are resized for the prototype.',
@@ -214,18 +293,22 @@ window.TechouseContent = (() => {
           `<section class="form-card customizer-panel" id="customizer-${group.id}" data-customizer-group="${group.id}" ${i ? 'hidden' : ''}><div class="customizer-section-heading"><div><h2>${group.title}</h2><p>${group.note}</p></div><button type="button" class="text-link" data-reset-section="${group.id}">Reset section</button></div>${
             group.id === 'solar-rate'
               ? rateFields()
-              : group.id === 'images'
-                ? `<div class="image-editor-grid">${divisions.map((id) => `<div class="content-field"><label for="banner-upload-${id}">${id.charAt(0).toUpperCase() + id.slice(1)}</label><img class="upload-preview" src="${imageURL(data.images[id] || 'assets/' + defaultImages[id])}" data-default-image="${escape('assets/' + defaultImages[id])}" alt="${id} banner preview"><input id="banner-upload-${id}" type="file" accept="image/jpeg,image/png,image/webp" data-banner-upload="${id}"><label class="restore-image"><input type="checkbox" name="remove-${id}"> Use original image</label></div>`).join('')}</div>`
-                : fields
-                    .filter(group.filter)
-                    .map(([page, selector, label]) => {
-                      const original = (
-                        roots[page].querySelector(selector)?.textContent || ''
-                      ).trim();
-                      const index = fields.findIndex((f) => f[1] === selector);
-                      return `<div class="content-field"><div class="customizer-field-heading"><label for="custom-text-${index}">${escape(label)}</label><button type="button" data-reset-field="${escape(selector)}" aria-label="Restore default for ${escape(label)}">Restore default</button></div><textarea id="custom-text-${index}" name="${escape(selector)}" rows="${label.includes('paragraph') || label.includes('description') ? 4 : 2}" maxlength="2000" data-default="${escape(original)}">${escape(data.text[selector] ?? original)}</textarea></div>`;
-                    })
-                    .join('')
+              : group.id === 'division-pages'
+                ? pageFields()
+                : group.id === 'elevator-photos'
+                  ? photoPicker()
+                  : group.id === 'images'
+                    ? `<div class="image-editor-grid">${divisions.map((id) => `<div class="content-field"><label for="banner-upload-${id}">${id.charAt(0).toUpperCase() + id.slice(1)}</label><img class="upload-preview" src="${imageURL(data.images[id] || 'assets/' + defaultImages[id])}" data-default-image="${escape('assets/' + defaultImages[id])}" alt="${id} banner preview"><input id="banner-upload-${id}" type="file" accept="image/jpeg,image/png,image/webp" data-banner-upload="${id}"><label class="restore-image"><input type="checkbox" name="remove-${id}"> Use original image</label></div>`).join('')}</div>`
+                    : fields
+                        .filter(group.filter)
+                        .map(([page, selector, label]) => {
+                          const original = (
+                            roots[page].querySelector(selector)?.textContent || ''
+                          ).trim();
+                          const index = fields.findIndex((f) => f[1] === selector);
+                          return `<div class="content-field"><div class="customizer-field-heading"><label for="custom-text-${index}">${escape(label)}</label><button type="button" data-reset-field="${escape(selector)}" aria-label="Restore default for ${escape(label)}">Restore default</button></div><textarea id="custom-text-${index}" name="${escape(selector)}" rows="${label.includes('paragraph') || label.includes('description') ? 4 : 2}" maxlength="2000" data-default="${escape(original)}">${escape(data.text[selector] ?? original)}</textarea></div>`;
+                        })
+                        .join('')
           }</section>`,
       )
       .join(
@@ -252,6 +335,9 @@ window.TechouseContent = (() => {
     panel
       .querySelectorAll('textarea, input[data-default]')
       .forEach((input) => (input.value = input.dataset.default));
+    panel
+      .querySelectorAll('input[data-default-checked]')
+      .forEach((input) => (input.checked = input.dataset.defaultChecked === 'true'));
     panel.querySelectorAll('[data-banner-upload]').forEach((input) => {
       delete input.dataset.image;
       input.value = '';
@@ -301,18 +387,18 @@ window.TechouseContent = (() => {
     if (select) syncProjectDivision(select.form);
   });
   // Resize uploads before storage; only decoded raster images are accepted.
-  async function upload(file) {
+  async function upload(file, maxSize = 1440, format = 'jpeg') {
     if (!file || !['image/jpeg', 'image/png', 'image/webp'].includes(file.type))
       throw Error('Choose a JPEG, PNG or WebP image.');
     if (file.size > 15 * 1024 * 1024) throw Error('Choose an image smaller than 15 MB.');
     const bitmap = await createImageBitmap(file);
-    const scale = Math.min(1, 1440 / Math.max(bitmap.width, bitmap.height));
+    const scale = Math.min(1, maxSize / Math.max(bitmap.width, bitmap.height));
     const canvas = document.createElement('canvas');
     canvas.width = Math.round(bitmap.width * scale);
     canvas.height = Math.round(bitmap.height * scale);
     canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
     bitmap.close();
-    return canvas.toDataURL('image/jpeg', 0.78);
+    return format === 'png' ? canvas.toDataURL('image/png') : canvas.toDataURL('image/jpeg', 0.78);
   }
   document.addEventListener('input', (event) => {
     const form = event.target.closest('#website-customizer');
@@ -361,6 +447,10 @@ window.TechouseContent = (() => {
   });
   document.addEventListener('change', async (event) => {
     const input = event.target;
+    if (input.matches('.division-page-toggle input'))
+      input.closest('label').querySelector('[data-open-label]').textContent = input.checked
+        ? 'Open to visitors'
+        : 'Closed · visitors see “Coming soon”';
     if (input.matches('.restore-image input')) {
       const field = input.closest('.content-field'),
         image = field.querySelector('img'),
@@ -383,7 +473,11 @@ window.TechouseContent = (() => {
         window.TechouseOfficeUI.projectPhotos(form).length + input.files.length > 3
       )
         throw Error('Each project can have up to 3 images. Remove a photo before adding more.');
-      const images = await Promise.all([...input.files].map(upload));
+      // Elevator photos are smaller, so seven of them keep the saved content light.
+      const maxSize = Number(input.dataset.maxSize) || 1440;
+      const images = await Promise.all(
+        [...input.files].map((file) => upload(file, maxSize, input.dataset.format)),
+      );
       const image = images[0];
       if (input.hasAttribute('data-banner-upload')) {
         input.dataset.image = image;
@@ -427,8 +521,15 @@ window.TechouseContent = (() => {
       if (note) next.settings.electricityRateNote = note;
       const mapsKey = form.elements.namedItem('googleMapsKey').value.trim();
       if (mapsKey) next.settings.googleMapsKey = mapsKey;
-      if (!Object.keys(next.settings).length) delete next.settings;
-      for (const id of divisions) {
+      // Always saved, so an empty list means "every page open" rather than the default.
+      next.settings.closedDivisions = divisions.filter(
+        (id) => !form.elements.namedItem('open-' + id).checked,
+      );
+      for (const id of [
+        ...divisions,
+        ...elevatorTypes.map(([type]) => 'elevator-' + type),
+        ...brandLogos.map(([brand]) => 'brand-' + brand),
+      ]) {
         const input = form.querySelector(`[data-banner-upload="${id}"]`);
         if (form.elements.namedItem('remove-' + id).checked) delete next.images[id];
         else if (input.dataset.image) next.images[id] = input.dataset.image;
@@ -553,7 +654,7 @@ window.TechouseContent = (() => {
       form.dataset.image = project.image;
       document.querySelector('#project-image-preview').src = imageURL(project.image);
     }
-    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    form.scrollIntoView({ behavior: 'instant', block: 'start' });
   });
   const previewFrame =
     new URLSearchParams(location.search).has('office-preview') && window.parent !== window;
@@ -590,11 +691,23 @@ window.TechouseContent = (() => {
       );
       data.images = Object.fromEntries(
         Object.entries(draft.images).filter(
-          ([key, value]) => divisions.includes(key) && typeof value === 'string',
+          ([key, value]) =>
+            (divisions.includes(key) || /^(elevator|brand)-[a-z]+$/.test(key)) &&
+            typeof value === 'string',
         ),
       );
       const view = event.data.view || 'opening';
       const url = new URL(location.href);
+      // Elevator photos and logos preview on the Elevators page, at the slot being edited.
+      if (view === 'elevator-photos') {
+        url.hash = '/divisions/elevators';
+        history.replaceState(null, '', url.href);
+        renderPage();
+        window.TechouseElevators?.focus(event.data.photo);
+        previousView = view;
+        document.documentElement.dataset.previewRevision = String(latestRevision);
+        return;
+      }
       url.hash = view === 'about' ? '/about' : '/';
       history.replaceState(null, '', url.href);
       window.techouseIntroStarted = !(event.data.animate && view === 'opening');
@@ -650,6 +763,7 @@ window.TechouseContent = (() => {
     page,
     projectsPage,
     snapshot: () => structuredClone(data),
+    isClosed: (id) => closedDivisions().includes(id),
     customizationSnapshot: () => structuredClone({ text: data.text, images: data.images }),
     previewFrame,
     startPreview,

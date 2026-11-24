@@ -2,6 +2,35 @@
 
 Recorded milestones for the Techouse website. Dates use the project's Asia/Manila calendar. These entries describe completed work; they are not retroactively created Git tags or GitHub Releases.
 
+## Unreleased — About page story and header alignment (25 Nov 2026)
+
+- About page retold in order: opening, prologue, four timeline chapters ending in the five divisions, what we hold to, the people and office, then the next step.
+- Homepage header: the logo's visible edge lines up with the headline and its wordmark with the header buttons.
+
+## Unreleased — Elevators: own photos, merged section, brand logos (24 Nov 2026)
+
+- Elevator types and services share one section ("Every elevator, every service.") with two tabs over one slideshow; brands close it as a row.
+- Staff upload a photo per elevator type and each brand's logo in the back office (Website customizer, Elevator photos and logos); drawings and names show until they do.
+
+## Unreleased — Elevators form: Simple and Detailed (24 Nov 2026)
+
+- Each elevator service opens in Simple mode (two or three plain questions); Detailed shows every question. Answers carry over when switching.
+- Questions are rearranged into one ledger: the question on the left, the answer on the right.
+- The machine-room drawings in the form are replaced by a "What is a machine room?" tooltip.
+
+## Unreleased — Elevators page rebuild and homepage news ticker (24 Nov 2026)
+
+- Elevators page: a two-step planner. Step 1 picks one of four services; step 2 shows that service's own form (spec sheet with machine room or machine-room-less, triage, diagnosis, parts request) beside a request summary and inquiry button. Slideshows of elevator types (drawn car floor plans), services (a shaft drawing marking the parts each service touches) and brands, then projects.
+- Inquiry form: shows the planner answers with "Change answers"; the server accepts the new answers.
+- Homepage header: the latest news scrolls between the logo and the actions at 60% white on a soft dark band; Call us, Refer & Earn and Request a quote are more compact.
+
+## Unreleased — Approval meeting follow-ups (24 Nov 2026)
+
+- Solar inquiries ask an optional roof type. Elevator inquiries ask optional elevator questions (service, building type, floors, size, largest item, car entrances, brand, part); the Elevators page opens with the same questions and hands the answers to the form. Answers are stored in a new `inquiry_details` table (migration 0004, additive) and shown in the back office and CSV.
+- Elevators page: six service cards (install, maintain, repair, replace, modernise, parts) and the hard-to-find parts offer ("in as little as 7 days").
+- Back office: Website customizer → Division pages closes a division's page while keeping it on the homepage and in menus. Real estate development starts closed.
+- New `BACKLOG.md`; editing solar products from the back office is queued there.
+
 ## Unreleased — Traffic, leads and stored inquiries (merged into main 23 Nov 2026)
 
 - Inquiries are stored on the server (D1, migration `0002.sql`) instead of only in the visitor's browser, with their source (search, social, paid, campaign tags, referring site and first page). Site-visit preferences are attached to the inquiry. Public copy says the request was sent; the static demo keeps its demo wording.

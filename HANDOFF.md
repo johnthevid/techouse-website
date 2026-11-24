@@ -1,5 +1,121 @@
 # Current handoff
 
+## Latest: About page as a story, homepage header alignment (branch `claude/solar-elevator-config-14em1m`, 25 Nov 2026; not merged, not deployed)
+
+- **About page** (`about()` in `site/app.js`, new `site/about-story.css` loaded last), done with Impeccable. It inherits the existing look, and the user chose "chapters along a timeline". The page now reads in order:
+  1. The opening hero.
+  2. The prologue "One company. Five ways to move forward." (heading left, paragraphs right).
+  3. "From elevators to rooftops.": four numbered chapters down a gold timeline, each with copy, division links and a photo: It started with elevators / Then, new ways to build / Then, the sun / Five divisions today. The last chapter ends in the five division links, which replace "Start with your next step".
+  4. "Practical, honest, built to last." as a two-column ruled list (no cards).
+  5. The people and office panel.
+  6. The partner banner, then "Have a project in mind?".
+- **Chapter photos** reuse each division's banner, including banners staff replace in the back office.
+- **Motion:** the timeline draws itself on scroll where the browser supports scroll-driven animation; none with reduced motion.
+- **Back-office editing:** the five Detailed About fields still map one-to-one (`.page-hero h1/p`, `.content-columns h2` and its two paragraphs), checked in the browser.
+- **Homepage header:** the logo PNG's transparent left margin and its low wordmark made the logo look misaligned. `banner.css` now shifts the artwork (`translate: -5.57% -7.67%`, measured from the 2172×724 file). The visible logo now starts at the headline's left edge (x=72 at 1440), and the TECHOUSE wordmark is centred with the header buttons (y=56). Headline, buttons and the intro are untouched.
+- **News ticker:** spans evenly from the end of the TECHOUSE wordmark to the first header button, with a 24px gap on each side at 1440, 1024, 820 and 390 (`news-ticker.css`).
+- **Checks:** `npm test` 51/51; Impeccable detector: no findings. Captured at 1440 and 390.
+
+## Latest: shorter elevator section, page spacing, About tabs (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; not merged, not deployed)
+
+- **"Every elevator, every service."** went from 1,372px to 897px tall, so its heading, tabs, slideshow and brands row fit one 1440×900 screen below the section menu.
+  - One-line heading; the counter and the arrows share a row; slimmer progress bar.
+  - Smaller slide type, a smaller shaft drawing, a compact brands row and a smaller note.
+  - Uploaded photos fill their panel edge to edge.
+- **Section spacing on Construction, Prefabrication and Elevators** (`division-content.css` end):
+  - 64px section padding (was 90px), 56px for the first section, 40px on phones.
+  - A hairline divider between every section (previously only some had one).
+  - Headings 32px above their content (was 45px); closing brief bottom margin 64px (was 96px).
+- **About page:**
+  - Leadership tab: the portrait placeholder is removed (text only; "Leadership profile to follow.").
+  - Office tab: shows only the Google map (now 320px tall) and the links. The interior photo is removed there but still used on the partner page, so the asset and its credit stay. README updated.
+- **Checks:** `npm test` 51/51. One run had a timing flake in `update-101-browser`, which passed alone and on the rerun.
+
+## Latest: uniform slideshow height, back-office elevator photo picker, snappy back office, round Back to top (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; not merged, not deployed)
+
+- **Elevators page:** "Every elevator, every service." keeps one height across every slide and both tabs.
+  - Slide text, visuals and the two tab panels share one grid cell, and hidden layers keep their space.
+  - Phones use a fixed visual height.
+  - The construction-hoist note now sits below the frame.
+- **Back office, Website customizer → "Elevator photos and logos"** (Impeccable, Operate mode). It replaces ten identical upload cards:
+  - **Picker:** every slot is listed with a thumbnail, its name and a status: "Your photo" / "Drawing shown" for types, "Your logo" / "Name shown" for brands.
+  - **Editor:** one card for the selected slot, with a large preview, a file picker, a hint and a remove option.
+  - **Placeholders:** empty slots use the new `assets/placeholders/no-photo.svg` and `no-logo.svg`.
+  - **Live preview:** opens the Elevators page at the selected type's slide, or the brands row with that brand outlined (`TechouseElevators.focus`), instead of the homepage banners.
+  - **Change tracking:** unsaved-change counts and "Review changes" include these slots.
+- **Back office motion off:** no transition or entrance animations (CSS rule on `body.office-page`; the project editor and sign-in fade-ins and the smooth scrolls are removed). The live preview still shows the website's own motion.
+- **Homepage Back to top:** on the banner page it is now a round, arrow-only button. "Back to top" appears beside it on hover or keyboard focus, and its accessible name is unchanged. Other pages keep the labelled button.
+- **Checks:** `npm test` 51/51 (the photo test now covers picker status, selection, the preview heading and no transitions).
+
+## Latest: Elevators page, own photos, merged section and brand logos (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; not merged, not deployed)
+
+- **One section for elevators and services** (`#elevator-range`):
+  - Heading "Every elevator, every service." with the line "The elevators we install, and how we look after them for their whole life, whoever installed them." It replaces "Installed, maintained, renewed."
+  - Two tabs, "Elevators we install" and "How we help", over one slideshow frame (arrow keys move between tabs).
+  - Brands close the section as a row of three, replacing the brands slideshow.
+  - Section menu: Get started · Elevators and services · Brands · Projects.
+- **Own photos and logos, editable in the back office:** Website customizer has a new "Elevator photos and logos" section.
+  - Seven uploads, one per elevator type, resized to 1,000px JPEG. A type shows its photo, or its drawing until one is uploaded.
+  - Three logo uploads, resized to 600px PNG so transparency is kept. A brand shows its logo, or its name until one is uploaded.
+  - Both are stored in the content `images` map under the keys `elevator-<type>` and `brand-<id>`, which `worker.mjs` allows.
+- Use only logos supplied or approved by each manufacturer. Saved content is capped at 5 MB per save, so keep photos reasonable.
+- **Checks:** `npm test` 51/51 (new tests for the tabbed section, photo and logo uploads, and back-office fields). Impeccable detector: no findings.
+
+## Latest: Elevators form, Simple and Detailed modes (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; not merged, not deployed)
+
+Done with the Impeccable skill (layout pass, existing look kept), after the client worried the elevator form could put people off sending an inquiry.
+- **Toggle:** every service's step 2 has a Simple / Detailed switch in the form's top bar (`.ev-mode`). Simple is the default and the choice is remembered for the visit.
+- **Simple mode asks only these questions:**
+  - New installation: building type, how many floors, what it will carry (people, a wheelchair, a hospital bed, goods).
+  - Maintenance and repair: is it working right now, which brand.
+  - Modernisation and replacement: what's bothering you, how old is it.
+  - Parts: which part, is the elevator stopped because of it.
+- **Detailed mode** shows every question. Both modes are one form, so answers carry over when switching.
+- **Layout:** questions are now ledger rows, with the question (and hint) on the left and the answer on the right. Faint rules divide rows and a firmer rule divides Detailed groups. On phones each row stacks. The "call now" note sits right under "Is it working right now?".
+- **Machine room:** the drawings are removed (user request). The answers are plain chips, and an info button beside the question opens "What is a machine room?" on hover, focus or tap. Escape closes it.
+- **New answer:** item `goods` ("Goods"), added in `inquiry-details.js` and `platform/insights.mjs`.
+- **Checks:** `npm test` 50/50 (the planner test now covers Simple to Detailed, answers carrying over, and the tooltip). Impeccable layout detector: no findings. All four services checked in both modes at 1440; install also checked at 390.
+
+## Latest: Elevators page rebuild and homepage news ticker (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; work in progress, not merged, not deployed)
+
+Built with the Impeccable skill, as an extension of the existing look.
+- **Elevators page** (`site/elevator-page.js`, `site/elevator-page.css`; `divisions.js` delegates): two-step planner like the solar one.
+  - Step 1 has four services: new installation, maintenance and repair, modernisation and replacement, and parts (any brand).
+  - Step 2 has a different layout for each service:
+    - **Installation:** a spec sheet, including drawn tiles for machine room vs machine-room-less.
+    - **Maintenance:** condition first; "Stopped" shows a call-now note.
+    - **Modernisation:** "what's wrong" checklist, then the preferred approach.
+    - **Parts:** the 7-day promise, then part name and number.
+  - A "Your request" summary with a gold "Send us your inquiry" button sits beside step 2.
+  - Below: slideshows of elevator types (drawn floor plans of each car), services (shaft drawing with the parts each service touches) and brands, then projects. The old FAQ facts were folded into the slides.
+- **Shared answers** (`site/inquiry-details.js`): the inquiry form shows the planner answers with "Change answers" and hides the size field. The server (`platform/insights.mjs`) accepts the new answers; old repair and replacement values stay valid.
+- **News ticker** (`banner.js` + `site/news-ticker.css`, loaded last): the latest published updates scroll between the logo and the actions at 60% white, pausing on hover or focus. It sits inside the header action group, so it appears with them after the approved intro, and the intro is unchanged. The actions are compact; from 600 to 899px, Refer & Earn is icon-only.
+- **Checks:** `npm test` 50/50. Impeccable first-viewport passes at 390 and 1440, and its detector found nothing.
+- Finish review (Impeccable finish reviewer): the first review returned "fix" with five items, all now done:
+  - The shaft drawing's label lines no longer cross, and its labels are about 12px on phones.
+  - The ticker has a dark band behind it for contrast, still at 60% opacity.
+  - The "Not sure" machine-room tile shows both arrangements faintly.
+  - The brand slides no longer repeat themselves.
+- The verdict review scored all five resolved ("ship", covering those fixes). Two small follow-ups from it are also done: the machine-room tiles line up, and the brand panels show only the name.
+- Never captured, so not judged by the reviewer: the red "Stopped" state, the inquiry summary with "Change answers", and the slide motion. Browser tests in `division-questions.test.mjs` cover the first two.
+- Checks: `npm test` 50/50; Impeccable detector: no findings. The project has no PRODUCT.md (optional `/impeccable init`).
+- To confirm with Techouse: wording of the four services, the step 2 questions, the 7-day parts claim, and the typical car sizes shown on the type slides (common industry sizes, labelled "Typical").
+
+## Latest: approval meeting follow-ups (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; not merged, not deployed)
+
+Task: the client's notes from the initial approval meeting.
+
+- **Solar roof type (inquiry form only).** When Solar is the division, the inquiry form shows an optional "Roof type" select (concrete deck, metal sheets, clay or concrete tiles, asphalt shingles, something else, not sure). The calculator does not ask for it.
+- **Elevator questions.** The Elevators page now opens with "Tell us about your elevator." (`#elevator-start`; the hero button and section menu lead there). First question: the service (new installation, maintenance, repair, replacement, refurbishment or modernisation, parts and components). Then only the questions that apply: a new or replacement elevator asks building type, floors served, size (450–2,000 kg tiles), largest thing it carries (wheelchair, stretcher, hospital bed, furniture, pallets, car…) and car entrances (one, front and back, front and side); maintenance, repair and modernisation ask building type, floors and the elevator brand; parts asks the brand and which part, and shows the offer "Hard-to-find parts, in as little as 7 days" (for any elevator, not only Techouse installs; timing depends on the part). "Continue to your inquiry" opens the form with the answers filled in an "About the elevator" group (editable) and a starting sentence in the brief. Choosing Elevators on the form directly shows the same fields. Everything is optional.
+- The Service section became six cards (Install, Maintain, Repair, Replace, Modernise, Parts). New Material icons: `build`, `autorenew`, `upgrade`, `memory`, `event_repeat` (official paths, added to `icons.js` and the sprite).
+- **Storage.** Answers are sent as one `details` object, validated against fixed lists (`detailChoices`/`parseDetails` in `platform/insights.mjs`; labels in `site/inquiry-details.js`, keep both in step), and stored in a new `inquiry_details` table (`platform/migrations/0004.sql`, CREATE TABLE IF NOT EXISTS, no existing table changes). The back office shows them in the inquiry facts, and the CSV gains a "Project details" column. The visitor's saved inquiry shows them too.
+- **Real estate development page closed for now.** New back-office setting: Website customizer → Division pages, one switch per division. A closed division keeps its homepage panel, photo, hover and menu links; choosing it shows "… is coming soon." as a toast and the link is marked `aria-disabled`; its URL shows a short coming-soon page with "Send an inquiry". Real estate development starts closed until staff save the setting (default in `customizer.js`; client decision). Saved as `settings.closedDivisions`, validated in `worker.mjs`.
+- **Solar products editable from the back office:** not possible yet (the catalogue is written into `site/catalogue.js`). Queued in the new `BACKLOG.md` with a proposed scope.
+- Wording: the site says "elevator" everywhere visitors read (client: in the Philippines everyone says elevator). Internal code names (`.lift-plan`, `data-lift`) are unchanged. The planner hands off with `#/inquiry?division=elevators&elevator=1`.
+- Checks: `npm test` 48/48 (new `platform/tests/division-questions.test.mjs`; `round3-browser` expects the saved Division pages list). Screenshots at 1440 and 390 of the planner, inquiry form (elevator and roof), service cards, coming-soon page and the customizer section; no page errors or horizontal overflow. Node 22 in the cloud container.
+- To confirm with Techouse: the roof-type list, the elevator size tiles, the "7 days" wording. "How many doors" is confirmed as the elevator car's entrances.
+- Deployment: before deploying this code, apply migration 0004 to the production D1 database separately (`npx wrangler@4.157.0 d1 execute techouse --remote --file=../../platform/migrations/0004.sql` from `deployments/techouse-1.0/`; additive, safe to repeat). Without it, inquiries still send but the roof type and elevator answers are not stored. Needs the user's release instruction.
+
 ## Latest: header Call us shrinks to its icon on tablets (branch `fix/header-call-icon`, merged into `main` 24 Nov 2026 at the user's request; not deployed)
 
 - Homepage header at 600–899px (`mobile-refinement.css` end): Call us shows only its phone icon (44 × 44, aria-label unchanged) so Call us, Refer & Earn and Request a quote fit. Fixes the iPad mini portrait overflow (Request a quote was cut off by 14px). Phones already showed the icon; 900px and wider keep the text; other pages' headers fit and are unchanged (checked 744–1280px).

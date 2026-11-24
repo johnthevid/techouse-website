@@ -1,0 +1,146 @@
+/* Homepage header news ticker (banner.js ticker): the latest updates scroll between the logo and
+ * the header actions at 60% white so they inform without competing. The three actions get a
+ * compact size, keeping their look, to make room. Loaded last so it settles the header layers. */
+#header .banner-nav.has-news .banner-nav-right {
+  flex: 1 1 auto;
+  min-width: 0;
+  justify-content: flex-end;
+  /* The ticker runs evenly between the end of the TECHOUSE wordmark and the first action. The
+     logo's box reaches about 45px past the visible artwork (its link box plus the shift in
+     banner.css), so pulling in 21px leaves the same 24px gap as before the actions. */
+  margin-left: -21px;
+}
+#header .banner-nav.has-news .banner-nav-right > .news-ticker {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0 12px 0 0;
+  overflow: hidden;
+  /* A soft dark band keeps the 60% text readable over bright photos; the mask fades its ends. */
+  background: rgb(8 20 15 / 0.58);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 36px,
+    #000 calc(100% - 36px),
+    transparent
+  );
+  mask-image: linear-gradient(90deg, transparent, #000 36px, #000 calc(100% - 36px), transparent);
+}
+.news-ticker-track {
+  display: flex;
+  width: max-content;
+  animation: news-ticker var(--news-duration, 40s) linear infinite;
+}
+.news-ticker:hover .news-ticker-track,
+.news-ticker:focus-within .news-ticker-track {
+  animation-play-state: paused;
+}
+@keyframes news-ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.news-ticker-list {
+  display: flex;
+  gap: 44px;
+  margin: 0;
+  padding: 0 44px 0 0;
+  list-style: none;
+}
+.news-ticker-list li {
+  display: flex;
+  align-items: center;
+  gap: 44px;
+}
+/* A small square between headlines. */
+.news-ticker-list li::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  background: #e6cf99;
+  opacity: 0.6;
+}
+.news-ticker-list li:first-child::before {
+  display: none;
+}
+.news-ticker a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 12px 0;
+  color: rgb(255 255 255 / 0.6);
+  font-size: 13px;
+  line-height: 1.3;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.news-ticker-date {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.news-ticker a:hover,
+.news-ticker a:focus-visible {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.news-ticker a:focus-visible {
+  outline: 2px solid #e6cf99;
+  outline-offset: 2px;
+}
+
+/* Compact header actions beside the ticker; same colours, borders and icons. */
+#header .banner-nav.has-news .banner-nav-right > :not(.news-ticker) {
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+#header .banner-nav.has-news .header-call {
+  padding-block: 8px;
+}
+#header .banner-nav.has-news .partner-header-cta {
+  height: 38px;
+  min-height: 38px;
+  padding-inline: 12px;
+  font-size: 12px;
+}
+#header .banner-nav.has-news .banner-global-quote {
+  min-height: 38px;
+  padding: 8px 12px;
+}
+
+/* Tablets: Refer & Earn keeps its handshake and gold outline but drops its label, as Call us
+   already does here, so the headlines have room. The label stays for screen readers. */
+@media (min-width: 600px) and (max-width: 899px) {
+  #header .banner-nav.has-news .partner-header-cta {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    padding: 0;
+    justify-content: center;
+  }
+  #header .banner-nav.has-news .partner-header-cta span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+@media (max-width: 599px) {
+  #header .banner-nav.has-news .banner-nav-right {
+    margin-left: 3px;
+  }
+  .news-ticker a {
+    font-size: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .news-ticker-track {
+    animation: none;
+  }
+  .news-ticker-list[aria-hidden='true'] {
+    display: none;
+  }
+}

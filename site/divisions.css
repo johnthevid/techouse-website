@@ -1194,3 +1194,15 @@
 .division-curtain .curtain-hero-visual { z-index: 1; display: block; backface-visibility: hidden; }
 .division-curtain:after { z-index: 2; pointer-events: none; }
 .division-curtain h2 { z-index: 3; }
+
+/* A division page closed in the back office (Website customizer → Division pages). */
+.division-coming-soon-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 28px;
+  margin-top: 28px;
+}
+a[aria-disabled='true'] {
+  cursor: default;
+}

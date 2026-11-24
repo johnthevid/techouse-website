@@ -456,3 +456,30 @@ article.construction-type:hover {
     transform: none;
   }
 }
+
+/* Section rhythm for Construction, Prefabrication and Elevators: 64px panels divided by a hairline,
+   headings 32px above their content, so the pages read as a steady run of panels without dead space. */
+.division-wrap:is(.construction-content, .ev-page) > .division-section {
+  padding-block: 64px;
+}
+.division-wrap:is(.construction-content, .ev-page) > .division-section:first-child {
+  padding-top: 56px;
+}
+.division-wrap:is(.construction-content, .ev-page) > .division-section + .division-section {
+  border-top: 1px solid #d6d9cd;
+}
+.division-wrap:is(.construction-content, .ev-page) > .division-section > .section-heading {
+  margin-bottom: 32px;
+}
+.division-wrap.construction-content > .construction-brief {
+  margin-top: 8px;
+  margin-bottom: 64px;
+}
+@media (max-width: 600px) {
+  .division-wrap:is(.construction-content, .ev-page) > .division-section {
+    padding-block: 40px;
+  }
+  .division-wrap:is(.construction-content, .ev-page) > .division-section > .section-heading {
+    margin-bottom: 24px;
+  }
+}

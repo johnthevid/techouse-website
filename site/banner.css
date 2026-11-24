@@ -985,3 +985,49 @@
 .division-banner > .banner-trigger { z-index: 2; }
 .division-banner > .banner-content { z-index: 3; }
 .previous-page-snapshot * { animation: none !important; transition: none !important; }
+
+/* Homepage only: Back to top is a round, arrow-only button so it doesn't cover the About section;
+   "Back to top" appears beside it on hover and keyboard focus. Other pages keep the labelled button. */
+body.landing > .back-to-top {
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  min-height: 0;
+  padding: 0;
+  border-radius: 50%;
+}
+body.landing > .back-to-top > span:last-child {
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  padding: 7px 11px;
+  background: #182e25;
+  color: #f7f3e9;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(4px, -50%);
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+body.landing > .back-to-top:hover > span:last-child,
+body.landing > .back-to-top:focus-visible > span:last-child {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+@media (prefers-reduced-motion: reduce) {
+  body.landing > .back-to-top > span:last-child {
+    transition: none;
+  }
+}
+
+/* Homepage header alignment: the logo PNG has a transparent margin on its left and its TECHOUSE
+   wordmark sits below the image's centre (under the house icon). Shift the artwork so its left edge
+   lines up with the headline and the wordmark's centre lines up with the header actions.
+   Measured from the 2172 × 724 artwork: left margin 121 (5.57%), wordmark centre 55.5 below the
+   image centre (7.67%). The independent translate property leaves any intro transforms untouched. */
+.banner-nav .banner-company-link .brand-logo {
+  translate: -5.57% -7.67%;
+}

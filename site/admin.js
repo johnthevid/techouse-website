@@ -57,8 +57,9 @@
       busy(e.target, false);
     }
   });
+  // Sign-in appears instantly; the back office has no transition animations.
   function animateAuth() {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    return;
     requestAnimationFrame(() => {
       document.querySelectorAll('.auth-context, .auth-form-panel').forEach((el, index) => {
         el.getAnimations().forEach((animation) => animation.cancel());

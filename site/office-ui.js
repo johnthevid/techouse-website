@@ -25,6 +25,14 @@ window.TechouseOfficeUI = (() => {
   let previewRevision = 0,
     lastPreview = '';
   const ids = ['solar', 'construction', 'prefabrication', 'development', 'elevators'];
+  // Elevators page slots: a photo per elevator type and a logo per brand.
+  let selectedPhoto = 'elevator-passenger';
+  const photoIds = () =>
+    [...(form?.querySelectorAll('[data-photo-editor]') || [])].map((el) => el.dataset.photoEditor);
+  const photoSrc = (id) => {
+    const img = form.querySelector(`[data-photo-editor="${id}"] img`);
+    return img.getAttribute('src') === img.dataset.defaultImage ? '' : img.getAttribute('src');
+  };
   function draft() {
     const value = window.TechouseContent.customizationSnapshot();
     for (const input of form.querySelectorAll('textarea[name]')) {
@@ -34,6 +42,11 @@ window.TechouseOfficeUI = (() => {
     for (const id of ids) {
       const input = form.querySelector(`[data-banner-upload="${id}"]`);
       value.images[id] = input.closest('.content-field').querySelector('img').getAttribute('src');
+    }
+    for (const id of photoIds()) {
+      const src = photoSrc(id);
+      if (src) value.images[id] = src;
+      else delete value.images[id];
     }
     return { text: value.text, images: value.images };
   }
@@ -45,14 +58,17 @@ window.TechouseOfficeUI = (() => {
         label: input.labels?.[0]?.textContent || input.name,
         group: input.closest('[data-customizer-group]').dataset.customizerGroup,
       })),
-      images: ids.map((id) => ({
-        id,
-        src: form
-          .querySelector(`[data-banner-upload="${id}"]`)
-          .closest('.content-field')
-          .querySelector('img')
-          .getAttribute('src'),
-      })),
+      images: [
+        ...ids.map((id) => ({
+          id,
+          src: form
+            .querySelector(`[data-banner-upload="${id}"]`)
+            .closest('.content-field')
+            .querySelector('img')
+            .getAttribute('src'),
+        })),
+        ...photoIds().map((id) => ({ id, src: photoSrc(id), photo: true })),
+      ],
     };
   }
   function sendPreview(animate = false) {
@@ -63,6 +79,7 @@ window.TechouseOfficeUI = (() => {
       animate,
       view: form.querySelector('.customizer-panel:not([hidden])').dataset.customizerGroup,
       division: selectedDivision,
+      photo: selectedPhoto,
     };
     const fingerprint = JSON.stringify({ ...payload, animate: false });
     if (!animate && fingerprint === lastPreview) return;
@@ -93,8 +110,10 @@ window.TechouseOfficeUI = (() => {
       if (changed)
         changes.push({
           name: image.id,
-          label: image.id + ' banner image',
-          group: 'banners',
+          label: image.photo
+            ? `${form.querySelector(`[data-photo-select="${image.id}"] strong`).textContent} ${image.id.startsWith('brand-') ? 'logo' : 'photo'}`
+            : image.id + ' banner image',
+          group: image.photo ? 'elevator-photos' : 'banners',
           image: true,
           before: 'Saved image',
           after: 'New image or restored original',
@@ -120,23 +139,46 @@ window.TechouseOfficeUI = (() => {
     form.querySelector('.banner-preview-panel').hidden = false;
     form.querySelector('.customizer-panels').classList.add('with-banner-preview');
     form.querySelector('.customizer-live-preview').hidden = true;
+    syncPhotoPicker();
     const about = group === 'about',
-      company = group === 'landing-about';
+      company = group === 'landing-about',
+      photos = group === 'elevator-photos';
     frameHeight = about ? 1500 : company ? 1000 : 900;
     iframe.style.height = frameHeight + 'px';
-    form.querySelector('.preview-panel-heading h3').textContent = about
-      ? 'Detailed About — live view'
-      : company
-        ? 'Landing About — live view'
-        : group === 'banners'
-          ? `${selectedDivision.charAt(0).toUpperCase() + selectedDivision.slice(1)} division — live view`
-          : 'Your banners, as visitors see them';
+    form.querySelector('.preview-panel-heading h3').textContent = photos
+      ? `Elevators page — ${form.querySelector(`[data-photo-select="${selectedPhoto}"] strong`).textContent}`
+      : about
+        ? 'Detailed About — live view'
+        : company
+          ? 'Landing About — live view'
+          : group === 'banners'
+            ? `${selectedDivision.charAt(0).toUpperCase() + selectedDivision.slice(1)} division — live view`
+            : 'Your banners, as visitors see them';
     const replay = form.querySelector('[data-replay-preview]');
-    replay.hidden = about || group === 'banners';
+    replay.hidden = about || group === 'banners' || photos;
+    form.querySelector('[data-final-preview]').hidden = photos;
     replay.textContent = company ? 'Replay About entrance' : 'Replay intro animation';
     fitPreview();
     clearTimeout(previewTimer);
     previewTimer = setTimeout(() => sendPreview(false), 220);
+  }
+  // Thumbnails and status in the photo picker follow uploads and removals.
+  function syncPhotoPicker() {
+    for (const id of photoIds()) {
+      const button = form.querySelector(`[data-photo-select="${id}"]`);
+      const src = photoSrc(id);
+      const img = form.querySelector(`[data-photo-editor="${id}"] img`);
+      button.querySelector('[data-photo-thumb]').src = src || img.dataset.defaultImage;
+      const logo = id.startsWith('brand-');
+      button.querySelector('[data-photo-status]').textContent = src
+        ? logo
+          ? 'Your logo'
+          : 'Your photo'
+        : logo
+          ? 'Name shown'
+          : 'Drawing shown';
+      button.classList.toggle('is-set', Boolean(src));
+    }
   }
   function markSaved() {
     if (!form?.isConnected) return;
@@ -168,11 +210,12 @@ window.TechouseOfficeUI = (() => {
           ? change.name
           : change.name.match(/data-banner="([^"]+)/)?.[1];
         if (division) form.querySelector(`[data-image-select="${division}"]`)?.click();
+        if (change.image) form.querySelector(`[data-photo-select="${change.name}"]`)?.click();
         const target = change.image
           ? form.querySelector(`[data-banner-upload="${change.name}"]`)
           : form.elements.namedItem(change.name);
         target.closest('.content-field').scrollIntoView({
-          behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+          behavior: 'instant',
           block: 'center',
         });
         target.focus({ preventScroll: true });
@@ -344,6 +387,17 @@ window.TechouseOfficeUI = (() => {
           sendPreview(false);
           return;
         }
+        const photoTab = event.target.closest('[data-photo-select]');
+        if (photoTab) {
+          selectedPhoto = photoTab.dataset.photoSelect;
+          form
+            .querySelectorAll('[data-photo-select]')
+            .forEach((b) => b.setAttribute('aria-pressed', String(b === photoTab)));
+          form
+            .querySelectorAll('[data-photo-editor]')
+            .forEach((el) => (el.hidden = el.dataset.photoEditor !== selectedPhoto));
+          refresh();
+        }
         const imageTab = event.target.closest('[data-image-select]');
         if (imageTab) {
           selectedDivision = imageTab.dataset.imageSelect;
@@ -463,14 +517,7 @@ window.TechouseOfficeUI = (() => {
         ),
       );
     drawProjectPhotos(editor);
-    if (animate && !matchMedia('(prefers-reduced-motion: reduce)').matches)
-      editor.animate(
-        [
-          { opacity: 0.4, transform: 'translateY(10px)' },
-          { opacity: 1, transform: 'translateY(0)' },
-        ],
-        { duration: 300, easing: 'ease-out' },
-      );
+    // The back office stays snappy: the editor appears without a transition.
   }
   function renderProjects() {
     const browser = document.querySelector('.project-manager-browser');

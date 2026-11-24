@@ -1,0 +1,255 @@
+/* About page as a story (#/about): opening, prologue, four chapters down a timeline, what we hold to,
+ * the people and office, then the next step. Inherits the site world: cream paper, deep green,
+ * gold accents, square corners, Manrope display / DM Sans body. Loaded after content-tools.css. */
+
+/* Prologue: the heading leads on the left, the two paragraphs read on the right. */
+.content-columns.about-prologue {
+  display: block;
+  padding-block: 72px 24px;
+}
+.about-prologue > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 18px 64px;
+  padding: 0;
+  background: none;
+  border: 0;
+}
+.about-prologue h2 {
+  grid-row: 1 / span 2;
+  margin: 0;
+  font-size: clamp(30px, 3.2vw, 46px);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+}
+.about-prologue p {
+  margin: 0;
+  max-width: 62ch;
+  font-size: 18px;
+  line-height: 1.7;
+  color: #3f4b45;
+}
+
+/* The story: a gold timeline with one numbered mark per chapter. */
+.about-chapters {
+  padding-block: 72px 32px;
+}
+.about-chapters > .section-heading {
+  margin-bottom: 48px;
+}
+.about-timeline {
+  position: relative;
+  display: grid;
+  gap: 64px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.about-timeline::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  bottom: 28px;
+  left: 27px;
+  width: 2px;
+  background: #d8c69a;
+  transform-origin: top;
+}
+.about-chapter {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 5fr) minmax(0, 6fr);
+  gap: 0 40px;
+  align-items: start;
+}
+.about-chapter-mark {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border: 2px solid #c79a3b;
+  border-radius: 50%;
+  background: #f3f0e7;
+  color: #1d3a2f;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.about-chapter-copy {
+  padding-top: 8px;
+}
+.about-chapter-copy h3 {
+  margin: 0 0 14px;
+  font-family: var(--display);
+  font-size: clamp(26px, 2.6vw, 38px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+.about-chapter-copy p {
+  max-width: 46ch;
+  margin: 0 0 18px;
+  font-size: 17px;
+  line-height: 1.7;
+  color: #46534c;
+}
+.about-chapter-copy .text-link {
+  display: inline-flex;
+  margin: 0 24px 8px 0;
+}
+.about-chapter-photo {
+  margin: 0;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: #1d3a2f;
+}
+.about-chapter-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* Chapter four ends on the five divisions: the story hands over to the visitor's next step. */
+.about-chapter-divisions {
+  display: grid;
+  border-top: 1px solid #c9cebe;
+}
+.about-chapter-divisions a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 4px;
+  border-bottom: 1px solid #c9cebe;
+  font-size: 19px;
+}
+.about-chapter-divisions a strong {
+  font-weight: 500;
+}
+.about-chapter-divisions a:hover {
+  background: #e8eddf;
+}
+.about-chapter-divisions a:focus-visible {
+  outline: 3px solid #a85d2c;
+  outline-offset: 2px;
+}
+
+/* What we hold to: four principles as a quiet ruled list, not cards. */
+.about-beliefs {
+  padding-block: 72px;
+}
+.about-beliefs > .section-heading {
+  margin-bottom: 36px;
+}
+.about-beliefs dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 56px;
+  margin: 0;
+}
+.about-beliefs dl > div {
+  padding: 24px 0;
+  border-top: 1px solid #c9cebe;
+}
+.about-beliefs dt {
+  margin-bottom: 8px;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.about-beliefs dd {
+  max-width: 52ch;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.65;
+  color: #4c5852;
+}
+
+/* The people and the office close the story before the next step. */
+.about-meet {
+  padding-block: 8px 56px;
+}
+.about-meet .about-people-panel {
+  padding: clamp(28px, 4vw, 48px);
+  background: #e8eddf;
+  border: 1px solid #ccd6c0;
+}
+
+/* One authored moment: the timeline draws itself as the chapters scroll past. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .about-timeline::before {
+      animation: about-timeline-draw linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 60%;
+    }
+  }
+}
+@keyframes about-timeline-draw {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@media (max-width: 900px) {
+  .about-prologue > div {
+    grid-template-columns: 1fr;
+  }
+  .about-prologue h2 {
+    grid-row: auto;
+  }
+  .about-chapter {
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 20px 28px;
+  }
+  .about-chapter > :last-child {
+    grid-column: 2;
+  }
+  .about-beliefs dl {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .content-columns.about-prologue {
+    padding-block: 44px 8px;
+  }
+  .about-prologue p {
+    font-size: 16px;
+  }
+  .about-chapters,
+  .about-beliefs {
+    padding-block: 48px 24px;
+  }
+  .about-timeline {
+    gap: 44px;
+  }
+  .about-timeline::before {
+    left: 19px;
+    top: 20px;
+  }
+  .about-chapter {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 16px 18px;
+  }
+  .about-chapter-mark {
+    width: 40px;
+    height: 40px;
+    font-size: 17px;
+  }
+  .about-chapter-copy {
+    padding-top: 2px;
+  }
+  .about-chapter-copy p {
+    font-size: 16px;
+  }
+  .about-chapter-divisions a {
+    font-size: 17px;
+  }
+}

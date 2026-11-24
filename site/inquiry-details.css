@@ -1,0 +1,65 @@
+/* Inquiry form: Solar's roof type and the Elevators planner summary ("Your elevator"). */
+.inquiry-elevator {
+  display: grid;
+  gap: 12px;
+  padding: 20px 22px;
+  border: 1px solid #c9cebe;
+  background: #faf9f2;
+}
+.inquiry-elevator-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 20px;
+}
+.inquiry-elevator h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+.inquiry-elevator h3 small {
+  font-weight: 400;
+}
+.inquiry-elevator .text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: start;
+  font-size: 15px;
+}
+.inquiry-elevator .text-link svg {
+  width: 16px;
+  height: 16px;
+}
+.inquiry-elevator dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 24px;
+  margin: 0;
+}
+.inquiry-elevator dt {
+  color: #56625d;
+  font-size: 13px;
+}
+.inquiry-elevator dd {
+  margin: 0;
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+.inquiry-elevator-note {
+  margin: 0;
+  color: #56625d;
+  font-size: 14px;
+  line-height: 1.5;
+}
+/* .field sets display, which would otherwise override the hidden attribute. */
+.inquiry-detail[hidden],
+#inquiry-form .field[hidden] {
+  display: none;
+}
+@media (max-width: 600px) {
+  .inquiry-elevator dl {
+    grid-template-columns: 1fr;
+  }
+}
