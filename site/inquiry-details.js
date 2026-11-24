@@ -23,17 +23,27 @@ window.TechouseInquiryDetails = (() => {
       ['unsure', 'Not sure'],
     ],
     service: [
-      ['install', 'New installation', 'A new lift for a new or existing building.', 'elevator'],
-      ['maintenance', 'Maintenance', 'Regular visits that keep a lift running.', 'event_repeat'],
-      ['repair', 'Repair', 'A lift that has stopped or is acting up.', 'build'],
-      ['replacement', 'Replacement', 'Take out an old lift and put in a new one.', 'autorenew'],
+      ['install', 'New installation', 'A new elevator for a new or existing building.', 'elevator'],
+      [
+        'maintenance',
+        'Maintenance',
+        'Regular visits that keep an elevator running.',
+        'event_repeat',
+      ],
+      ['repair', 'Repair', 'An elevator that has stopped or is acting up.', 'build'],
+      ['replacement', 'Replacement', 'Take out an old elevator and put in a new one.', 'autorenew'],
       [
         'modernisation',
         'Refurbishment or modernisation',
-        'New motor, controls or car interior for an older lift.',
+        'New motor, controls or car interior for an older elevator.',
         'upgrade',
       ],
-      ['parts', 'Parts and components', 'Hard-to-find boards and parts, for any lift.', 'memory'],
+      [
+        'parts',
+        'Parts and components',
+        'Hard-to-find boards and parts, for any elevator.',
+        'memory',
+      ],
     ],
     building: [
       ['residential', 'Residential', 'home'],
@@ -78,23 +88,23 @@ window.TechouseInquiryDetails = (() => {
     service: 'Service needed',
     building: 'Building type',
     floors: 'Floors served',
-    capacity: 'Lift size',
+    capacity: 'Elevator size',
     item: 'Largest thing it carries',
     doors: 'Car entrances',
-    brand: 'Lift brand',
+    brand: 'Elevator brand',
     part: 'Part needed',
   };
   // Questions shown in the planner, in order.
   const QUESTIONS = {
     building: 'What kind of building is it?',
     floors: 'How many floors will it serve?',
-    capacity: 'How big should the lift be?',
+    capacity: 'How big should the elevator be?',
     item: 'What’s the biggest thing it needs to carry?',
     doors: 'How many entrances does the car need?',
-    brand: 'Which brand is the lift?',
+    brand: 'Which brand is the elevator?',
     part: 'Which part do you need?',
   };
-  // Which questions apply to each service. A new lift needs sizing; an existing one needs its brand.
+  // Which questions apply to each service. A new elevator needs sizing; an existing one needs its brand.
   const ASK = {
     install: ['building', 'floors', 'capacity', 'item', 'doors'],
     replacement: ['building', 'floors', 'capacity', 'item', 'doors'],
@@ -184,7 +194,7 @@ window.TechouseInquiryDetails = (() => {
     return `<fieldset class="lift-q" data-q="${key}" hidden><legend class="lift-q-title">${QUESTIONS[key]}</legend>${tiles(key, CHOICES[key], key === 'item' || key === 'capacity' ? ' lift-choices-wide' : '')}</fieldset>`;
   };
   const planner = () =>
-    `<section id="elevator-start" class="division-section lift-planner"><div class="section-heading"><h2>Tell us about<br>your lift.</h2><p>A few quick questions, so the right person calls you back ready. Skip any you’re unsure of.</p></div><form class="lift-plan" data-lift-plan novalidate><fieldset class="lift-q" data-q="service"><legend class="lift-q-title">What can we help with?</legend>${tiles('service', CHOICES.service, ' lift-choices-services')}</fieldset><aside class="lift-parts-offer" data-parts-offer hidden><strong>Hard-to-find parts, in as little as 7 days.</strong><p>Control boards, electrical components and small parts that are difficult to find in the Philippines. For any lift, not only ones we installed. Timing depends on the part.</p></aside>${Object.keys(QUESTIONS).map(question).join('')}<div class="lift-plan-actions" hidden><button class="button" type="submit">Continue to your inquiry ${icon('arrow_forward')}</button><p>Nothing is sent yet. You’ll add your details and review everything on the next page.</p></div></form></section>`;
+    `<section id="elevator-start" class="division-section lift-planner"><div class="section-heading"><h2>Tell us about<br>your elevator.</h2><p>A few quick questions, so the right person calls you back ready. Skip any you’re unsure of.</p></div><form class="lift-plan" data-lift-plan novalidate><fieldset class="lift-q" data-q="service"><legend class="lift-q-title">What can we help with?</legend>${tiles('service', CHOICES.service, ' lift-choices-services')}</fieldset><aside class="lift-parts-offer" data-parts-offer hidden><strong>Hard-to-find parts, in as little as 7 days.</strong><p>Control boards, electrical components and small parts that are difficult to find in the Philippines. For any elevator, not only ones we installed. Timing depends on the part.</p></aside>${Object.keys(QUESTIONS).map(question).join('')}<div class="lift-plan-actions" hidden><button class="button" type="submit">Continue to your inquiry ${icon('arrow_forward')}</button><p>Nothing is sent yet. You’ll add your details and review everything on the next page.</p></div></form></section>`;
 
   function readForm(form) {
     const data = Object.fromEntries(new FormData(form));
@@ -236,7 +246,7 @@ window.TechouseInquiryDetails = (() => {
       const plan = readForm(form);
       if (!plan.service) return;
       savePlan(plan);
-      location.hash = '#/inquiry?division=elevators&lift=1';
+      location.hash = '#/inquiry?division=elevators&elevator=1';
     });
   }
 
@@ -246,16 +256,16 @@ window.TechouseInquiryDetails = (() => {
       .map(([value]) => `<option value="${value}">${esc(label(key, value))}</option>`)
       .join('')}</select>`;
   const formFields = () =>
-    `<div class="field full inquiry-detail" data-details="solar" hidden><label for="inquiry-roof">Roof type <small>(optional)</small></label>${select('roofType', 'inquiry-roof', 'Choose if you know it')}</div><fieldset class="field full inquiry-detail inquiry-lift" data-details="elevators" hidden><legend>About the lift <small>(optional)</small></legend><p class="inquiry-lift-note" data-lift-note hidden>Answers from the Elevators page. Change anything here.</p><div class="field-grid"><div class="field full"><label for="inquiry-lift-service">Service needed</label>${select('service', 'inquiry-lift-service', 'Choose a service')}</div><div class="field" data-lift="building"><label for="inquiry-lift-building">Building type</label>${select('building', 'inquiry-lift-building', 'Choose')}</div><div class="field" data-lift="floors"><label for="inquiry-lift-floors">Floors served</label><input id="inquiry-lift-floors" name="detail-floors" type="number" inputmode="numeric" min="2" max="120" placeholder="Including ground"></div><div class="field" data-lift="capacity"><label for="inquiry-lift-capacity">Lift size</label>${select('capacity', 'inquiry-lift-capacity', 'Choose')}</div><div class="field" data-lift="item"><label for="inquiry-lift-item">Largest thing it carries</label>${select('item', 'inquiry-lift-item', 'Choose')}</div><div class="field" data-lift="doors"><label for="inquiry-lift-doors">Car entrances</label>${select('doors', 'inquiry-lift-doors', 'Choose')}</div><div class="field" data-lift="brand"><label for="inquiry-lift-brand">Lift brand</label>${select('brand', 'inquiry-lift-brand', 'Choose')}</div><div class="field full" data-lift="part"><label for="inquiry-lift-part">Part needed</label><input id="inquiry-lift-part" name="detail-part" maxlength="200" placeholder="Name, model or part number"></div></div><p class="inquiry-lift-parts" data-lift-parts hidden>Hard-to-find parts can arrive in as little as 7 days, depending on the part.</p></fieldset>`;
+    `<div class="field full inquiry-detail" data-details="solar" hidden><label for="inquiry-roof">Roof type <small>(optional)</small></label>${select('roofType', 'inquiry-roof', 'Choose if you know it')}</div><fieldset class="field full inquiry-detail inquiry-lift" data-details="elevators" hidden><legend>About the elevator <small>(optional)</small></legend><p class="inquiry-lift-note" data-lift-note hidden>Answers from the Elevators page. Change anything here.</p><div class="field-grid"><div class="field full"><label for="inquiry-lift-service">Service needed</label>${select('service', 'inquiry-lift-service', 'Choose a service')}</div><div class="field" data-lift="building"><label for="inquiry-lift-building">Building type</label>${select('building', 'inquiry-lift-building', 'Choose')}</div><div class="field" data-lift="floors"><label for="inquiry-lift-floors">Floors served</label><input id="inquiry-lift-floors" name="detail-floors" type="number" inputmode="numeric" min="2" max="120" placeholder="Including ground"></div><div class="field" data-lift="capacity"><label for="inquiry-lift-capacity">Elevator size</label>${select('capacity', 'inquiry-lift-capacity', 'Choose')}</div><div class="field" data-lift="item"><label for="inquiry-lift-item">Largest thing it carries</label>${select('item', 'inquiry-lift-item', 'Choose')}</div><div class="field" data-lift="doors"><label for="inquiry-lift-doors">Car entrances</label>${select('doors', 'inquiry-lift-doors', 'Choose')}</div><div class="field" data-lift="brand"><label for="inquiry-lift-brand">Elevator brand</label>${select('brand', 'inquiry-lift-brand', 'Choose')}</div><div class="field full" data-lift="part"><label for="inquiry-lift-part">Part needed</label><input id="inquiry-lift-part" name="detail-part" maxlength="200" placeholder="Name, model or part number"></div></div><p class="inquiry-lift-parts" data-lift-parts hidden>Hard-to-find parts can arrive in as little as 7 days, depending on the part.</p></fieldset>`;
   // A starting sentence for the required brief, built from the planner answers.
   function sentence(plan) {
     const service = {
-      install: 'a new lift installation',
-      maintenance: 'lift maintenance',
-      repair: 'a lift repair',
-      replacement: 'a lift replacement',
-      modernisation: 'refurbishing or modernising a lift',
-      parts: 'a lift part',
+      install: 'a new elevator installation',
+      maintenance: 'elevator maintenance',
+      repair: 'an elevator repair',
+      replacement: 'an elevator replacement',
+      modernisation: 'refurbishing or modernising an elevator',
+      parts: 'an elevator part',
     }[plan.service];
     if (!service) return '';
     const building = plan.building ? ` for a ${plan.building} building` : '';
@@ -267,12 +277,14 @@ window.TechouseInquiryDetails = (() => {
     const anchor = form.querySelector('#inquiry-capacity')?.closest('.field');
     if (!anchor) return;
     anchor.insertAdjacentHTML('beforebegin', formFields());
-    const lift = form.querySelector('[data-details="elevators"]');
+    const elevator = form.querySelector('[data-details="elevators"]');
     const syncLift = () => {
       const service = form.elements['detail-service'].value;
       const asked = new Set(ASK[service] || []);
-      lift.querySelectorAll('[data-lift]').forEach((f) => (f.hidden = !asked.has(f.dataset.lift)));
-      lift.querySelector('[data-lift-parts]').hidden = service !== 'parts';
+      elevator
+        .querySelectorAll('[data-lift]')
+        .forEach((f) => (f.hidden = !asked.has(f.dataset.lift)));
+      elevator.querySelector('[data-lift-parts]').hidden = service !== 'parts';
     };
     let starter = '';
     const sync = () => {
@@ -287,13 +299,13 @@ window.TechouseInquiryDetails = (() => {
     };
     // Answers from the Elevators page planner.
     const params = new URLSearchParams(location.hash.split('?')[1]);
-    const plan = params.get('lift') === '1' ? readPlan() : null;
+    const plan = params.get('elevator') === '1' ? readPlan() : null;
     if (plan && form.elements.division?.value === 'elevators') {
       for (const [key, value] of Object.entries(plan)) {
         const field = form.elements['detail-' + key];
         if (field) field.value = value;
       }
-      lift.querySelector('[data-lift-note]').hidden = false;
+      elevator.querySelector('[data-lift-note]').hidden = false;
       const brief = form.elements.requirements;
       if (brief && !brief.value) brief.value = starter = sentence(plan);
     }

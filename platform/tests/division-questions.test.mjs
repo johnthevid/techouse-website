@@ -14,7 +14,7 @@ const inquiry = (extra = {}) => ({
   email: 'maria@example.com',
   division: 'elevators',
   location: 'Makati · Metro Manila',
-  requirements: 'A bed lift for our clinic building.',
+  requirements: 'A bed elevator for our clinic building.',
   ...extra,
 });
 
@@ -103,7 +103,7 @@ test('division questions: elevator planner hands its answers to the inquiry, sol
   assert.equal(await page.inputValue('#inquiry-lift-floors'), '6');
   assert.equal(await page.inputValue('#inquiry-lift-item'), 'bed');
   assert.equal(await page.locator('[data-lift="brand"]').isVisible(), false);
-  assert.match(await page.inputValue('#inquiry-requirements'), /new lift installation for a commercial building with 6 floors/);
+  assert.match(await page.inputValue('#inquiry-requirements'), /new elevator installation for a commercial building with 6 floors/);
   // Solar asks for the roof type instead; other divisions ask neither.
   await page.selectOption('#inquiry-division', 'solar');
   assert.equal(await page.locator('#inquiry-roof').isVisible(), true);
@@ -111,9 +111,9 @@ test('division questions: elevator planner hands its answers to the inquiry, sol
   await page.selectOption('#inquiry-division', 'construction');
   assert.equal(await page.locator('#inquiry-roof').isVisible(), false);
   await page.selectOption('#inquiry-division', 'elevators');
-  // The untouched lift sentence was cleared when the visitor left Elevators.
+  // The untouched elevator sentence was cleared when the visitor left Elevators.
   assert.equal(await page.inputValue('#inquiry-requirements'), '');
-  await page.fill('#inquiry-requirements', 'A bed lift for our clinic building.');
+  await page.fill('#inquiry-requirements', 'A bed elevator for our clinic building.');
 
   await page.fill('#inquiry-name', 'Maria Santos');
   await page.fill('#inquiry-email', 'maria@example.com');
@@ -134,7 +134,7 @@ test('division questions: elevator planner hands its answers to the inquiry, sol
   await page.waitForSelector('.ix-facts');
   const facts = await page.locator('.ix-facts').first().textContent();
   assert.match(facts, /Service neededNew installation/);
-  assert.match(facts, /Lift size21 people or a hospital bed \(1,600 kg\)/);
+  assert.match(facts, /Elevator size21 people or a hospital bed \(1,600 kg\)/);
   assert.match(facts, /Car entrancesTwo, front and back/);
   assert.deepEqual(errors, []);
 });

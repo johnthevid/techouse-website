@@ -33,9 +33,9 @@ window.TechouseDivisions = (() => {
     },
     elevators: {
       title: 'Going up?<br>Every floor, covered.',
-      text: 'Hitachi, EPSS and Shanghai Mitsubishi lifts, sourced direct, installed with care and kept running for the long ride.',
+      text: 'Hitachi, EPSS and Shanghai Mitsubishi elevators, sourced direct, installed with care and kept running for the long ride.',
       icon: 'elevator',
-      action: 'Find your lift',
+      action: 'Find your elevator',
       target: 'elevator-start',
     },
     development: {
@@ -250,16 +250,16 @@ window.TechouseDivisions = (() => {
       ['Shanghai Mitsubishi', 'Mitsubishi, built in Shanghai.', 'Widely installed across China.'],
     ];
     const types = [
-      'Passenger lifts',
-      'Panoramic lifts',
-      'Cargo lifts',
-      'Home lifts',
-      'Hospital bed lifts',
+      'Passenger elevators',
+      'Panoramic elevators',
+      'Cargo elevators',
+      'Home elevators',
+      'Hospital bed elevators',
       'Escalators',
       'Moving walkways',
     ];
     const services = [
-      ['elevator', 'Install', 'New lifts.', 'For new buildings and existing ones.'],
+      ['elevator', 'Install', 'New elevators.', 'For new buildings and existing ones.'],
       [
         'event_repeat',
         'Maintain',
@@ -267,7 +267,7 @@ window.TechouseDivisions = (() => {
         'Visits every month or two, wear parts replaced early.',
       ],
       ['build', 'Repair', 'Back in service.', 'Breakdowns and faults on any major brand.'],
-      ['autorenew', 'Replace', 'Old out, new in.', 'A new lift in an existing shaft.'],
+      ['autorenew', 'Replace', 'Old out, new in.', 'A new elevator in an existing shaft.'],
       [
         'upgrade',
         'Modernise',
@@ -278,7 +278,7 @@ window.TechouseDivisions = (() => {
         'memory',
         'Parts',
         'Hard-to-find parts.',
-        'Boards and components for any lift, in as little as 7 days.',
+        'Boards and components for any elevator, in as little as 7 days.',
       ],
     ];
     return `${subnav('Elevator sections', [
@@ -290,9 +290,9 @@ window.TechouseDivisions = (() => {
       ['elevator-questions', 'Good to know'],
     ])}<div class="division-wrap construction-content">${window.TechouseInquiryDetails?.planner() || ''}<section id="elevator-brands" class="division-section"><div class="section-heading"><h2>Three brands.<br>Sourced direct.</h2><p>Straight from the manufacturers, with no resellers in between.</p></div>${cards(
       brands.map(([label, title, text]) => ({ icon: 'elevator', label, title, text })),
-    )}</section><section id="elevator-types" class="division-section"><div class="section-heading"><h2>Lifts for<br>every building.</h2><p>Across all three brands, for new buildings and renovations.</p></div><ul class="division-type-list">${types.map((t) => `<li>${window.TechouseIcons.icon('check')}<span>${t}</span></li>`).join('')}</ul><p class="division-note">We don’t supply external construction hoists. On a building site they collect debris and are easily overloaded, which puts riders at risk.</p></section><section id="elevator-service" class="division-section"><div class="section-heading"><h2>Installed, maintained,<br>renewed.</h2><p>A lift is a long-term system. We look after it for its whole life.</p></div>${cards(
+    )}</section><section id="elevator-types" class="division-section"><div class="section-heading"><h2>Elevators for<br>every building.</h2><p>Across all three brands, for new buildings and renovations.</p></div><ul class="division-type-list">${types.map((t) => `<li>${window.TechouseIcons.icon('check')}<span>${t}</span></li>`).join('')}</ul><p class="division-note">We don’t supply external construction hoists. On a building site they collect debris and are easily overloaded, which puts riders at risk.</p></section><section id="elevator-service" class="division-section"><div class="section-heading"><h2>Installed, maintained,<br>renewed.</h2><p>An elevator is a long-term system. We look after it for its whole life.</p></div>${cards(
       services.map(([icon, label, title, text]) => ({ icon, label, title, text })),
-    )}</section><p class="division-note division-note-wide">We service any major brand, not only the three we sell. Lifts built from unbranded parts can be difficult to repair, so we inspect first.</p>${projectsSection()}${faq(
+    )}</section><p class="division-note division-note-wide">We service any major brand, not only the three we sell. Elevators built from unbranded parts can be difficult to repair, so we inspect first.</p>${projectsSection()}${faq(
       'elevator-questions',
       'Good to know.',
       [
@@ -302,11 +302,11 @@ window.TechouseDivisions = (() => {
         ],
         [
           'What keeps passengers safe?',
-          'Lifts have layered safety systems: a speed governor that monitors the car, safety gear that clamps the car to its rails if it overspeeds, and buffers in the pit below.',
+          'Elevators have layered safety systems: a speed governor that monitors the car, safety gear that clamps the car to its rails if it overspeeds, and buffers in the pit below.',
         ],
         [
           'Can you maintain an elevator we bought elsewhere?',
-          'Yes, for any major brand. Lifts built from unbranded parts can be difficult or impossible to repair, so we’ll inspect it first.',
+          'Yes, for any major brand. Elevators built from unbranded parts can be difficult or impossible to repair, so we’ll inspect it first.',
         ],
       ],
     )}${brief(d, 'Let’s talk about your building')}</div>`;

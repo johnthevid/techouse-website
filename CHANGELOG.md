@@ -4,7 +4,7 @@ Recorded milestones for the Techouse website. Dates use the project's Asia/Manil
 
 ## Unreleased — Approval meeting follow-ups (24 Nov 2026)
 
-- Solar inquiries ask an optional roof type. Elevator inquiries ask optional lift questions (service, building type, floors, size, largest item, car entrances, brand, part); the Elevators page opens with the same questions and hands the answers to the form. Answers are stored in a new `inquiry_details` table (migration 0004, additive) and shown in the back office and CSV.
+- Solar inquiries ask an optional roof type. Elevator inquiries ask optional elevator questions (service, building type, floors, size, largest item, car entrances, brand, part); the Elevators page opens with the same questions and hands the answers to the form. Answers are stored in a new `inquiry_details` table (migration 0004, additive) and shown in the back office and CSV.
 - Elevators page: six service cards (install, maintain, repair, replace, modernise, parts) and the hard-to-find parts offer ("in as little as 7 days").
 - Back office: Website customizer → Division pages closes a division's page while keeping it on the homepage and in menus. Real estate development starts closed.
 - New `BACKLOG.md`; editing solar products from the back office is queued there.
