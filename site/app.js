@@ -290,7 +290,7 @@ function renderHeader(path) {
     return;
   }
   if (path === '/') {
-    $('#header').innerHTML = window.TechouseBanner.header(brand, arrow);
+    $('#header').innerHTML = window.TechouseBanner.header(brand, arrow, publishedPosts());
     return;
   }
   const solarPage = /^\/divisions\/solar(?:\/|$)/.test(path);
@@ -880,7 +880,7 @@ function render() {
   if (path === '/inquiry') window.TechousePropertyPin?.mount(document.querySelector('#inquiry-form'));
   // Roof type (Solar) and elevator questions (Elevators) on the inquiry form; the Elevators page planner.
   if (path === '/inquiry') window.TechouseInquiryDetails?.mount(document.querySelector('#inquiry-form'));
-  window.TechouseInquiryDetails?.mountPlanner(document.querySelector('[data-lift-plan]'));
+  window.TechouseElevators?.mount();
   if (path === '/inquiry') mountInquiryHistory();
   window.TechouseReadability?.mount();
   window.TechouseExperience?.mount();

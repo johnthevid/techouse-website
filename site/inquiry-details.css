@@ -1,239 +1,65 @@
-/* Elevators page planner (#elevator-start) and the optional division questions on the inquiry form.
-   Tiles follow the solar planner's selection tiles: square corners, dark green when chosen. */
-.lift-plan {
+/* Inquiry form: Solar's roof type and the Elevators planner summary ("Your elevator"). */
+.inquiry-elevator {
   display: grid;
-  gap: 36px;
-  max-width: 1040px;
+  gap: 12px;
+  padding: 20px 22px;
+  border: 1px solid #c9cebe;
+  background: #faf9f2;
 }
-.lift-q {
-  min-width: 0;
+.inquiry-elevator-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 20px;
+}
+.inquiry-elevator h3 {
   margin: 0;
-  padding: 0;
-  border: 0;
-}
-.lift-q:not([hidden]) {
-  animation: lift-q-enter 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-@keyframes lift-q-enter {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-}
-.lift-q-title {
-  display: block;
-  margin-bottom: 14px;
-  padding: 0;
-  font-size: clamp(19px, 1.6vw, 23px);
+  font-size: 17px;
   font-weight: 600;
-  line-height: 1.35;
 }
-.lift-q-hint {
-  margin: -8px 0 14px;
-  color: #56635c;
+.inquiry-elevator h3 small {
+  font-weight: 400;
+}
+.inquiry-elevator .text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: start;
   font-size: 15px;
 }
-.lift-choices {
+.inquiry-elevator .text-link svg {
+  width: 16px;
+  height: 16px;
+}
+.inquiry-elevator dl {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 24px;
+  margin: 0;
 }
-.lift-choices-services {
-  grid-template-columns: repeat(3, 1fr);
+.inquiry-elevator dt {
+  color: #56625d;
+  font-size: 13px;
 }
-.lift-choices-wide {
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+.inquiry-elevator dd {
+  margin: 0;
+  font-size: 15px;
+  overflow-wrap: anywhere;
 }
-.lift-choices label {
-  position: relative;
-  cursor: pointer;
-}
-.lift-choices input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-}
-.lift-choices span {
-  display: grid;
-  align-content: start;
-  gap: 4px;
-  height: 100%;
-  min-height: 56px;
-  padding: 16px 18px;
-  border: 1px solid #a7b4aa;
-  border-radius: var(--corner-action, 0);
-  background: #fff;
-  color: #17231e;
-  transition:
-    background 0.2s,
-    color 0.2s,
-    border-color 0.2s;
-}
-.lift-choices strong {
-  font-size: 16px;
-  font-weight: 600;
-}
-.lift-choices small {
-  color: #56635c;
+.inquiry-elevator-note {
+  margin: 0;
+  color: #56625d;
   font-size: 14px;
-  line-height: 1.4;
-}
-.lift-choice-icon {
-  width: 24px;
-  height: 24px;
-  margin-bottom: 6px;
-  color: #a2763a;
-}
-.lift-choices label:hover span {
-  border-color: #234a3c;
-}
-.lift-choices input:checked + span {
-  border-color: #234a3c;
-  background: #234a3c;
-  color: #fff;
-}
-.lift-choices input:checked + span small {
-  color: #dfe8e2;
-}
-.lift-choices input:checked + span .lift-choice-icon {
-  color: #e1c48f;
-}
-.lift-choices input:focus-visible + span {
-  outline: 3px solid #a85d2c;
-  outline-offset: 3px;
-}
-.lift-stepper {
-  display: inline-flex;
-  border: 1px solid #a7b4aa;
-  background: #fff;
-}
-.lift-stepper button {
-  display: grid;
-  width: 52px;
-  height: 52px;
-  place-items: center;
-  border: 0;
-  background: transparent;
-  color: #234a3c;
-  cursor: pointer;
-}
-.lift-stepper button:hover {
-  background: #eef2ee;
-}
-.lift-stepper button:focus-visible,
-.lift-stepper input:focus-visible,
-.lift-q > input:focus-visible {
-  outline: 3px solid #a85d2c;
-  outline-offset: 2px;
-}
-.lift-stepper input {
-  width: 84px;
-  border: 0;
-  border-inline: 1px solid #a7b4aa;
-  font: inherit;
-  font-size: 20px;
-  text-align: center;
-  -moz-appearance: textfield;
-}
-.lift-stepper input::-webkit-inner-spin-button,
-.lift-stepper input::-webkit-outer-spin-button {
-  margin: 0;
-  -webkit-appearance: none;
-}
-.lift-q > input {
-  width: 100%;
-  max-width: 560px;
-  min-height: 52px;
-  padding: 12px 14px;
-  border: 1px solid #a7b4aa;
-  border-radius: var(--corner-action, 0);
-  font: inherit;
-}
-.lift-parts-offer {
-  max-width: 720px;
-  padding: 22px 24px;
-  border-left: 3px solid #b99258;
-  background: #f3efe6;
-}
-.lift-parts-offer strong {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 19px;
-  font-weight: 600;
-}
-.lift-parts-offer p {
-  margin: 0;
-}
-.lift-plan-actions {
-  display: grid;
-  justify-items: start;
-  gap: 10px;
-}
-.lift-plan-actions p {
-  margin: 0;
-  color: #56635c;
-  font-size: 14px;
-}
-
-/* Inquiry form: roof type and elevator details */
-.inquiry-lift {
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-.inquiry-lift legend {
-  margin-bottom: 10px;
-  padding: 0;
-  font-weight: 600;
-}
-.inquiry-lift .field-grid {
-  margin: 0;
-}
-.inquiry-lift-note,
-.inquiry-lift-parts {
-  margin: 0 0 12px;
-  color: #56635c;
-  font-size: 14px;
-}
-.inquiry-lift-parts {
-  margin: 12px 0 0;
-}
-
-@media (max-width: 900px) {
-  .lift-choices-services {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (max-width: 600px) {
-  .lift-plan {
-    gap: 30px;
-  }
-  .lift-choices,
-  .lift-choices-services,
-  .lift-choices-wide {
-    grid-template-columns: 1fr;
-  }
-  .lift-choices-services span {
-    grid-template-columns: 28px 1fr;
-    column-gap: 12px;
-  }
-  .lift-choices-services .lift-choice-icon {
-    grid-row: span 2;
-    margin: 0;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .lift-q:not([hidden]) {
-    animation: none;
-  }
-  .lift-choices span {
-    transition: none;
-  }
+  line-height: 1.5;
 }
 /* .field sets display, which would otherwise override the hidden attribute. */
 .inquiry-detail[hidden],
-.inquiry-lift [hidden] {
+#inquiry-form .field[hidden] {
   display: none;
+}
+@media (max-width: 600px) {
+  .inquiry-elevator dl {
+    grid-template-columns: 1fr;
+  }
 }

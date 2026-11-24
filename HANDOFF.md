@@ -1,5 +1,28 @@
 # Current handoff
 
+## Latest: Elevators page rebuild and homepage news ticker (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; work in progress, not merged, not deployed)
+
+Built with the Impeccable skill, as an extension of the existing look.
+- **Elevators page** (`site/elevator-page.js`, `site/elevator-page.css`; `divisions.js` delegates): two-step planner like the solar one.
+  - Step 1 has four services: new installation, maintenance and repair, modernisation and replacement, and parts (any brand).
+  - Step 2 has a different layout for each service:
+    - **Installation:** a spec sheet, including drawn tiles for machine room vs machine-room-less.
+    - **Maintenance:** condition first; "Stopped" shows a call-now note.
+    - **Modernisation:** "what's wrong" checklist, then the preferred approach.
+    - **Parts:** the 7-day promise, then part name and number.
+  - A "Your request" summary with a gold "Send us your inquiry" button sits beside step 2.
+  - Below: slideshows of elevator types (drawn floor plans of each car), services (shaft drawing with the parts each service touches) and brands, then projects. The old FAQ facts were folded into the slides.
+- **Shared answers** (`site/inquiry-details.js`): the inquiry form shows the planner answers with "Change answers" and hides the size field. The server (`platform/insights.mjs`) accepts the new answers; old repair and replacement values stay valid.
+- **News ticker** (`banner.js` + `site/news-ticker.css`, loaded last): the latest published updates scroll between the logo and the actions at 60% white, pausing on hover or focus. It sits inside the header action group, so it appears with them after the approved intro, and the intro is unchanged. The actions are compact; from 600 to 899px, Refer & Earn is icon-only.
+- **Checks:** `npm test` 50/50. Impeccable first-viewport passes at 390 and 1440, and its detector found nothing.
+- **Finish review: "fix"**, with five items still open (in `site/elevator-page.js`, `elevator-page.css` and `news-ticker.css`):
+  1. **Shaft drawing labels:** re-route the leader lines so they don't cross. Sort labels by height and run them horizontally, then vertically.
+  2. **Shaft drawing label size:** labels render at about 8px on phones and should be at least 12px.
+  3. **Ticker contrast:** add a soft dark band behind the ticker so its text holds 4.5:1 over bright hero photos. Keep the 60% opacity.
+  4. **"Not sure" machine-room tile:** it shows an empty drawing area at 1440.
+  5. **Brand slides:** each slide repeats the brand name and origin. Give the visual panel its own content or drop the duplicate.
+- After those fixes, re-capture into `.impeccable/review/` (ignored by Git) and ask the reviewer for a verdict on them.
+
 ## Latest: approval meeting follow-ups (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; not merged, not deployed)
 
 Task: the client's notes from the initial approval meeting.

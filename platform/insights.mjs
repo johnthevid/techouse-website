@@ -125,19 +125,37 @@ export function parseSite(input, fail) {
     roofArea: area,
   };
 }
-// Optional answers some divisions ask for (inquiry form and the elevator page's questions).
-// Each value must come from a fixed list; anything else is dropped. Labels live in site/inquiry-details.js.
+// Optional answers some divisions ask for (inquiry form and the Elevators page planner).
+// Each value must come from a fixed list; anything else is dropped. Labels live in
+// site/inquiry-details.js, which also lists the details each elevator service asks for.
+const elevatorDetails = {
+  building: ["residential", "commercial", "industrial"],
+  elevatorType: ["passenger", "home", "bed", "cargo", "panoramic", "unsure"],
+  capacity: ["450", "630", "800", "1000", "1600", "2000", "unsure"],
+  item: ["none", "wheelchair", "stretcher", "bed", "furniture", "pallet", "vehicle", "other"],
+  doors: ["1", "2-opposite", "2-adjacent", "unsure"],
+  machineRoom: ["with", "without", "unsure"],
+  shaft: ["plans", "building", "ready", "none"],
+  timeline: ["3m", "6m", "12m", "planning"],
+  condition: ["running", "issues", "stopped"],
+  age: ["under10", "10to20", "over20", "unsure"],
+  contract: ["none", "other", "techouse"],
+  scope: ["upgrade", "replace", "advise"],
+  brand: ["hitachi", "mitsubishi", "epss", "other", "unknown"],
+  stopped: ["yes", "no"],
+  client: ["yes", "no"],
+};
 export const detailChoices = {
   solar: { roofType: ["concrete", "metal", "tile", "asphalt", "other", "unsure"] },
   elevators: {
-    service: ["install", "maintenance", "repair", "replacement", "modernisation", "parts"],
-    building: ["residential", "commercial", "industrial"],
-    capacity: ["450", "630", "800", "1000", "1600", "2000", "unsure"],
-    item: ["none", "wheelchair", "stretcher", "bed", "furniture", "pallet", "vehicle", "other"],
-    doors: ["1", "2-opposite", "2-adjacent", "unsure"],
-    brand: ["hitachi", "mitsubishi", "epss", "other", "unknown"],
+    // repair and replacement came from the first planner; kept so older requests stay valid.
+    service: ["install", "maintenance", "modernisation", "parts", "repair", "replacement"],
+    ...elevatorDetails,
   },
 };
+const detailNumbers = { floors: [2, 120], units: [1, 50], quantity: [1, 999] };
+const detailTexts = { part: 200, partNumber: 80, model: 80 };
+const issueChoices = ["breakdowns", "parts", "ride", "doors", "look", "safety"];
 export function parseDetails(division, input, fail) {
   const choices = detailChoices[division];
   if (!choices || !input || typeof input !== "object" || Array.isArray(input)) return null;
@@ -145,11 +163,17 @@ export function parseDetails(division, input, fail) {
   for (const [key, allowed] of Object.entries(choices))
     if (allowed.includes(input[key])) details[key] = input[key];
   if (division === "elevators") {
-    // Floors served, ground floor included.
-    if (Number.isInteger(input.floors) && input.floors >= 2 && input.floors <= 120) details.floors = input.floors;
-    const part = clean(input.part, 201);
-    if (part.length > 200) fail(400, "Shorten the part description to 200 characters.");
-    if (part) details.part = part;
+    for (const [key, [min, max]] of Object.entries(detailNumbers))
+      if (Number.isInteger(input[key]) && input[key] >= min && input[key] <= max) details[key] = input[key];
+    for (const [key, max] of Object.entries(detailTexts)) {
+      const value = clean(input[key], max + 1);
+      if (value.length > max) fail(400, "Shorten your elevator answers and try again.");
+      if (value) details[key] = value;
+    }
+    if (Array.isArray(input.issues)) {
+      const issues = [...new Set(input.issues.filter((v) => issueChoices.includes(v)))];
+      if (issues.length) details.issues = issues;
+    }
   }
   return Object.keys(details).length ? details : null;
 }
