@@ -1,5 +1,9 @@
 # Current handoff
 
+## Main now includes `claude/solar-elevator-config-14em1m` (merged 25 Nov 2026 at the user's request; not deployed)
+
+Everything recorded below from the approval meeting onward is on `main`: solar roof type, the elevator planner (Simple/Detailed), types and services slideshows with back-office photos and logos, closable division pages (Real estate development starts closed), homepage news ticker and header alignment, About page story, and the snappier back office. `npm test` 51/51 on the merged main; build stamp refreshed. Before deploying, apply migration `platform/migrations/0004.sql` to production D1 separately (additive). Without it, inquiries still send, but roof type and elevator answers are not stored. Deployment needs the user's release instruction.
+
 ## Latest: About page as a story, homepage header alignment (branch `claude/solar-elevator-config-14em1m`, 25 Nov 2026; not merged, not deployed)
 
 - **About page** (`about()` in `site/app.js`, new `site/about-story.css` loaded last), done with Impeccable. It inherits the existing look, and the user chose "chapters along a timeline". The page now reads in order:
