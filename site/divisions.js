@@ -36,7 +36,7 @@ window.TechouseDivisions = (() => {
       text: 'Hitachi, EPSS and Shanghai Mitsubishi lifts, sourced direct, installed with care and kept running for the long ride.',
       icon: 'elevator',
       action: 'Find your lift',
-      target: 'elevator-brands',
+      target: 'elevator-start',
     },
     development: {
       title: 'Got land? Let’s see<br>what it could be.',
@@ -258,30 +258,41 @@ window.TechouseDivisions = (() => {
       'Escalators',
       'Moving walkways',
     ];
+    const services = [
+      ['elevator', 'Install', 'New lifts.', 'For new buildings and existing ones.'],
+      [
+        'event_repeat',
+        'Maintain',
+        'Regular care.',
+        'Visits every month or two, wear parts replaced early.',
+      ],
+      ['build', 'Repair', 'Back in service.', 'Breakdowns and faults on any major brand.'],
+      ['autorenew', 'Replace', 'Old out, new in.', 'A new lift in an existing shaft.'],
+      [
+        'upgrade',
+        'Modernise',
+        'A second life.',
+        'New motor, controls and car interior around year 25.',
+      ],
+      [
+        'memory',
+        'Parts',
+        'Hard-to-find parts.',
+        'Boards and components for any lift, in as little as 7 days.',
+      ],
+    ];
     return `${subnav('Elevator sections', [
+      ['elevator-start', 'Get started'],
       ['elevator-brands', 'Our brands'],
       ['elevator-types', 'What we install'],
       ['elevator-service', 'Service'],
       ['projects', 'Projects'],
       ['elevator-questions', 'Good to know'],
-    ])}<div class="division-wrap construction-content"><section id="elevator-brands" class="division-section"><div class="section-heading"><h2>Three brands.<br>Sourced direct.</h2><p>Straight from the manufacturers, with no resellers in between.</p></div>${cards(
+    ])}<div class="division-wrap construction-content">${window.TechouseInquiryDetails?.planner() || ''}<section id="elevator-brands" class="division-section"><div class="section-heading"><h2>Three brands.<br>Sourced direct.</h2><p>Straight from the manufacturers, with no resellers in between.</p></div>${cards(
       brands.map(([label, title, text]) => ({ icon: 'elevator', label, title, text })),
-    )}</section><section id="elevator-types" class="division-section"><div class="section-heading"><h2>Lifts for<br>every building.</h2><p>Across all three brands, for new buildings and renovations.</p></div><ul class="division-type-list">${types.map((t) => `<li>${window.TechouseIcons.icon('check')}<span>${t}</span></li>`).join('')}</ul><p class="division-note">We don’t supply external construction hoists. On a building site they collect debris and are easily overloaded, which puts riders at risk.</p></section>${steps(
-      'elevator-service',
-      'Installed, maintained,<br>renewed.',
-      'A lift is a long-term system. We look after it for its whole life.',
-      [
-        ['Installation', 'New lifts and escalators, for new builds and renovations.'],
-        [
-          'Regular maintenance',
-          'Visits every month or two that replace wear parts before they fail.',
-        ],
-        [
-          'Modernisation',
-          'Around year 25: new motor, cables and controls, and a refreshed car interior.',
-        ],
-      ],
-    )}<p class="division-note division-note-wide">We service any major brand, not only the three we sell. Lifts built from unbranded parts can be difficult to repair, so we inspect first.</p>${projectsSection()}${faq(
+    )}</section><section id="elevator-types" class="division-section"><div class="section-heading"><h2>Lifts for<br>every building.</h2><p>Across all three brands, for new buildings and renovations.</p></div><ul class="division-type-list">${types.map((t) => `<li>${window.TechouseIcons.icon('check')}<span>${t}</span></li>`).join('')}</ul><p class="division-note">We don’t supply external construction hoists. On a building site they collect debris and are easily overloaded, which puts riders at risk.</p></section><section id="elevator-service" class="division-section"><div class="section-heading"><h2>Installed, maintained,<br>renewed.</h2><p>A lift is a long-term system. We look after it for its whole life.</p></div>${cards(
+      services.map(([icon, label, title, text]) => ({ icon, label, title, text })),
+    )}</section><p class="division-note division-note-wide">We service any major brand, not only the three we sell. Lifts built from unbranded parts can be difficult to repair, so we inspect first.</p>${projectsSection()}${faq(
       'elevator-questions',
       'Good to know.',
       [
@@ -310,6 +321,17 @@ window.TechouseDivisions = (() => {
   }
   async function enter(panel) {
     if (entering) return;
+    // A division page closed in the back office: the panel stays, the page does not open.
+    if (window.TechouseContent?.isClosed?.(panel.dataset.banner)) {
+      const toast = document.querySelector('#toast');
+      if (toast) {
+        toast.textContent = `${panel.querySelector('.banner-division-label span')?.textContent || 'This division'} is coming soon.`;
+        toast.classList.add('show');
+        clearTimeout(enter.toastTimer);
+        enter.toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
+      }
+      return;
+    }
     entering = true;
     const id = panel.dataset.banner,
       destination = `#/divisions/${id}`;

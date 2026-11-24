@@ -125,6 +125,42 @@ export function parseSite(input, fail) {
     roofArea: area,
   };
 }
+// Optional answers some divisions ask for (inquiry form and the elevator page's questions).
+// Each value must come from a fixed list; anything else is dropped. Labels live in site/inquiry-details.js.
+export const detailChoices = {
+  solar: { roofType: ["concrete", "metal", "tile", "asphalt", "other", "unsure"] },
+  elevators: {
+    service: ["install", "maintenance", "repair", "replacement", "modernisation", "parts"],
+    building: ["residential", "commercial", "industrial"],
+    capacity: ["450", "630", "800", "1000", "1600", "2000", "unsure"],
+    item: ["none", "wheelchair", "stretcher", "bed", "furniture", "pallet", "vehicle", "other"],
+    doors: ["1", "2-opposite", "2-adjacent", "unsure"],
+    brand: ["hitachi", "mitsubishi", "epss", "other", "unknown"],
+  },
+};
+export function parseDetails(division, input, fail) {
+  const choices = detailChoices[division];
+  if (!choices || !input || typeof input !== "object" || Array.isArray(input)) return null;
+  const details = {};
+  for (const [key, allowed] of Object.entries(choices))
+    if (allowed.includes(input[key])) details[key] = input[key];
+  if (division === "elevators") {
+    // Floors served, ground floor included.
+    if (Number.isInteger(input.floors) && input.floors >= 2 && input.floors <= 120) details.floors = input.floors;
+    const part = clean(input.part, 201);
+    if (part.length > 200) fail(400, "Shorten the part description to 200 characters.");
+    if (part) details.part = part;
+  }
+  return Object.keys(details).length ? details : null;
+}
+const detailsOf = (row) => {
+  try {
+    return row?.data ? JSON.parse(row.data) : null;
+  } catch {
+    return null;
+  }
+};
+
 const siteRecord = (row) =>
   row
     ? {
@@ -234,6 +270,7 @@ export async function insightsRoute(request, env, path, tools) {
     };
     if (!divisions.includes(record.division)) fail(400, "Choose a division.");
     const site = record.division === "solar" && topic === "project" ? parseSite(input.site, fail) : null;
+    const details = topic === "project" ? parseDetails(record.division, input.details, fail) : null;
     if ((record.email || topic === "project") && !emailPattern.test(record.email))
       fail(400, "Enter a valid email address.");
     if (topic === "partnership" && !record.phone) fail(400, "Add a mobile number so the team can call you.");
@@ -296,6 +333,8 @@ export async function insightsRoute(request, env, path, tools) {
         site.roof.length ? JSON.stringify(site.roof) : "",
         site.roofArea,
       ).run();
+    if (details)
+      await query(env, "INSERT INTO inquiry_details(inquiry_id,data) VALUES(?,?)", id, JSON.stringify(details)).run();
     return json({ id, token, createdAt: new Date(now).toISOString() }, 201);
   }
 
@@ -338,8 +377,17 @@ export async function insightsRoute(request, env, path, tools) {
       const { results: rows } = await query(env, "SELECT * FROM inquiry_sites").all();
       for (const row of rows) sites.set(row.inquiry_id, siteRecord(row));
     } catch {}
+    const details = new Map();
+    try {
+      const { results: rows } = await query(env, "SELECT * FROM inquiry_details").all();
+      for (const row of rows) details.set(row.inquiry_id, detailsOf(row));
+    } catch {}
     return json({
-      inquiries: results.map((row) => ({ ...inquiryRecord(row), site: sites.get(row.id) || null })),
+      inquiries: results.map((row) => ({
+        ...inquiryRecord(row),
+        site: sites.get(row.id) || null,
+        details: details.get(row.id) || null,
+      })),
     });
   }
 
@@ -371,10 +419,14 @@ export async function insightsRoute(request, env, path, tools) {
     const siteRow = await query(env, "SELECT * FROM inquiry_sites WHERE inquiry_id=?", row.id)
       .first()
       .catch(() => null);
+    const detailRow = await query(env, "SELECT * FROM inquiry_details WHERE inquiry_id=?", row.id)
+      .first()
+      .catch(() => null);
     return json({
       inquiry: {
         ...inquiryRecord({ ...row, status, note, seen, updated: changed ? now : row.updated }),
         site: siteRecord(siteRow),
+        details: detailsOf(detailRow),
       },
     });
   }
@@ -386,6 +438,9 @@ export async function insightsRoute(request, env, path, tools) {
     const result = await query(env, "DELETE FROM inquiries WHERE id=?", clean(input.id, 40)).run();
     if (!result.meta.changes) fail(404, "This inquiry no longer exists. Reload the list.");
     await query(env, "DELETE FROM inquiry_sites WHERE inquiry_id=?", clean(input.id, 40))
+      .run()
+      .catch(() => {});
+    await query(env, "DELETE FROM inquiry_details WHERE inquiry_id=?", clean(input.id, 40))
       .run()
       .catch(() => {});
     await audit(env, s.email, "inquiry_deleted");

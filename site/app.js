@@ -540,7 +540,7 @@ function showSavedInquiry(q) {
     industrial: 'Industrial',
   }[q.solarSector];
   const annual = Number(q.solarSavings) * 12;
-  area.innerHTML = `<div class="success saved-inquiry-current" tabindex="-1"><header class="inquiry-ticket-heading"><h2>${esc(getDivision(q.division)?.short || 'Project')} inquiry</h2><p class="ticket-reference">Reference <strong>${esc(q.id)}</strong></p></header><div class="inquiry-ticket-body">${q.token ? '<p class="inquiry-save-status"><span aria-hidden="true">✓</span> Sent to the Techouse team</p><p class="inquiry-delivery-note">The team will contact you using the details you gave.</p>' : `<p class="inquiry-save-status"><span aria-hidden="true">✓</span> ${window.TechousePlatformMode ? 'Saved in this browser only' : 'Demo saved in this browser'}</p><p class="inquiry-delivery-note">${window.TechousePlatformMode ? 'This request was not sent online. Call or email the team to follow it up.' : 'No inquiry has been sent to Techouse.'}</p>`}<dl class="inquiry-summary-facts"><div><dt>Project location</dt><dd>${esc(q.location || 'Not provided')}</dd></div>${sectorLabel ? `<div><dt>Installation type</dt><dd>${sectorLabel}</dd></div>` : ''}</dl>${solar && Number.isFinite(annual) && annual > 0 ? `<div class="inquiry-annual-savings"><span>Your potential annual savings</span><strong>${new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', maximumFractionDigits: 0 }).format(annual)}<small> / year</small></strong><p>Monthly estimate × 12. Subject to site and usage review.</p></div>` : ''}<details class="inquiry-request-details"><summary>Review your request</summary><p class="saved-inquiry-requirements">${esc(q.requirements)}</p></details>${solar ? `<div class="inquiry-next-step"><h3>Let’s take a closer look.</h3><p>A site visit helps check your roof and refine your estimate.</p><button class="button" type="button" data-request-visit data-inquiry-id="${esc(q.id)}">Request a site visit ${arrow}</button></div>` : ''}</div></div>`;
+  area.innerHTML = `<div class="success saved-inquiry-current" tabindex="-1"><header class="inquiry-ticket-heading"><h2>${esc(getDivision(q.division)?.short || 'Project')} inquiry</h2><p class="ticket-reference">Reference <strong>${esc(q.id)}</strong></p></header><div class="inquiry-ticket-body">${q.token ? '<p class="inquiry-save-status"><span aria-hidden="true">✓</span> Sent to the Techouse team</p><p class="inquiry-delivery-note">The team will contact you using the details you gave.</p>' : `<p class="inquiry-save-status"><span aria-hidden="true">✓</span> ${window.TechousePlatformMode ? 'Saved in this browser only' : 'Demo saved in this browser'}</p><p class="inquiry-delivery-note">${window.TechousePlatformMode ? 'This request was not sent online. Call or email the team to follow it up.' : 'No inquiry has been sent to Techouse.'}</p>`}<dl class="inquiry-summary-facts"><div><dt>Project location</dt><dd>${esc(q.location || 'Not provided')}</dd></div>${sectorLabel ? `<div><dt>Installation type</dt><dd>${sectorLabel}</dd></div>` : ''}${(window.TechouseInquiryDetails?.facts(q.details) || []).map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>${solar && Number.isFinite(annual) && annual > 0 ? `<div class="inquiry-annual-savings"><span>Your potential annual savings</span><strong>${new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', maximumFractionDigits: 0 }).format(annual)}<small> / year</small></strong><p>Monthly estimate × 12. Subject to site and usage review.</p></div>` : ''}<details class="inquiry-request-details"><summary>Review your request</summary><p class="saved-inquiry-requirements">${esc(q.requirements)}</p></details>${solar ? `<div class="inquiry-next-step"><h3>Let’s take a closer look.</h3><p>A site visit helps check your roof and refine your estimate.</p><button class="button" type="button" data-request-visit data-inquiry-id="${esc(q.id)}">Request a site visit ${arrow}</button></div>` : ''}</div></div>`;
   if (q.division === 'solar')
     window.TechouseVisits?.restoreSavedVisit(area.querySelector('.success'), q);
   if (q.division === 'solar') window.TechouseVisits?.renderProjectPreviews();
@@ -699,6 +699,32 @@ function adminInquiries() {
 function adminTraffic() {
   return `<section class="container admin-shell office-wide">${adminTop('Traffic & leads', 'How many people visit, where they come from, and which sources turn into inquiries. Counted without cookies; staff visits are left out.', window.TechouseInsights.rangeControls())}${adminTabs('traffic')}<div id="office-traffic" class="ix"></div></section>`;
 }
+const divisionClosed = (id) => Boolean(id && window.TechouseContent?.isClosed?.(id));
+function comingSoon(id) {
+  const d = getDivision(id);
+  return `${breadcrumb(d.short)}<section class="container page-hero division-coming-soon"><h1>${esc(d.short)}<br>is coming soon.</h1><p>We’re preparing this page. If you already have a property or project in mind, tell us about it and we’ll start the conversation.</p><div class="division-coming-soon-actions"><a class="button" href="#/inquiry?division=${esc(id)}">Send an inquiry ${arrow}</a><a class="text-link" href="#/divisions">See all divisions ${arrow}</a></div></section>`;
+}
+// Links into a closed division page stay visible; choosing one explains instead of navigating.
+const linkedDivision = (link) => link?.getAttribute('href').match(/^#\/divisions\/([a-z-]+)/)?.[1];
+function markClosedLinks(root = document) {
+  root.querySelectorAll('a[href^="#/divisions/"]').forEach((link) => {
+    const id = linkedDivision(link);
+    if (divisionClosed(id)) link.setAttribute('aria-disabled', 'true');
+    else link.removeAttribute('aria-disabled');
+  });
+}
+document.addEventListener(
+  'click',
+  (event) => {
+    const link = event.target.closest?.('a[href^="#/divisions/"]');
+    const id = linkedDivision(link);
+    if (!link || !divisionClosed(id)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    showToast(`${getDivision(id)?.short || 'This division'} is coming soon.`);
+  },
+  true,
+);
 function notFound() {
   return `<div class="container not-found"><h1>Let’s find your next step.</h1><p>This page or post is not available. Drafts appear only in the back office.</p><a class="button" href="#/">Return home ${arrow}</a></div>`;
 }
@@ -721,6 +747,8 @@ function render() {
     return;
   }
   render.previousPath = path;
+  // A division page staff closed in the back office shows a short "coming soon" page instead.
+  const closedId = divisionClosed(path.split('/')[2]) && path.startsWith('/divisions/') ? path.split('/')[2] : '';
   window.TechouseBanner.destroy();
   if (path !== '/') window.TechouseDivisions.clearPreviousPage();
   document.body.classList.toggle('office-page', path === '/office' || path.startsWith('/office/'));
@@ -729,13 +757,14 @@ function render() {
     'division-page',
     path === '/partnership' ||
       (path.startsWith('/divisions/') &&
+        !closedId &&
         !path.startsWith('/divisions/solar/products/') &&
         !/^\/divisions\/[a-z-]+\/projects\//.test(path)),
   );
   document.body.classList.toggle('landing', path === '/');
   document.body.classList.toggle(
     'division-content-page',
-    path.startsWith('/divisions/') || path === '/partnership',
+    (path.startsWith('/divisions/') && !closedId) || path === '/partnership',
   );
   document.body.classList.toggle('partner-apply-page', path === '/partnership/apply');
   activePostFilter = 'all';
@@ -759,6 +788,9 @@ function render() {
   else if (path === '/divisions') {
     title = 'Our divisions';
     html = `${breadcrumb('Our divisions')}<section class="container page-hero divisions-introduction"><div><h1>What are you<br>building next?</h1></div><p>A lower electricity bill. A new space. A building brought to life. Explore our five divisions and find the right place to begin.</p></section>${window.TechousePartner.promo('directory')}${divisionDirectory()}${cta()}`;
+  } else if (closedId) {
+    title = (getDivision(closedId)?.name || 'Division') + ' · Coming soon';
+    html = comingSoon(closedId);
   } else if (/^\/divisions\/[a-z-]+\/projects\//.test(path)) {
     // A project opens over its division page as a dialog.
     const owner = divisions.some((d) => d.id === path.split('/')[2]) ? path.split('/')[2] : 'solar';
@@ -838,6 +870,7 @@ function render() {
     requestAnimationFrame(() =>
       document.querySelector('#projects')?.scrollIntoView({ behavior: 'instant' }),
     );
+  markClosedLinks();
   if (path === '/') window.TechouseBanner.mount(returningHome);
   window.TechouseDivisions.mount();
   // Prefabrication's 3D standard module (no-op on other pages).
@@ -845,6 +878,9 @@ function render() {
   window.TechouseSolar?.prefill();
   // Solar inquiries: optional property pin and roof outline under the location field.
   if (path === '/inquiry') window.TechousePropertyPin?.mount(document.querySelector('#inquiry-form'));
+  // Roof type (Solar) and lift questions (Elevators) on the inquiry form; the Elevators page planner.
+  if (path === '/inquiry') window.TechouseInquiryDetails?.mount(document.querySelector('#inquiry-form'));
+  window.TechouseInquiryDetails?.mountPlanner(document.querySelector('[data-lift-plan]'));
   if (path === '/inquiry') mountInquiryHistory();
   window.TechouseReadability?.mount();
   window.TechouseExperience?.mount();
@@ -1146,6 +1182,9 @@ document.addEventListener('submit', async (event) => {
     const solarSavings = data.division === 'solar' ? Number(form.dataset.solarSavings) : NaN;
     const trap = data.website;
     delete data.website;
+    // Division questions (roof type, lift details) travel as one validated object.
+    for (const k of Object.keys(data)) if (k.startsWith('detail-')) delete data[k];
+    const details = window.TechouseInquiryDetails?.value(form);
     const q = {
       ...data,
       ...(data.division === 'solar' && form.dataset.solarSector
@@ -1153,6 +1192,7 @@ document.addEventListener('submit', async (event) => {
         : {}),
       ...(Number.isFinite(solarSavings) && solarSavings > 0 ? { solarSavings } : {}),
       ...(window.TechousePropertyPin?.value(form) ? { site: window.TechousePropertyPin.value(form) } : {}),
+      ...(details ? { details } : {}),
       id: uid('DEMO').toUpperCase(),
       createdAt: new Date().toISOString(),
     };
@@ -1197,6 +1237,7 @@ document.addEventListener('submit', async (event) => {
     const next = [...inquiries, q];
     if (!(await saveStore(inquiryKey, next))) return;
     inquiries = next;
+    window.TechouseInquiryDetails?.clear();
     const inquiryParams = new URLSearchParams(location.hash.split('?')[1]);
     inquiryParams.delete('new');
     history.replaceState(

@@ -247,6 +247,8 @@ test("F3 browser login, enrollment, CMS publishing, public site and mobile", asy
   assert.deepEqual(JSON.parse(f.db.prepare('SELECT body FROM content WHERE id=1').get().body).settings, {
     electricityRate: 15.551,
     electricityRateNote: 'Meralco, November 2026',
+    // Division pages: Real estate development starts closed (client decision, 24 Nov 2026).
+    closedDivisions: ['development'],
   });
   await page.locator('[data-customizer-section="opening"]').click();
   // Review actions wait for the server; a rejected save keeps the draft and dialog open.

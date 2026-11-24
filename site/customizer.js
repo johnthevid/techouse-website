@@ -148,6 +148,26 @@ window.TechouseContent = (() => {
       select.parentElement.after(label);
     }
   }
+  // Division pages staff have closed for now. The division stays on the homepage, in menus and in
+  // inquiries; only its page is replaced by a short "coming soon" note. Until staff save this
+  // setting, Real estate development starts closed (client decision, 24 Nov 2026).
+  const DEFAULT_CLOSED = ['development'];
+  const closedDivisions = () =>
+    Array.isArray(data.settings.closedDivisions) ? data.settings.closedDivisions : DEFAULT_CLOSED;
+  const divisionNames = {
+    solar: 'Solar energy',
+    construction: 'Construction',
+    prefabrication: 'Prefabricated buildings',
+    development: 'Real estate development',
+    elevators: 'Elevator engineering',
+  };
+  const pageFields = () =>
+    `<div class="division-page-toggles">${divisions
+      .map(
+        (id) =>
+          `<label class="division-page-toggle"><input type="checkbox" name="open-${id}" data-default-checked="${!DEFAULT_CLOSED.includes(id)}" ${closedDivisions().includes(id) ? '' : 'checked'}><span><strong>${divisionNames[id]}</strong><small data-open-label>${closedDivisions().includes(id) ? 'Closed · visitors see “Coming soon”' : 'Open to visitors'}</small></span></label>`,
+      )
+      .join('')}</div>`;
   // Default rate comes from the calculator model; saved settings override it on the public site.
   const defaultRate = () => window.TechouseSolarCalculator?.DEFAULTS.rate ?? 16;
   function rateFields() {
@@ -195,6 +215,12 @@ window.TechouseContent = (() => {
         filter: () => false,
       },
       {
+        id: 'division-pages',
+        title: 'Division pages',
+        note: 'Choose which division pages visitors can open. A closed division keeps its homepage panel, photo and menu links, but its page shows “Coming soon” with a way to send an inquiry.',
+        filter: () => false,
+      },
+      {
         id: 'images',
         title: 'Banner images',
         note: 'Upload JPEG, PNG or WebP. Images are resized for the prototype.',
@@ -214,18 +240,20 @@ window.TechouseContent = (() => {
           `<section class="form-card customizer-panel" id="customizer-${group.id}" data-customizer-group="${group.id}" ${i ? 'hidden' : ''}><div class="customizer-section-heading"><div><h2>${group.title}</h2><p>${group.note}</p></div><button type="button" class="text-link" data-reset-section="${group.id}">Reset section</button></div>${
             group.id === 'solar-rate'
               ? rateFields()
-              : group.id === 'images'
-                ? `<div class="image-editor-grid">${divisions.map((id) => `<div class="content-field"><label for="banner-upload-${id}">${id.charAt(0).toUpperCase() + id.slice(1)}</label><img class="upload-preview" src="${imageURL(data.images[id] || 'assets/' + defaultImages[id])}" data-default-image="${escape('assets/' + defaultImages[id])}" alt="${id} banner preview"><input id="banner-upload-${id}" type="file" accept="image/jpeg,image/png,image/webp" data-banner-upload="${id}"><label class="restore-image"><input type="checkbox" name="remove-${id}"> Use original image</label></div>`).join('')}</div>`
-                : fields
-                    .filter(group.filter)
-                    .map(([page, selector, label]) => {
-                      const original = (
-                        roots[page].querySelector(selector)?.textContent || ''
-                      ).trim();
-                      const index = fields.findIndex((f) => f[1] === selector);
-                      return `<div class="content-field"><div class="customizer-field-heading"><label for="custom-text-${index}">${escape(label)}</label><button type="button" data-reset-field="${escape(selector)}" aria-label="Restore default for ${escape(label)}">Restore default</button></div><textarea id="custom-text-${index}" name="${escape(selector)}" rows="${label.includes('paragraph') || label.includes('description') ? 4 : 2}" maxlength="2000" data-default="${escape(original)}">${escape(data.text[selector] ?? original)}</textarea></div>`;
-                    })
-                    .join('')
+              : group.id === 'division-pages'
+                ? pageFields()
+                : group.id === 'images'
+                  ? `<div class="image-editor-grid">${divisions.map((id) => `<div class="content-field"><label for="banner-upload-${id}">${id.charAt(0).toUpperCase() + id.slice(1)}</label><img class="upload-preview" src="${imageURL(data.images[id] || 'assets/' + defaultImages[id])}" data-default-image="${escape('assets/' + defaultImages[id])}" alt="${id} banner preview"><input id="banner-upload-${id}" type="file" accept="image/jpeg,image/png,image/webp" data-banner-upload="${id}"><label class="restore-image"><input type="checkbox" name="remove-${id}"> Use original image</label></div>`).join('')}</div>`
+                  : fields
+                      .filter(group.filter)
+                      .map(([page, selector, label]) => {
+                        const original = (
+                          roots[page].querySelector(selector)?.textContent || ''
+                        ).trim();
+                        const index = fields.findIndex((f) => f[1] === selector);
+                        return `<div class="content-field"><div class="customizer-field-heading"><label for="custom-text-${index}">${escape(label)}</label><button type="button" data-reset-field="${escape(selector)}" aria-label="Restore default for ${escape(label)}">Restore default</button></div><textarea id="custom-text-${index}" name="${escape(selector)}" rows="${label.includes('paragraph') || label.includes('description') ? 4 : 2}" maxlength="2000" data-default="${escape(original)}">${escape(data.text[selector] ?? original)}</textarea></div>`;
+                      })
+                      .join('')
           }</section>`,
       )
       .join(
@@ -252,6 +280,9 @@ window.TechouseContent = (() => {
     panel
       .querySelectorAll('textarea, input[data-default]')
       .forEach((input) => (input.value = input.dataset.default));
+    panel
+      .querySelectorAll('input[data-default-checked]')
+      .forEach((input) => (input.checked = input.dataset.defaultChecked === 'true'));
     panel.querySelectorAll('[data-banner-upload]').forEach((input) => {
       delete input.dataset.image;
       input.value = '';
@@ -361,6 +392,10 @@ window.TechouseContent = (() => {
   });
   document.addEventListener('change', async (event) => {
     const input = event.target;
+    if (input.matches('.division-page-toggle input'))
+      input.closest('label').querySelector('[data-open-label]').textContent = input.checked
+        ? 'Open to visitors'
+        : 'Closed · visitors see “Coming soon”';
     if (input.matches('.restore-image input')) {
       const field = input.closest('.content-field'),
         image = field.querySelector('img'),
@@ -427,7 +462,10 @@ window.TechouseContent = (() => {
       if (note) next.settings.electricityRateNote = note;
       const mapsKey = form.elements.namedItem('googleMapsKey').value.trim();
       if (mapsKey) next.settings.googleMapsKey = mapsKey;
-      if (!Object.keys(next.settings).length) delete next.settings;
+      // Always saved, so an empty list means "every page open" rather than the default.
+      next.settings.closedDivisions = divisions.filter(
+        (id) => !form.elements.namedItem('open-' + id).checked,
+      );
       for (const id of divisions) {
         const input = form.querySelector(`[data-banner-upload="${id}"]`);
         if (form.elements.namedItem('remove-' + id).checked) delete next.images[id];
@@ -650,6 +688,7 @@ window.TechouseContent = (() => {
     page,
     projectsPage,
     snapshot: () => structuredClone(data),
+    isClosed: (id) => closedDivisions().includes(id),
     customizationSnapshot: () => structuredClone({ text: data.text, images: data.images }),
     previewFrame,
     startPreview,

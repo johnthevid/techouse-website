@@ -187,6 +187,7 @@ techouse-website/
 ├── HANDOFF.md                Current task and deployment context
 ├── WORKFLOW.md               Multi-device and release workflow
 ├── CHANGELOG.md              Recorded changes
+├── BACKLOG.md                Requested features not built yet
 ├── RELEASES.md               Release identities and recovery guidance
 ├── GITHUB_ABOUT.md           Repository About text and suggested topics
 ├── STABLE_BUILD_1.md          Original approved baseline record

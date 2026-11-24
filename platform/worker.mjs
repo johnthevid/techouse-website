@@ -305,7 +305,7 @@ export function validateContent(input) {
     if (!settings || typeof settings !== "object" || Array.isArray(settings))
       fail(400, "Invalid settings.");
     for (const key of Object.keys(settings))
-      if (!["electricityRate", "electricityRateNote", "googleMapsKey"].includes(key))
+      if (!["electricityRate", "electricityRateNote", "googleMapsKey", "closedDivisions"].includes(key))
         fail(400, "Unknown setting.");
     content.settings = {};
     if (settings.electricityRate !== undefined) {
@@ -322,6 +322,13 @@ export function validateContent(input) {
       if (typeof settings.googleMapsKey !== "string" || !/^AIza[0-9A-Za-z_-]{35}$/.test(settings.googleMapsKey))
         fail(400, "Enter a Google Maps API key (it starts with AIza).");
       content.settings.googleMapsKey = settings.googleMapsKey;
+    }
+    // Division pages closed to visitors for now (the division itself stays listed).
+    if (settings.closedDivisions !== undefined) {
+      const closed = settings.closedDivisions;
+      if (!Array.isArray(closed) || closed.some((id) => !divisions.includes(id)) || new Set(closed).size !== closed.length)
+        fail(400, "Unknown division in the closed pages list.");
+      content.settings.closedDivisions = closed;
     }
   }
   for (const type of ["projects", "posts"]) {

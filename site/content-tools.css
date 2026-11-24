@@ -2068,3 +2068,30 @@ html.contact-dialog-open { overflow: hidden; }
   body.office-page input[type='file'] { width: 100%; font: inherit; font-size: 14px; }
   body.office-page input[type='file']::file-selector-button { min-height: 44px; margin-right: 12px; padding: 0 16px; border: 0; background: #244d3d; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
 }
+
+/* Website customizer → Division pages: one switch per division page. */
+.division-page-toggles {
+  display: grid;
+  gap: 10px;
+}
+.division-page-toggle {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--line, #c9d2cb);
+  cursor: pointer;
+}
+.division-page-toggle input {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  accent-color: #234a3c;
+}
+.division-page-toggle span {
+  display: grid;
+  gap: 2px;
+}
+.division-page-toggle small {
+  opacity: 0.75;
+}

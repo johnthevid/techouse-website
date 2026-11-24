@@ -2,6 +2,13 @@
 
 Recorded milestones for the Techouse website. Dates use the project's Asia/Manila calendar. These entries describe completed work; they are not retroactively created Git tags or GitHub Releases.
 
+## Unreleased — Approval meeting follow-ups (24 Nov 2026)
+
+- Solar inquiries ask an optional roof type. Elevator inquiries ask optional lift questions (service, building type, floors, size, largest item, car entrances, brand, part); the Elevators page opens with the same questions and hands the answers to the form. Answers are stored in a new `inquiry_details` table (migration 0004, additive) and shown in the back office and CSV.
+- Elevators page: six service cards (install, maintain, repair, replace, modernise, parts) and the hard-to-find parts offer ("in as little as 7 days").
+- Back office: Website customizer → Division pages closes a division's page while keeping it on the homepage and in menus. Real estate development starts closed.
+- New `BACKLOG.md`; editing solar products from the back office is queued there.
+
 ## Unreleased — Traffic, leads and stored inquiries (merged into main 23 Nov 2026)
 
 - Inquiries are stored on the server (D1, migration `0002.sql`) instead of only in the visitor's browser, with their source (search, social, paid, campaign tags, referring site and first page). Site-visit preferences are attached to the inquiry. Public copy says the request was sent; the static demo keeps its demo wording.
