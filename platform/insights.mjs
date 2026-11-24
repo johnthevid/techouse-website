@@ -2,6 +2,7 @@
  * Privacy: no cookies, no IP addresses. A visitor is a salted hash of the day, network address
  * and browser, so the same person counts once a day and cannot be followed across days.
  */
+import { consumeInquiryProof } from "./inquiry-otp.mjs";
 const DAY = 86400000;
 const MANILA = 8 * 3600000;
 export const divisions = ["solar", "construction", "prefabrication", "development", "elevators"];
@@ -72,7 +73,7 @@ async function visitorOf(request, env, hash, time) {
   const agent = request.headers.get("user-agent") || "";
   return (await hash(`visitor|${env.AUTH_KEY}|${dayKey(time)}|${address}|${agent}`)).slice(0, 20);
 }
-const emailPattern = /^[^\s@<>"]{1,64}@[^\s@<>"]{1,180}\.[a-z]{2,24}$/i;
+export const emailPattern = /^[^\s@<>"]{1,64}@[^\s@<>"]{1,180}\.[a-z]{2,24}$/i;
 
 function inquiryRecord(row) {
   return {
@@ -176,6 +177,10 @@ export async function insightsRoute(request, env, path, tools) {
     if (record.phone && !/^[+\d][\d\s()\-.]{5,34}$/.test(record.phone))
       fail(400, "Enter a valid mobile number, or leave it blank.");
     await rate(env, "inquiry-contact:" + (record.email || record.phone).toLowerCase(), 4, 3600);
+    // Project inquiries need a verified email when INQUIRY_OTP_ENABLED is on (inquiry-otp.mjs).
+    const honeypot = !!clean(input.website, 200);
+    if (topic === "project" && !honeypot)
+      await consumeInquiryProof(env, query, fail, record.email, input.emailProof);
     const sector = ["residential", "commercial", "industrial"].includes(input.solarSector)
       ? input.solarSector
       : "";
@@ -191,7 +196,7 @@ export async function insightsRoute(request, env, path, tools) {
       .slice(0, 6)
       .toUpperCase()}`;
     // A filled hidden field means an automated submission: answer normally, store nothing.
-    if (clean(input.website, 200))
+    if (honeypot)
       return json({ id, token: crypto.randomUUID().replaceAll("-", ""), createdAt: new Date(now).toISOString() }, 201);
     const source = attribution(input.attribution, ownHost);
     // The visitor's browser keeps this token so it alone can add a site-visit preference later.

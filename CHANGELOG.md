@@ -2,6 +2,10 @@
 
 Recorded milestones for the Techouse website. Dates use the project's Asia/Manila calendar. These entries describe completed work; they are not retroactively created Git tags or GitHub Releases.
 
+## Unreleased — Inquiry email verification (branch `feature/inquiry-otp`)
+
+- Project inquiries can require a six-digit code sent to the visitor's email through Brevo before they are sent. The server checks a one-time proof, so the step cannot be skipped. Off until the Brevo sender, API key and flag are set; partner applications are not affected.
+
 ## Unreleased — Traffic, leads and stored inquiries (merged into main 23 Nov 2026)
 
 - Inquiries are stored on the server (D1, migration `0002.sql`) instead of only in the visitor's browser, with their source (search, social, paid, campaign tags, referring site and first page). Site-visit preferences are attached to the inquiry. Public copy says the request was sent; the static demo keeps its demo wording.

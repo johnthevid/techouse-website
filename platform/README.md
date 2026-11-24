@@ -49,6 +49,14 @@ The authenticator setup uses a private manual setup key: add a time-based accoun
 
 The CMS is deliberately basic. It currently edits project/post covers; project covers replace the gallery with that cover. Existing multi-image galleries remain in records until a cover is replaced. The older prototype's full customizer preview and gallery-management experience has not yet been ported to the secure CMS. Media are resized and persisted inside the content document for this base; the maximum content request is 5 MB. Migrate media to R2 before large content libraries. No customer contact data should be put into public CMS content.
 
+## Inquiry email verification (Brevo)
+
+Project inquiries can require a six-digit email code before they are sent. The check is on only when all three settings exist: `INQUIRY_OTP_ENABLED=true`, `INQUIRY_OTP_FROM` (the sender address alone, verified in Brevo) and the Worker secret `BREVO_API_KEY` (a Brevo transactional API key). With any of them missing the form works as before, without codes. For local development set the same names in the server process environment. Keep the key out of source control.
+
+How it works (`inquiry-otp.mjs`): `POST /api/inquiry/otp/send` emails a code through Brevo; `POST /api/inquiry/otp/verify` checks it and returns a proof valid for 30 minutes; `POST /api/inquiries` uses up that proof for the same address before storing a project inquiry, so the check cannot be skipped by posting to the endpoint directly. Partner applications (phone required, email optional) do not need a code. Codes last 10 minutes, one send per minute and five per hour per address, five tries per code, plus limits per network address. A resend replaces the previous code. Addresses, codes and proofs are stored only as keyed digests; the daily cron removes expired rows.
+
+Before switching it on: apply `migrations/0003.sql` to the D1 database (additive, safe to repeat), verify the Techouse sender (and ideally the domain's SPF/DKIM) in Brevo, then set the variables and secret. Production enablement needs the user's approval of the sender and of handling visitor email addresses.
+
 ## What remains before launch
 
 1. Create Client-owned Cloudflare services, approve costs and data handling, configure real domain/APP_ORIGIN, apply the schema, provision the production account and secret, and test in the actual Workers runtime.

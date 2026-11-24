@@ -2,7 +2,8 @@
  * Never place encryption keys, passwords, or MFA secrets in public assets or browser storage.
  */
 import { scrypt } from "node:crypto";
-import { insightsRoute, pruneInsights } from "./insights.mjs";
+import { emailPattern, insightsRoute, pruneInsights } from "./insights.mjs";
+import { inquiryOtpEnabled, inquiryOtpRoute, pruneInquiryOtp } from "./inquiry-otp.mjs";
 const encoder = new TextEncoder();
 const json = (body, status = 200, headers = {}) =>
   new Response(JSON.stringify(body), {
@@ -127,7 +128,7 @@ async function rate(env, id, max, seconds = 900) {
   if (record.count > max)
     fail(429, "Too many attempts. Please try again later.");
 }
-async function body(request) {
+async function body(request, maxBytes = 5_000_000) {
   if (!request.headers.get("content-type")?.startsWith("application/json"))
     fail(415, "Send JSON.");
   const reader = request.body?.getReader();
@@ -138,7 +139,7 @@ async function body(request) {
       const { done, value } = await reader.read();
       if (done) break;
       size += value.length;
-      if (size > 5_000_000) {
+      if (size > maxBytes) {
         await reader.cancel();
         fail(413, "Request too large.");
       }
@@ -430,7 +431,7 @@ async function route(request, env) {
   if (path === "/api/bootstrap.js" && request.method === "GET") {
     const { content } = await getContent(env, true);
     return new Response(
-      `window.TechouseBoot=${JSON.stringify(content).replace(/</g, "\\u003c")};`,
+      `window.TechouseBoot=${JSON.stringify(content).replace(/</g, "\\u003c")};window.TechouseInquiryOtp=${inquiryOtpEnabled(env)};`,
       { headers: { "Content-Type": "application/javascript" } },
     );
   }
@@ -723,6 +724,16 @@ async function route(request, env) {
     }
     fail(405, "Method not allowed.");
   }
+  const otp = await inquiryOtpRoute(request, env, path, {
+    query,
+    rate,
+    body,
+    fail,
+    json,
+    random,
+    emailPattern,
+  });
+  if (otp) return otp;
   const insight = await insightsRoute(request, env, path, {
     query,
     rate,
@@ -798,5 +809,6 @@ export default {
       now - 90 * 86400000,
     ).run();
     await pruneInsights(env, query, now);
+    await pruneInquiryOtp(env, query, now);
   },
 };

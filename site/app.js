@@ -843,7 +843,10 @@ function render() {
   // Prefabrication's 3D standard module (no-op on other pages).
   window.TechouseModule3D?.mount(document.querySelector('[data-module-3d]'));
   window.TechouseSolar?.prefill();
-  if (path === '/inquiry') mountInquiryHistory();
+  if (path === '/inquiry') {
+    mountInquiryHistory();
+    mountInquiryEmailCheck(document.querySelector('#inquiry-form'));
+  }
   window.TechouseReadability?.mount();
   window.TechouseExperience?.mount();
   window.TechouseSolarExtras?.mount();
@@ -866,6 +869,121 @@ function render() {
   if (/^\/divisions\/[a-z-]+\/projects\//.test(path))
     window.TechousePortfolio.openProject(path.split('/')[4] || '');
 }
+// Hosted site with email codes switched on: the address must be verified before sending.
+// The server returns a short-lived proof that POST /api/inquiries uses up (platform/inquiry-otp.mjs).
+const inquiryEmailChecks = new WeakMap();
+
+function mountInquiryEmailCheck(form) {
+  if (!form || !window.TechousePlatformMode || !window.TechouseInquiryOtp) return;
+  const email = form.elements.email;
+  const submit = form.querySelector('[type="submit"]');
+  email.closest('.field').insertAdjacentHTML(
+    'beforeend',
+    `<div class="inquiry-email-check">
+      <div><button class="button outline" type="button" id="inquiry-send-code">Send email code</button></div>
+      <div id="inquiry-code-field" class="inquiry-code-field" hidden>
+        <label for="inquiry-code">Email verification code</label>
+        <input id="inquiry-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" aria-describedby="inquiry-code-status">
+      </div>
+      <p id="inquiry-code-status" class="inquiry-code-status" role="status">We email a six-digit code to confirm this address before you send.</p>
+    </div>`,
+  );
+  const send = form.querySelector('#inquiry-send-code');
+  const code = form.querySelector('#inquiry-code');
+  const field = form.querySelector('#inquiry-code-field');
+  const status = form.querySelector('#inquiry-code-status');
+  let challenge, proof, verifiedEmail = '', busy = false;
+  const address = () => email.value.trim().toLowerCase();
+
+  function reset(message) {
+    challenge = proof = undefined;
+    verifiedEmail = '';
+    code.value = '';
+    field.hidden = true;
+    send.hidden = false;
+    send.textContent = 'Send email code';
+    if (message) status.textContent = message;
+  }
+
+  async function request(action, data) {
+    busy = true;
+    email.readOnly = send.disabled = submit.disabled = true;
+    try {
+      const response = await fetch('/api/inquiry/otp/' + action, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        status.textContent =
+          response.status === 429
+            ? 'Too many attempts. Wait a minute before trying again.'
+            : result.error || 'Email verification is temporarily unavailable. Try again.';
+        return null;
+      }
+      return result;
+    } catch {
+      status.textContent = 'We could not reach the server. Check your connection and try again.';
+      return null;
+    } finally {
+      busy = false;
+      email.readOnly = send.disabled = submit.disabled = false;
+    }
+  }
+
+  email.addEventListener('input', () => {
+    if ((challenge || proof) && address() !== verifiedEmail)
+      reset('Email address changed. Request a code for this address.');
+  });
+  send.addEventListener('click', async () => {
+    if (busy || !email.reportValidity()) return;
+    const recipient = address();
+    status.textContent = 'Sending verification code…';
+    const result = await request('send', { email: recipient });
+    if (!result?.challenge || !form.isConnected) return;
+    challenge = result.challenge;
+    proof = undefined;
+    verifiedEmail = recipient;
+    field.hidden = false;
+    code.value = '';
+    send.textContent = 'Resend email code';
+    status.textContent =
+      'Check your inbox for the code. It expires in 10 minutes; you can resend after one minute.';
+    code.focus();
+  });
+
+  inquiryEmailChecks.set(form, {
+    // Resolves to the proof, or null with the reason shown under the email field.
+    async proof() {
+      if (busy) return null;
+      if (proof && address() === verifiedEmail) return proof;
+      if (!challenge || address() !== verifiedEmail) {
+        status.textContent = 'Send a code to your email and enter it before sending your inquiry.';
+        send.focus();
+        return null;
+      }
+      if (!/^\d{6}$/.test(code.value.trim())) {
+        status.textContent = 'Enter the six-digit code from your email.';
+        code.focus();
+        return null;
+      }
+      status.textContent = 'Checking your code…';
+      const result = await request('verify', { email: address(), challenge, code: code.value.trim() });
+      if (!result?.proof) {
+        code.focus();
+        return null;
+      }
+      proof = result.proof;
+      challenge = undefined;
+      field.hidden = send.hidden = true;
+      status.textContent = 'Email verified.';
+      return proof;
+    },
+    reset,
+  });
+}
+
 function decodeSegment(value = '') {
   try {
     return decodeURIComponent(value);
@@ -1141,6 +1259,9 @@ document.addEventListener('submit', async (event) => {
       showToast('Add your name, location, and at least 10 characters of project details.');
       return;
     }
+    const emailCheck = inquiryEmailChecks.get(form);
+    const emailProof = emailCheck ? await emailCheck.proof() : undefined;
+    if (emailCheck && (!emailProof || !form.isConnected)) return;
     const solarSavings = data.division === 'solar' ? Number(form.dataset.solarSavings) : NaN;
     const trap = data.website;
     delete data.website;
@@ -1168,10 +1289,14 @@ document.addEventListener('submit', async (event) => {
           body: JSON.stringify({
             ...q,
             website: trap || '',
+            emailProof,
             attribution: window.TechouseAnalytics?.attribution() || undefined,
           }),
         });
         const value = await response.json().catch(() => ({}));
+        // A used or expired proof: start the email check again.
+        if (response.status === 403 && emailCheck)
+          emailCheck.reset('Your verification expired. Send a new code to your email.');
         if (!response.ok)
           throw Error(
             value.error ||

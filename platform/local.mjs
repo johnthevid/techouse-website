@@ -67,6 +67,10 @@ export async function createEnvironment(folder = resolve(here, ".data")) {
   const site = resolve(here, "../site");
   const env = {
     DB: d1(db),
+    // Inquiry email codes (Brevo). Off unless set in the server process environment.
+    INQUIRY_OTP_ENABLED: process.env.INQUIRY_OTP_ENABLED,
+    INQUIRY_OTP_FROM: process.env.INQUIRY_OTP_FROM,
+    BREVO_API_KEY: process.env.BREVO_API_KEY,
     AUTH_KEY: key,
     APP_ORIGIN: "http://127.0.0.1:8787",
     COOKIE_SECURE: "false",

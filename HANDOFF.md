@@ -1,5 +1,13 @@
 # Current handoff
 
+## Latest: inquiry email verification through Brevo (branch `feature/inquiry-otp`, from `main`, 24 Nov 2026; not merged, not deployed)
+
+- Task: rebuild the email-code check from `feature/inquiry-email-otp` on current `main`. The old branch was based on `develop`, conflicted in 8 files, reused migration number 0002 and only checked the code in the browser, which `main`'s stored inquiries would have let anyone skip. That branch is left as it was.
+- Done: `platform/inquiry-otp.mjs` (send and verify routes, Brevo sending, proofs), `platform/migrations/0003.sql` (`inquiry_otp` table), `insights.mjs` requires and uses up a proof for project inquiries when the check is on (partner applications exempt), `worker.mjs` wiring, bootstrap flag `window.TechouseInquiryOtp` and cleanup in the cron, `local.mjs` reads the three settings from the environment. Inquiry form (`app.js`, `inquiry.css`): Send/Resend email code, code field and status under the email address; a verified proof is kept for retries after a validation error and cleared when the address changes or the server rejects it. Details in `platform/README.md`.
+- Checks: `npm test` 47/47 (new `tests/inquiry-otp.test.mjs`: code rules, proofs, partner exemption, flag off, and the hosted form in Chrome at 1440 and 390 with Brevo mocked). One run had an intermittent failure in `update-101-browser.test.mjs` that passed alone and on the rerun. Form screenshots at 1440 and 390: no overflow. Node 22 in the cloud container. No real email was sent.
+- Remaining: create the Brevo account, verify the sender, add the API key as the Worker secret `BREVO_API_KEY`, set `INQUIRY_OTP_FROM` and `INQUIRY_OTP_ENABLED=true`; apply `0003.sql` once, separately, from `deployments/techouse-1.0/` (`npx wrangler@4.157.0 d1 execute techouse --remote --file=../../platform/migrations/0003.sql`); test one real code end to end on staging.
+- Deployment: none. No remote database change.
+
 ## Latest: traffic & leads dashboard, stored inquiries, back office fixes (branch `claude/zen-fermat-g5352f`, merged into `main` 23 Nov 2026 at the user's request; not deployed)
 
 Merged with the partner program already on `main`. Conflicts in `app.js`, `index.html`, `HANDOFF.md` and `build-info.js` were resolved keeping both features; asset versions regenerated. Partner applications (Be a partner page) now also go to the server with `topic: partnership` (phone required, email optional) and appear in the Inquiries inbox labelled "Partner application", with a Partners filter; Traffic & leads counts them apart from project inquiries. The partner page says "sent" only when the server accepted the application; the static demo keeps its demo wording. `npm test` 43/43 after the merge.
