@@ -41,7 +41,7 @@ Corporate website and protected content-management workspace for Techouse, built
 | Solar planning      | Property/priority questions, illustrative system-cost and savings estimates, and inquiry handoff                                                                    |
 | Solar equipment     | Skyworth panel, inverter and battery categories, connected horizontal category slider, adaptive content height, model details and manufacturer datasheets           |
 | Project portfolio   | Residential, commercial and industrial categories, project details, image presentation and slide-up/slide-out detail dialog with backdrop transitions               |
-| Company information | About page, team/leadership/office tabs, Google Maps office embed and credited building interior photo; team photographs and leadership details remain pending      |
+| Company information | About page, team/leadership/office tabs and Google Maps office embed; team photographs and leadership details remain pending                                    |
 | Contact             | Shared call-options dialog, phone/Viber QR options, calling-app links and office map links                                                                          |
 | Company updates     | Published post listing and individual update pages, backed by shared content in platform mode                                                                       |
 | Usability           | Responsive layouts, keyboard controls and focus states, reduced-motion support, larger-text control and back-to-top navigation                                      |
@@ -90,7 +90,7 @@ Performance checks showed reduced rendering work in controlled samples. They do 
 - Site-visit times are preferences attached to the inquiry; no staff calendar or booking confirmation is connected.
 - Visitor counts are cookieless: no IP address is stored, and a visitor is a salted hash that changes daily, so "visitors" means unique visitors per day. Staff, crawlers and draft previews are not counted.
 - Phone/Viber actions depend on the user's device, installed apps and number availability.
-- Team photos and completed leadership profiles are not supplied yet. The office image is a credited building interior reference.
+- Team photos and completed leadership profiles are not supplied yet. The office tab shows the Google map only.
 - No payment processing, ecommerce checkout, unrestricted site builder or completed offering/catalogue for every non-solar division is included.
 - Authentication protections do not make public forms spam-proof or prank-proof. Public anti-abuse integrations and a real inquiry workflow are not represented as complete.
 - A custom domain and full hosted production acceptance remain outstanding. The preview retains a `noindex` directive.
@@ -188,6 +188,7 @@ techouse-website/
 ├── HANDOFF.md                Current task and deployment context
 ├── WORKFLOW.md               Multi-device and release workflow
 ├── CHANGELOG.md              Recorded changes
+├── BACKLOG.md                Requested features not built yet
 ├── RELEASES.md               Release identities and recovery guidance
 ├── GITHUB_ABOUT.md           Repository About text and suggested topics
 ├── STABLE_BUILD_1.md          Original approved baseline record

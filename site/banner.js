@@ -16,8 +16,31 @@ window.TechouseBanner = (() => {
     },
     elevators: { title: 'Rise to new<br> possibilities.', cta: 'Let’s start elevating' },
   };
-  function header(brand, arrow) {
-    return `<div class="banner-nav"><a href="#company" class="banner-company-link" aria-label="About Techouse">${brand}</a><div class="banner-nav-right"><a class="header-call" href="tel:+639855626888" aria-label="Call Techouse at +63 985 562 6888">${window.TechouseIcons.icon('call')}<span>Call us</span></a><a class="partner-header-cta" href="#/partnership">${window.TechouseIcons.icon('handshake')}<span>Refer &amp; Earn</span></a><a class="banner-global-quote" href="#/inquiry">Request a quote ${arrow}</a></div></div>`;
+  // News ticker: the latest published updates scroll between the logo and the header actions.
+  // It sits inside the action group so it appears with them after the approved intro.
+  function ticker(news = []) {
+    const items = news.slice(0, 6);
+    if (!items.length) return '';
+    const date = (value) => {
+      const d = new Date(value);
+      return Number.isFinite(+d)
+        ? d.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', timeZone: 'Asia/Manila' })
+        : '';
+    };
+    const esc = (v) =>
+      String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+    const list = (hidden) =>
+      `<ul class="news-ticker-list"${hidden ? ' aria-hidden="true"' : ''}>${items
+        .map(
+          (p) =>
+            `<li><a href="#/updates/${encodeURIComponent(p.id)}"${hidden ? ' tabindex="-1"' : ''}><span class="news-ticker-date">${esc(date(p.createdAt || p.updatedAt))}</span>${esc(p.title)}</a></li>`,
+        )
+        .join('')}</ul>`;
+    return `<div class="news-ticker" role="region" aria-label="Latest news" style="--news-duration:${items.length * 9}s"><div class="news-ticker-track">${list(false)}${list(true)}</div></div>`;
+  }
+  function header(brand, arrow, news = []) {
+    const feed = ticker(news);
+    return `<div class="banner-nav${feed ? ' has-news' : ''}"><a href="#company" class="banner-company-link" aria-label="About Techouse">${brand}</a><div class="banner-nav-right">${feed}<a class="header-call" href="tel:+639855626888" aria-label="Call Techouse at +63 985 562 6888">${window.TechouseIcons.icon('call')}<span>Call us</span></a><a class="partner-header-cta" href="#/partnership">${window.TechouseIcons.icon('handshake')}<span>Refer &amp; Earn</span></a><a class="banner-global-quote" href="#/inquiry">Request a quote ${arrow}</a></div></div>`;
   }
   // LANDING MARKUP: intro, banners, About section, and right-edge About cue.
   function html(divisions, art, arrow) {

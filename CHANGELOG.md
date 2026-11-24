@@ -2,13 +2,42 @@
 
 Recorded milestones for the Techouse website. Dates use the project's Asia/Manila calendar. These entries describe completed work; they are not retroactively created Git tags or GitHub Releases.
 
-## Unreleased — Solar products editor
+## Unreleased — Solar products editor (merged into main 25 Nov 2026)
 
 - Back office tab "Solar products": edit, reorder, draft, add and delete the Skyworth catalogue (names, capacity, specifications, image upload or bundled image, datasheet file or link) with a live preview. Saved into the content record; the built-in catalogue remains the default until the first save.
 - Right panel tabs: Add product, Edit product and Page preview; each form keeps its own unsaved draft.
 - Page preview tab beside Edit product: the real category page with unsaved edits, at computer or phone width.
 - Fix: back office theme buttons now work in the local workspace and the static demo, not only on the signed-in office page.
 - The public catalogue now escapes product text and handles missing images, datasheets and empty categories. Content saves over 1.9 MB are refused before they hit the database row limit.
+
+## Unreleased — About page story and header alignment (25 Nov 2026)
+
+- About page retold in order: opening, prologue, four timeline chapters ending in the five divisions, what we hold to, the people and office, then the next step.
+- Homepage header: the logo's visible edge lines up with the headline and its wordmark with the header buttons.
+
+## Unreleased — Elevators: own photos, merged section, brand logos (24 Nov 2026)
+
+- Elevator types and services share one section ("Every elevator, every service.") with two tabs over one slideshow; brands close it as a row.
+- Staff upload a photo per elevator type and each brand's logo in the back office (Website customizer, Elevator photos and logos); drawings and names show until they do.
+
+## Unreleased — Elevators form: Simple and Detailed (24 Nov 2026)
+
+- Each elevator service opens in Simple mode (two or three plain questions); Detailed shows every question. Answers carry over when switching.
+- Questions are rearranged into one ledger: the question on the left, the answer on the right.
+- The machine-room drawings in the form are replaced by a "What is a machine room?" tooltip.
+
+## Unreleased — Elevators page rebuild and homepage news ticker (24 Nov 2026)
+
+- Elevators page: a two-step planner. Step 1 picks one of four services; step 2 shows that service's own form (spec sheet with machine room or machine-room-less, triage, diagnosis, parts request) beside a request summary and inquiry button. Slideshows of elevator types (drawn car floor plans), services (a shaft drawing marking the parts each service touches) and brands, then projects.
+- Inquiry form: shows the planner answers with "Change answers"; the server accepts the new answers.
+- Homepage header: the latest news scrolls between the logo and the actions at 60% white on a soft dark band; Call us, Refer & Earn and Request a quote are more compact.
+
+## Unreleased — Approval meeting follow-ups (24 Nov 2026)
+
+- Solar inquiries ask an optional roof type. Elevator inquiries ask optional elevator questions (service, building type, floors, size, largest item, car entrances, brand, part); the Elevators page opens with the same questions and hands the answers to the form. Answers are stored in a new `inquiry_details` table (migration 0004, additive) and shown in the back office and CSV.
+- Elevators page: six service cards (install, maintain, repair, replace, modernise, parts) and the hard-to-find parts offer ("in as little as 7 days").
+- Back office: Website customizer → Division pages closes a division's page while keeping it on the homepage and in menus. Real estate development starts closed.
+- New `BACKLOG.md`; editing solar products from the back office is queued there.
 
 ## Unreleased — Traffic, leads and stored inquiries (merged into main 23 Nov 2026)
 

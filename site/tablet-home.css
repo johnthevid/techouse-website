@@ -1,12 +1,15 @@
-/* Touch-tablet homepage: five panels opened by tapping (tablet-home.js). Applies at 600px
-   wide or more, 600px tall or more, on devices without hover. Desktop, laptops and tablets
-   with a mouse or trackpad keep the hover banners. Columns in landscape; stacked bands in
-   portrait, where the first band's photo runs up behind the header, blurred and vignetted. */
+/* Tablet homepage: five panels opened by tapping (tablet-home.js). Applies to touch screens
+   600px wide and tall or more, and to every portrait screen 600–1199px wide whatever the input
+   (browser window, iPad with a trackpad). Laptops and desktops in landscape keep the hover banners.
+   Columns in landscape; stacked bands in portrait, where the first band's photo runs up behind
+   the header, blurred and vignetted. */
 .tp {
   display: none;
 }
 
-@media (min-width: 600px) and (min-height: 600px) and (hover: none) {
+/* Portrait screens 600–1199px wide get the bands whatever the input (trackpad, mouse, browser window) */
+@media (min-width: 600px) and (min-height: 600px) and (hover: none),
+  (min-width: 600px) and (max-width: 1199px) and (orientation: portrait) {
   .landing .division-landing.tp-active {
     --tp-ease: cubic-bezier(0.22, 0.7, 0.2, 1);
     --tp-top: clamp(214px, 25vh, 300px);
@@ -103,6 +106,12 @@
   }
   .tp-panel:first-child > img,
   .tp-panel:first-child > .tp-shade {
+    top: calc(-1 * var(--tp-top));
+    height: calc(100% + var(--tp-top));
+  }
+  /* ...and so does its tap area: tapping beside "What are you building next?" opens Solar.
+     The header stays on top, so its logo and buttons keep working. */
+  .tp-panel:first-child > .tp-hit {
     top: calc(-1 * var(--tp-top));
     height: calc(100% + var(--tp-top));
   }
@@ -314,7 +323,8 @@
     border-left: 0;
   }
   .tp-panel:first-child > img,
-  .tp-panel:first-child > .tp-shade {
+  .tp-panel:first-child > .tp-shade,
+  .tp-panel:first-child > .tp-hit {
     top: 0;
     height: 100%;
   }
@@ -359,7 +369,8 @@
   }
 }
 
-@media (min-width: 600px) and (min-height: 600px) and (hover: none) and (prefers-reduced-motion: reduce) {
+@media (min-width: 600px) and (min-height: 600px) and (hover: none) and (prefers-reduced-motion: reduce),
+  (min-width: 600px) and (max-width: 1199px) and (orientation: portrait) and (prefers-reduced-motion: reduce) {
   .tp *,
   .division-landing.tp-active > .landing-intro {
     transition: none !important;

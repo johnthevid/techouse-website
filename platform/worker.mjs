@@ -254,6 +254,11 @@ const retiredSelectors = new Set([
     [".banner-hook", ".banner-description"].map((sel) => `[data-banner="${id}"] ${sel}`),
   ),
 ]);
+const elevatorPhotos = [
+  ...["passenger", "home", "bed", "cargo", "panoramic", "escalator", "walkway"].map((id) => "elevator-" + id),
+  // Brand logos staff upload for the Elevators page (supplied by the manufacturers).
+  ...["hitachi", "epss", "mitsubishi"].map((id) => "brand-" + id),
+];
 function text(value, limit = 5000) {
   if (typeof value !== "string" || value.length > limit)
     fail(400, "Invalid or oversized text.");
@@ -297,7 +302,8 @@ export function validateContent(input) {
     content.text[key] = text(value);
   }
   for (const [key, value] of Object.entries(input.images || {})) {
-    if (!divisions.includes(key)) fail(400, "Unknown banner.");
+    // Division banners, plus one photo per elevator type on the Elevators page.
+    if (!divisions.includes(key) && !elevatorPhotos.includes(key)) fail(400, "Unknown banner.");
     content.images[key] = image(value);
   }
   // Solar Calculator settings: the default electricity rate staff update from Meralco's advisory.
@@ -306,7 +312,7 @@ export function validateContent(input) {
     if (!settings || typeof settings !== "object" || Array.isArray(settings))
       fail(400, "Invalid settings.");
     for (const key of Object.keys(settings))
-      if (!["electricityRate", "electricityRateNote", "googleMapsKey"].includes(key))
+      if (!["electricityRate", "electricityRateNote", "googleMapsKey", "closedDivisions"].includes(key))
         fail(400, "Unknown setting.");
     content.settings = {};
     if (settings.electricityRate !== undefined) {
@@ -323,6 +329,13 @@ export function validateContent(input) {
       if (typeof settings.googleMapsKey !== "string" || !/^AIza[0-9A-Za-z_-]{35}$/.test(settings.googleMapsKey))
         fail(400, "Enter a Google Maps API key (it starts with AIza).");
       content.settings.googleMapsKey = settings.googleMapsKey;
+    }
+    // Division pages closed to visitors for now (the division itself stays listed).
+    if (settings.closedDivisions !== undefined) {
+      const closed = settings.closedDivisions;
+      if (!Array.isArray(closed) || closed.some((id) => !divisions.includes(id)) || new Set(closed).size !== closed.length)
+        fail(400, "Unknown division in the closed pages list.");
+      content.settings.closedDivisions = closed;
     }
   }
   for (const type of ["projects", "posts"]) {

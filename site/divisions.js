@@ -33,10 +33,10 @@ window.TechouseDivisions = (() => {
     },
     elevators: {
       title: 'Going up?<br>Every floor, covered.',
-      text: 'Hitachi, EPSS and Shanghai Mitsubishi lifts, sourced direct, installed with care and kept running for the long ride.',
+      text: 'Hitachi, EPSS and Shanghai Mitsubishi elevators, sourced direct, installed with care and kept running for the long ride.',
       icon: 'elevator',
-      action: 'Find your lift',
-      target: 'elevator-brands',
+      action: 'Find your elevator',
+      target: 'elevator-start',
     },
     development: {
       title: 'Got land? Let’s see<br>what it could be.',
@@ -243,63 +243,11 @@ window.TechouseDivisions = (() => {
     ])}${brief(d, 'Let’s talk about your project')}</div>`;
   }
 
-  function elevatorContent(d) {
-    const brands = [
-      ['Hitachi', 'Built in Hitachi’s China plants.', 'A trusted Japanese name, made in China.'],
-      ['EPSS', 'Elevators and escalators.', 'From Yida Express Elevator, Huzhou, China.'],
-      ['Shanghai Mitsubishi', 'Mitsubishi, built in Shanghai.', 'Widely installed across China.'],
-    ];
-    const types = [
-      'Passenger lifts',
-      'Panoramic lifts',
-      'Cargo lifts',
-      'Home lifts',
-      'Hospital bed lifts',
-      'Escalators',
-      'Moving walkways',
-    ];
-    return `${subnav('Elevator sections', [
-      ['elevator-brands', 'Our brands'],
-      ['elevator-types', 'What we install'],
-      ['elevator-service', 'Service'],
-      ['projects', 'Projects'],
-      ['elevator-questions', 'Good to know'],
-    ])}<div class="division-wrap construction-content"><section id="elevator-brands" class="division-section"><div class="section-heading"><h2>Three brands.<br>Sourced direct.</h2><p>Straight from the manufacturers, with no resellers in between.</p></div>${cards(
-      brands.map(([label, title, text]) => ({ icon: 'elevator', label, title, text })),
-    )}</section><section id="elevator-types" class="division-section"><div class="section-heading"><h2>Lifts for<br>every building.</h2><p>Across all three brands, for new buildings and renovations.</p></div><ul class="division-type-list">${types.map((t) => `<li>${window.TechouseIcons.icon('check')}<span>${t}</span></li>`).join('')}</ul><p class="division-note">We don’t supply external construction hoists. On a building site they collect debris and are easily overloaded, which puts riders at risk.</p></section>${steps(
-      'elevator-service',
-      'Installed, maintained,<br>renewed.',
-      'A lift is a long-term system. We look after it for its whole life.',
-      [
-        ['Installation', 'New lifts and escalators, for new builds and renovations.'],
-        [
-          'Regular maintenance',
-          'Visits every month or two that replace wear parts before they fail.',
-        ],
-        [
-          'Modernisation',
-          'Around year 25: new motor, cables and controls, and a refreshed car interior.',
-        ],
-      ],
-    )}<p class="division-note division-note-wide">We service any major brand, not only the three we sell. Lifts built from unbranded parts can be difficult to repair, so we inspect first.</p>${projectsSection()}${faq(
-      'elevator-questions',
-      'Good to know.',
-      [
-        [
-          'How long does an elevator last?',
-          'About 25 years with regular maintenance. Along the way, wear parts are replaced every year or two depending on traffic. At around 25 years, the whole system is reviewed for replacement or modernisation.',
-        ],
-        [
-          'What keeps passengers safe?',
-          'Lifts have layered safety systems: a speed governor that monitors the car, safety gear that clamps the car to its rails if it overspeeds, and buffers in the pit below.',
-        ],
-        [
-          'Can you maintain an elevator we bought elsewhere?',
-          'Yes, for any major brand. Lifts built from unbranded parts can be difficult or impossible to repair, so we’ll inspect it first.',
-        ],
-      ],
-    )}${brief(d, 'Let’s talk about your building')}</div>`;
+  // The Elevators page body (planner, slideshows, projects) lives in elevator-page.js.
+  function elevatorContent() {
+    return window.TechouseElevators.content({ subnav, projectsSection });
   }
+
   function page(d, divisions, art, arrow) {
     return `<article class="division-experience"><section class="division-cover">${window.TechouseContent?.snapshot().images[d.id] ? `<img src="${window.TechouseContent.imageURL(window.TechouseContent.snapshot().images[d.id])}" alt="${d.alt || d.short}" fetchpriority="high">` : d.image ? `<img src="assets/${d.image}" alt="${d.alt}" fetchpriority="high">` : art}<div class="cover-shade"></div><div class="cover-copy"><a href="#/" class="back-divisions">← All divisions</a>${d.id === 'solar' ? `<h1>Turn sunlight into<br>everyday savings.</h1><p>Looking at your electricity bill differently? Explore what solar could mean for your property.</p><a class="button" href="#solar-start" data-scroll="solar-start">${window.TechouseIcons.icon('solar_power')}Let’s find your solar savings </a>` : hero(d, arrow)}</div></section>${d.id === 'solar' ? `<nav class="division-subnav" aria-label="Solar sections"><a href="#products" data-scroll="products">Products</a><a href="#projects" data-scroll="projects">Past projects</a><a href="#estimator" data-scroll="estimator">Cost estimator ↗</a></nav><div class="division-wrap">${solar}</div>` : d.id === 'construction' ? constructionContent(d) : d.id === 'prefabrication' ? prefabricationContent(d) : d.id === 'elevators' ? elevatorContent(d) : d.id === 'development' ? developmentContent(d) : `<div class="division-wrap"><section class="division-section basic-division"><div><h2>${d.tagline}</h2><p>${d.description}</p><a class="text-link" href="#/inquiry?division=${d.id}">Start a conversation ${arrow}</a></div><div><span>Let’s start with the essentials</span><ul>${d.prompts.map((p, i) => `<li><small>0${i + 1}</small>${p}</li>`).join('')}</ul></div></section></div>${projectsSection()}`}<section class="division-next"><h2>What else are you building?</h2><div>${divisions
       .filter((x) => x.id !== d.id)
@@ -310,6 +258,17 @@ window.TechouseDivisions = (() => {
   }
   async function enter(panel) {
     if (entering) return;
+    // A division page closed in the back office: the panel stays, the page does not open.
+    if (window.TechouseContent?.isClosed?.(panel.dataset.banner)) {
+      const toast = document.querySelector('#toast');
+      if (toast) {
+        toast.textContent = `${panel.querySelector('.banner-division-label span')?.textContent || 'This division'} is coming soon.`;
+        toast.classList.add('show');
+        clearTimeout(enter.toastTimer);
+        enter.toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
+      }
+      return;
+    }
     entering = true;
     const id = panel.dataset.banner,
       destination = `#/divisions/${id}`;
