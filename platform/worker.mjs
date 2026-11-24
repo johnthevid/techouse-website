@@ -305,7 +305,7 @@ export function validateContent(input) {
     if (!settings || typeof settings !== "object" || Array.isArray(settings))
       fail(400, "Invalid settings.");
     for (const key of Object.keys(settings))
-      if (!["electricityRate", "electricityRateNote"].includes(key))
+      if (!["electricityRate", "electricityRateNote", "googleMapsKey"].includes(key))
         fail(400, "Unknown setting.");
     content.settings = {};
     if (settings.electricityRate !== undefined) {
@@ -316,6 +316,13 @@ export function validateContent(input) {
     }
     if (settings.electricityRateNote !== undefined)
       content.settings.electricityRateNote = text(settings.electricityRateNote, 120);
+    // Browser key for the solar inquiry's property map. It is public by design; restrict it to the
+    // site's addresses in Google Cloud. Only the key format is accepted here.
+    if (settings.googleMapsKey !== undefined) {
+      if (typeof settings.googleMapsKey !== "string" || !/^AIza[0-9A-Za-z_-]{35}$/.test(settings.googleMapsKey))
+        fail(400, "Enter a Google Maps API key (it starts with AIza).");
+      content.settings.googleMapsKey = settings.googleMapsKey;
+    }
   }
   for (const type of ["projects", "posts"]) {
     if (!Array.isArray(input[type]) || input[type].length > 100)
@@ -776,7 +783,9 @@ export default {
     );
     headers.set(
       "Content-Security-Policy",
-      "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-src 'self' https://www.google.com https://maps.google.com; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'self'",
+      // Google Maps (solar inquiry property pin) needs its documented script, image, data and
+      // worker sources; everything else stays on this origin.
+      "default-src 'self'; script-src 'self' https://*.googleapis.com https://*.gstatic.com *.google.com https://*.ggpht.com *.googleusercontent.com blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://*.googleapis.com https://*.gstatic.com *.google.com *.googleusercontent.com; connect-src 'self' https://*.googleapis.com *.google.com https://*.gstatic.com data: blob:; worker-src blob:; frame-src 'self' *.google.com; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'self'",
     );
     if (env.COOKIE_SECURE !== "false")
       headers.set("Strict-Transport-Security", "max-age=31536000");

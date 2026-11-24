@@ -1206,3 +1206,41 @@ html[data-office-theme='dark'] body.office-page .office-footer-bar strong {
 #main .ix-toolbar-actions .button {
   white-space: nowrap;
 }
+/* Property pin: satellite view with the customer's pin and roof outline, then the facts. */
+#main .ix-site {
+  padding-top: 16px;
+  margin-bottom: 20px;
+  border-top: 1px solid var(--ix-line);
+}
+#main .ix-site h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+#main .ix-site-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+#main .ix-site-map {
+  display: block;
+  aspect-ratio: 8 / 5;
+  overflow: hidden;
+  border: 1px solid var(--ix-line);
+  background: #dfe4da;
+}
+#main .ix-site-map img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+#main .ix-site .ix-facts {
+  grid-template-columns: minmax(0, 1fr);
+  margin-bottom: 12px;
+}
+#main .ix-site-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

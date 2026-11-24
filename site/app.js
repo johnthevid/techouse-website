@@ -843,6 +843,8 @@ function render() {
   // Prefabrication's 3D standard module (no-op on other pages).
   window.TechouseModule3D?.mount(document.querySelector('[data-module-3d]'));
   window.TechouseSolar?.prefill();
+  // Solar inquiries: optional property pin and roof outline under the location field.
+  if (path === '/inquiry') window.TechousePropertyPin?.mount(document.querySelector('#inquiry-form'));
   if (path === '/inquiry') mountInquiryHistory();
   window.TechouseReadability?.mount();
   window.TechouseExperience?.mount();
@@ -1150,6 +1152,7 @@ document.addEventListener('submit', async (event) => {
         ? { solarSector: form.dataset.solarSector }
         : {}),
       ...(Number.isFinite(solarSavings) && solarSavings > 0 ? { solarSavings } : {}),
+      ...(window.TechousePropertyPin?.value(form) ? { site: window.TechousePropertyPin.value(form) } : {}),
       id: uid('DEMO').toUpperCase(),
       createdAt: new Date().toISOString(),
     };

@@ -153,7 +153,7 @@ window.TechouseContent = (() => {
   function rateFields() {
     const rate = data.settings.electricityRate ?? defaultRate();
     const note = data.settings.electricityRateNote || '';
-    return `<div class="content-field"><div class="customizer-field-heading"><label for="custom-electricity-rate">Electricity rate (₱ per kWh)</label><button type="button" data-reset-field="electricityRate" aria-label="Restore default electricity rate">Restore default</button></div><input id="custom-electricity-rate" name="electricityRate" type="number" min="1" max="100" step="0.0001" required value="${escape(rate)}" data-default="${escape(defaultRate())}"><small>Use the all-in residential rate from Meralco’s monthly advisory, for example 15.5510.</small></div><div class="content-field"><div class="customizer-field-heading"><label for="custom-electricity-rate-note">Rate source shown to visitors (optional)</label><button type="button" data-reset-field="electricityRateNote" aria-label="Clear rate source">Clear</button></div><input id="custom-electricity-rate-note" name="electricityRateNote" maxlength="120" value="${escape(note)}" data-default="" placeholder="Meralco, November 2026"></div>`;
+    return `<div class="content-field"><div class="customizer-field-heading"><label for="custom-electricity-rate">Electricity rate (₱ per kWh)</label><button type="button" data-reset-field="electricityRate" aria-label="Restore default electricity rate">Restore default</button></div><input id="custom-electricity-rate" name="electricityRate" type="number" min="1" max="100" step="0.0001" required value="${escape(rate)}" data-default="${escape(defaultRate())}"><small>Use the all-in residential rate from Meralco’s monthly advisory, for example 15.5510.</small></div><div class="content-field"><div class="customizer-field-heading"><label for="custom-electricity-rate-note">Rate source shown to visitors (optional)</label><button type="button" data-reset-field="electricityRateNote" aria-label="Clear rate source">Clear</button></div><input id="custom-electricity-rate-note" name="electricityRateNote" maxlength="120" value="${escape(note)}" data-default="" placeholder="Meralco, November 2026"></div><div class="content-field"><div class="customizer-field-heading"><label for="custom-google-maps-key">Google Maps API key (optional)</label><button type="button" data-reset-field="googleMapsKey" aria-label="Clear Google Maps API key">Clear</button></div><input id="custom-google-maps-key" name="googleMapsKey" data-default="" autocomplete="off" spellcheck="false" pattern="AIza[0-9A-Za-z_\\-]{35}" maxlength="39" placeholder="AIza…" value="${escape(data.settings.googleMapsKey || '')}"><small>Turns on the map pin and roof outline in solar inquiries. Create a browser key with the Maps JavaScript, Places (New) and Maps Static APIs, restricted to this website’s addresses.</small></div>`;
   }
   function page(home, about, top, tabs) {
     const roots = {};
@@ -425,6 +425,8 @@ window.TechouseContent = (() => {
       if (Number.isFinite(rate) && rate > 0 && rate !== defaultRate())
         next.settings.electricityRate = rate;
       if (note) next.settings.electricityRateNote = note;
+      const mapsKey = form.elements.namedItem('googleMapsKey').value.trim();
+      if (mapsKey) next.settings.googleMapsKey = mapsKey;
       if (!Object.keys(next.settings).length) delete next.settings;
       for (const id of divisions) {
         const input = form.querySelector(`[data-banner-upload="${id}"]`);

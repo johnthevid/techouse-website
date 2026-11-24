@@ -74,6 +74,69 @@ async function visitorOf(request, env, hash, time) {
 }
 const emailPattern = /^[^\s@<>"]{1,64}@[^\s@<>"]{1,180}\.[a-z]{2,24}$/i;
 
+// PROPERTY PIN: an optional solar inquiry pin and roof outline. Coordinates must fall in the
+// Philippines, corners within 2 km of the pin; the roof area is computed here, never trusted.
+const PH = { south: 4, north: 21.5, west: 116, east: 127.5 };
+const inPH = (lat, lng) =>
+  Number.isFinite(lat) && Number.isFinite(lng) && lat >= PH.south && lat <= PH.north && lng >= PH.west && lng <= PH.east;
+/** Area in square metres of a small lat/lng polygon (local flat projection; ample for a roof). */
+export function roofArea(points) {
+  const lat0 = (points.reduce((sum, [lat]) => sum + lat, 0) / points.length) * (Math.PI / 180);
+  const xy = points.map(([lat, lng]) => [lng * 111320 * Math.cos(lat0), lat * 110540]);
+  let twice = 0;
+  for (let i = 0; i < xy.length; i++) {
+    const [x1, y1] = xy[i];
+    const [x2, y2] = xy[(i + 1) % xy.length];
+    twice += x1 * y2 - x2 * y1;
+  }
+  return Math.abs(twice) / 2;
+}
+export function parseSite(input, fail) {
+  if (input === undefined || input === null) return null;
+  const bad = () => fail(400, "We could not read the property pin. Remove it and try again.");
+  if (typeof input !== "object" || Array.isArray(input)) bad();
+  const lat = Number(input.lat), lng = Number(input.lng);
+  if (typeof input.lat !== "number" || typeof input.lng !== "number" || !inPH(lat, lng))
+    fail(400, "The property pin must be in the Philippines.");
+  const source = input.source === "gps" ? "gps" : "map";
+  let accuracy = null;
+  if (input.accuracy !== undefined && input.accuracy !== null) {
+    if (typeof input.accuracy !== "number" || !(input.accuracy >= 0 && input.accuracy <= 10000)) bad();
+    accuracy = Math.round(input.accuracy);
+  }
+  let roof = [];
+  if (input.roof !== undefined && input.roof !== null) {
+    if (!Array.isArray(input.roof) || input.roof.length < 3 || input.roof.length > 24) bad();
+    roof = input.roof.map((corner) => {
+      if (!Array.isArray(corner) || corner.length !== 2 || !corner.every((n) => typeof n === "number")) bad();
+      const [a, b] = corner;
+      if (!inPH(a, b) || Math.abs(a - lat) > 0.02 || Math.abs(b - lng) > 0.02) bad();
+      return [Math.round(a * 1e6) / 1e6, Math.round(b * 1e6) / 1e6];
+    });
+  }
+  const area = roof.length ? Math.round(roofArea(roof)) : null;
+  if (area !== null && (area < 4 || area > 200000)) bad();
+  return {
+    lat: Math.round(lat * 1e6) / 1e6,
+    lng: Math.round(lng * 1e6) / 1e6,
+    accuracy,
+    source,
+    roof,
+    roofArea: area,
+  };
+}
+const siteRecord = (row) =>
+  row
+    ? {
+        lat: row.lat,
+        lng: row.lng,
+        accuracy: row.accuracy,
+        source: row.source,
+        roof: row.roof ? JSON.parse(row.roof) : [],
+        roofArea: row.roof_area,
+      }
+    : null;
+
 function inquiryRecord(row) {
   return {
     id: row.id,
@@ -170,6 +233,7 @@ export async function insightsRoute(request, env, path, tools) {
       requirements: field("requirements", 5000, true, 10),
     };
     if (!divisions.includes(record.division)) fail(400, "Choose a division.");
+    const site = record.division === "solar" && topic === "project" ? parseSite(input.site, fail) : null;
     if ((record.email || topic === "project") && !emailPattern.test(record.email))
       fail(400, "Enter a valid email address.");
     if (topic === "partnership" && !record.phone) fail(400, "Add a mobile number so the team can call you.");
@@ -220,6 +284,18 @@ export async function insightsRoute(request, env, path, tools) {
       await visitorOf(request, env, hash, now),
       await hash(token),
     ).run();
+    if (site)
+      await query(
+        env,
+        "INSERT INTO inquiry_sites(inquiry_id,lat,lng,accuracy,source,roof,roof_area) VALUES(?,?,?,?,?,?,?)",
+        id,
+        site.lat,
+        site.lng,
+        site.accuracy,
+        site.source,
+        site.roof.length ? JSON.stringify(site.roof) : "",
+        site.roofArea,
+      ).run();
     return json({ id, token, createdAt: new Date(now).toISOString() }, 201);
   }
 
@@ -256,7 +332,15 @@ export async function insightsRoute(request, env, path, tools) {
       env,
       "SELECT * FROM inquiries ORDER BY created DESC LIMIT 1000",
     ).all();
-    return json({ inquiries: results.map(inquiryRecord) });
+    // Property pins join by inquiry; an older database without the table simply has none.
+    const sites = new Map();
+    try {
+      const { results: rows } = await query(env, "SELECT * FROM inquiry_sites").all();
+      for (const row of rows) sites.set(row.inquiry_id, siteRecord(row));
+    } catch {}
+    return json({
+      inquiries: results.map((row) => ({ ...inquiryRecord(row), site: sites.get(row.id) || null })),
+    });
   }
 
   if (path === "/api/admin/inquiries/update" && method === "POST") {
@@ -283,7 +367,16 @@ export async function insightsRoute(request, env, path, tools) {
       row.id,
     ).run();
     if (status !== row.status) await audit(env, s.email, `inquiry_${status}`);
-    return json({ inquiry: inquiryRecord({ ...row, status, note, seen, updated: changed ? now : row.updated }) });
+    // Keep the property pin on the returned record; the back office replaces its copy with this one.
+    const siteRow = await query(env, "SELECT * FROM inquiry_sites WHERE inquiry_id=?", row.id)
+      .first()
+      .catch(() => null);
+    return json({
+      inquiry: {
+        ...inquiryRecord({ ...row, status, note, seen, updated: changed ? now : row.updated }),
+        site: siteRecord(siteRow),
+      },
+    });
   }
 
   if (path === "/api/admin/inquiries/delete" && method === "POST") {
@@ -292,6 +385,9 @@ export async function insightsRoute(request, env, path, tools) {
     const input = await body(request);
     const result = await query(env, "DELETE FROM inquiries WHERE id=?", clean(input.id, 40)).run();
     if (!result.meta.changes) fail(404, "This inquiry no longer exists. Reload the list.");
+    await query(env, "DELETE FROM inquiry_sites WHERE inquiry_id=?", clean(input.id, 40))
+      .run()
+      .catch(() => {});
     await audit(env, s.email, "inquiry_deleted");
     return json({ ok: true });
   }

@@ -286,6 +286,8 @@ window.TechouseInsights = (() => {
       ['Requirements', 'requirements'],
       ['Solar property', 'solarSector'],
       ['Estimated monthly savings (PHP)', 'solarSavings'],
+      ['Property pin', (q) => (q.site ? `${q.site.lat}, ${q.site.lng}` : '')],
+      ['Roof area (m²)', (q) => (q.site?.roofArea ? Math.round(q.site.roofArea) : '')],
       ['Preferred visit', (q) => (q.visit ? `${q.visit.date} ${q.visit.time}` : '')],
       ['Source', 'channel'],
       ['Campaign', 'campaign'],
@@ -309,6 +311,25 @@ window.TechouseInsights = (() => {
   function row(q) {
     return `<li><button type="button" class="ix-row" data-select-inquiry="${esc(q.id)}" aria-pressed="${q.id === selected}"><span class="ix-row-main"><strong>${!q.seenAt ? '<span class="ix-unseen" aria-label="Not opened yet"></span>' : ''}${esc(q.name)}</strong><span>${esc(q.company || q.email || q.phone)}</span></span><span class="ix-row-project">${esc(kind(q))}<span>${esc(q.location)}</span></span><span class="ix-row-source">${esc(q.channel)}${q.campaign ? `<span>${esc(q.campaign)}</span>` : ''}</span><time datetime="${esc(q.createdAt)}" title="${esc(dateTime.format(new Date(q.createdAt)))}">${esc(ago(q.createdAt))}</time><span class="ix-status" data-status="${q.status}">${statusName(q.status)}</span></button></li>`;
   }
+  // PROPERTY PIN: where the customer pinned the property and, optionally, outlined the roof.
+  function site(pin) {
+    if (!pin) return '';
+    const P = window.TechousePropertyPin;
+    const key = window.TechouseContent?.snapshot().settings?.googleMapsKey;
+    const coords = `${Number(pin.lat).toFixed(6)}, ${Number(pin.lng).toFixed(6)}`;
+    const from =
+      pin.source === 'gps'
+        ? `from the customer’s phone at the property${pin.accuracy ? ` (±${Math.round(pin.accuracy)} m)` : ''}`
+        : 'placed by the customer on the map';
+    const roof = pin.roof?.length
+      ? `${pin.roof.length} corners · ≈ ${Math.round(pin.roofArea)} m² · about ${P ? P.panels(pin.roofArea) : '–'} panels at 620 W`
+      : '';
+    const image =
+      key && P
+        ? `<a class="ix-site-map" href="${esc(P.mapsLink(pin.lat, pin.lng))}" target="_blank" rel="noopener"><img src="${esc(P.staticMap(pin, 640, 400))}" alt="Satellite view of the pinned property${roof ? ' with the roof outline' : ''}" width="640" height="400" loading="lazy"></a>`
+        : '';
+    return `<section class="ix-site"><h3>Property</h3><div class="ix-site-body">${image}<div><dl class="ix-facts"><div><dt>Pin</dt><dd>${esc(coords)} <small>${esc(from)}</small></dd></div>${roof ? `<div><dt>Roof outline</dt><dd>${esc(roof)}</dd></div>` : ''}</dl><div class="ix-site-actions"><a class="button small" href="${esc(P ? P.mapsLink(pin.lat, pin.lng) : `https://www.google.com/maps/search/?api=1&query=${coords}`)}" target="_blank" rel="noopener">Open in Google Maps ${icon('arrow_outward')}</a><button type="button" class="button outline small" data-copy-coordinates="${esc(coords)}">Copy coordinates</button></div></div></div></section>`;
+  }
   function detail(q) {
     if (!q)
       return `<div class="ix-detail-empty"><h2>Select an inquiry</h2><p>Choose a request to see the full brief, contact details and where the visitor came from. Set a status as you follow up so the team knows what is in progress.</p></div>`;
@@ -323,7 +344,7 @@ window.TechouseInsights = (() => {
       )
       .join(
         '',
-      )}</select></label></header><p class="ix-save-state" role="status" aria-live="polite"></p><div class="ix-contact">${q.email ? `<a class="button outline small" href="mailto:${esc(q.email)}?subject=${encodeURIComponent('Your Techouse inquiry ' + q.id)}">${icon('arrow_outward')} Email ${esc(q.email)}</a>` : ''}${q.phone ? `<a class="button outline small" href="tel:${esc(q.phone.replace(/[^+\d]/g, ''))}">${icon('call')} Call ${esc(q.phone)}</a>` : ''}</div><dl class="ix-facts">${fact(isPartner(q) ? 'Type' : 'Division', esc(isPartner(q) ? 'Solar partner application' : divisionNames[q.division] || q.division))}${fact('Company', esc(q.company))}${fact('Project location', esc(q.location))}${fact('Size or capacity', esc(q.capacity))}${fact('Solar property', esc(sector || ''))}${fact('Estimated savings', Number(q.solarSavings) > 0 ? `${esc(peso.format(q.solarSavings))} a month (website estimate)` : '')}${fact('Preferred site visit', q.visit ? `${esc(fullDate.format(new Date(q.visit.date + 'T12:00:00+08:00')))} · ${esc(q.visit.time)} Philippine time <small>Not yet confirmed</small>` : '')}</dl><section class="ix-brief"><h3>${isPartner(q) ? 'Application' : 'Project requirements'}</h3><p>${esc(q.requirements)}</p></section><section class="ix-source"><h3>How they found the website</h3><dl class="ix-facts">${fact('Source', esc(q.channel))}${fact('Campaign', esc(q.campaign))}${fact('Referring site', esc(q.referrer))}${fact('First page seen', esc(q.landing))}</dl>${!q.campaign && !q.referrer && q.channel === 'Direct' ? '<p class="ix-hint">Direct visits came from a typed address, a bookmark or an app that hides where links come from.</p>' : ''}</section><form class="ix-note" data-inquiry-note><label for="ix-note-text">Team notes <small>Only staff see these.</small></label><textarea id="ix-note-text" name="note" rows="4" maxlength="2000" placeholder="Calls made, quote sent, next step…">${esc(q.note)}</textarea><div><button class="button small" type="submit">Save note</button></div></form><footer class="ix-detail-foot">${
+      )}</select></label></header><p class="ix-save-state" role="status" aria-live="polite"></p><div class="ix-contact">${q.email ? `<a class="button outline small" href="mailto:${esc(q.email)}?subject=${encodeURIComponent('Your Techouse inquiry ' + q.id)}">${icon('arrow_outward')} Email ${esc(q.email)}</a>` : ''}${q.phone ? `<a class="button outline small" href="tel:${esc(q.phone.replace(/[^+\d]/g, ''))}">${icon('call')} Call ${esc(q.phone)}</a>` : ''}</div><dl class="ix-facts">${fact(isPartner(q) ? 'Type' : 'Division', esc(isPartner(q) ? 'Solar partner application' : divisionNames[q.division] || q.division))}${fact('Company', esc(q.company))}${fact('Project location', esc(q.location))}${fact('Size or capacity', esc(q.capacity))}${fact('Solar property', esc(sector || ''))}${fact('Estimated savings', Number(q.solarSavings) > 0 ? `${esc(peso.format(q.solarSavings))} a month (website estimate)` : '')}${fact('Preferred site visit', q.visit ? `${esc(fullDate.format(new Date(q.visit.date + 'T12:00:00+08:00')))} · ${esc(q.visit.time)} Philippine time <small>Not yet confirmed</small>` : '')}</dl>${site(q.site)}<section class="ix-brief"><h3>${isPartner(q) ? 'Application' : 'Project requirements'}</h3><p>${esc(q.requirements)}</p></section><section class="ix-source"><h3>How they found the website</h3><dl class="ix-facts">${fact('Source', esc(q.channel))}${fact('Campaign', esc(q.campaign))}${fact('Referring site', esc(q.referrer))}${fact('First page seen', esc(q.landing))}</dl>${!q.campaign && !q.referrer && q.channel === 'Direct' ? '<p class="ix-hint">Direct visits came from a typed address, a bookmark or an app that hides where links come from.</p>' : ''}</section><form class="ix-note" data-inquiry-note><label for="ix-note-text">Team notes <small>Only staff see these.</small></label><textarea id="ix-note-text" name="note" rows="4" maxlength="2000" placeholder="Calls made, quote sent, next step…">${esc(q.note)}</textarea><div><button class="button small" type="submit">Save note</button></div></form><footer class="ix-detail-foot">${
       confirming
         ? `<p>Delete this inquiry permanently? This cannot be undone.</p><button type="button" class="button small ix-danger" data-confirm-delete-inquiry>Delete permanently</button><button type="button" class="button outline small" data-keep-inquiry>Keep inquiry</button>`
         : `<button type="button" class="text-link ix-danger-link" data-delete-stored-inquiry>Delete inquiry</button>`
@@ -408,6 +429,14 @@ window.TechouseInsights = (() => {
       }
       const pick = event.target.closest('[data-select-inquiry]');
       if (pick) return open(pick.dataset.selectInquiry);
+      const copy = event.target.closest('[data-copy-coordinates]');
+      if (copy) {
+        const say = (text) => (root.querySelector('.ix-save-state').textContent = text);
+        return navigator.clipboard
+          ?.writeText(copy.dataset.copyCoordinates)
+          .then(() => say('Coordinates copied.'))
+          .catch(() => say(`Copy failed. Coordinates: ${copy.dataset.copyCoordinates}`));
+      }
       if (event.target.closest('[data-close-inquiry]')) {
         const id = selected;
         selected = null;
