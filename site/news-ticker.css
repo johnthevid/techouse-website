@@ -5,12 +5,15 @@
   flex: 1 1 auto;
   min-width: 0;
   justify-content: flex-end;
-  margin-left: clamp(16px, 3vw, 48px);
+  /* The ticker runs evenly between the end of the TECHOUSE wordmark and the first action. The
+     logo's box reaches about 45px past the visible artwork (its link box plus the shift in
+     banner.css), so pulling in 21px leaves the same 24px gap as before the actions. */
+  margin-left: -21px;
 }
 #header .banner-nav.has-news .banner-nav-right > .news-ticker {
   flex: 1 1 auto;
   min-width: 0;
-  margin: 0 8px 0 0;
+  margin: 0 12px 0 0;
   overflow: hidden;
   /* A soft dark band keeps the 60% text readable over bright photos; the mask fades its ends. */
   background: rgb(8 20 15 / 0.58);
@@ -127,7 +130,7 @@
 }
 @media (max-width: 599px) {
   #header .banner-nav.has-news .banner-nav-right {
-    margin-left: 12px;
+    margin-left: 3px;
   }
   .news-ticker a {
     font-size: 12px;

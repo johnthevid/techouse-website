@@ -13,6 +13,7 @@
 - **Motion:** the timeline draws itself on scroll where the browser supports scroll-driven animation; none with reduced motion.
 - **Back-office editing:** the five Detailed About fields still map one-to-one (`.page-hero h1/p`, `.content-columns h2` and its two paragraphs), checked in the browser.
 - **Homepage header:** the logo PNG's transparent left margin and its low wordmark made the logo look misaligned. `banner.css` now shifts the artwork (`translate: -5.57% -7.67%`, measured from the 2172×724 file). The visible logo now starts at the headline's left edge (x=72 at 1440), and the TECHOUSE wordmark is centred with the header buttons (y=56). Headline, buttons and the intro are untouched.
+- **News ticker:** spans evenly from the end of the TECHOUSE wordmark to the first header button, with a 24px gap on each side at 1440, 1024, 820 and 390 (`news-ticker.css`).
 - **Checks:** `npm test` 51/51; Impeccable detector: no findings. Captured at 1440 and 390.
 
 ## Latest: shorter elevator section, page spacing, About tabs (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; not merged, not deployed)
