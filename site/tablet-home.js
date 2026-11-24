@@ -7,7 +7,10 @@
  */
 'use strict';
 window.TechouseTabletHome = (() => {
-  const TABLET = '(min-width: 600px) and (min-height: 600px) and (hover: none)';
+  // Touch tablets in either orientation, and any portrait screen of tablet width (a browser
+  // window, or an iPad with a trackpad), so portrait always gets the client's banded design.
+  const TABLET =
+    '(min-width: 600px) and (min-height: 600px) and (hover: none), (min-width: 600px) and (max-width: 1199px) and (orientation: portrait)';
   let teardown = () => {};
   const esc = (text) =>
     String(text).replace(
