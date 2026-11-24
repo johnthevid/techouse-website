@@ -1,5 +1,10 @@
 # Current handoff
 
+## Latest: header Call us shrinks to its icon on tablets (branch `fix/header-call-icon`, 24 Nov 2026, not merged or deployed)
+
+- Homepage header at 600–899px (`mobile-refinement.css` end): Call us shows only its phone icon (44 × 44, aria-label unchanged) so Call us, Refer & Earn and Request a quote fit. Fixes the iPad mini portrait overflow (Request a quote was cut off by 14px). Phones already showed the icon; 900px and wider keep the text; other pages' headers fit and are unchanged (checked 744–1280px).
+- Portrait tablets keep the horizontal bands (client confirmed); the side-by-side column experiment was dropped.
+
 ## Latest: solar inquiry property pin and roof outline (main, 24 Nov 2026)
 
 - Customer (`site/property-pin.js`, `property-pin.css`, mounted from `app.js` on `/inquiry`, solar division only): optional card under Project location. "I'm at the property" uses GPS (accuracy kept; warns above 100 m). "Find it on the map" opens a full-screen dialog: Google satellite (hybrid) map, pin fixed at the centre, Places (New) autocomplete limited to PH, go-to-my-location, Confirm. "Outline my roof": tap corners on a satellite map (editable Polygon, max 24), Undo/Clear/Done, live area and panel estimate (area × 0.6 ÷ 2.7 m²). The map starts at the typed town (from `assets/data/ph-places.json`) or Manila. Moving the pin elsewhere clears the outline. Preview uses the Maps Static API.

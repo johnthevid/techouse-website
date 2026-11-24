@@ -682,3 +682,19 @@
     justify-content: space-between;
   }
 }
+
+/* Tablets (600–899px): the homepage header carries Call us, Refer & Earn and Request a quote.
+   There is not room for all three in words, so Call us keeps only its phone icon (its
+   aria-label still says "Call Techouse at …"). Phones already do this; wider screens keep the text. */
+@media (min-width: 600px) and (max-width: 899px) {
+  .landing .banner-nav-right .header-call span {
+    display: none;
+  }
+  .landing .banner-nav-right .header-call {
+    display: grid;
+    place-items: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+  }
+}
