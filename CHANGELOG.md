@@ -2,6 +2,12 @@
 
 Recorded milestones for the Techouse website. Dates use the project's Asia/Manila calendar. These entries describe completed work; they are not retroactively created Git tags or GitHub Releases.
 
+## Unreleased — Elevators page rebuild and homepage news ticker (24 Nov 2026)
+
+- Elevators page: a two-step planner. Step 1 picks one of four services; step 2 shows that service's own form (spec sheet with machine room or machine-room-less, triage, diagnosis, parts request) beside a request summary and inquiry button. Slideshows of elevator types (drawn car floor plans), services (a shaft drawing marking the parts each service touches) and brands, then projects.
+- Inquiry form: shows the planner answers with "Change answers"; the server accepts the new answers.
+- Homepage header: the latest news scrolls between the logo and the actions at 60% white on a soft dark band; Call us, Refer & Earn and Request a quote are more compact.
+
 ## Unreleased — Approval meeting follow-ups (24 Nov 2026)
 
 - Solar inquiries ask an optional roof type. Elevator inquiries ask optional elevator questions (service, building type, floors, size, largest item, car entrances, brand, part); the Elevators page opens with the same questions and hands the answers to the form. Answers are stored in a new `inquiry_details` table (migration 0004, additive) and shown in the back office and CSV.

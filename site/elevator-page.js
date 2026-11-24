@@ -35,26 +35,35 @@ window.TechouseElevators = (() => {
       room === 'with'
         ? `<rect class="ev-d-room" x="92" y="58" width="116" height="62"/><g class="ev-part${lit('machine')}"><circle cx="150" cy="95" r="14"/><circle cx="150" cy="95" r="4"/><rect x="166" y="84" width="26" height="22"/></g><g class="ev-part${lit('controller')}"><rect x="100" y="70" width="20" height="42"/><path d="M104 80h12M104 88h12M104 96h8"/></g>`
         : `<g class="ev-part${lit('machine')}"><circle cx="150" cy="138" r="10"/><circle cx="150" cy="138" r="3"/><rect x="162" y="130" width="20" height="16"/></g><g class="ev-part${lit('controller')}"><rect x="196" y="160" width="16" height="36"/><path d="M199 168h10M199 175h10M199 182h6"/></g>`;
+    // Labels sit level with their part: most on the right, parts on the left wall on the left.
+    // Leaders run horizontally out of the drawing, jogging only when two labels would collide.
     const labelAt = {
-      machine: room === 'with' ? [192, 95] : [182, 138],
-      controller: room === 'with' ? [100, 72] : [212, 170],
-      ropes: [178, 170],
-      counterweight: [184, 214],
-      car: [162, 320],
-      rails: [164, 400],
-      doors: [106, 254],
-      buffers: [146, 452],
+      machine: room === 'with' ? [192, 95, 'right'] : [182, 138, 'right'],
+      controller: room === 'with' ? [100, 80, 'left'] : [212, 178, 'right'],
+      ropes: [181, 160, 'right'],
+      counterweight: [184, 214, 'right'],
+      car: [160, 322, 'right'],
+      rails: [186, 400, 'right'],
+      doors: [104, 262, 'left'],
+      buffers: [177, 455, 'right'],
     };
-    const tags = labels
-      ? on
-          .map((part, i) => {
-            const [x, y] = labelAt[part];
-            const ty = 70 + i * 34;
-            return `<g class="ev-d-tag"><path d="M${x} ${y} L238 ${ty}H252"/><circle cx="${x}" cy="${y}" r="2.5"/><text x="256" y="${ty + 4}">${PARTS[part]}</text></g>`;
-          })
-          .join('')
-      : '';
-    return `<svg class="ev-drawing ev-shaft" viewBox="${crop ? '70 44 160 260' : `0 0 ${labels ? 360 : 300} 470`}" role="img" aria-label="${esc(title || (room === 'with' ? 'Elevator with a machine room above the shaft' : 'Machine-room-less elevator with the machine inside the shaft'))}"><g class="ev-d-base"><path d="M20 440H${labels ? 340 : 280}"/><path d="M40 120V440M260 120V440M40 120H260"/>${floors
+    const place = (side) => {
+      let last = -Infinity;
+      return on
+        .filter((part) => labelAt[part][2] === side)
+        .sort((a, b) => labelAt[a][1] - labelAt[b][1])
+        .map((part) => {
+          const [x, y] = labelAt[part];
+          const ty = Math.max(y, last + 26);
+          last = ty;
+          const elbow = side === 'right' ? 272 : 28;
+          const tx = side === 'right' ? 284 : 16;
+          return `<g class="ev-d-tag"><path d="M${x} ${y}H${elbow}V${ty}H${side === 'right' ? tx - 6 : tx + 6}"/><circle cx="${x}" cy="${y}" r="2.5"/><text x="${tx}" y="${ty + 5}"${side === 'left' ? ' text-anchor="end"' : ''}>${PARTS[part]}</text></g>`;
+        })
+        .join('');
+    };
+    const tags = labels ? place('right') + place('left') : '';
+    return `<svg class="ev-drawing ev-shaft" viewBox="${crop ? '70 44 160 260' : labels ? '-170 40 610 430' : '0 0 300 470'}" role="img" aria-label="${esc(title || (room === 'with' ? 'Elevator with a machine room above the shaft' : 'Machine-room-less elevator with the machine inside the shaft'))}"><g class="ev-d-base"><path d="M20 440H280"/><path d="M40 120V440M260 120V440M40 120H260"/>${floors
       .slice(0, 3)
       .map((y) => `<path d="M40 ${y}H110M190 ${y}H260"/>`)
       .join(
@@ -77,11 +86,16 @@ window.TechouseElevators = (() => {
       panoramic: [1.1, 1.4],
     };
     if (type === 'escalator')
-      return `<svg class="ev-drawing ev-floorplan" viewBox="0 0 300 230" role="img" aria-label="Escalator seen from the side, rising between two floors"><g class="ev-d-base"><path d="M16 190H70L230 70H286"/><path class="ev-d-thin" d="M16 196H286"/></g><g class="ev-part is-on"><path d="M60 160L84 160L220 58H252"/>${Array.from({ length: 9 }, (_, i) => {
-        const x = 78 + i * 17,
-          y = 184 - i * 12.8;
-        return `<path d="M${x} ${y}h12v-12.8"/>`;
-      }).join('')}</g><text class="ev-d-dim" x="150" y="222" text-anchor="middle">Typical rise 30°, one floor</text></svg>`;
+      return `<svg class="ev-drawing ev-floorplan" viewBox="0 0 300 230" role="img" aria-label="Escalator seen from the side, rising between two floors"><g class="ev-d-base"><path d="M16 190H70L230 70H286"/><path class="ev-d-thin" d="M16 196H286"/></g><g class="ev-part is-on"><path d="M60 160L84 160L220 58H252"/>${Array.from(
+        { length: 9 },
+        (_, i) => {
+          const x = 78 + i * 17,
+            y = 184 - i * 12.8;
+          return `<path d="M${x} ${y}h12v-12.8"/>`;
+        },
+      ).join(
+        '',
+      )}</g><text class="ev-d-dim" x="150" y="222" text-anchor="middle">Typical rise 30°, one floor</text></svg>`;
     if (type === 'walkway')
       return `<svg class="ev-drawing ev-floorplan" viewBox="0 0 300 230" role="img" aria-label="Moving walkway seen from the side, nearly level"><g class="ev-d-base"><path d="M10 170H290"/></g><g class="ev-part is-on"><path d="M30 150H270"/><path d="M30 150a10 10 0 0 0 0 20H270a10 10 0 0 0 0-20"/>${Array.from({ length: 12 }, (_, i) => `<path d="M${46 + i * 19} 156v8"/>`).join('')}<path d="M26 120H274"/><path class="ev-d-thin" d="M30 150V120M270 150V120"/></g><text class="ev-d-dim" x="150" y="210" text-anchor="middle">Level or gently sloped, up to 12°</text></svg>`;
     const [w, d] = cars[type];
@@ -110,7 +124,9 @@ window.TechouseElevators = (() => {
       bed: () =>
         `<rect x="${x0 + 10}" y="${y0 + 10}" width="${W - 40}" height="${H - 28}"/><path d="M${x0 + 16} ${y0 + 30}h${W - 52}"/>${person(x0 + W - 15, y0 + H / 2, 11)}`,
       cargo: () =>
-        `<rect x="${x0 + 12}" y="${y0 + 12}" width="${W - 24}" height="${H * 0.5}"/>${[0.15, 0.3, 0.45]
+        `<rect x="${x0 + 12}" y="${y0 + 12}" width="${W - 24}" height="${H * 0.5}"/>${[
+          0.15, 0.3, 0.45,
+        ]
           .map((f) => `<path d="M${x0 + 12} ${y0 + 12 + H * f}h${W - 24}"/>`)
           .join(
             '',
@@ -222,12 +238,10 @@ window.TechouseElevators = (() => {
     ]
       .map(([value, title, extra]) => {
         const help =
-          kind === 'tiles' && extra && key !== 'building'
-            ? `<small>${esc(extra)}</small>`
-            : '';
+          kind === 'tiles' && extra && key !== 'building' ? `<small>${esc(extra)}</small>` : '';
         const art = drawn
           ? value === 'unsure'
-            ? ''
+            ? `<span class="ev-choice-art ev-choice-art-pair" aria-hidden="true">${shaft({ room: 'with', crop: true })}${shaft({ room: 'without', crop: true })}</span>`
             : `<span class="ev-choice-art" aria-hidden="true">${shaft({ room: value, on: ['machine', 'controller', 'ropes'], title, crop: true })}</span>`
           : '';
         const lead = key === 'building' ? icon(extra, 'ev-choice-icon') : '';
@@ -241,8 +255,7 @@ window.TechouseElevators = (() => {
     machineRoom: ['Does it have a machine room?'],
   };
   function field(key, service, scope) {
-    const [title, hint] =
-      service !== 'install' && EXISTING[key] ? EXISTING[key] : QUESTIONS[key];
+    const [title, hint] = service !== 'install' && EXISTING[key] ? EXISTING[key] : QUESTIONS[key];
     const id = `ev-${scope}-${key}`;
     const hintHtml = hint ? `<p class="ev-q-hint" id="${id}-hint">${hint}</p>` : '';
     if (key in D().NUMBERS) {
@@ -367,7 +380,11 @@ window.TechouseElevators = (() => {
           { duration: 360, easing: 'cubic-bezier(.16,1,.3,1)' },
         );
       if (focus) {
-        const target = step === 2 ? title : panel.querySelector('.ev-service[aria-pressed="true"]') || panel.querySelector('.ev-service');
+        const target =
+          step === 2
+            ? title
+            : panel.querySelector('.ev-service[aria-pressed="true"]') ||
+              panel.querySelector('.ev-service');
         target?.focus({ preventScroll: true });
         const top = root.getBoundingClientRect().top;
         if (top < 0 || top > innerHeight * 0.6)
@@ -376,9 +393,9 @@ window.TechouseElevators = (() => {
     };
     const choose = (value, focus = true) => {
       service = value;
-      root.querySelectorAll('.ev-service').forEach((b) =>
-        b.setAttribute('aria-pressed', String(b.dataset.service === value)),
-      );
+      root
+        .querySelectorAll('.ev-service')
+        .forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.service === value)));
       Object.entries(forms).forEach(([k, f]) => (f.hidden = k !== value));
       title.textContent = D().CHOICES.service.find(([v]) => v === value)[1];
       update();
@@ -432,7 +449,7 @@ window.TechouseElevators = (() => {
       )}</div><div class="ev-slide-copy"><p class="ev-count"><strong data-slide-number>1</strong><span>/ ${n}</span></p><div class="ev-dots" role="group" aria-label="Choose a slide">${items
       .map(
         (item, i) =>
-          `<button type="button" data-slide-go="${i}" aria-label="${i + 1}: ${esc(item.title)}"${i ? '' : ' aria-current="true"'}><span></span></button>`,
+          `<button type="button" data-slide-go="${i}" aria-label="${i + 1}: ${esc(item.name || item.title)}"${i ? '' : ' aria-current="true"'}><span></span></button>`,
       )
       .join('')}</div><ol class="ev-slide-list" aria-live="polite">${items
       .map(
@@ -482,7 +499,12 @@ window.TechouseElevators = (() => {
               { strokeDasharray: length, strokeDashoffset: length },
               { strokeDasharray: length, strokeDashoffset: 0 },
             ],
-            { duration: 700, delay: 120 + i * 25, easing: 'cubic-bezier(.22,.7,.2,1)', fill: 'backwards' },
+            {
+              duration: 700,
+              delay: 120 + i * 25,
+              easing: 'cubic-bezier(.22,.7,.2,1)',
+              fill: 'backwards',
+            },
           );
         });
       }
@@ -607,23 +629,26 @@ window.TechouseElevators = (() => {
       action: start('parts', 'Request a part'),
     },
   ];
-  const brand = (name, origin) =>
-    `<div class="ev-brand-art" role="img" aria-label="${esc(name)}"><span class="ev-brand-name">${name}</span><span class="ev-brand-origin">${origin}</span></div>`;
+  const brand = (name) =>
+    `<div class="ev-brand-art" role="img" aria-label="${esc(name)}"><span class="ev-brand-name">${name}</span></div>`;
   const BRANDS = [
     {
-      title: 'Hitachi',
-      text: 'A trusted Japanese name, built in Hitachi’s plants in China.',
-      visual: brand('Hitachi', 'Japan · built in China'),
+      title: 'A trusted Japanese name.',
+      text: 'Hitachi elevators, built in Hitachi’s plants in China.',
+      name: 'Hitachi',
+      visual: brand('Hitachi'),
     },
     {
-      title: 'EPSS',
-      text: 'Elevators and escalators from Yida Express Elevator in Huzhou, China.',
-      visual: brand('EPSS', 'Huzhou, China'),
+      title: 'Elevators and escalators.',
+      text: 'EPSS, from Yida Express Elevator in Huzhou, China.',
+      name: 'EPSS',
+      visual: brand('EPSS'),
     },
     {
-      title: 'Shanghai Mitsubishi',
-      text: 'Mitsubishi elevators built in Shanghai and widely installed across China.',
-      visual: brand('Shanghai Mitsubishi', 'Shanghai, China'),
+      title: 'Widely installed across China.',
+      text: 'Shanghai Mitsubishi elevators, built in Shanghai.',
+      name: 'Shanghai Mitsubishi',
+      visual: brand('Shanghai Mitsubishi'),
     },
   ];
 
@@ -636,7 +661,12 @@ window.TechouseElevators = (() => {
       ['elevator-brands', 'Brands'],
       ['projects', 'Projects'],
     ])}<div class="division-wrap ev-page">${planner()}<section id="elevator-types" class="division-section ev-section"><div class="section-heading"><h2>Elevators for<br>every building.</h2><p>From a family home to a hospital, across all three brands, for new buildings and renovations.</p></div>${slideshow(
-      { id: 'types', label: `Elevator types, ${TYPES.length} slides`, items: TYPES, visualClass: 'ev-visual-plan' },
+      {
+        id: 'types',
+        label: `Elevator types, ${TYPES.length} slides`,
+        items: TYPES,
+        visualClass: 'ev-visual-plan',
+      },
     )}<p class="ev-note">We don’t supply external construction hoists. On a building site they collect debris and are easily overloaded, which puts riders at risk.</p></section><section id="elevator-service" class="division-section ev-section"><div class="section-heading"><h2>Installed, maintained,<br>renewed.</h2><p>An elevator is a long-term system. We look after it for its whole life, whoever installed it.</p></div>${slideshow(
       {
         id: 'services',
@@ -646,7 +676,12 @@ window.TechouseElevators = (() => {
         visualClass: 'ev-visual-shaft',
       },
     )}</section><section id="elevator-brands" class="division-section ev-section"><div class="section-heading"><h2>Three brands.<br>Sourced direct.</h2><p>Straight from the manufacturers, with no resellers in between. We service any major brand.</p></div>${slideshow(
-      { id: 'brands', label: `Elevator brands, ${BRANDS.length} slides`, items: BRANDS, visualClass: 'ev-visual-brand' },
+      {
+        id: 'brands',
+        label: `Elevator brands, ${BRANDS.length} slides`,
+        items: BRANDS,
+        visualClass: 'ev-visual-brand',
+      },
     )}</section>${projectsSection()}</div>`;
   }
 

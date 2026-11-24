@@ -12,7 +12,15 @@
   min-width: 0;
   margin: 0 8px 0 0;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 36px, #000 calc(100% - 36px), transparent);
+  /* A soft dark band keeps the 60% text readable over bright photos; the mask fades its ends. */
+  background: rgb(8 20 15 / 0.58);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 36px,
+    #000 calc(100% - 36px),
+    transparent
+  );
   mask-image: linear-gradient(90deg, transparent, #000 36px, #000 calc(100% - 36px), transparent);
 }
 .news-ticker-track {

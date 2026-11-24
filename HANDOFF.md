@@ -15,13 +15,15 @@ Built with the Impeccable skill, as an extension of the existing look.
 - **Shared answers** (`site/inquiry-details.js`): the inquiry form shows the planner answers with "Change answers" and hides the size field. The server (`platform/insights.mjs`) accepts the new answers; old repair and replacement values stay valid.
 - **News ticker** (`banner.js` + `site/news-ticker.css`, loaded last): the latest published updates scroll between the logo and the actions at 60% white, pausing on hover or focus. It sits inside the header action group, so it appears with them after the approved intro, and the intro is unchanged. The actions are compact; from 600 to 899px, Refer & Earn is icon-only.
 - **Checks:** `npm test` 50/50. Impeccable first-viewport passes at 390 and 1440, and its detector found nothing.
-- **Finish review: "fix"**, with five items still open (in `site/elevator-page.js`, `elevator-page.css` and `news-ticker.css`):
-  1. **Shaft drawing labels:** re-route the leader lines so they don't cross. Sort labels by height and run them horizontally, then vertically.
-  2. **Shaft drawing label size:** labels render at about 8px on phones and should be at least 12px.
-  3. **Ticker contrast:** add a soft dark band behind the ticker so its text holds 4.5:1 over bright hero photos. Keep the 60% opacity.
-  4. **"Not sure" machine-room tile:** it shows an empty drawing area at 1440.
-  5. **Brand slides:** each slide repeats the brand name and origin. Give the visual panel its own content or drop the duplicate.
-- After those fixes, re-capture into `.impeccable/review/` (ignored by Git) and ask the reviewer for a verdict on them.
+- Finish review (Impeccable finish reviewer): the first review returned "fix" with five items, all now done:
+  - The shaft drawing's label lines no longer cross, and its labels are about 12px on phones.
+  - The ticker has a dark band behind it for contrast, still at 60% opacity.
+  - The "Not sure" machine-room tile shows both arrangements faintly.
+  - The brand slides no longer repeat themselves.
+- The verdict review scored all five resolved ("ship", covering those fixes). Two small follow-ups from it are also done: the machine-room tiles line up, and the brand panels show only the name.
+- Never captured, so not judged by the reviewer: the red "Stopped" state, the inquiry summary with "Change answers", and the slide motion. Browser tests in `division-questions.test.mjs` cover the first two.
+- Checks: `npm test` 50/50; Impeccable detector: no findings. The project has no PRODUCT.md (optional `/impeccable init`).
+- To confirm with Techouse: wording of the four services, the step 2 questions, the 7-day parts claim, and the typical car sizes shown on the type slides (common industry sizes, labelled "Typical").
 
 ## Latest: approval meeting follow-ups (branch `claude/solar-elevator-config-14em1m`, 24 Nov 2026; not merged, not deployed)
 

@@ -377,9 +377,6 @@
   width: auto;
   height: 138px;
 }
-.ev-drawn label:not(:has(.ev-choice-art)) span {
-  align-content: end;
-}
 .ev-choices label:hover span {
   border-color: var(--ev-green);
 }
@@ -547,7 +544,15 @@
 .ev-summary .button {
   justify-content: space-between;
   width: 100%;
-  background: linear-gradient(115deg, #b98626 0%, #e6bf5c 21%, #fff0ad 41%, #dbad45 60%, #f5d77e 79%, #bd8a2c 100%);
+  background: linear-gradient(
+    115deg,
+    #b98626 0%,
+    #e6bf5c 21%,
+    #fff0ad 41%,
+    #dbad45 60%,
+    #f5d77e 79%,
+    #bd8a2c 100%
+  );
   background-size: 180% 100%;
   background-position: 0 50%;
   border-color: #e6c46c;
@@ -627,7 +632,22 @@
 }
 .ev-d-tag text {
   fill: var(--d-on, var(--ev-gold-soft));
-  font-size: 13px;
+  font-size: 15px;
+}
+/* One fixed frame for every drawn tile, so the three labels line up. */
+.ev-drawn .ev-choice-art {
+  box-sizing: border-box;
+  height: 152px;
+  min-height: 0;
+  overflow: hidden;
+}
+.ev-choice-art-pair {
+  grid-auto-flow: column;
+  gap: 4px;
+  opacity: 0.55;
+}
+.ev-choice-art-pair svg {
+  height: 120px;
 }
 
 /* ---- Slideshows ----------------------------------------------------------------------------- */
@@ -839,12 +859,6 @@
   line-height: 0.98;
   text-wrap: balance;
 }
-.ev-brand-origin {
-  padding-top: 14px;
-  border-top: 1px solid #ffffff33;
-  color: var(--ev-gold-soft);
-  font-size: 15px;
-}
 
 /* ---- Small screens -------------------------------------------------------------------------- */
 @media (max-width: 1100px) {
@@ -922,6 +936,17 @@
   .ev-slide-visual,
   .ev-slides-flip .ev-slide-visual {
     min-height: 260px;
+  }
+  /* Shaft labels stay at about 12px on a phone. */
+  .ev-visual-shaft .ev-slide-art {
+    padding: 16px 8px;
+  }
+  .ev-visual-shaft .ev-drawing {
+    width: 100%;
+    height: auto;
+  }
+  .ev-d-tag text {
+    font-size: 22px;
   }
   .ev-slide-copy {
     gap: 18px;
