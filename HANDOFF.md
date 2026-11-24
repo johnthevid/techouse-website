@@ -1,6 +1,6 @@
 # Current handoff
 
-## Latest: header Call us shrinks to its icon on tablets (branch `fix/header-call-icon`, 24 Nov 2026, not merged or deployed)
+## Latest: header Call us shrinks to its icon on tablets (branch `fix/header-call-icon`, merged into `main` 24 Nov 2026 at the user's request; not deployed)
 
 - Homepage header at 600–899px (`mobile-refinement.css` end): Call us shows only its phone icon (44 × 44, aria-label unchanged) so Call us, Refer & Earn and Request a quote fit. Fixes the iPad mini portrait overflow (Request a quote was cut off by 14px). Phones already showed the icon; 900px and wider keep the text; other pages' headers fit and are unchanged (checked 744–1280px).
 - Portrait tablets keep the horizontal bands (client confirmed); the side-by-side column experiment was dropped.
