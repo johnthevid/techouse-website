@@ -1,6 +1,6 @@
 # Current handoff
 
-## Latest: Solar step 1 fits one screen, division calls to action, narrow-screen section menu (branch `claude/solar-elevator-config-14em1m`, 25 Nov 2026; not merged, not deployed)
+## Latest: Solar step 1 fits one screen, division calls to action, narrow-screen section menu (branch `claude/solar-elevator-config-14em1m`, merged into `main` 25 Nov 2026 at the user's request; not deployed)
 
 - **Solar planner step 1** (new `site/solar-step-one.css`, loaded last; Impeccable layout pass): heading to the bottom of the form went from 930px to 634px at 1440, and from 889px to 697px at 390, so it all fits one screen under the section bar.
   - The step tracker is one row: marker and label side by side, with the connector in the gap.
