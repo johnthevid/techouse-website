@@ -322,3 +322,34 @@ test('division pages: Real estate development starts closed and staff can open i
   assert.equal(await page.locator('.division-coming-soon').count(), 0);
   assert.deepEqual(errors, []);
 });
+
+test('division pages: own call to action in the header and section bar; menu on narrow screens', async (t) => {
+  const f = await fixture(t);
+  const { page, errors } = await open(t, f);
+  for (const [id, label] of [['construction', 'Let’s start building'], ['prefabrication', 'Let’s start forming'], ['elevators', 'Let’s start elevating']]) {
+    await page.goto(f.env.APP_ORIGIN + '/#/divisions/' + id);
+    await page.waitForSelector('.construction-subnav .division-subnav-cta', { state: 'attached' });
+    const header = page.locator('#header .nav-actions a.button');
+    assert.match(await header.textContent(), new RegExp(label));
+    assert.equal(await header.getAttribute('href'), '#/inquiry?division=' + id);
+    const bar = page.locator('.construction-subnav .division-subnav-cta');
+    assert.equal(await bar.getAttribute('href'), '#/inquiry?division=' + id);
+    // The bar button appears once the header's button has scrolled away.
+    assert.equal(await bar.isVisible(), false);
+    await page.evaluate(() => scrollTo(0, 2000));
+    await page.waitForFunction(() => document.querySelector('.construction-subnav').classList.contains('has-cta'));
+  }
+  // Narrow screens: a menu button names the section and opens the links as a list.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(f.env.APP_ORIGIN + '/');
+  await page.goto(f.env.APP_ORIGIN + '/#/divisions/construction');
+  const toggle = page.locator('.division-subnav-toggle');
+  await toggle.waitFor();
+  assert.equal(await page.locator('.division-subnav-links a').first().isVisible(), false);
+  await toggle.click();
+  assert.equal(await toggle.getAttribute('aria-expanded'), 'true');
+  assert.equal(await page.locator('.division-subnav-links a').first().isVisible(), true);
+  await page.keyboard.press('Escape');
+  assert.equal(await toggle.getAttribute('aria-expanded'), 'false');
+  assert.deepEqual(errors, []);
+});

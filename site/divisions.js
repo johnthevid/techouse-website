@@ -430,9 +430,90 @@ window.TechouseDivisions = (() => {
       revealObserver.observe(group);
     });
   }
+  // Each division's own call to action: in the main header, and at the right of the sticky section
+  // bar once the header's button has scrolled away. Both open that division's inquiry form.
+  const CTA = {
+    construction: 'Let’s start building',
+    prefabrication: 'Let’s start forming',
+    elevators: 'Let’s start elevating',
+  };
+  let ctaWatch, menuWatch;
+  // Phones and narrow screens (900px and under): the section links sit behind a three-line menu
+  // button that names the section in view and opens them as a drop-down list, like Solar's.
+  function mountBarMenu(bar) {
+    removeEventListener('scroll', menuWatch);
+    const links = document.createElement('div');
+    links.className = 'division-subnav-links';
+    links.id = 'division-subnav-links';
+    bar.querySelectorAll(':scope > a[data-scroll]').forEach((a) => links.append(a));
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'division-subnav-toggle';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-controls', links.id);
+    toggle.innerHTML = `${window.TechouseIcons.icon('menu')}<span class="visually-hidden">Sections: </span><span data-subnav-current>${links.querySelector('a')?.textContent || ''}</span>`;
+    bar.prepend(toggle, links);
+    const setMenu = (open, focusToggle = false) => {
+      bar.classList.toggle('is-menu-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.querySelector('svg').outerHTML = window.TechouseIcons.icon(open ? 'close' : 'menu');
+      if (open) links.querySelector('a')?.focus({ preventScroll: true });
+      else if (focusToggle) toggle.focus({ preventScroll: true });
+    };
+    toggle.addEventListener('click', () => setMenu(!bar.classList.contains('is-menu-open')));
+    links.addEventListener('click', (e) => e.target.closest('a') && setMenu(false));
+    bar.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && bar.classList.contains('is-menu-open')) setMenu(false, true);
+    });
+    document.addEventListener('click', function close(e) {
+      if (!bar.isConnected) return document.removeEventListener('click', close);
+      if (bar.classList.contains('is-menu-open') && !bar.contains(e.target)) setMenu(false);
+    });
+    // The button names the last section whose top has passed 40% of the screen.
+    const sections = [...links.querySelectorAll('a[data-scroll]')]
+      .map((a) => [document.getElementById(a.dataset.scroll), a])
+      .filter(([el]) => el);
+    menuWatch = () => {
+      if (!bar.isConnected) return removeEventListener('scroll', menuWatch);
+      const line = innerHeight * 0.4;
+      const current = sections.filter(([el]) => el.getBoundingClientRect().top <= line).pop() || sections[0];
+      if (!current) return;
+      const label = toggle.querySelector('[data-subnav-current]');
+      if (label.textContent !== current[1].textContent) label.textContent = current[1].textContent;
+      sections.forEach(([, a]) =>
+        a === current[1] ? a.setAttribute('aria-current', 'location') : a.removeAttribute('aria-current'),
+      );
+    };
+    addEventListener('scroll', menuWatch, { passive: true });
+    menuWatch();
+  }
+  function mountBarCta() {
+    removeEventListener('scroll', ctaWatch);
+    const id = location.hash.slice(1).split('?')[0].match(/^\/divisions\/([a-z-]+)$/)?.[1];
+    const bar = document.querySelector('.construction-subnav');
+    if (!bar || bar.querySelector('.division-subnav-toggle')) return;
+    mountBarMenu(bar);
+    if (!CTA[id]) return;
+    const cta = document.createElement('a');
+    cta.className = 'button small division-subnav-cta';
+    cta.href = '#/inquiry?division=' + id;
+    cta.innerHTML = `${CTA[id]} ${arrowIcon()}`;
+    bar.append(cta);
+    const headerCta = document.querySelector('#header .nav-actions a.button');
+    ctaWatch = () => {
+      const box = headerCta?.getBoundingClientRect();
+      const headerShowing = box && box.width > 0 && box.bottom > 0;
+      bar.classList.toggle('has-cta', !headerShowing);
+      cta.tabIndex = headerShowing ? -1 : 0;
+      cta.setAttribute('aria-hidden', String(Boolean(headerShowing)));
+    };
+    addEventListener('scroll', ctaWatch, { passive: true });
+    ctaWatch();
+  }
   function mount() {
     window.TechouseSolar?.mount();
     revealBlocks();
+    mountBarCta();
     document.querySelectorAll('[data-scroll]').forEach((a) =>
       a.addEventListener('click', (e) => {
         e.preventDefault();
@@ -1038,5 +1119,5 @@ window.TechouseDivisions = (() => {
       actionTransition = false;
     }
   });
-  return { page, enter, mount, preservePreviousPage, clearPreviousPage };
+  return { CTA, page, enter, mount, preservePreviousPage, clearPreviousPage };
 })();
